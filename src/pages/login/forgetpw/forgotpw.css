@@ -1,0 +1,89 @@
+.s-fp-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.s-fp-form {
+  width: 500px;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  
+
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.s-forgotText {
+  display: flex;
+  margin-bottom: 5px;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+}
+.s-fp-fp {
+  margin-bottom: 0.1rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.s-fp-inputField {
+  display: flex;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  flex-direction: row;
+  border-radius: 9999px;
+  width: 100%;
+  background-color: #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.s-fp-inputF {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  margin-right: 5px;
+}
+
+.fp-error {
+  color: red;
+  font-size: 0.8em;
+  /* position: relative;  */
+  /* bottom: calc(100% + 1px); Adjust the distance from the input field */
+
+  left: 0;
+}
+
+.s-fp-button {
+  border-radius: 0.5rem;
+  width: 8rem;
+  height: 2rem;
+  color: #ffffff;
+  /* transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+    transition-duration: 150ms;
+    transition-timing-function: linear; */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  background: #469cb7;
+  border: 0px;
+}
+
+.s-fp-button:hover {
+  box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1),
+    0 4px 7px -1px rgba(0, 0, 0, 0.06);
+}
+
+.backtologin {
+  margin-top: 2rem;
+}
