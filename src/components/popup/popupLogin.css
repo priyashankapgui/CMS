@@ -1,0 +1,47 @@
+.popupModal{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    
+      
+}
+
+.s_popup{
+    display:flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    padding:20px;
+    border-radius: 0.5rem;
+}
+  
+  .popupModal > div p {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .popupModal > div button {
+    
+
+    display: block;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    width: 8rem;
+    height: 2rem;
+    color: #ffffff;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    background: #469cb7;
+    border: 0px;
+    cursor: pointer;
+}
+  
+  .popupModal > div button:hover {
+    
+    box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1),
+        0 4px 7px -1px rgba(0, 0, 0, 0.06);
+
+
+  }
+
+.s_icon {
+  text-align: center;
+}

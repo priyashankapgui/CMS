@@ -1,10 +1,13 @@
-
+import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
+import createRoutes from './routes';
 
 function App() {
   return (
-    <div className="App">
-      
+    <div>
+      <Router>
+        {createRoutes()}
+      </Router>
     </div>
   );
 }
