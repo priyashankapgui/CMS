@@ -1,14 +1,15 @@
-import { BrowserRouter as Router } from 'react-router-dom';
-import './App.css';
-import createRoutes from './routes';
+import "./Components/SideDrawer/Sidebar.css";
+// import Sidebar from "./Components/SideDrawer/Sidebar";
+import { BrowserRouter as Router } from "react-router-dom";
+import { SidebarRouter } from "./Routers/SidebarRouter";
+import { LoginRouter } from "./Routers/LoginRouter";
 
 function App() {
   return (
-    <div>
-      <Router>
-        {createRoutes()}
-      </Router>
-    </div>
+    <Router>
+      <SidebarRouter />
+      <LoginRouter/>
+    </Router>
   );
 }
 

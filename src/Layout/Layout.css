@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+#bodycontent {
+  margin-top: 60px;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-nav.show + #bodycontent {
+  margin-left: 270px;
+}
+
+.sidebar-nav:not(.show) + #bodycontent {
+  margin-left: 10px;
+}
