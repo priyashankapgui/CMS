@@ -10,10 +10,8 @@
 body {
     background-color: #fafafa;
 }
-.branch-mgmt,
 .adjust-branch,
 .accounts,
-.inventory-mgmt,
 .products,
 .suppliers,
 .good-receive,
@@ -21,7 +19,6 @@ body {
 .stock-transfer,
 .stock-return,
 .check-price,
-.billing,
 .sales,
 .work-list,
 .online-orders,
@@ -36,7 +33,7 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-top: 18px;
+    margin-top: -53px;
     z-index: 1;
 }
 /* Sidebar.js */
