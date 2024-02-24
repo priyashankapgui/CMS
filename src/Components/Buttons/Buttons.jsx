@@ -5,7 +5,7 @@ const Button = styled.button`
   width: ${(props) => props.btnWidth || '5.125em'};
   height: ${(props) => props.btnHeight || '2em'};
   border-radius: 0.625em;
-  font-weight: 200;
+  font-weight: 600;
   font-size: 1em;
   border: none;
   box-shadow: 1px 1px rgba(0, 0, 0, 0.2);

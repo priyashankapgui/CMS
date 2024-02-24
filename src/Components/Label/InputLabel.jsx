@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Label = styled.label`
-  font-size: 0.875em;
+  font-size: 13px;
   font-family: Poppins;
   font-weight: 500;
   color: ${props => props.color}; 
