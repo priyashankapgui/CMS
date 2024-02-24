@@ -4,7 +4,6 @@ import { Icon } from '@iconify/react'
 export const SidebarData = [
     {
         title: "Branch Mgmt",
-        path: "/branch-mgmt",
         icon: <Icon icon="solar:shop-linear" style={{ fontSize: '22px' }} />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
@@ -22,7 +21,6 @@ export const SidebarData = [
     },
     {
         title: "Inventory Mgmt",
-        path: "/inventory-mgmt",
         icon: <Icon icon="carbon:inventory-management" style={{ fontSize: '22px' }} />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
@@ -67,7 +65,6 @@ export const SidebarData = [
     },
     {
         title: "Billing",
-        path: "/billing",
         icon: <Icon icon="solar:bill-check-linear" style={{ fontSize: '22px' }} />,
         iconClosed: <RiIcons.RiArrowDownSFill />,
         iconOpened: <RiIcons.RiArrowUpSFill />,
