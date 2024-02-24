@@ -13,18 +13,13 @@ import { WorkList } from "../pages/Billing/WorkList/WorkList";
 import { WebMgmt } from "../pages/WebMgmt/WebMgmt";
 import { Reporting } from "../pages/Reporting/Reporting";
 import { OnlineOrders } from "../pages/OnlineOrders/OnlineOrders";
-import BranchMgmt from "../pages/BranchMgmt/BranchMgmt-Def/BranchMgmt";
-import InventoryMgmt from "../pages/InventoryMgmt/InventoryMgmt-Def/InventoryMgmt";
-import Billing from "../pages/Billing/Billing-Def/Billing";
 
 
 export function SidebarRouter() {
   return (
     <Routes>
-      <Route path="/branch-mgmt" element={<BranchMgmt />} />
       <Route path="/adjust-branch" element={<AdjustBranch />} />
       <Route path="/accounts" element={<Accounts />} />
-      <Route path="/inventory-mgmt" element={<InventoryMgmt/>} />
       <Route path="/products" element={<Products />} />
       <Route path="/suppliers" element={<Suppliers />} />
       <Route path="/good-receive" element={<GoodReceive />} />
@@ -32,7 +27,6 @@ export function SidebarRouter() {
       <Route path="/stock-transfer" element={<StockTransfer />} />
       <Route path="/stock-return" element={<StockReturn />} />
       <Route path="/check-price" element={<CheckPrice/>} />
-      <Route path="/billing" element={<Billing/>} />
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
       <Route path="/online-orders" element={<OnlineOrders />} />
