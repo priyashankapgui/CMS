@@ -1,34 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Icon } from "@iconify/react";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
-import MyAccountDetails from "../PopupsWindows/MyAccountDetails";
-import LogoutPopup from "../PopupsWindows/LogoutPopup";
 import TopNav from "../TopNavDrawer/TopNav";
 import "./Sidebar.css";
 
-const Sidebar = () => {
-  const [sidebar, setSidebar] = useState(true);
-  const [logoutPopupOpen, setLogoutPopupOpen] = useState(false);
-  const [MyAccountDetailsOpen, setMyAccountDetailsOpen] = useState(false);
-
-  const showSidebar = () => setSidebar(!sidebar);
-  const openLogoutPopup = () => setLogoutPopupOpen(true);
-  const closeLogoutPopup = () => setLogoutPopupOpen(false);
-  const openMyAccountDetails = () => setMyAccountDetailsOpen(true);
-  const closeMyAccountDetails = () => setMyAccountDetailsOpen(false);
+const Sidebar = ({ expanded, toggleSidebar }) => {
 
   return (
     <>
-      <TopNav
-        showSidebar={showSidebar}
-        openMyAccountDetails={openMyAccountDetails}
-        openLogoutPopup={openLogoutPopup}
-      />
-      <div className={`sidebar-nav ${sidebar ? "show" : ""}`}>
+      <TopNav showSidebar={toggleSidebar} />
+      <div className={`sidebar-nav ${expanded ? "show" : ""}`}>
         <div className="sidebar-wrap">
           <div className="side-top">
-            <div className="collapse-side-icon2" onClick={showSidebar}>
+            <div className="collapse-side-icon2" onClick={toggleSidebar}>
               <Icon icon="bi:menu-app" style={{ fontSize: "22px" }} />
             </div>
             <h3 className="SystemName-2">Flex Flow</h3>
@@ -40,9 +25,6 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-      <MyAccountDetails open={MyAccountDetailsOpen} onClose={closeMyAccountDetails} />
-      <LogoutPopup open={logoutPopupOpen} onClose={closeLogoutPopup} />
-
     </>
   );
 };
