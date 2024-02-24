@@ -1,22 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Icon } from "@iconify/react";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
 import TopNav from "../TopNavDrawer/TopNav";
 import "./Sidebar.css";
 
-const Sidebar = () => {
-  const [sidebar, setSidebar] = useState(true);
-
-  const showSidebar = () => setSidebar(!sidebar);
+const Sidebar = ({ expanded, toggleSidebar }) => {
 
   return (
     <>
-      <TopNav showSidebar={showSidebar} />
-      <div className={`sidebar-nav ${sidebar ? "show" : ""}`}>
+      <TopNav showSidebar={toggleSidebar} />
+      <div className={`sidebar-nav ${expanded ? "show" : ""}`}>
         <div className="sidebar-wrap">
           <div className="side-top">
-            <div className="collapse-side-icon2" onClick={showSidebar}>
+            <div className="collapse-side-icon2" onClick={toggleSidebar}>
               <Icon icon="bi:menu-app" style={{ fontSize: "22px" }} />
             </div>
             <h3 className="SystemName-2">Flex Flow</h3>
