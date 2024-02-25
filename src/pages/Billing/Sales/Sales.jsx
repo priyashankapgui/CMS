@@ -23,6 +23,7 @@ export const Sales = () => {
                     <div className="contactNo">
                         <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
                         <InputField type="text" id="contactNo" name="contactNo" editable={true} />
+                 
                     </div>
                 </div>
             </Layout>
