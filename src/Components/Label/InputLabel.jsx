@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Label = styled.label`
-  font-size: 0.875em;
+  font-size: ${(props) => props.fontsize || '0.875em'};
   font-family: Poppins;
   font-weight: 500;
   color: ${props => props.color}; 
@@ -16,6 +16,7 @@ function InputLabel(props) {
             <Label
                 htmlFor={props.for}
                 color={props.color}
+                fontsize={props.fontsize}
             >
                 {props.children}
             </Label>

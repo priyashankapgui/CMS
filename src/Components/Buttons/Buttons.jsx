@@ -5,11 +5,11 @@ const Button = styled.button`
   width: ${(props) => props.btnWidth || '5.125em'};
   height: ${(props) => props.btnHeight || '2em'};
   border-radius: 0.625em;
-  font-weight: 200;
+  font-weight:550;
   font-size: 1em;
   border: none;
-  box-shadow: 1px 1px rgba(0, 0, 0, 0.2);
-  margin-top: 0.625em;
+  box-shadow: 1px 1px 1px 1px rgba(0.1, 0, 0, 0.2);
+  margin-top: ${(props) => props.margintop || '0.625em'};
   padding: 0.125em;
   text-transform: none;
   text-align: center;
@@ -30,6 +30,7 @@ function Buttons(props) {
                 alignSelf={props.alignSelf}
                 btnHeight={props.btnHeight}
                 btnWidth={props.btnWidth}
+                margintop={props.margintop}
             >
                 {props.children}
             </Button>
