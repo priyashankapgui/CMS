@@ -4,8 +4,8 @@ import styled from 'styled-components';
 const Dropdown = styled.select`
   border-radius: 0.625em;
   border: 1px solid #8D9093;
-  height: 2.25em;
-  width: 15.625em;
+  height: ${(props) => props.height || '2.25em'};
+  width: ${(props) => props.width || '15.625em'};
   margin-top: 0.313em;
   margin-bottom: 0.313em;
   font-size: 0.813em;
@@ -21,6 +21,8 @@ function InputDropdown(props) {
                 id={props.id}
                 name={props.name}
                 style={props.style}
+                height={props.height}
+                width={props.width}
                 onChange={props.onChange}
                 editable={props.editable}
             >
