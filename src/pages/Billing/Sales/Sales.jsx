@@ -5,7 +5,6 @@ import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputLabel from "../../../Components/Label/InputLabel";
 import BillingTable from "../../../Components/Tables/BillingTable";
 
-
 export const Sales = () => {
     return (
         <>
@@ -26,6 +25,8 @@ export const Sales = () => {
                         <div className="contactNo">
                             <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
                             <InputField type="text" id="contactNo" name="contactNo" editable={true} />
+                        </div>
+                        <div>
                         </div>
                     </div>
                     <div className="billContainer">
