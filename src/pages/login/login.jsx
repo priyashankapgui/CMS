@@ -3,8 +3,8 @@ import "./login.css";
 import { Link } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
 import { FaKey } from "react-icons/fa";
-import cmslogo from "../../assets/cmslogo.svg";
-import greenmart from "../../assets/greenmart.svg";
+import cmslogo from "../../Assets/cmslogo.svg";
+import greenmart from "../../Assets/greenmart.svg";
 
 const Login = () => {
 
@@ -41,8 +41,8 @@ const Login = () => {
     sessionStorage.removeItem('employeeId');
     sessionStorage.removeItem('password');
     // // Store employee ID and password in sessionStorage
-    // sessionStorage.setItem("employeeId", employeeId);
-    // sessionStorage.setItem("password", password);
+    sessionStorage.setItem("employeeId", employeeId);
+    sessionStorage.setItem("password", password);
 
     // Clear the input fields
     setEmployeeId("");
