@@ -17,14 +17,14 @@ body {
 .good-receive,
 .stock-balance,
 .stock-transfer,
-.stock-return,
 .check-price,
 .sales,
 .work-list,
 .online-orders,
 .web-mgmt,
-.reporting,
-.page-name {
+.analysis,
+.reports
+{
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;
@@ -41,7 +41,7 @@ body {
 .sidebar-nav {
     background: #0377A8;
     width: 15.625em;
-    min-height: 100vh;
+    min-height: 160vh;
     height: 100%;
     display: flex;
     flex-direction: column;

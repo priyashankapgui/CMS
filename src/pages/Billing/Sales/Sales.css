@@ -4,17 +4,62 @@
     margin-bottom: 20px;
 }
 
-.salesBody{
+.salesBody {
     background-color: #fafafa;
     width: 100%;
-    height: 600px;
+    height: 960px;
     border-radius: 10px;
     padding: 5px 20px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  
+
 }
-.billContainer{
+
+.billContainer {
     overflow: auto;
-    height: 40vh;
+    width: 100%;
+    height: 60vh;
     margin-bottom: 20px;
+
+}
+
+.paymentContainerWrapper {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.paymentContainer {
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+}
+
+.paymentContainer table td {
+    padding-right: 10px;
+    /* Adjust the value as needed */
+}
+
+
+.payment-method-top {
+    text-align: center;
+}
+
+.payment-method-bottom {
+    display: flex;
+    gap: 10px;
+}
+
+.discountFieldsContainer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cardLogos {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
 }
