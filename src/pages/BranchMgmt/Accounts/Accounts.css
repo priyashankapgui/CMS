@@ -1,0 +1,12 @@
+.linkDiv{
+    padding: 5px;
+}
+.link{
+    padding-right: 30px;
+    text-decoration: none;
+    color: #000000;
+}
+.link:hover{
+    text-decoration: underline;
+    color: #0377A8;
+}
