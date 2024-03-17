@@ -7,6 +7,7 @@ import InputLabel from '../Label/InputLabel';
 import InputField from '../InputField/InputField';
 import InputDropdown from '../InputDropdown/InputDropdown';
 import { useDropzone } from 'react-dropzone';
+import dropdownOptions from '../Data.json';
 
 
 const FormBackground = styled.div`
@@ -78,7 +79,7 @@ function MyAccountDetails() {
     return (
         <>
             <SubPopup
-               triggerComponent={<ProfileDP />}
+                triggerComponent={<ProfileDP />}
                 popupPosition="70%"
                 headBG="none"
                 title={
@@ -96,12 +97,13 @@ function MyAccountDetails() {
                     <FormBackground>
                         <div className="BranchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" options={['All', 'Galle', 'Kaluthara']} editable={false} />
+                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
                         <FlexContent>
                             <div className="UserRoleField">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
-                                <InputDropdown id="userRole" name="userRole" options={['Super Admin', 'Admin', 'Cashier']} editable={false} />
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.userRoleOptions} />
+
                             </div>
                             <ChangeDP {...getRootProps()}>
                                 {/* Preview image */}
@@ -134,9 +136,9 @@ function MyAccountDetails() {
                             <InputField type="password" id="conf_newPassword" name="conf_newPassword" placeholder="Confirm New Password" editable={editable} />
                         </div>
                         <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-                  
+
                     </FormBackground>
-                 
+
                 )}
             />
         </>

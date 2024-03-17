@@ -1,0 +1,45 @@
+/* SalesChart.css */
+
+.dropdown-style {
+    border-radius: 0.625em;
+    border: 1px solid #8D9093;
+    font-size: 0.813em;
+    padding-left: 0.625em;
+    height: 2.25em;
+}
+
+.chart-container {
+    margin-bottom: 10px;
+}
+
+.chart-container select {
+    margin-right: 15px;
+}
+
+.chart-container select,
+#chart {
+    font-family: 'Poppins';
+}
+
+#chart {
+    text-align: center;
+}
+
+.total-sales {
+    text-align: center;
+    margin-top: 10px;
+    font-family: 'Poppins';
+    font-size: 1.2em;
+}
+
+.total-sales span {
+    font-weight: bold;
+}
+
+.total-sales .total-sales-amount {
+    color: #0377A8;
+}
+
+.total-sales .total-sales-value {
+    color: #000;
+}

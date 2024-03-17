@@ -24,7 +24,7 @@ function DeletePopup() {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <p>Do you really want to delete this one?</p> <br/>
-            <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#EB1313", color: "white" }} onclick=""> Yes </Buttons>
+            <Buttons type="submit" id="yes-btn" style={{ backgroundColor: "#EB1313", color: "white" }} onclick=""> Yes </Buttons>
           </div>
         )}
       />

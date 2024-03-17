@@ -72,7 +72,11 @@ const ForgetPw = () => {
           closeIconColor="white"
           bodyContent={(
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p>Your password has been sent to your email</p>
+              <p>Your password reset link has been sent to your email</p>
+
+
+              {/*  Change this one later when it can be sent by email. */}
+
               <Link to="/login/resetpw">
                 <Buttons type="button" id="ok-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}>Ok </Buttons>
               </Link>

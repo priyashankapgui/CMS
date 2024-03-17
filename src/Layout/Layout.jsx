@@ -19,7 +19,7 @@ const Layout = ({ children }) => {
                 <div id="side-nav-content">
                     <Sidebar expanded={sidebarExpanded} toggleSidebar={toggleSidebar} />
                 </div>
-                <div id="bodycontent" style={{ marginLeft: sidebarExpanded ? '270px' : '10px' }}>
+                <div id="bodycontent" style={{ marginLeft: sidebarExpanded ? '16.875em' : '1.25em' ,  marginRight: sidebarExpanded ? '1.25em' : '1.25em' }}>
                     {children}
                 </div>
             </div>

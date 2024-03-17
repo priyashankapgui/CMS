@@ -51,11 +51,7 @@ export const SidebarData = [
                 path: "/stock-transfer",
                 cName: "sub-nav",
             },
-            {
-                title: "Stock Return",
-                path: "/stock-return",
-                cName: "sub-nav",
-            },
+    
             {
                 title: "Check Price",
                 path: "/check-price",
@@ -93,7 +89,7 @@ export const SidebarData = [
     },
     {
         title: "Reporting",
-        path: "/reporting",
+        path: "/reporting/analysis",
         icon: <Icon icon="mdi:chart-donut" style={{ fontSize: '22px' }} />,
     },
 ];

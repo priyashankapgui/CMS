@@ -41,10 +41,11 @@ export default function SubPopup(props) {
                         backgroundColor: `${props.headBG}`,
                         color: `${props.headTextColor}`,
                         py: '10px', // Adjust the padding top and bottom
-                        px: '24px'  // Adjust the padding left and right
+                        px: '24px', // Adjust the padding left and right
+
                     }}
                 >
-                    <Typography variant="h6" sx={{ fontFamily: 'Poppins', fontSize: '18px', fontWeight: 'bold' }}>
+                    <Typography variant="h6" sx={{ fontFamily: 'Poppins', fontSize: '18px', fontWeight: '500' }}>
                         {props.title}
                     </Typography>
                     <IconButton
@@ -60,7 +61,7 @@ export default function SubPopup(props) {
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent sx={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
+                <DialogContent sx={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa', padding:'15px 15px' }}>
                     <DialogContentText id="alert-dialog-description" sx={{ fontSize: '16px', fontFamily: 'Poppins', marginTop: '8px' }}>
                         {props.bodyContent}
                     </DialogContentText>
