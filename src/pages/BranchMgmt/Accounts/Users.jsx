@@ -5,7 +5,10 @@ import Label from "../../../Components/Label/InputLabel";
 import dropdownOptions from "../../../Components/Data.json";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import Buttons from "../../../Components/Buttons/Buttons";
-import InputField from "../../../Components/InputField/InputField"
+import InputField from "../../../Components/InputField/InputField";
+import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
+import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
 export const Users = () => {
     return (
         <>
@@ -33,16 +36,40 @@ export const Users = () => {
                             <InputField id="empID" name="empID"  width="15.625em" borderRadius="0.625em" style={{border: "1px solid #8D9093"}}></InputField>
                         </div>
                     </div>
-                    <hr className="line" />
+                    {/* <hr className="line" /> */}
                     <div className="Button">
                         <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} > Save </Buttons>
                         <Buttons type="clear" id="clear-btn" style={{ backgroundColor: "#FFFFFF", color: "red" }}>Clear</Buttons>
                         <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }}>New +</Buttons>
                     </div>
                     <hr className="line" />
-                    <div className="tableContainer">
-                        
-                    </div>
+                    <TableWithPagi
+                        columns={['Branch Name', 'Emp ID', 'Emp Name', 'Gender', 'Role', '']}
+                        rows={[
+                            { branch: 'Galle', empId: '22100', empName: 'Anne Perera', gender: 'F', role: 'Admin - G',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )
+                         },
+                            { branch: 'Galle', empId: '22100', empName: 'Anne Perera', gender: 'F', role: 'Admin - G',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            ) },
+                            { branch: 'Galle', empId: '22100', empName: 'Anne Perera', gender: 'F', role: 'Admin - G',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            ) },
+                        ]}
+                    />
                 </div>
             </Layout>
         </>
