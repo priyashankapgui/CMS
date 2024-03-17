@@ -5,6 +5,9 @@ import Buttons from "../../../Components/Buttons/Buttons";
 import Label from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from "../../../Components/Data.json";
+import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
+import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
 
 export const UserRoleMgmt = () => {
     return (
@@ -27,7 +30,47 @@ export const UserRoleMgmt = () => {
                         <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
                     </div>
                     <div>
-                        
+                    <TableWithPagi
+                        columns={[]}
+                        rows={[
+                            { Role: 'Super Admin',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )  },
+                            { Role: 'Admin - G',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )  },
+                            { Role: 'Admin - K',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )  },
+                            { Role: 'Cashier - G',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )  },
+                            { Role: 'Cashier - K',
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )  },
+                                                      
+                        ]}
+                    />
                     </div>
                 </div>
             </Layout>
