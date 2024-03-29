@@ -4,6 +4,7 @@ import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
 import Buttons from "../../../Components/Buttons/Buttons";
+import data from "../../../Components/Data.json";
 
 
 export const AdjustBranch = () => {
@@ -21,36 +22,20 @@ export const AdjustBranch = () => {
                     </div>
                     <TableWithPagi
                         itemsPerPage={5}
-                        columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', 'Action']}
-                        rows={[
-                            {
-                                branchid: "B001",
-                                branchName: "Kaluthara",
-                                branchAddress: "28, Galle Road, Kaluthara South",
-                                branchEmail: "kaluthara@greenleaf.com",
-                                branchContact: "0342 222 231",
-                                action: (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <UpdateBranchPopup />
-                                        <DeletePopup />
-                                    </div>
-                                )
-                            },
-                            {
-                                branchid: "B002",
-                                branchName: "Galle",
-                                branchAddress: "28, Galle Road, Kaluthara South",
-                                branchEmail: "galle@greenleaf.com",
-                                branchContact: "0342 222 231",
-                                action: (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <UpdateBranchPopup />
-                                        <DeletePopup />
-                                    </div>
-                                )
-                            }
-
-                        ]}
+                        columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
+                        rows={data.registeredBranches.map(branch => ({
+                            branchid: branch.id,
+                            branchName: branch.name,
+                            branchAddress: branch.address,
+                            branchEmail: branch.email,
+                            branchContact: branch.contact,
+                            action: (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <UpdateBranchPopup />
+                                    <DeletePopup />
+                                </div>
+                            )
+                        }))}
                     />
                 </div>
 

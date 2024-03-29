@@ -9,6 +9,7 @@ import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
+// import rowData from "./"
 export const Users = () => {
     return (
         <>
