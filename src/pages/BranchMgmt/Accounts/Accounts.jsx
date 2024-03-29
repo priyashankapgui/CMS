@@ -1,13 +1,21 @@
 import Layout from "../../../Layout/Layout";
-export const Accounts = () => {
+import './Accounts.css';
+import { Link } from "react-router-dom";
+
+
+export function Accounts() {
     return (
         <>
             <div className="accounts">
                 <h4>Accounts</h4>
             </div>
             <Layout>
-            <p>This is the body content of the Accounts page.</p>
+                <div className="linkDiv">
+                    <Link className="link" to="/Users">Users</Link>
+                    <Link className="link" to="/UserRoleMgmt">User Role Mgmt</Link>
+                </div>
+            
             </Layout>
         </>
-    );
-};
+  );
+}
