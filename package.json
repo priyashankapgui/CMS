@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/is-prop-valid": "^1.2.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.15.10",
@@ -12,7 +11,6 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
@@ -20,13 +18,10 @@
     "react-datepicker": "^6.1.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-hooks": "^1.0.1",
     "react-icons": "^5.0.1",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.22.1",
     "react-scripts": "5.0.1",
-    "react-select": "^5.8.0",
-    "react-to-print": "^2.15.1",
     "styled-components": "^6.1.8",
     "web-vitals": "^2.1.4"
   },
@@ -56,11 +51,9 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
-    "@babel/core": "^7.24.3",
+    "@babel/core": "^7.24.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@babel/plugin-transform-runtime": "^7.24.3",
-    "@babel/preset-env": "^7.24.3",
-    "@babel/preset-react": "^7.24.1",
+    "@babel/preset-react": "^7.23.3",
     "@iconify/react": "^4.1.1",
     "babel-plugin-styled-components": "^2.1.4"
   }

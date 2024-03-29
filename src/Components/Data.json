@@ -1,38 +1,14 @@
 {
-
   "dropDownOptions": {
     "userRoleOptions": ["Super Admin", "Admin", "Cashier"],
     "branchOptions": ["All", "Galle", "Kaluthara"]
   },
-
   "radioBtnOptions": [
     { "id": "paymentOption1", "label": "Cash" },
     { "id": "paymentOption2", "label": "Card" }
   ],
-
-
-  "registerdProductsData":[
-    { "branch": "Galle", "productId": "P10035", "productName": "Sustagen Vanilla 400g", "category": "Milk Powders", "description": "Sustagen Vanilla 400g milk powder is a convenient and nutritious option for boosting your daily intake of essential vitamins and minerals.", "supplierName": "Hemas Pharmaceuticals Pvt Ltd" },
-    { "branch": "Galle", "productId": "P10036", "productName": "Sustagen Chocolate 400g", "category": "Milk Powders", "description": "Sustagen Chocolate 400g milk powder is a convenient and nutritious option for boosting your daily intake of essential vitamins and minerals.", "supplierName": "Hemas Pharmaceuticals Pvt Ltd" },
-    { "branch": "Galle", "productId": "P10037", "productName": "Maliban Bran Cracker 140g", "category": "Biscuits", "description": "Maliban Bran Cracker biscuits are a wholesome and nutritious snack option, packed with the goodness of bran in a 140g pack", "supplierName": " Maliban Biscuit Manufactories Pvt Ltd" },
-    { "branch": "Galle", "productId": "P10038", "productName": "Milo Chocolate 100ml", "category": "Beverages", "description": "Milo Chocolate Food Drink, a 180ml package, is a popular, energizing beverage with rich chocolate flavor.", "supplierName": "Nesle Lanka PLC" },
-    { "branch": "Galle", "productId": "P10039", "productName": "Imorich Black Forest Cone 120ml", "category": "Ice Creams", "description": "Imorich Black Forest Cone is a delightful ice cream treat packed into a convenient 120ml cone. ", "supplierName": "Imorich Lanka" },
-    { "branch": "Galle", "productId": "P10040", "productName": "Astra 500G With Free Astra 100g", "category": "Spreds", "description": "Astra is a brand of margarine or cooking fat that is popular for its versatility and flavor", "supplierName": "AStra Sri Lanka" },
-    { "branch": "Galle", "productId": "P10041", "productName": "Astra Fat Spread 100g", "category": "Spreds", "description": "Astra is a brand of margarine or cooking fat that is popular for its versatility and flavor.", "supplierName": "AStra Sri Lanka" }
-
-  ],
-
-  "registeredProductCategories":[
-    {"categoryName": "Beverages"},
-    {"categoryName": "Biscuits"},
-    {"categoryName": "Milk Powder"},
-    {"categoryName": "Spreds"}
-  ],
-
-
-  "repoTypes": ["Stock Summary", "Expired Stock", "Upcoming Expiry"],
+  "repoTypes": ["Stock Summary", "Expired Stock"],
   
-
   "salesChartData": {
     "2023": [
       {
@@ -54,5 +30,22 @@
         "data": [220000, 270000, 370000, 420000, 440000, 390000, 370000, 750000, 570000, 670000, 740000, 720000, 770000, 620000, 870000, 580000, 970000, 920000, 870000, 820000, 770000, 720000, 370000, 620000, 710000, 520000, 470000, 520000, 370000, 520000, 270000, 920000]
       }
     ]
-  }
+  },
+  "registeredBranches": [
+    {
+      "id": "B001",
+      "name": "Kaluthara",
+      "address": "No:28, Galle Road, Kaluthara South",
+      "email": "kaluthara@greenleaf.com",
+      "contact": "0342 222 231"
+    },
+    {
+      "id": "B002",
+      "name": "Galle",
+      "address": "No:30, Main Street, Galle",
+      "email": "galle@greenleaf.com",
+      "contact": "0342 222 231"
+    }
+  ]
+
 }

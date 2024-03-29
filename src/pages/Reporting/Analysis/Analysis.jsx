@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import SalesChart from '../../../Components/Charts/SalesChart';
 
 export const Analysis = () => {
-    const [clickedLink, setClickedLink] = useState('Analysis'); 
+    const [clickedLink, setClickedLink] = useState('Analysis'); // Set initial value to 'Analysis'
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);

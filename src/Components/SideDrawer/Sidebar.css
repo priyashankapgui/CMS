@@ -20,7 +20,6 @@ body {
 .check-price,
 .sales,
 .work-list,
-.work-list-return-bill,
 .online-orders,
 .web-mgmt,
 .analysis,
@@ -42,14 +41,14 @@ body {
 .sidebar-nav {
     background: #0377A8;
     width: 15.625em;
-    min-height: 150vh;
+    min-height: 160vh;
     height: 100%;
     display: flex;
     flex-direction: column;
     top: 0;
     left: -100%;
     transition: 350ms;
-    z-index: 1;
+    z-index: 10;
     position: absolute;
   }
   

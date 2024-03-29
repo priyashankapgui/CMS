@@ -8,11 +8,13 @@ import { StockBalance } from "../pages/InventoryMgmt/StockBalance/StockBalance";
 import { StockTransfer } from "../pages/InventoryMgmt/StockTransfer/StockTransfer";
 import { CheckPrice } from "../pages/InventoryMgmt/CheckPrice/CheckPrice";
 import { Sales } from "../pages/Billing/Sales/Sales";
-import { WorkList } from "../pages/Billing/WorkList/WorkListPage/WorkList";
+import { WorkList } from "../pages/Billing/WorkList/WorkList";
 import { WebMgmt } from "../pages/WebMgmt/WebMgmt";
 import { OnlineOrders } from "../pages/OnlineOrders/OnlineOrders";
 import { Reports } from "../pages/Reporting/Reports/Reports";
 import { Analysis } from "../pages/Reporting/Analysis/Analysis";
+import { Users } from "../pages/BranchMgmt/Accounts/Users";
+import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoleMgmt";
 
 
 
@@ -33,6 +35,8 @@ export function SidebarRouter() {
       <Route path="/web-mgmt" element={<WebMgmt />} />
       <Route path="/reporting/analysis" element={<Analysis/>} />
       <Route path="/reporting/reports" element={<Reports />} />
+      <Route path="/Users" element={<Users />} />
+      <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
     </Routes>
 
   );

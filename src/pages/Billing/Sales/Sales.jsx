@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Sales.css";
 import InputField from "../../../Components/InputField/InputField";
@@ -12,7 +12,6 @@ import InputRadio from '../../../Components/InputRadio/InputRadio';
 import radioBtnOptions from '../../../Components/Data.json';
 import Buttons from '../../../Components/Buttons/Buttons';
 import { Icon } from "@iconify/react";
-
 
 export const Sales = () => {
 
@@ -65,7 +64,7 @@ export const Sales = () => {
                             <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
                         <div className="customerName">
-                            <InputLabel for="customerName" color="#0377A8" fontsize="">Customer Name</InputLabel>
+                            <InputLabel for="customerName" color="#0377A8" fontSize="">Customer Name</InputLabel>
                             <InputField type="text" id="customerName" name="customerName" editable={true} />
                         </div>
                         <div className="contactNo">
@@ -91,7 +90,7 @@ export const Sales = () => {
                             <tbody>
                                 {rows.map(row => (
                                     <tr key={row.id}>
-                                        <td><InputField type="text" id={`productID_${row.id}`} name="productID" editable={true} width="151px" value={row.productID} onChange={(e) => handleInputChange(row.id, 'productID', e.target.value) }/></td>
+                                        <td><InputField type="text" id={`productID_${row.id}`} name="productID" editable={true} width="151px" value={row.productID} onChange={(e) => handleInputChange(row.id, 'productID', e.target.value)} /></td>
                                         <td><InputField type="text" id={`productName_${row.id}`} name="productName" editable={true} width="300px" value={row.productName} onChange={(e) => handleInputChange(row.id, 'productName', e.target.value)}><CiSearch /></InputField></td>
                                         <td><InputField type="text" id={`billQty_${row.id}`} name="billQty" editable={true} width="90px" value={row.billQty} onChange={(e) => handleInputChange(row.id, 'billQty', e.target.value)} /></td>
                                         <td><InputDropdown id={`batchNo_${row.id}`} name="batchNo" width="154px" options={['', '', '']} editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td>                        {/* <td><InputField type="text" id={`batchNo_${row.id}`} name="batchNo" editable="true" width="154px" value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td> */}
@@ -99,7 +98,6 @@ export const Sales = () => {
                                         <td><InputField type="text" id={`unitPrice_${row.id}`} name="unitPrice" editable={false} width="95px" value={row.unitPrice} onChange={(e) => handleInputChange(row.id, 'unitPrice', e.target.value)} /></td>
                                         <td><InputField type="text" id={`discount_${row.id}`} name="discount" editable={true} width="60px" value={row.discount} onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)} /></td>
                                         <td><InputField type="text" id={`amount_${row.id}`} name="amount" editable={false} width="95px" value={row.amount} onChange={(e) => handleInputChange(row.id, 'amount', e.target.value)} /></td>
-
                                         {row.id === 1 ? (
                                             <>
                                                 <td style={{ paddingRight: '15px' }}><FiPlus onClick={handleAddRow} /></td>
@@ -166,8 +164,8 @@ export const Sales = () => {
                                     <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </Buttons>
                                 </div>
                                 <div className="cardLogos">
-                                    <Icon icon="fa:cc-visa" />
-                                    <Icon icon="logos:mastercard" />
+                                    <Icon icon="fa:cc-visa"/>
+                                    <Icon icon="logos:mastercard"   />
                                 </div>
                             </div>
                         </div>

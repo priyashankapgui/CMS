@@ -70,6 +70,15 @@
     display: inline-flex;
 }
 
+/* .ProfileDP {
+    width: 2.1875em; 
+    height: 2.1875em; 
+    margin-left: 1.25em; 
+    margin-right: 0.625em; 
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: url('../../Assets/ProfileDP-SuperAdmin.svg'), lightgray 0px -0.3666em / 100% 9.205em no-repeat;
+} */
 
 .ProfileName {
     color: #000;
