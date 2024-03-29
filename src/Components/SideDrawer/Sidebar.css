@@ -12,6 +12,7 @@ body {
 }
 .adjust-branch,
 .accounts,
+.userRoleMgmt,
 .products,
 .suppliers,
 .good-receive,
@@ -20,6 +21,7 @@ body {
 .check-price,
 .sales,
 .work-list,
+.work-list-return-bill,
 .online-orders,
 .web-mgmt,
 .analysis,
