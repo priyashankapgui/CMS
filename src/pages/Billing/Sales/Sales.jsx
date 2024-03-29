@@ -64,7 +64,7 @@ export const Sales = () => {
                             <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
                         <div className="customerName">
-                            <InputLabel for="customerName" color="#0377A8" fontsize="">Customer Name</InputLabel>
+                            <InputLabel for="customerName" color="#0377A8" fontSize="">Customer Name</InputLabel>
                             <InputField type="text" id="customerName" name="customerName" editable={true} />
                         </div>
                         <div className="contactNo">
@@ -140,7 +140,7 @@ export const Sales = () => {
                                             </tr>
 
                                             <tr>
-                                                <td><InputLabel for="netTotal" color="#0377A8" fontsize="1.125em" fontweight="510">Net Total</InputLabel></td>
+                                                <td><InputLabel for="netTotal" color="#0377A8" fontSize="1.125em" fontweight="510">Net Total</InputLabel></td>
                                                 <td><InputField type="tect" id="netTotal" name="netTotal" editable={false} marginTop="0" /></td>
                                             </tr>
                                             <tr>

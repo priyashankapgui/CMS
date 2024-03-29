@@ -1,9 +1,24 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 
 const SubMenu = ({ item }) => {
+ 
+  const currentLocation = useLocation().pathname;
   const [subnav, setSubnav] = useState(false);
+
+
+  useEffect(() => {
+    if (item.subNav) {
+      item.subNav.forEach(link => {
+        if (link.path === currentLocation) {
+          setSubnav(true);
+        }
+      });
+    }
+  }, [currentLocation, item.subNav]);
+  
+
 
   const showSubnav = () => setSubnav(!subnav);
 
