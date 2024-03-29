@@ -12,7 +12,7 @@ const Input = styled.input`
   width: ${({ width }) => width || '27em'};
   margin-top: ${({marginTop }) => marginTop || '0.313em'};
   margin-bottom: 0.313em;
-  font-size: 0.75em;
+  font-size:  0.813em;
   padding: 0.625em;
   opacity: ${({ editable }) => (editable ? 1 : 0.5)};
   pointer-events: ${({ editable }) => (editable ? 'auto' : 'none')};

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactApexChart from 'react-apexcharts';
-import './SalesChart.css'; // Import external CSS file
-import salesChartData from '../Data.json'; // Import data from Data.json
+import './SalesChart.css'; 
+import salesChartData from '../Data.json';
 
 class SalesChart extends React.Component {
     constructor(props) {
@@ -70,7 +70,7 @@ class SalesChart extends React.Component {
                         }
                     },
                     min: 0,
-                    max: 1000000, // Set maximum value to 1000000
+                    max: 1000000, 
                     tickAmount: 6,
                     labels: {
                         formatter: (value) => {

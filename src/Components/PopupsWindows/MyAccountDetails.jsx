@@ -97,12 +97,12 @@ function MyAccountDetails() {
                     <FormBackground>
                         <div className="BranchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
                         <FlexContent>
                             <div className="UserRoleField">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.userRoleOptions} />
+                                <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
 
                             </div>
                             <ChangeDP {...getRootProps()}>
