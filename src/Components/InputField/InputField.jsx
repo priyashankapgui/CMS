@@ -25,10 +25,11 @@ const IconContainer = styled.span`
   transform: translateY(-50%);
 `;
 
-function InputField({ id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop ,children }) {
+function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop ,children }) {
     return (
         <InputContainer>
             <Input
+                type={type}
                 id={id}
                 name={name}
                 placeholder={placeholder}
