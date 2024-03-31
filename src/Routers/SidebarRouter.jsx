@@ -15,29 +15,37 @@ import { Reports } from "../pages/Reporting/Reports/Reports";
 import { Analysis } from "../pages/Reporting/Analysis/Analysis";
 import { Users } from "../pages/BranchMgmt/Accounts/Users";
 import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoleMgmt";
-
-
+import CashierRoute from "./CashierRoute";
+import AdminRoute from "./AdminRoute";
+import SuperAdminRoute from "./SuperAdminRoute";
 
 export function SidebarRouter() {
   return (
     <Routes>
-      <Route path="/adjust-branch" element={<AdjustBranch />} />
-      <Route path="/accounts" element={<Accounts />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/suppliers" element={<Suppliers />} />
-      <Route path="/good-receive" element={<GoodReceive />} />
-      <Route path="/stock-balance" element={<StockBalance />} />
-      <Route path="/stock-transfer" element={<StockTransfer />} />
-      <Route path="/check-price" element={<CheckPrice />} />
-      <Route path="/sales" element={<Sales />} />
-      <Route path="/work-list" element={<WorkList />} />
-      <Route path="/online-orders" element={<OnlineOrders />} />
-      <Route path="/web-mgmt" element={<WebMgmt />} />
-      <Route path="/reporting/analysis" element={<Analysis/>} />
-      <Route path="/reporting/reports" element={<Reports />} />
-      <Route path="/Users" element={<Users />} />
-      <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
-    </Routes>
+      <Route element={<SuperAdminRoute />}>
+        <Route path="/adjust-branch" element={<AdjustBranch />} />
+      </Route>
 
+      <Route element={<AdminRoute />}>
+        <Route path="/accounts" element={<Accounts />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/suppliers" element={<Suppliers />} />
+        <Route path="/good-receive" element={<GoodReceive />} />
+        <Route path="/stock-balance" element={<StockBalance />} />
+        <Route path="/stock-transfer" element={<StockTransfer />} />
+        <Route path="/check-price" element={<CheckPrice />} />
+        <Route path="/reporting/analysis" element={<Analysis />} />
+        <Route path="/reporting/reports" element={<Reports />} />
+        <Route path="/Users" element={<Users />} />
+        <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
+        <Route path="/web-mgmt" element={<WebMgmt />} />
+      </Route>
+
+      <Route element={<CashierRoute />}>
+        <Route path="/sales" element={<Sales />} />
+        <Route path="/work-list" element={<WorkList />} />
+        <Route path="/online-orders" element={<OnlineOrders />} />
+      </Route>
+    </Routes>
   );
 }
