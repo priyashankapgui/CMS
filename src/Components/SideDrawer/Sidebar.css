@@ -10,24 +10,23 @@
 body {
     background-color: #fafafa;
 }
-.branch-mgmt,
 .adjust-branch,
 .accounts,
-.inventory-mgmt,
+.userRoleMgmt,
 .products,
 .suppliers,
 .good-receive,
 .stock-balance,
 .stock-transfer,
-.stock-return,
 .check-price,
-.billing,
 .sales,
 .work-list,
+.work-list-return-bill,
 .online-orders,
 .web-mgmt,
-.reporting,
-.page-name {
+.analysis,
+.reports
+{
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;
@@ -36,16 +35,16 @@ body {
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-top: 18px;
-    z-index: 1;
+    margin-top: -53px;
+    z-index: 2;
 }
 /* Sidebar.js */
 
 .sidebar-nav {
     background: #0377A8;
     width: 15.625em;
-    min-height: 100vh;
-    height: fit-content;
+    min-height: 160vh;
+    height: 100%;
     display: flex;
     flex-direction: column;
     top: 0;
@@ -61,6 +60,7 @@ body {
 
 .sidebar-wrap {
     width: 100%;
+    height: 100%;
 }
 
 .side-top {

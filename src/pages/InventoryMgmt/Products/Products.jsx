@@ -1,5 +1,7 @@
+import React from 'react';
 import Layout from "../../../Layout/Layout";
 export const Products = () => {
+
     return (
         <>
             <div className="products">

@@ -1,43 +1,44 @@
 import { Routes, Route } from "react-router-dom";
 import { AdjustBranch } from "../pages/BranchMgmt/AdjustBranch/AdjustBranch";
-import { Accounts } from "../pages/BranchMgmt/Accounts/Accounts";
+import { Accounts } from "../pages/BranchMgmt/Accounts/UserAccounts/Accounts";
 import { Products } from "../pages/InventoryMgmt/Products/Products";
 import { Suppliers } from "../pages/InventoryMgmt/Suppliers/Suppliers";
 import { GoodReceive } from "../pages/InventoryMgmt/GoodReceive/GoodReceive";
 import { StockBalance } from "../pages/InventoryMgmt/StockBalance/StockBalance";
 import { StockTransfer } from "../pages/InventoryMgmt/StockTransfer/StockTransfer";
-import { StockReturn } from "../pages/InventoryMgmt/StockReturn/StockReturn";
 import { CheckPrice } from "../pages/InventoryMgmt/CheckPrice/CheckPrice";
 import { Sales } from "../pages/Billing/Sales/Sales";
-import { WorkList } from "../pages/Billing/WorkList/WorkList";
+import { WorkList } from "../pages/Billing/WorkList/WorkList-Billed/WorkList";
+import { ReturnBill } from "../pages/Billing/WorkList/WorkList-Returned/ReturnBill";
 import { WebMgmt } from "../pages/WebMgmt/WebMgmt";
-import { Reporting } from "../pages/Reporting/Reporting";
 import { OnlineOrders } from "../pages/OnlineOrders/OnlineOrders";
-import BranchMgmt from "../pages/BranchMgmt/BranchMgmt-Def/BranchMgmt";
-import InventoryMgmt from "../pages/InventoryMgmt/InventoryMgmt-Def/InventoryMgmt";
-import Billing from "../pages/Billing/Billing-Def/Billing";
+import { Reports } from "../pages/Reporting/Reports/Reports";
+import { Analysis } from "../pages/Reporting/Analysis/Analysis";
+import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgmt";
+
+
 
 
 export function SidebarRouter() {
   return (
     <Routes>
-      <Route path="/branch-mgmt" element={<BranchMgmt />} />
       <Route path="/adjust-branch" element={<AdjustBranch />} />
       <Route path="/accounts" element={<Accounts />} />
-      <Route path="/inventory-mgmt" element={<InventoryMgmt/>} />
+      <Route path="/accounts/user-roles" element={<UserRoleMgmt/>} />
       <Route path="/products" element={<Products />} />
       <Route path="/suppliers" element={<Suppliers />} />
       <Route path="/good-receive" element={<GoodReceive />} />
       <Route path="/stock-balance" element={<StockBalance />} />
       <Route path="/stock-transfer" element={<StockTransfer />} />
-      <Route path="/stock-return" element={<StockReturn />} />
-      <Route path="/check-price" element={<CheckPrice/>} />
-      <Route path="/billing" element={<Billing/>} />
+      <Route path="/check-price" element={<CheckPrice />} />
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
+      <Route path="/work-list/returnbill" element={<ReturnBill />} />
       <Route path="/online-orders" element={<OnlineOrders />} />
       <Route path="/web-mgmt" element={<WebMgmt />} />
-      <Route path="/reporting" element={<Reporting />} />
+      <Route path="/reporting/analysis" element={<Analysis />} />
+      <Route path="/reporting/reports" element={<Reports />} />
+      <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
     </Routes>
 
   );
