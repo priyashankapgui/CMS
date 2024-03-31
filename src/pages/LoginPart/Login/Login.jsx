@@ -16,6 +16,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [empID, setEmpId] = useState("");
+  const [error, setError] = useState("");
 
   const handleEmpIdChange = (e) => {
     setEmpId(e.target.value);
@@ -50,18 +51,18 @@ const Login = () => {
 
       // Store the token in local storage
       sessionStorage.setItem("accessToken", data.token);
+      sessionStorage.setItem("user", JSON.stringify(data.user));
 
       // This will print the token if it exists, or 'null' if it doesn't
       console.log(sessionStorage.getItem("accessToken"));
 
       // Login successful, redirect to home page
-      window.location.href = "/adjust-branch";
+      window.location.href = "/sales";
     } else {
       // Login failed, handle error
       const data = await response.json();
-      alert(data.message);
       console.log("Error:", data.message);
-      alert(data.message);
+      setError(data.message);
     }
   };
 
@@ -129,6 +130,7 @@ const Login = () => {
                 />
               )}
             </InputField>
+            {error && <p className="login-error">{error}</p>}
 
             <Buttons
               type="submit"
@@ -140,7 +142,9 @@ const Login = () => {
               Sign In <FaArrowRight />
             </Buttons>
             <Link to="/login/fp">Forgot Password?</Link>
+            
           </form>
+
         </div>
       </div>
     </div>

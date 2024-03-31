@@ -13,6 +13,9 @@ const TopNav = ({ showSidebar }) => {
   const closeLogoutPopup = () => setLogoutPopupOpen(false);
   const closeMyAccountDetails = () => setMyAccountDetailsOpen(false);
 
+  const user=JSON.parse(sessionStorage.getItem('user'));
+  let employeeName=user?.employeeName;
+
   return (
     <div className="TopNav">
       <Link to="#" className="nav-icon" onClick={showSidebar}>
@@ -41,7 +44,7 @@ const TopNav = ({ showSidebar }) => {
           <div className="Profile">
             <MyAccountDetails open={MyAccountDetailsOpen} onClose={closeMyAccountDetails} />
           </div>
-          <h4 className="ProfileName">Imesh Mendis</h4>
+          <h4 className="ProfileName">{employeeName}</h4>
           <div className="logout-icon">
             <Link to="#" onClick={openLogoutPopup}>
               <Icon icon="icomoon-free:switch" style={{ fontSize: '19px', color: 'Red' }} />

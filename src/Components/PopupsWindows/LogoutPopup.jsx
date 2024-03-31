@@ -30,6 +30,7 @@ const LogoutPopup = ({ open, onClose }) => {
     const handleLogout = () => {
         // Perform logout actions (e.g., redirect to the login page)
         // ...
+        sessionStorage.clear();
         window.location.href = '/';
 
         // Close the modal
