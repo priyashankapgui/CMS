@@ -1,133 +1,245 @@
+import React, { useState, useEffect }  from 'react';
+import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./Products.css";
-import InputField from "../../../Components/InputField/InputField" ;
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown" ;
+import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import Buttons  from '../../../Components/Buttons/Buttons';
-//import { BuildTwoTone } from "@mui/icons-material";
+import Buttons from '../../../Components/Buttons/Buttons';
+import InputLabel from "../../../Components/Label/InputLabel";
+import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
+import dropdownOptions from '../../../Components/Data.json';
+//import jsonData from "../../../Components/Data.json";
+import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
+import { CiSearch } from "react-icons/ci";
+import { Icon } from "@iconify/react";
+
 
 export const Products = () => {
+    // const [productsData, setProductsData] = useState([]);
+    // const [searchProductId, setSearchProductId] = useState('');
+
+   
+    //     // Fetch products data when the component mounts
+       
+    // const fetchProducts = async () => {
+    //     try {
+    //         let endpoint = 'http://localhost:8080/products/${searchProductId}';
+    //         const response = await axios.get(endpoint);
+    //         setProductsData(response.data);
+    //     } catch (error) {
+    //         console.error('Error fetching products:', error);
+    //     }
+    //         // if (searchProductId) {
+    //         //     endpoint += `?search=${encodeURIComponent(searchProductId)}`;
+
+
+    //         // }
+           
+    //         //const response = await axios.get('http://localhost:8080/products/:productId'); // Make a GET request to your backend endpoint
+        
+    // };
+
+    // useEffect(() => {
+    //     // Fetch products data when the component mounts
+    //     fetchProducts();
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [searchProductId]);
+
+    // const handleSearch = () => {
+    //     fetchProducts();
+    // };
+
+    
+    
+    // axios.get("http://localhost:8080/categories", {
+    //     params: {
+    //         Reg_Categories: "your_value_here"
+    //     }
+    // })
+    // .then(response => {
+    //     // Handle the response here
+    // })
+    // .catch(error => {
+    //     // Handle errors here
+    // });
+    // const [productsData, setProductsData] = useState([]);
+
+
+    // useEffect(() => {
+    //     const fetchProductsData = async () => {
+    //         try {
+    //             const response = await axios.get("http://localhost:8080/products");
+    //             setProductsData(response.data); // Set the fetched category names
+    //         } catch (error) {
+    //             console.error('Error fetching products:', error);
+    //         }
+    //     };
+
+    //     fetchProductsData();
+    // }, []);
+    
+    const [productsData, setProductsData] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    useEffect(() => {
+        fetchProductsData(searchQuery);
+    }, [searchQuery]);
+
+    const fetchProductsData = async (searchQuery) => {
+        try {
+            let endpoint = `http://localhost:8080/products/${searchQuery}`;
+            const response = await axios.get(endpoint);
+            setProductsData(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    const handleInputChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+
+    const handleSearch = () => {
+        fetchProductsData(searchQuery);
+    };
+
+
+
+
+    const [categoryNames, setCategoryNames] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/categories");
+                setCategoryNames(response.data); // Set the fetched category names
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <>
             <div className="products">
                 <h4>Products</h4>
             </div>
             <Layout>
-                <div className="registered-products">
-                <h2 className="reg-product">Registered Products</h2>
-                
-                     <table className="product-table" style={{ border: "none" }} >
-                        <thead>
-                        <tr>
-                            <th>Branch</th>
-                            <th>Category</th>
-                            <th>Product ID / Name</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            
-                            <td><InputDropdown options= {["Galle","Colombo", "Kalutara"]} id="branch" name="branch" placeholder="Galle" editable={true} height="12em" width="15em"  required></InputDropdown></td>
-                            <td><InputField type="text" id="category" name="category" editable={true} height="3em" width="15em"  required></InputField></td>
-                            <td><InputField type="text" id="Product ID / Name" name="Product ID / Name" editable={true} height="3em" width="15em"  required></InputField></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div className="search-bar">
-                    <Buttons type="submit" id="Search"  style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
-                    <Buttons type="submit" id="Clear"  style={{ backgroundColor: "white", color: "red" }}> Clear </Buttons>
-                    <Buttons type="submit" id="New +"  style={{ backgroundColor: "white", color: "#23A3DA" }}> New +  </Buttons>
-                        {/* <Buttons type="button" onClick={handleSearch} style={{backgrounfColor: "blue", color: "white"}}>Search</Buttons> Add the Buttons component for search */}
-                        {/* <Buttons type="button" onClick={handleClear}>Clear</Buttons> {/* Add the Buttons component for clear */}
-                        {/* <Buttons type="button" onClick={handleNew}>New +</Buttons> Add the Buttons component for new */} 
+                <div className="reg-product-bodycontainer">
+                    <div className="product-filter-container">
+                        <h3 className="reg-product-title">Registered Products</h3>
+                        <div className="product-content-top">
+                            <div className="branchField">
+                                <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            </div>
+                            <div className="categoryField">
+                                <InputLabel htmlFor="category" color="#0377A8">Category</InputLabel>
+                                <InputField type="text" id="category" name="category" editable={true} width="250px" />
+                            </div>
+                            <div className="productField">
+                                <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
+                                <InputField type="text" id="searchQuery" name="searchQuery" editable={true} onChange={handleInputChange} value={searchQuery} />
+                            </div>
+                        </div>
+                        <div className="p-BtnSection">
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
+                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }}> New + </Buttons>
+                        </div>
                     </div>
-{/*                     
-                    <div className="search-bar">
+                    <div className="product-content-middle">
+                     
+                            <TableWithPagi
+                                columns={[ 'Product ID', 'Product Name', 'Product Category', 'Description' , 'Action' ]}
+                                rows={productsData.map(product => ({
+                                    
+                                    'Product ID': product.productId,
+                                    'Product Name': product.productName,
+                                    'Product Category': product.category?.categoryName,
+                                    'Description': product.description,
+                                    'Actions': (
+                                        <div style={{ display: "flex", gap: "0.5em" }}>
+                                            <Icon icon="bitcoin-icons:edit-outline"
+                                                style={{ fontSize: '24px' }} />
+                                            <DeletePopup />
+                                        </div>
+                                    )
+                                }))}
+                            />
                         
-                        <button type="button">Search</button>
-                        <button type="button">Clear</button>
-                        <button type="button">New +</button>
-
-                    </div> */}
-                    <TableWithPagi
-                        columns={['Branch Name', 'Product ID', 'Product Name', 'Product Category', 'Size', 'Description', 'Supplier Name']}
-                        rows={[
-                            { branch: 'Galle', productId: 'P10035', productName: 'Sustagen Vanilla 400g', category: 'Milk Powder', size: '400g', description: 'This is Sustagen Vanilla milk powder', SupplierName: 'Hemas Pharmaceuticals Pvt Ltd'  },
-                            { branch: 'Galle', productId: 'P10036', productName: 'Nestamailt Pouch', category: 'Milk Powder', size: '600g', description: 'This is Sustagen Vanilla milk powder', SupplierName: 'Nesle Lanka PLC'  },
-                            { branch: 'Galle', productId: 'P10037', productName: 'Milo Packet', category: 'Milk Powder', size: '400g', description: 'This is Sustagen Vanilla milk powder', SupplierName: 'Nesle Lanka PLC'  },
-                            { branch: 'Galle', productId: 'P10038', productName: 'Anchor Packet', category: 'Milk Powder', size: '1200g', description: 'This is Sustagen Vanilla milk powder',  SupplierName: 'Fontera Lanka'  },
-                            
-                            
-                            
-                        ]}
-                    />
-                       
-                       
-                    
-                    <div className="adjust-price">
-                    <h2 className="adj-prc">Adjust Product's Price</h2>
-                    <table className="adjust-product-price" style={{ border: "none" }} >
-                        <thead>
-                        <tr>
-                            <th>Branch</th>
-                            <th>Search Product ID / Name</th>
-                    
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            
-                            <td><InputDropdown options= {["Galle","Colombo", "Kalutara"]} id="branch" name="branch" placeholder="-Select" editable={true} height="12em" width="15em"  required></InputDropdown></td>
-                            <td><InputField type="text" id="productId" name="productId" editable={true} height="3em" width="15em"  required></InputField></td>
-                            
-                        </tr>
-                        <tr>
-                            <th>Batch No</th>
-                            <th>Unit Price</th>
-                        </tr>
-                        <tr>
-                            <td><InputField type="text" id="batchNo" name="batchNo" editable={true} height="3em" width="15em"  required></InputField></td>
-                            <td><InputField type="text" id="unitPrice" name="unitPrice" editable={true} height="3em" width="15em"  required></InputField></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-
-                        {/* <h2>Adjust Product's Price</h2>
-                        <InputDropdown options= {[ "Galle","Colombo", "Kalutara"]} id="branch" name="branch" placeholder="-Select" editable={true} height="3em" width="15em"  required></InputDropdown>
-                        {/* <select>
-                        <option value="">-Select-</option>
-                        </select> */}
-
-                        {/* <div className="search-bar">
-                        <input type="text" placeholder="Search Product ID / Name" />
-                    </div>
-
-                        <input type="text" placeholder="Batch No" />
-                        <input type="text" placeholder="Unit Price" />  */}
-                        <Buttons type="button" onClick={handleUpdate}>Update</Buttons> {/* Add the Buttons component for update */}
-                        {/* <button type="button">Update</button> */}
                     </div>
                 </div>
+                <div className="create-product-category-section">
+                    <div className="category-filter-container">
+                        <h3 className="create-product-category-title">Adjust Product's Category</h3>
+                        <div className="create-product-category-top">
+                            <div className="branchField">
+                                <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            </div>
+                            <div className="categoryField">
+                                <InputLabel htmlFor="category" color="#0377A8">Category</InputLabel>
+                                <InputField type="text" id="category" name="category" editable={true} width="250px" />
+                            </div>
+                        </div>
+                        <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
+                    </div>
+
+                    <div className="create-product-category-middle">
+                        
+                            <TableWithPagi
+                            columns={['Reg Categories', 'Action']}
+                            rows={categoryNames.map(category => ({
+                                'Reg Categories': category.categoryName,
+                                'Action': (
+                                    <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <Icon icon="bitcoin-icons:edit-outline"
+                                        style={{ fontSize: '24px' }} />
+                                    <DeletePopup />
+                                </div>
+                                )
+                            }))}
+                            />
+                        
+                    </div>
+                </div>
+                <div className="adjust-product-price-section">
+                    <div className="adjust-product-price-filter-container">
+                        <h3 className="adjust-product-price-title">Adjust Product's Price</h3>
+                        <div className="adjust-product-price-top">
+                            <div className="branchField">
+                                <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            </div>
+                            <div className="productField">
+                                <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
+                                <InputField type="text" id="billNo" name="billNo" editable={true} ><CiSearch /></InputField>
+                            </div>
+                        </div>
+                        <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
+                    </div>
+
+                    <div className="adjust-product-price-middle">
+                        <div className="batchNoField">
+                            <InputLabel for="batchNo" color="#0377A8">Batch No</InputLabel>
+                            <InputDropdown id="batchNo" name="batchNo" editable={true} options={['']} />
+                        </div>
+                        <div className="unitPriceField">
+                            <InputLabel htmlFor="unitPrice" color="#0377A8">Unit Price</InputLabel>
+                            <InputField type="text" id="unitPrice" name="unitPrice" editable={true} width="150px" />
+                        </div>
+                        <Buttons type="submit" id="update-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} margintop="1.563em"> Update </Buttons>
+                    </div>
+                </div>
+
+
             </Layout>
         </>
 
     );
-};
+   
 
-// const handleSearch = () => {
-//     // Add logic for search button click
-// };
-
-// const handleClear = () => {
-//     // Add logic for clear button click
-// };
-
-// const handleNew = () => {
-//     // Add logic for new button click
-// };
-
-const handleUpdate = () => {
-    // Add logic for update button click
 };
