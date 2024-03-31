@@ -1,3 +1,4 @@
+
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -25,7 +26,9 @@ export default function SubPopup(props) {
         <>
             {props.triggerComponent && (
                 <div onClick={() => setOpen(true)}>
+                    
                     {props.triggerComponent}
+
                 </div>
             )}
             <Dialog
