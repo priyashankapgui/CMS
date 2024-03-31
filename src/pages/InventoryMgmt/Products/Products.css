@@ -1,105 +1,107 @@
- .registered-products {
-    margin: 30px;
-  }
-  
-  .reg-product{
-    font-size: 16px;
-  }
+.reg-product-bodycontainer {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  border-radius: 0.625em;
+  width: 100%;
+  height: fit-content;
+}
 
-  .adj-prc{
-    font-size: 16px;
-  }
+.product-filter-container {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  padding: 0.9375em 1.25em;
+  border-radius: 0.625em;
+  gap: 0.625em;
+  width: 100%;
+  height: fit-content;
+}
 
-  .product-table {
-    width: 100%;
-    border-collapse: collapse; 
-    border: none;
-  }
-  
-  .product-table th,
-  .product-table td {
-    padding: 10px;
-    text-align: left;
-    font-size: 14px; 
-    color: #23A3DA;
-    /* border: 1px solid #ddd; */
-  }
-  
-  .product-table thead th:first-child,
-  .product-table tbody td:first-child {
-    width: 150px;
-  }
-  
-  .product-table thead th:last-child,
-  .product-table tbody td:last-child {
-    width: 250px;
-  }
-  
-  .search-bar {
-    display: flex;
-    margin: 10px 0;
-  }
-  
-  .search-bar input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    width: 20%;
-  }
-  
-  .search-bar button {
-    padding: 10px;
-    margin-left: 10px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-  }
-  
-  .adjust-price {
-    margin: 20px 0;
-  }
-  
-  .adjust-price h2 {
-    margin-bottom: 10px;
-  }
-  
-  .adjust-price select,
-  .adjust-price input[type="text"] {
-    width: 100px;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ddd;
-  }
-  
-  .adjust-price button {
-    padding: 10px;
-    margin-top: 10px;
-    border: 1px solid #ddd;
-    cursor: pointer;
-  }
+.product-content-top {
+  display: flex;
+  height: 80px;
+  gap: 50px;
+  margin-top: 10px;
+  border-bottom: 3px solid #D9D9D9;
+}
 
-  
+.p-BtnSection {
+  display: flex;
+  gap: 15px;
+}
 
-  .adjust-product-price {
-    width: 50%;
-    border-collapse: collapse; 
-    border: none;
-  }
-  
-  .adjust-product-price th,
-  .adjust-product-price td {
-    padding: 10px;
-    text-align: left;
-    font-size: 14px; 
-    color: #23A3DA;
-    /* border: 1px solid #ddd; */
-  }
-  
-  .adjust-product-price th:first-child,
-  .adjust-product-price td:first-child {
-    width: 150px;
-  }
-  
-  .adjust-product-price th:last-child,
-  .adjust-product-price tbody td:last-child {
-    width: 250px;
-  }
+.product-content-middle {
+  padding: 0.9375em;
+  height: fit-content;
+}
+
+
+.create-product-category-section {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  border-radius: 0.625em;
+  gap: 0.625em;
+  margin-top: 2em;
+  width: 100%;
+  height: fit-content;
+}
+
+.category-filter-container {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  padding: 0.9375em 1.25em;
+  border-radius: 0.625em;
+  gap: 0.625em;
+  width: 100%;
+  height: fit-content;
+}
+
+.create-product-category-top {
+  display: flex;
+  height: 80px;
+  gap: 50px;
+  margin-top: 10px;
+  border-bottom: 3px solid #D9D9D9;
+}
+
+.create-product-category-middle {
+  padding: 0.9375em 1.25em;
+}
+
+
+.adjust-product-price-filter-container {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  padding: 0.9375em 1.25em;
+  border-radius: 0.625em;
+  gap: 0.625em;
+  width: 100%;
+  height: fit-content;
+}
+
+
+.adjust-product-price-section {
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+
+  border-radius: 0.625em;
+  gap: 0.625em;
+  margin-top: 2em;
+  width: 100%;
+  height: fit-content;
+}
+
+.adjust-product-price-top {
+  display: flex;
+  height: 80px;
+  gap: 50px;
+  margin-top: 10px;
+  border-bottom: 3px solid #D9D9D9;
+}
+
+.adjust-product-price-middle {
+  display: flex;
+  height: fit-content;
+  gap: 50px;
+
+  padding: 0.9375em 1.25em;
+}

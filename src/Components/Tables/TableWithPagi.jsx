@@ -34,7 +34,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function TableWithPagi({ rows, columns, itemsPerPage = 10 }) {
+function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
   const [page, setPage] = React.useState(1);
   const handlePageChange = (event, value) => {
     setPage(value);
