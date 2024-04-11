@@ -18,7 +18,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontFamily: 'Poppins',
     fontSize: 14
   },
-  [`&.${tableCellClasses.body }`]: {
+  [`&.${tableCellClasses.body}`]: {
     fontSize: 13,
     fontFamily: 'Poppins',
   },
@@ -42,7 +42,7 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
 
   const handlePagiPage = (event, value) => {
     // Do something with the value in this handler if needed
-    console.log ('Value of Pagination:', value);
+    console.log('Value of Pagination:', value);
   };
 
   const startIndex = (page - 1) * itemsPerPage;
@@ -81,7 +81,7 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
         <Pagination
           count={Math.ceil(rows.length / itemsPerPage)}
           page={page}
-          onChange={handlePageChange}
+          onChange={handlePageChange} // Corrected prop name
           variant="outlined"
           shape="rounded"
           size="medium" // Reduced pagination size
@@ -104,8 +104,8 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
               },
             },
           }}
-          onChangePagiPage={handlePagiPage} // Added onChangePagiPage
         />
+
       </Stack>
     </>
   );

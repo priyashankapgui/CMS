@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Button = styled.button`
-  width: ${({ btnWidth }) => btnWidth || '5.125em'};
-  height: ${({ btnHeight }) => btnHeight || '2em'};
+  width: ${({ btnwidth }) => btnwidth || '5.125em'};
+  height: ${({ btnheight }) => btnheight || '2em'};
   border-radius: 0.625em;
   font-weight: 550;
   font-size: 1em;
@@ -19,7 +19,7 @@ const Button = styled.button`
   }
 `;
 
-function Buttons({ type, id, style, onClick, alignSelf, btnHeight, btnWidth, margintop, children }) {
+function Buttons({ type, id, style, onClick, btnHeight, btnWidth, marginTop, children }) {
 
     return (
         <div>
@@ -28,10 +28,9 @@ function Buttons({ type, id, style, onClick, alignSelf, btnHeight, btnWidth, mar
                 id={id}
                 style={style}
                 onClick={onClick}
-                alignSelf={alignSelf}
-                btnHeight={btnHeight}
-                btnWidth={btnWidth}
-                margintop={margintop}
+                btnheight={btnHeight}
+                btnwidth={btnWidth}
+                margintop={marginTop}
             >
                 {children}
             </Button>
@@ -40,3 +39,4 @@ function Buttons({ type, id, style, onClick, alignSelf, btnHeight, btnWidth, mar
 }
 
 export default Buttons;
+
