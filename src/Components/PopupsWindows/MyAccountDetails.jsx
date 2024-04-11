@@ -15,7 +15,7 @@ const FormBackground = styled.div`
 `;
 
 const FlexContent = styled.div`
-  display: inline-flex;
+  display: flex;
   gap: 2.5em;
 `;
 
@@ -51,14 +51,13 @@ const ProfileDP = styled.div`
     margin-right: 0.625em; 
     border-radius: 50%;
     flex-shrink: 0;
-    background: url('../../Assets/ProfileDP-SuperAdmin.svg') lightgray 0px -0.3666em / 100% 9.205em no-repeat;
+    background: url('../../../Assets/ProfileDP-SuperAdmin.svg') lightgray 0px -0.3666em / 100% 9.205em no-repeat;
 `;
-
-
 
 function MyAccountDetails() {
     const [editable, setEditable] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
+    const [showSubPopup, setShowSubPopup] = useState(false);
 
     const toggleEditable = () => {
         setEditable(!editable);
@@ -66,15 +65,22 @@ function MyAccountDetails() {
 
     const handleDrop = (acceptedFiles) => {
         const file = acceptedFiles[0];
-        const url = URL.createObjectURL(file);
-        setImageUrl(url);
+        const reader = new FileReader();
+        reader.onload = () => {
+            setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
 
-    const { getRootProps, getInputProps } = useDropzone({
-        accept: 'image/*',
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        accept: '',
         multiple: false,
         onDrop: handleDrop
     });
+
+    const handleCloseSubPopup = () => {
+        setShowSubPopup(false);
+    };
 
     return (
         <>
@@ -87,23 +93,20 @@ function MyAccountDetails() {
                         My Profile <Icon icon="tabler:edit" style={{ fontSize: "1em" }} onClick={toggleEditable} />
                     </>
                 }
-
                 headTextColor="black"
                 closeIconColor="red"
-                btnName="Save"
-                btnBG="#23A3DA"
-                btnTextColor="white"
+                show={showSubPopup}
+                onClose={handleCloseSubPopup}
                 bodyContent={(
                     <FormBackground>
                         <div className="BranchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
                         <FlexContent>
                             <div className="UserRoleField">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.userRoleOptions} />
-
+                                <InputDropdown id="userRole" name="userRole" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
                             </div>
                             <ChangeDP {...getRootProps()}>
                                 {/* Preview image */}
@@ -113,7 +116,8 @@ function MyAccountDetails() {
                                     <Icon icon="fluent:camera-add-20-regular" style={{ fontSize: "0.813em" }} />
                                 </UploadLabel>
                                 {/* Hidden file input */}
-                                <input {...getInputProps()} style={{ display: "none" }} />
+                                <input {...getInputProps()} />
+                                {isDragActive ? <p>Drop the image here...</p> : <p>Drag 'n' drop or click to select an image</p>}
                             </ChangeDP>
                         </FlexContent>
                         {/* Other fields */}
@@ -136,9 +140,7 @@ function MyAccountDetails() {
                             <InputField type="password" id="conf_newPassword" name="conf_newPassword" placeholder="Confirm New Password" editable={editable} />
                         </div>
                         <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-
                     </FormBackground>
-
                 )}
             />
         </>

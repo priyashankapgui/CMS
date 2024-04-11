@@ -3,8 +3,6 @@ import Login from "../pages/LoginPart/Login/Login";
 import ForgetPw from "../pages/LoginPart/ForgetPw/ForgetPw";
 import ChangePw from "../pages/LoginPart/ResetPw/ResetPw";
 
-
-
 export function LoginRouter() {
     return (
         <Routes>

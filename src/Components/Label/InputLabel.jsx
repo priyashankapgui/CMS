@@ -1,19 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const Label = styled.label`
-  font-size: ${({ fontsize }) => fontsize || '0.875em'};
-  font-family: Poppins;
-  font-weight: ${({ fontweight }) => fontweight || '500'};
-  color: ${({ color }) => color};
-`;
+import './InputLabel.css'; 
 
 function InputLabel({ htmlFor, color, fontsize, fontweight, children }) {
     return (
         <div>
-            <Label htmlFor={htmlFor} color={color} fontsize={fontsize} fontweight={fontweight}>
+            <label htmlFor={htmlFor} className="input-label" style={{ fontSize: fontsize, fontWeight: fontweight, color: color }}>
                 {children}
-            </Label>
+            </label>
         </div>
     );
 }
