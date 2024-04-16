@@ -1,21 +1,20 @@
-import React, {  useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import './AdjustBranch.css'
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
-import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
-import Buttons from "../../../Components/Buttons/Buttons";
-// import data from "../../../Components/Data.json";
+import UpdateBranchPopup from "./UpdateBranchPopup";
+import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
 
 export const AdjustBranch = () => {
-  const [branchData, setBranchData] = useState([]);
+    const [branchData, setBranchData] = useState([]);
 
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
                 const response = await axios.get("http://localhost:8080/branches");
-                setBranchData(response.data); // Set the fetched supplier data
+                setBranchData(response.data); // Set the fetched branch data
             } catch (error) {
                 console.error('Error fetching branches:', error);
             }
@@ -23,6 +22,12 @@ export const AdjustBranch = () => {
 
         fetchBranchData();
     }, []);
+
+    const handleDelete = () => {
+        // Your delete logic here
+        console.log("Delete button clicked");
+    };
+
     return (
         <>
             <div className="adjust-branch">
@@ -33,31 +38,27 @@ export const AdjustBranch = () => {
                 <div className="registerdBranch">
                     <div className="adjustBranchTop">
                         <h3 className="registerdBranch-title">Registered Branches</h3>
-                        <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} margintop="0"> New + </Buttons>
+                        <AddNewBranchPopup />
                     </div>
                     <TableWithPagi
                         itemsPerPage={5}
                         columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
-                        rows={branchData.map(branch=>({'branchId':branch.branchId,'branchName':branch.branchName,'address':branch.address,'email':branch.email,'contactNumber':branch.contactNumber,
+                        rows={branchData.map(branch => ({
+                            branchid: branch.id,
+                            branchName: branch.name,
+                            branchAddress: branch.address,
+                            branchEmail: branch.email,
+                            branchContact: branch.contact,
                             action: (
                                 <div style={{ display: "flex", gap: "0.5em" }}>
                                     <UpdateBranchPopup />
-                                    <DeletePopup />
+                                    <DeletePopup handleDelete={handleDelete} />
                                 </div>
                             )
                         }))}
                     />
                 </div>
-
-
-
-
-
-
-
             </Layout>
-
-
         </>
     );
 };

@@ -262,5 +262,22 @@
     {
       "Role": "Cashier - K"
     }
+  ],
+  "biiReceiptsData": [
+    {
+      "name": "Sustagen Chocolate 400g",
+      "rate": 4200.00,
+      "quantity": 1
+    },
+    {
+      "name": "Vim Dish Wash Bar 100g",
+      "rate": 100.50,
+      "quantity": 2
+    },
+    {
+      "name": "Kotmale Non Fat Milk 1L",
+      "rate": 410.00,
+      "quantity": 1
+    }
   ]
 }

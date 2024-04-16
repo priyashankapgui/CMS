@@ -8,7 +8,7 @@ import InputField from '../InputField/InputField';
 import InputDropdown from '../InputDropdown/InputDropdown';
 import { useDropzone } from 'react-dropzone';
 import dropdownOptions from '../Data.json';
-
+import SuperAdmin from '../../Assets/ProfileDP-SuperAdmin.svg'
 
 const FormBackground = styled.div`
   height: fit-content;
@@ -51,7 +51,7 @@ const ProfileDP = styled.div`
     margin-right: 0.625em; 
     border-radius: 50%;
     flex-shrink: 0;
-    background: url('../../../Assets/ProfileDP-SuperAdmin.svg') lightgray 0px -0.3666em / 100% 9.205em no-repeat;
+    background: url(${SuperAdmin}) ;
 `;
 
 function MyAccountDetails() {

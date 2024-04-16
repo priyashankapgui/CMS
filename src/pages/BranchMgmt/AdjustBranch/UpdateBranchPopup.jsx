@@ -1,14 +1,14 @@
-import React from 'react'
-import InputLabel from '../../Components/Label/InputLabel';
-import InputField from '../InputField/InputField'
-import EditPopup from './EditPopup';
+import React from 'react';
+import InputLabel from '../../../Components/Label/InputLabel';
+import InputField from '../../../Components/InputField/InputField';
+import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 
 function UpdateBranchPopup() {
     return (
         <>
-            <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update">
+            <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={() => console.log('clicked')}>
 
-                <div className="content1" style={{ display: 'flex', gap: '12px' }}>
+                <div className="content1" style={{ display: 'flex', gap: '20px', width: '100%' }}>
                     <div className="BranchField">
                         <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
                         <InputField type="text" id="branchName" name="branchName" editable={true} />
@@ -18,7 +18,7 @@ function UpdateBranchPopup() {
                         <InputField type="text" id="address" name="address" editable={true} />
                     </div>
                 </div>
-                <div className="content2" style={{ display: 'flex', gap: '10px' }}>
+                <div className="content2" style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
                     <div className="EmailField">
                         <InputLabel for="branchEmail" color="#0377A8">Email</InputLabel>
                         <InputField type="text" id="branchEmail" name="branchEmail" editable={true} />
@@ -32,7 +32,7 @@ function UpdateBranchPopup() {
 
             </EditPopup>
         </>
-    )
+    );
 }
 
 export default UpdateBranchPopup;
