@@ -3,11 +3,11 @@ import { Icon } from "@iconify/react";
 import SubPopup from './SubPopup';
 import Buttons from '../Buttons/Buttons';
 
-function EditPopup({ topTitle, children, buttonId, buttonText }) {
+function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div style={{ width: 'fit-content' }}>
+    <div style={{ width: '' }}>
       <SubPopup
         triggerComponent={
           <Icon
@@ -24,7 +24,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {children}
-            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={() => { /* Your action here */ }}>{buttonText}</Buttons>
+            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={onClick}>{buttonText}</Buttons>
           </div>
         )}
       />

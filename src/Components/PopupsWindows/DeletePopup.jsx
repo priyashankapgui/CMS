@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react";
 import SubPopup from './SubPopup';
 import Buttons from '../Buttons/Buttons';
 
-function DeletePopup() {
+function DeletePopup({ handleDelete }) { 
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -24,7 +24,8 @@ function DeletePopup() {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <p>Do you really want to delete this one?</p> <br/>
-            <Buttons type="submit" id="yes-btn" style={{ backgroundColor: "#EB1313", color: "white" }} onclick=""> Yes </Buttons>
+            {/* Pass the handleDelete function to the Buttons component */}
+            <Buttons type="submit" id="yes-btn" style={{ backgroundColor: "#EB1313", color: "white" }} onClick={handleDelete}> Yes </Buttons>
           </div>
         )}
       />

@@ -1,9 +1,12 @@
-import React from 'react'
+import { React } from 'react'
 import "./WebMgmt.css";
 import Layout from "../../Layout/Layout";
 
 
+
 export const WebMgmt = () => {
+
+
     return (
         <>
             <div className="web-mgmt">
