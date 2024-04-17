@@ -10,10 +10,12 @@ import axios from "axios";
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
 
+    const baseURL = "http://localhost:8080/branches";
+
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/branches");
+                const response = await axios.get(baseURL);
                 setBranchData(response.data); // Set the fetched branch data
             } catch (error) {
                 console.error('Error fetching branches:', error);
@@ -37,18 +39,19 @@ export const AdjustBranch = () => {
             <Layout>
                 <div className="registerdBranch">
                     <div className="adjustBranchTop">
-                        <h3 className="registerdBranch-title">Registered Branches</h3>
+                        <h3 className="registeredBranch-title">Registered Branches</h3>
                         <AddNewBranchPopup />
                     </div>
                     <TableWithPagi
                         itemsPerPage={5}
                         columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
                         rows={branchData.map(branch => ({
-                            branchid: branch.id,
-                            branchName: branch.name,
+                            branchId: branch.branchId,
+                            branchName: branch.branchName,
                             branchAddress: branch.address,
                             branchEmail: branch.email,
-                            branchContact: branch.contact,
+                            branchContact: branch.contactNumber,
+
                             action: (
                                 <div style={{ display: "flex", gap: "0.5em" }}>
                                     <UpdateBranchPopup />
@@ -62,3 +65,5 @@ export const AdjustBranch = () => {
         </>
     );
 };
+
+export default AdjustBranch;

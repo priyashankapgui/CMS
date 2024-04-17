@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
-import TopNav from "../TopNavDrawer/TopNav";
+import TopNav from "../../Components/TopNavDrawer/TopNav/TopNav";
 import "./Sidebar.css";
 
 const Sidebar = ({ expanded, toggleSidebar }) => {

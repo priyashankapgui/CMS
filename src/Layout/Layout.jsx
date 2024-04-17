@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./Layout.css";
-import TopNav from '../Components/TopNavDrawer/TopNav';
+import TopNav from "../../src/Components/TopNavDrawer/TopNav/TopNav";
 import Sidebar from '../Components/SideDrawer/Sidebar';
 
 const Layout = ({ children }) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ReturnBill.css';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
-import Buttons from "../../../../Components/Buttons/Buttons";
+import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputField from "../../../../Components/InputField/InputField";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import DatePicker from "../../../../Components/DatePicker/DatePicker";

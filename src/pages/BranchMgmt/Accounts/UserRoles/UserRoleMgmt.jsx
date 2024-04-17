@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
 import './UserRoleMgmt.css';
-import Buttons from "../../../../Components/Buttons/Buttons";
+import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
 import jsonData from "../../../../Components/Data.json";
@@ -17,6 +17,11 @@ export const UserRoleMgmt = () => {
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
+
+    const handleDelete = () => {
+        console.log('deleted');
+    };
+
 
     return (
         <>
@@ -65,7 +70,7 @@ export const UserRoleMgmt = () => {
                                         <Icon icon="bitcoin-icons:edit-outline"
                                             style={{ fontSize: '24px' }} />
 
-                                        <DeletePopup />
+                                        <DeletePopup handleDelete={handleDelete} />
                                     </div>
                                 )
                             }))}
