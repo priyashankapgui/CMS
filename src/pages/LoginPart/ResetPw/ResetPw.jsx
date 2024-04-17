@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./ResetPw.css";
 import InputField from "../../../Components/InputField/InputField";
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 
 const ResetPw = () => {

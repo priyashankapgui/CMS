@@ -8,7 +8,7 @@ import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Icon } from "@iconify/react";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
-import Buttons from '../../../Components/Buttons/Buttons';
+import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import jsonData from '../../../Components/Data.json';
 import InputRadio from '../../../Components/InputRadio/InputRadio';
 

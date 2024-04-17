@@ -11,12 +11,14 @@ import { StockTransfer } from '../pages/InventoryMgmt/StockTransfer/StockTransfe
 import { CheckPrice } from '../pages/InventoryMgmt/CheckPrice/CheckPrice';
 import { Sales } from '../pages/Billing/Sales/Sales';
 import { WorkList } from '../pages/Billing/WorkList/WorkList-Billed/WorkList';
+import { ViewBill } from '../pages/Billing/WorkList/WorkList-Billed/ViewBill';
 import { ReturnBill } from '../pages/Billing/WorkList/WorkList-Returned/ReturnBill';
 import { OnlineOrders } from '../pages/OnlineOrders/OnlineOrders';
 import { WebMgmt } from '../pages/WebMgmt/WebMgmt';
 import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
+
 
 export function SidebarRouter() {
   return (
@@ -37,6 +39,7 @@ export function SidebarRouter() {
       {/* Billing Routes */}
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
+      <Route path="/work-list/viewbill" element={<ViewBill/>} />
       <Route path="/work-list/returnbill" element={<ReturnBill />} />
 
       {/* Online Orders */}

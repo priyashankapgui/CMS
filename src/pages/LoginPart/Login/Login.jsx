@@ -5,7 +5,7 @@ import { FaRegEye, FaRegUserCircle, FaEyeSlash, FaArrowRight } from "react-icons
 import cmslogo from "../../../Assets/cmslogo.svg";
 import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -71,10 +71,16 @@ const Login = () => {
             >
               {showPassword ? <FaEyeSlash onClick={toggleShowPassword} style={{ cursor: "pointer" }} /> : <FaRegEye onClick={toggleShowPassword} style={{ cursor: "pointer" }} />}
             </InputField>
-
-            <Buttons type="submit" id="signin-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} btnHeight="2.2em" btnWidth="7em">
+            <Buttons
+              type="submit"
+              id="signin-btn"
+              style={{ backgroundColor: "#23A3DA", color: "white" }}
+              btnHeight="2.2em"
+              btnWidth="8em"
+            >
               Sign In <FaArrowRight />
             </Buttons>
+
             <Link to="/login/fp">Forgot Password?</Link>
           </form>
         </div>

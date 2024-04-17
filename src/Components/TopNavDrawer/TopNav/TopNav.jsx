@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import './TopNav.css';
-import MyAccountDetails from '../PopupsWindows/MyAccountDetails';
-import LogoutPopup from '../PopupsWindows/LogoutPopup';
+import MyAccountDetails from '../MyAccountDetailsPopup/MyAccountDetails';
+import LogoutPopup from '../LogoutPopup/LogoutPopup';
 
 const TopNav = ({ showSidebar }) => {
   const [logoutPopupOpen, setLogoutPopupOpen] = useState(false);
