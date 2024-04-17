@@ -1,21 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-
-const DatePickerContainer = styled.div`
- 
-`;
-
-const DatePickerInput = styled.input`
-  border-radius: 0.625em;
-  border: 1px solid #8D9093;
-  height: 2.25em;
-  width: 15.625em;
-  margin-top: 0.313em;
-  margin-bottom:  0.313em;
-  font-size: 0.98em;
-  padding: 0 0.625em 0 0.625em;
-`;
-
+import './DatePicker.css';
 
 function DatePicker() {
   const [selectedDate, setSelectedDate] = useState('');
@@ -25,16 +9,16 @@ function DatePicker() {
   };
 
   return (
-    <DatePickerContainer>
-      <DatePickerInput
+    <div className="datepicker-container">
+      <input
+        className="datepicker-input"
         id="date"
         name="date"
         type="date"
         value={selectedDate}
         onChange={handleDateChange}
       />
-   
-    </DatePickerContainer>
+    </div>
   );
 }
 

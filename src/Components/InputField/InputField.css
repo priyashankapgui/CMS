@@ -1,0 +1,22 @@
+.input-container {
+    position: relative;
+  }
+  
+  .input {
+    border: 1px solid #8D9093;
+    font-size: 0.75em;
+    padding: 0.625em;
+  }
+  
+  .input.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .icon-container {
+    position: absolute;
+    top: 50%;
+    right: 0.625em;
+    transform: translateY(-50%);
+  }
+  
