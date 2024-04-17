@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -29,7 +28,7 @@ export default function SubPopup(props) {
         <>
             {props.triggerComponent && (
                 <div onClick={() => setOpen(true)}>
-                    
+
                     {props.triggerComponent}
 
                 </div>
@@ -51,7 +50,7 @@ export default function SubPopup(props) {
                         px: '24px',
                     }}
                 >
-                    <Typography  sx={{ fontFamily: 'Poppins', fontSize: '18px', fontWeight: '500' }}>
+                    <Typography sx={{ fontFamily: 'Poppins', fontSize: '18px', fontWeight: '500' }}>
                         {props.title}
                     </Typography>
                     <IconButton
@@ -68,9 +67,10 @@ export default function SubPopup(props) {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa', padding: '15px' }}>
-                    <DialogContentText id="alert-dialog-description" sx={{ fontSize: '16px', fontFamily: 'Poppins', marginTop: '8px'}}>
+                    <DialogContentText id="alert-dialog-description" sx={{ fontSize: '16px', fontFamily: 'Poppins', marginTop: '8px' }}>
                         {props.bodyContent}
                     </DialogContentText>
+
                 </DialogContent>
             </Dialog>
         </>

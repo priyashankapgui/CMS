@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Icon } from "@iconify/react";
 import SubPopup from './SubPopup';
-import Buttons from '../Buttons/Buttons';
+import Buttons from '../Buttons/SquareButtons/Buttons';
 
 function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -16,7 +16,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           />
-        } 
+        }
         headBG="#23A3DA"
         title={topTitle}
         headTextColor="White"

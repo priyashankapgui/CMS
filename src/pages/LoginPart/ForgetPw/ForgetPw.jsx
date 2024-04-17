@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaEnvelope } from "react-icons/fa";
 import "./ForgetPw.css";
 import InputField from "../../../Components/InputField/InputField";
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 
 const ForgetPw = () => {

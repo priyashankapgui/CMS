@@ -2,7 +2,6 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 
-
 const style = {
     position: 'absolute',
     top: '10%',
@@ -25,7 +24,6 @@ const style = {
     },
 };
 
-
 const LogoutPopup = ({ open, onClose }) => {
     const handleLogout = () => {
         // Perform logout actions (e.g., redirect to the login page)
@@ -37,12 +35,10 @@ const LogoutPopup = ({ open, onClose }) => {
     };
 
     return (
-        <Modal
-            open={open}
-            onClose={onClose}
-        >
+        <Modal open={open} onClose={onClose}>
             <Button
                 sx={style}
+                tabIndex={0} // Ensure tabIndex is a number
                 onClick={handleLogout}
             >
                 Logout

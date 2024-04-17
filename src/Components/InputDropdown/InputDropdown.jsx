@@ -7,7 +7,7 @@ const InputDropdown = ({ id, name, style, height, width, onChange, editable, opt
     }
 
     return (
-        <div>
+        <div> 
             <select
                 id={id}
                 name={name}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Reports.css";
 import DatePicker from "../../../Components/DatePicker/DatePicker"
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from '../../../Components/Data.json';
