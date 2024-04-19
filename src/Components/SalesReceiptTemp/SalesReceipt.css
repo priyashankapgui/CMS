@@ -37,6 +37,11 @@
     width: 100%;
 }
 
+.info span {
+    font-weight: 500;
+
+}
+
 .items table {
     width: 100%;
     border-collapse: collapse;

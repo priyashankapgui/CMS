@@ -4,12 +4,12 @@
   
   .input {
     border: 1px solid #8D9093;
-    font-size: 0.75em;
+    font-size: 0.813em;
     padding: 0.625em;
   }
   
   .input.disabled {
-    opacity: 0.5;
+    opacity: 0.7;
     pointer-events: none;
   }
   
