@@ -263,6 +263,7 @@
       "Role": "Cashier - K"
     }
   ],
+
   "biiReceiptsData": [
     {
       "name": "Sustagen Chocolate 400g",
@@ -279,5 +280,69 @@
       "rate": 410.00,
       "quantity": 1
     }
+  ],
+
+  "worklistTableData": [
+    {
+      "billNo": "Gal-B24022091",
+      "billedAt": "20-12-2023  20:58",
+      "branch": "Galle",
+      "customerName": "",
+      "status": "Completed",
+      "billedBy": "Pramu Alwis",
+      "paymentMethod": "Card",
+      "billedItems": [
+        {
+          "name": "Sustagen Chocolate 400g",
+          "rate": 4200.00,
+          "quantity": 1,
+          "batchNo": "SH234157k"
+        },
+        {
+          "name": "Vim Dish Wash Bar 100g",
+          "rate": 100.50,
+          "quantity": 2,
+          "batchNo": "Bx23415N"
+        },
+        {
+          "name": "Kotmale Non Fat Milk 1L",
+          "rate": 410.00,
+          "quantity": 1,
+          "batchNo": "KK10415c"
+        }
+      ]
+    },
+    {
+      "billNo": "Gal-B24022092",
+      "billedAt": "21-12-2023  12:18",
+      "branch": "Galle",
+      "customerName": "Kasun Madushanka",
+      "status": "Completed",
+      "billedBy": "Pramu Alwis",
+      "paymentMethod": "Cash",
+      "billedItems": [
+        {
+          "name": "Milo Chocolate 400g",
+          "rate": 280.40,
+          "quantity": 2,
+          "batchNo": "xyz0415c"
+        },
+        {
+          "name": "SamaPosha 100g",
+          "rate": 120.00,
+          "quantity": 2,
+          "batchNo": "ssK04156"
+        },
+        {
+          "name": "Kothamle Yoghurt 80g",
+          "rate": 80.00,
+          "quantity": 10,
+          "batchNo": ["KS104123", "KS104127", "KS104131"]
+          
+        }
+      ]
+    }
+    
   ]
+  
 }

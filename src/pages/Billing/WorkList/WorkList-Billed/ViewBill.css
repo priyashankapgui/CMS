@@ -1,16 +1,13 @@
-.viewbill-top-link{
+.viewbill-top-link {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-
-
-
 .view-bill-top {
     background-color: white;
     width: 100%;
-    height: 190px;
+    height: 180px;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     font-size: 1em;
@@ -20,8 +17,13 @@
 
 .view-bill-top-cont {
     display: flex;
-    gap: 350px;
+    gap: 300px;
 
+}
+
+.view-bill-top-cont span{
+    color: black;
+    font-weight: 500;
 }
 
 .inputFlex {
@@ -69,9 +71,3 @@ hr {
     align-items: center;
     gap: 4px;
 }
-
-
-
-
-
-

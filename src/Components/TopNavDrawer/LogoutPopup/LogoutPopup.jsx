@@ -38,7 +38,7 @@ const LogoutPopup = ({ open, onClose }) => {
         <Modal open={open} onClose={onClose}>
             <Button
                 sx={style}
-                tabIndex={0} // Ensure tabIndex is a number
+                tabIndex={0}
                 onClick={handleLogout}
             >
                 Logout

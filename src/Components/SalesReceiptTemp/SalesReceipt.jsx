@@ -1,7 +1,7 @@
 import React from 'react';
 import "./SalesReceipt.css";
 import greenleaf from "../../Assets/greenleaf.svg";
-import itemsData from "../../Components/Data.json"; 
+import itemsData from "../../Components/Data.json";
 
 function SalesReceipt() {
     return (
@@ -20,14 +20,14 @@ function SalesReceipt() {
             <hr className='invoice-line-top' />
             <div className="info">
                 <div className="info-section">
-                    <div className="date"><span style={{ fontWeight: "500" }}>Date: </span>14.03.2023 18:02</div>
-                    <div className="bill-number"><span style={{ fontWeight: "500" }}>Bill No: </span>1172-22230039</div>
-                    <div className="user-details"><span style={{ fontWeight: "500" }}>User: </span>Pramu Alwis</div>
+                    <div className="date"><span>Date: </span>14.03.2023 18:02</div>
+                    <div className="bill-number"><span>Bill No: </span>1172-22230039</div>
+                    <div className="user-details"><span>User: </span>Pramu Alwis</div>
                 </div>
                 <div className="info-section">
-                    <div className="customer-name"><span style={{ fontWeight: "500" }}>Customer Name: </span>  </div>
-                    <div className="customer-contact"><span style={{ fontWeight: "500" }}>Contact No: </span>    </div>
-                    <div className="payment-method"><span style={{ fontWeight: "500" }}>Payment Method: </span>Cash    </div>
+                    <div className="customer-name"><span>Customer Name: </span>  </div>
+                    <div className="customer-contact"><span>Contact No: </span>    </div>
+                    <div className="payment-method"><span>Payment Method: </span>Cash    </div>
                 </div>
             </div>
             <hr className='invoice-line' />

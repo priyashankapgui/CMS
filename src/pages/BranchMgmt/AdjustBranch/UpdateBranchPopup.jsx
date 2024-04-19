@@ -4,6 +4,7 @@ import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 
 function UpdateBranchPopup() {
+
     return (
         <>
             <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={() => console.log('clicked')}>
@@ -11,7 +12,7 @@ function UpdateBranchPopup() {
                 <div className="content1" style={{ display: 'flex', gap: '20px', width: '100%' }}>
                     <div className="BranchField">
                         <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                        <InputField type="text" id="branchName" name="branchName" editable={true} />
+                        <InputField type="text" id="branchName" name="branchName" editable={true}/>
                     </div>
                     <div className="AddressField">
                         <InputLabel for="address" color="#0377A8" fontsize="">Address</InputLabel>
