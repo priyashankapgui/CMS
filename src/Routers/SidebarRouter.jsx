@@ -39,7 +39,7 @@ export function SidebarRouter() {
       {/* Billing Routes */}
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
-      <Route path="/work-list/viewbill" element={<ViewBill/>} />
+      <Route path="/work-list/viewbill/:billNo" element={<ViewBill/>} />
       <Route path="/work-list/returnbill" element={<ReturnBill />} />
 
       {/* Online Orders */}
