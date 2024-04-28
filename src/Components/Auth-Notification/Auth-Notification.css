@@ -1,0 +1,33 @@
+.unauthorized-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .unauthorized-frame {
+    padding: 20px;
+    border: 2px solid #23a3da; 
+    border-radius: 10px;
+    background-color: #f2f2f2; 
+  }
+  
+  .unauthorized-title {
+    color: #23a3da;
+  }
+  
+  .unauthorized-button {
+    background-color: #23a3da; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .unauthorized-button:hover {
+    background-color: #1a7a9f;
+  }
+  

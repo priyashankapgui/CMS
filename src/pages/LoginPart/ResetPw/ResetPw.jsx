@@ -22,8 +22,7 @@ const ResetPw = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
 
-    // Debugging: Log the token
-    console.log("Token:", token);
+   
 
     // If token is not present, redirect to login page
     if (!token) {
@@ -44,7 +43,7 @@ const ResetPw = () => {
       if (response.ok) {
         const data = await response.json();
         setShowSubPopup(true);
-        // Debugging: Log the entire data object
+        
         console.log("Response data:", data);
       } else {
         const data = await response.json();
@@ -112,7 +111,7 @@ const ResetPw = () => {
                 padding: 0,
               }}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ?  <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
           <p>Confirm New Password:</p>
@@ -139,7 +138,7 @@ const ResetPw = () => {
                 padding: 0,
               }}
             >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
 

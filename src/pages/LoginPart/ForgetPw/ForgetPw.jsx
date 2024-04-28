@@ -19,14 +19,16 @@ const ForgetPw = () => {
 
   const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
-    // Validate if the email is empty
+
+    
     if (!email) {
       setError("Please enter your email address.");
       return;
     }
-    // Validate if the email ends with "@gmail.com"
+    
+
     if (
-      !email.endsWith("@gmail.com") ||
+      // !email.endsWith("@gmail.com") ||
       !email.includes("@") ||
       !email.includes(".") ||
       !email.includes("com")
@@ -45,13 +47,6 @@ const ForgetPw = () => {
       }),
     }).catch((error) => console.error("Error:", error));
 
-    //   // If email is valid and response contains token, show the SubPopup
-    //   if (response.ok) {
-
-    //     setShowSubPopup(true);
-    // }
-
-    // Parse JSON response
 
     if (response.ok) {
       setShowSubPopup(true);
@@ -59,6 +54,10 @@ const ForgetPw = () => {
       const data = await response.json();
       setError(data.message);
     }
+  };
+
+  const handleOkButtonClick = () => {
+    setShowSubPopup(false);
   };
 
   return (
@@ -122,17 +121,16 @@ const ForgetPw = () => {
             >
               <p>Your password reset link has been sent to your email</p>
 
-              {/*  Change this one later when it can be sent by email. */}
-
-              {/* <Link to="/login/resetpw">
+              
                 <Buttons
                   type="button"
                   id="ok-btn"
                   style={{ backgroundColor: "#23A3DA", color: "white" }}
+                  onClick={handleOkButtonClick}
                 >
                   Ok{" "}
                 </Buttons>
-              </Link> */}
+              
             </div>
           }
         />

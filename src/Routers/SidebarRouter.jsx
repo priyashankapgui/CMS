@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import { AdjustBranch } from "../pages/BranchMgmt/AdjustBranch/AdjustBranch";
-import { Accounts } from "../pages/BranchMgmt/Accounts/Accounts";
 import { Products } from "../pages/InventoryMgmt/Products/Products";
 import { Suppliers } from "../pages/InventoryMgmt/Suppliers/Suppliers";
 import { GoodReceive } from "../pages/InventoryMgmt/GoodReceive/GoodReceive";
@@ -27,7 +26,7 @@ export function SidebarRouter() {
       </Route>
 
       <Route element={<AdminRoute />}>
-        <Route path="/accounts" element={<Accounts />} />
+        <Route path="/users" element={<Users />} />
         <Route path="/products" element={<Products />} />
         <Route path="/suppliers" element={<Suppliers />} />
         <Route path="/good-receive" element={<GoodReceive />} />
@@ -36,7 +35,6 @@ export function SidebarRouter() {
         <Route path="/check-price" element={<CheckPrice />} />
         <Route path="/reporting/analysis" element={<Analysis />} />
         <Route path="/reporting/reports" element={<Reports />} />
-        <Route path="/Users" element={<Users />} />
         <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
         <Route path="/web-mgmt" element={<WebMgmt />} />
       </Route>

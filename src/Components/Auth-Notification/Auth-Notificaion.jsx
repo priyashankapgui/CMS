@@ -1,4 +1,5 @@
 import React from "react";
+import "./Auth-Notification.css";
 
 
 export const UnAuthorized = () =>{
@@ -7,13 +8,14 @@ export const UnAuthorized = () =>{
     }
 
     return (
-        <div>
-            
-                <h1>UnAuthorized to access this page</h1>
-                <button onClick={goBack}>Go Back</button>
-            
-
-        </div>
+        <div className="unauthorized-container">
+            <div className="unauthorized-frame">
+                <h1 className="unauthorized-title">UnAuthorized to access this page</h1>
+                <button className="unauthorized-button" onClick={goBack}>
+                Go Back
+                </button>
+            </div>
+         </div>
     )
 
 }

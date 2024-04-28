@@ -46,17 +46,13 @@ const Login = () => {
 
     if (response.ok) {
       const data = await response.json();
-      // Debugging: Log the entire data object
       console.log("Response data:", data);
 
       // Store the token in local storage
       sessionStorage.setItem("accessToken", data.token);
       sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      // This will print the token if it exists, or 'null' if it doesn't
       console.log(sessionStorage.getItem("accessToken"));
-
-      // Login successful, redirect to home page
       window.location.href = "/sales";
     } else {
       // Login failed, handle error
