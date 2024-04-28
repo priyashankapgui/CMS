@@ -54,9 +54,9 @@ export const Sales = () => {
     };
 
     const handleDeleteRow = (id) => {
-        if (id == 1) {
+        if (id === 1) {
             const updatedRows = rows.map(row => {
-                if (row.id == 1) {
+                if (row.id === 1) {
                     return { ...row, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
                 }
                 return row;
@@ -70,19 +70,19 @@ export const Sales = () => {
 
     const handleInputChange = async (id, name, value) => {
         const updatedRows = rows.map(row => {
-            if (row.id == id) {
+            if (row.id === id) {
                 return { ...row, [name]: value };
             }
             return row;
         });
         setRows(updatedRows);
 
-        if (name == 'productId' || name == 'productName') {
+        if (name === 'productId' || name === 'productName') {
             const productDetails = await fetchProductDetails(value);
             if (productDetails) {
                 const { avbQty, batchNo, unitPrice, productName } = productDetails;
                 const updatedRows = rows.map(row => {
-                    if (row.id == id) {
+                    if (row.id === id) {
                         return { ...row, avbQty, batchNo, unitPrice, productName };
                     }
                     return row;

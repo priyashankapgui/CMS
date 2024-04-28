@@ -20,6 +20,7 @@ function InputField({ id, name, placeholder, onChange, editable, borderRadius, h
                     width: width || '27em',
                     marginTop: marginTop || '0.313em',
                     textAlign: textAlign || 'left',
+                    textAlign: textAlign || 'left',
                 }}
             />
             {children && (
