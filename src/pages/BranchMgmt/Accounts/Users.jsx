@@ -4,7 +4,7 @@ import "./Users.css";
 import Label from "../../../Components/Label/InputLabel";
 import dropdownOptions from "../../../Components/Data.json";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import { useEffect, useState } from "react";

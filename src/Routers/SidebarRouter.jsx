@@ -17,7 +17,7 @@ import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
 import { Users } from "../pages/BranchMgmt/Accounts/Users";
-import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoleMgmt";
+import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgmt";
 import CashierRoute from "./CashierRoute";
 import AdminRoute from "./AdminRoute";
 import SuperAdminRoute from "./SuperAdminRoute";
