@@ -1,8 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AdjustBranch } from '../pages/BranchMgmt/AdjustBranch/AdjustBranch';
-import { Accounts } from '../pages/BranchMgmt/Accounts/UserAccounts/Accounts';
-import { UserRoleMgmt } from '../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgmt';
 import { Products } from '../pages/InventoryMgmt/Products/Products';
 import { Suppliers } from '../pages/InventoryMgmt/Suppliers/Suppliers';
 import { GoodReceive } from '../pages/InventoryMgmt/GoodReceive/GoodReceive';
@@ -18,40 +16,42 @@ import { WebMgmt } from '../pages/WebMgmt/WebMgmt';
 import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
+import { Users } from "../pages/BranchMgmt/Accounts/Users";
+import { UserRoleMgmt } from "../pages/BranchMgmt/Accounts/UserRoleMgmt";
+import CashierRoute from "./CashierRoute";
+import AdminRoute from "./AdminRoute";
+import SuperAdminRoute from "./SuperAdminRoute";
 
 
 export function SidebarRouter() {
   return (
     <Routes>
-      {/* Branch Management Routes */}
-      <Route path="/adjust-branch" element={<AdjustBranch />} />
-      <Route path="/accounts" element={<Accounts />} />
-      <Route path="/accounts/user-roles" element={<UserRoleMgmt />} />
+      <Route element={<SuperAdminRoute />}>
+        <Route path="/adjust-branch" element={<AdjustBranch />} />
+      </Route>
 
-      {/* Inventory Management Routes */}
-      <Route path="/products" element={<Products />} />
-      <Route path="/suppliers" element={<Suppliers />} />
-      <Route path="/good-receive" element={<GoodReceive />} />
-      <Route path="/stock-balance" element={<StockBalance />} />
-      <Route path="/stock-transfer" element={<StockTransfer />} />
-      <Route path="/check-price" element={<CheckPrice />} />
+      <Route element={<AdminRoute />}>
+        <Route path="/users" element={<Users />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/suppliers" element={<Suppliers />} />
+        <Route path="/good-receive" element={<GoodReceive />} />
+        <Route path="/stock-balance" element={<StockBalance />} />
+        <Route path="/stock-transfer" element={<StockTransfer />} />
+        <Route path="/check-price" element={<CheckPrice />} />
+        <Route path="/reporting/analysis" element={<Analysis />} />
+        <Route path="/reporting/reports" element={<Reports />} />
+        <Route path="/UserRoleMgmt" element={<UserRoleMgmt />} />
+        <Route path="/web-mgmt" element={<WebMgmt />} />
+        <Route path="/web-feedbacks" element={<WebFeedbacks />} />
+        <Route path="/work-list/viewbill/:billNo" element={<ViewBill/>} />
+        <Route path="/work-list/returnbill" element={<ReturnBill />} />
+      </Route>
 
-      {/* Billing Routes */}
-      <Route path="/sales" element={<Sales />} />
-      <Route path="/work-list" element={<WorkList />} />
-      <Route path="/work-list/viewbill/:billNo" element={<ViewBill/>} />
-      <Route path="/work-list/returnbill" element={<ReturnBill />} />
-
-      {/* Online Orders */}
-      <Route path="/online-orders" element={<OnlineOrders />} />
-
-      {/* Web Management */}
-      <Route path="/web-mgmt" element={<WebMgmt />} />
-      <Route path="/web-feedbacks" element={<WebFeedbacks />} />
-
-      {/* Reporting Routes */}
-      <Route path="/reporting/analysis" element={<Analysis />} />
-      <Route path="/reporting/reports" element={<Reports />} />
+      <Route element={<CashierRoute />}>
+        <Route path="/sales" element={<Sales />} />
+        <Route path="/work-list" element={<WorkList />} />
+        <Route path="/online-orders" element={<OnlineOrders />} />
+      </Route>
     </Routes>
   );
 }
