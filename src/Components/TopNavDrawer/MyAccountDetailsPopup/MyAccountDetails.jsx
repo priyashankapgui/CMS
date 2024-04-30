@@ -9,10 +9,15 @@ import { useDropzone } from 'react-dropzone';
 import dropdownOptions from '../../Data.json';
 import './MyAccountDetails.css';
 
+
+
 function MyAccountDetails() {
     const [editable, setEditable] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
     const [showSubPopup, setShowSubPopup] = useState(false);
+
+    const user=JSON.parse(sessionStorage.getItem('user'));
+    let employeeName=user?.employeeName;
 
     const toggleEditable = () => {
         setEditable(!editable);
@@ -37,6 +42,7 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
+
     return (
         <div>
             <SubPopup
@@ -44,7 +50,7 @@ function MyAccountDetails() {
                     <div className="userProfile" >
                         <div className="profile-dp" />
                         <div className="userName">
-                            <h4>Imesh Mendis</h4>
+                            <h4>{employeeName}</h4>
                         </div>
                     </div>
 

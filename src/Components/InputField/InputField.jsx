@@ -1,33 +1,51 @@
 import React from 'react';
-import './InputField.css';
+import styled from 'styled-components';
 
-function InputField({ id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, children }) {
-    // Default onChange handler that does nothing
-    const noop = () => { };
+const InputContainer = styled.div`
+  position: relative;
+`;
 
+const Input = styled.input`
+  border-radius: ${({ borderRadius }) => borderRadius || '0.625em'};
+  border: 1px solid #8D9093;
+  height: ${({ height }) => height || '2.25em'};
+  width: ${({ width }) => width || '27em'};
+  margin-top: ${({marginTop }) => marginTop || '0.313em'};
+  margin-bottom: 0.313em;
+  font-size: 0.75em;
+  padding: 0.625em;
+  opacity: ${({ editable }) => (editable ? 1 : 0.5)};
+  pointer-events: ${({ editable }) => (editable ? 'auto' : 'none')};
+`;
+
+const IconContainer = styled.span`
+  position: absolute;
+  top: 50%;
+  right: 0.625em;
+  transform: translateY(-50%);
+`;
+
+function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop ,children }) {
     return (
-        <div className="input-container">
-            <input
+        <InputContainer>
+            <Input
+                type={type}
                 id={id}
                 name={name}
                 placeholder={placeholder}
-                onChange={onChange || noop}
-                value={value}
-                className={`input ${editable ? '' : 'disabled'}`}
-                style={{
-                    borderRadius: borderRadius || '0.625em',
-                    height: height || '2.25em',
-                    width: width || '27em',
-                    marginTop: marginTop || '0.313em',
-                    textAlign: textAlign || 'left',
-                }}
+                onChange={onChange}
+                editable={editable}
+                borderRadius={borderRadius}
+                height={height}
+                width={width}
+                marginTop={marginTop}
             />
             {children && (
-                <span className="icon-container">
+                <IconContainer>
                     {children}
-                </span>
+                </IconContainer>
             )}
-        </div>
+        </InputContainer>
     );
 }
 
