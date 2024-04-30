@@ -12,12 +12,13 @@ import { CheckPrice } from '../pages/InventoryMgmt/CheckPrice/CheckPrice';
 import { Sales } from '../pages/Billing/Sales/Sales';
 import { WorkList } from '../pages/Billing/WorkList/WorkList-Billed/WorkList';
 import { ViewBill } from '../pages/Billing/WorkList/WorkList-Billed/ViewBill';
-import { ReturnBill } from '../pages/Billing/WorkList/WorkList-Returned/ReturnBill';
+import { ReturnBillList } from '../pages/Billing/WorkList/WorkList-Returned/ReturnBillList';
 import { OnlineOrders } from '../pages/OnlineOrders/OnlineOrders';
 import { WebMgmt } from '../pages/WebMgmt/WebMgmt';
 import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
+import ViewReturnBill from '../pages/Billing/WorkList/WorkList-Returned/ViewReturnBill';
 
 
 export function SidebarRouter() {
@@ -40,7 +41,8 @@ export function SidebarRouter() {
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
       <Route path="/work-list/viewbill/:billNo" element={<ViewBill/>} />
-      <Route path="/work-list/returnbill" element={<ReturnBill />} />
+      <Route path="/work-list/returnbill-list" element={<ReturnBillList />} />
+      <Route path="/work-list/returnbill-list/viewreturnbill/:RTBNo" element={<ViewReturnBill/>} />
 
       {/* Online Orders */}
       <Route path="/online-orders" element={<OnlineOrders />} />

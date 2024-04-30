@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import Layout from "../../../../Layout/Layout";
 import "./WorkList.css";
 import InputLabel from "../../../../Components/Label/InputLabel";
@@ -27,7 +26,7 @@ export const WorkList = () => {
             </div>
             <Layout>
                 <div className="worklist-filter-container">
-                    <div className="Content1">
+                    <div className="W-Content1">
                         <div className="branchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
                             <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
@@ -46,10 +45,10 @@ export const WorkList = () => {
                         </div>
                         <div className="productField">
                             <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} />
+                            <InputField type="text" id="billNo" name="billNo" editable={true} width="25em" />
                         </div>
                     </div>
-                    <div className="BtnSection">
+                    <div className="WorklistBtnSection">
                         <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
                         <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
                     </div>
@@ -66,7 +65,7 @@ export const WorkList = () => {
                         </div>
                         <div className={clickedLink === 'Returned' ? 'clicked' : ''}>
                             <Link
-                                to="/work-list/returnbill"
+                                to="/work-list/returnbill-list"
                                 onClick={() => handleLinkClick('Returned')}
                             >
                                 Returned

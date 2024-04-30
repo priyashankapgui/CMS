@@ -13,7 +13,6 @@ import jsonData from '../../../Components/Data.json';
 import InputRadio from '../../../Components/InputRadio/InputRadio';
 
 
-
 export const Sales = () => {
 
     const fetchProductDetails = async (productId) => {
@@ -34,7 +33,7 @@ export const Sales = () => {
             const data = await response.json();
             const formattedSuggestions = data.map(item => ({
                 id: item.productId,
-                name: `${item.productId} ${item.productName}`
+                name: `${item.productName}`
             }));
 
             return formattedSuggestions;
@@ -126,6 +125,22 @@ export const Sales = () => {
         setReceived(event.target.value);
     };
 
+    const handleSelection = (e, selectedItem) => {
+        const newRow = {
+            id: rows.length + 1,
+            productId: selectedItem.id,
+            productName: selectedItem.name,
+            billQty: '',
+            batchNo: '',
+            avbQty: '',
+            unitPrice: '',
+            discount: '',
+            amount: ''
+        };
+        setRows(prevRows => [...prevRows, newRow]);
+    };
+
+
     return (
         <>
             <div className="sales">
@@ -165,7 +180,7 @@ export const Sales = () => {
                             <tbody>
                                 {rows.map(row => (
                                     <tr key={row.id}>
-                                        <td><SearchBar fetchSuggestions={fetchSuggestionsProducts} onSuggestionSelect={(productId) => handleInputChange(row.id, 'productId', productId)} /></td>
+                                        <td><SearchBar fetchSuggestions={fetchSuggestionsProducts} onSuggestionSelect={(productId) => handleInputChange(row.id, 'productId', productId)} onSelection={handleSelection} /></td>
                                         <td><InputField type="text" id={`billQty_${row.id}`} name="billQty" editable={true} width="90px" value={row.billQty} onChange={(e) => handleInputChange(row.id, 'billQty', e.target.value)} /></td>
                                         <td><InputDropdown id={`batchNo_${row.id}`} name="batchNo" width="154px" options={['',]} editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td>
                                         <td><InputField type="text" id={`avbQty_${row.id}`} name="avbQty" editable={false} width="90px" value={row.avbQty} onChange={(e) => handleInputChange(row.id, 'avbQty', e.target.value)} /></td>
@@ -176,7 +191,7 @@ export const Sales = () => {
                                         <td><AiOutlineDelete onClick={() => handleDeleteRow(row.id)} /></td>
                                     </tr>
                                 ))}
-                               
+
                             </tbody>
                         </table>
                     </div>

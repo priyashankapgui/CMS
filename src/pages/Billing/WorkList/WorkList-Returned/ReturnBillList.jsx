@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ReturnBill.css';
+import './ReturnBillList.css';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
@@ -8,9 +8,11 @@ import InputLabel from "../../../../Components/Label/InputLabel";
 import DatePicker from "../../../../Components/DatePicker/DatePicker";
 import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from '../../../../Components/Data.json';
+import { BsEye } from "react-icons/bs";
+import jsonData from "../../../../Components/Data.json";
+import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 
-
-export const ReturnBill = () => {
+export const ReturnBillList = () => {
 
     const [clickedLink, setClickedLink] = useState('Returned');
 
@@ -44,7 +46,7 @@ export const ReturnBill = () => {
                         </div>
                         <div className="productField">
                             <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} />
+                            <InputField type="text" id="billNo" name="billNo" editable={true} width="25em" />
 
                         </div>
                     </div>
@@ -75,9 +77,9 @@ export const ReturnBill = () => {
                     <table className="return-bill-history-table">
                         <thead>
                             <tr>
-                                <th>RTB No</th>
-                                <th>Bill No</th>
+                                <th>Return Bill No</th>
                                 <th>Returned At</th>
+                                <th>Bill No</th>
                                 <th>Branch </th>
                                 <th>Customer Name</th>
                                 <th>Status</th>
@@ -87,9 +89,28 @@ export const ReturnBill = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-
-                            </tr>
+                            {jsonData.ReturnBillListTableData.map((row, index) => (
+                                <tr key={index}>
+                                    <td>{row.RTBNo}</td>
+                                    <td>{row.returnedAt}</td>
+                                    <td>{row.billNo}</td>
+                                    <td>{row.branch}</td>
+                                    <td>{row.customerName}</td>
+                                    <td>{row.status}</td>
+                                    <td>{row.returnedBy}</td>
+                                    <td>{row.reason}</td>
+                                    <td>
+                                        <Link to={`/work-list/returnbill-list/viewreturnbill/${row.RTBNo}`}>
+                                            <RoundButtons
+                                                id={`eyeViewBtn-${index}`}
+                                                type="submit"
+                                                name={`eyeViewBtn-${index}`}
+                                                icon={<BsEye />}
+                                            />
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

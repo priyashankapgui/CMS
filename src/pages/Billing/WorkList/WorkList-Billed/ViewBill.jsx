@@ -1,21 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Layout from "../../../../Layout/Layout";
 import "./ViewBill.css";
-import InputLabel from '../../../../Components/Label/InputLabel';
 import { RiPrinterFill } from "react-icons/ri";
 import { MdOutlineAssignmentReturn } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import InputField from '../../../../Components/InputField/InputField';
 import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
+import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import jsonData from '../../../../Components/Data.json';
+import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
     const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
+    const [showSalesReceipt, setShowSalesReceipt] = useState(false);
 
+    
     if (!selectedBillData) {
         return <div>Bill not found</div>;
     }
@@ -75,9 +78,9 @@ export const ViewBill = () => {
 
                         <div className="reprintBtn">
                             <InputLabel> Reprint </InputLabel>
-                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={() => console.log("Reprint Button clicked")} />
+                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />}  onClick={() => setShowSalesReceipt(true)} />
                         </div>
-
+                        {showSalesReceipt && <SalesReceipt />}
                         <div className="cancelBillBtn">
                             <InputLabel> Cancel Bill </InputLabel>
                             <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={() => console.log("Cancel Bill Button clicked")} />} />
