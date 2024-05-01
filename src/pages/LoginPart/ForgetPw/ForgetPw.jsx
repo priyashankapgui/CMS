@@ -20,12 +20,12 @@ const ForgetPw = () => {
   const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
 
-    
+
     if (!email) {
       setError("Please enter your email address.");
       return;
     }
-    
+
 
     if (
       // !email.endsWith("@gmail.com") ||
@@ -62,6 +62,7 @@ const ForgetPw = () => {
 
   return (
     <div className="s-fp-container">
+       <h2 className="s-flexflow-text-fp">Flex Flow</h2>
       <form className="s-fp-form">
         <div className="s-forgotText">
           <h2>Forgot Password</h2>
@@ -121,16 +122,16 @@ const ForgetPw = () => {
             >
               <p>Your password reset link has been sent to your email</p>
 
-              
-                <Buttons
-                  type="button"
-                  id="ok-btn"
-                  style={{ backgroundColor: "#23A3DA", color: "white" }}
-                  onClick={handleOkButtonClick}
-                >
-                  Ok{" "}
-                </Buttons>
-              
+
+              <Buttons
+                type="button"
+                id="ok-btn"
+                style={{ backgroundColor: "#23A3DA", color: "white" }}
+                onClick={handleOkButtonClick}
+              >
+                Ok{" "}
+              </Buttons>
+
             </div>
           }
         />

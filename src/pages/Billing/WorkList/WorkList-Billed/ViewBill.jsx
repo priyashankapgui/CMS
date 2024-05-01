@@ -27,7 +27,7 @@ export const ViewBill = () => {
 
     return (
         <>
-            <div className="viewbill">
+            <div className="top-nav-blue-text">
                 <div className="viewbill-top-link">
                     <Link to="/work-list">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />

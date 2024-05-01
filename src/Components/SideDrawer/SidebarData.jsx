@@ -15,7 +15,7 @@ export const SidebarData = [
             },
             {
                 title: "Accounts",
-                path: "/users",
+                path: "/accounts",
             },
         ],
     },

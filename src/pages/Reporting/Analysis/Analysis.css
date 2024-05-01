@@ -1,71 +1,71 @@
-.linkActions-analysis{
-    display: flex;
-    gap: 30px;
-    margin-bottom: 10px;
-  }
-  
-  .linkActions-analysis div a {
-    color: black;
-    text-decoration: none;
-    font-weight: 400;
-  }
-  
-  .linkActions-analysis div a:hover {
-    color: rgba(19, 86, 112, 0.8);
-  }
-  
-  .linkActions-analysis div.clicked a {
-    color:  #0377A8;
-    text-decoration: underline;
-    font-weight: bold;
-  }
-  
+.linkActions-analysis {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 10px;
+}
+
+.linkActions-analysis div a {
+  color: black;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.linkActions-analysis div a:hover {
+  color: rgba(19, 86, 112, 0.8);
+}
+
+.linkActions-analysis div.clicked a {
+  color: #0377A8;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
 
 .reportingTop {
-    background-color: white;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-    border-radius: 0.625em;
-    padding: 0.9375em 1.25em;
-    display: flex;
-    gap: 0.625em;
-    margin-bottom: 1.875em;
-    width: 100%;
-    height: fit-content;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  border-radius: 0.625em;
+  padding: 0.9375em 1.25em;
+  display: flex;
+  gap: 0.625em;
+  margin-bottom: 1.875em;
+  width: 100%;
+  height: fit-content;
 
 }
 
 .rep-Cont1-top {
-    display: flex;
-    gap: 0.625em;
-    margin-top: 0.625em;
+  display: flex;
+  gap: 0.625em;
+  margin-top: 0.625em;
 
 }
 
 .reportLeftContent {
-    width: 28.125em;
-    border-right: 3px solid #D9D9D9;
-    height: 10em;
+  width: 28.125em;
+  border-right: 3px solid #D9D9D9;
+  height: 10em;
 }
 
 
 .reportRightContent {
-    width: 28.125em;
-    height: 10em;
-    padding: 0.625em;
+  width: 28.125em;
+  height: 10em;
+  padding: 0.625em;
 }
 
 .reportRightContent h3 {
-    text-align: left;
-    margin-top: 2.55em;
-    color: #0377A8;
+  text-align: left;
+  margin-top: 2.55em;
+  color: #0377A8;
 
 }
 
 .reportingMiddle {
-    background-color: white;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-    border-radius: 0.625em;
-    padding: 0.9375em 1.25em;
-    width: 100%;
-    height: fit-content;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  border-radius: 0.625em;
+  padding: 0.9375em 1.25em;
+  width: 100%;
+  height: fit-content;
 }

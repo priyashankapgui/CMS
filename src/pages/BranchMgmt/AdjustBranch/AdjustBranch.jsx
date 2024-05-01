@@ -31,7 +31,7 @@ export const AdjustBranch = () => {
 
     return (
         <>
-            <div className="adjust-branch">
+            <div className="top-nav-blue-text">
                 <h4>Adjust Branch</h4>
             </div>
 

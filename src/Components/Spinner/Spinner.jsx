@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import RingLoader from "react-spinners/RingLoader";
+import BeatLoader from "react-spinners/BeatLoader";
+import './Spinner.css';
+
 
 const Spinner = () => {
     const [loading, setLoading] = useState(true);
@@ -14,11 +16,15 @@ const Spinner = () => {
     }, []);
 
     return (
-        <div className="sweet-loading" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "80vh" }}>
-            <RingLoader
+        <div className="sweet-loading" style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "80vh", }}>
+            <div className="SpinnerSystemText">
+                Flex Flow
+            </div>
+            <BeatLoader
                 color="#0377A8"
                 loading={loading}
-                size={170}
+                size={15} // Adjust size as needed
+                css={{ margin: "auto" }} // Center loader horizontally
                 aria-label="Loading Spinner"
                 data-testid="loader"
             />

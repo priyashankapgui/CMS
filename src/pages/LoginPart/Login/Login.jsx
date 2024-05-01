@@ -99,7 +99,6 @@ const Login = () => {
             >
               <FaRegUserCircle />
             </InputField>
-            
             <InputField
               type={showPassword ? "text" : "password"}
               id="empPassword"

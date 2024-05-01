@@ -12,25 +12,7 @@ body {
     background-color: #fafafa;
 }
 
-.adjust-branch,
-.accounts,
-.userRoleMgmt,
-.products,
-.suppliers,
-.good-receive,
-.stock-balance,
-.stock-transfer,
-.check-price,
-.sales,
-.work-list,
-.viewbill,
-.work-list-return-bill,
-.viewReturnbill,
-.online-orders,
-.web-mgmt,
-.web-feedbacks,
-.analysis,
-.reports {
+.top-nav-blue-text {
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;

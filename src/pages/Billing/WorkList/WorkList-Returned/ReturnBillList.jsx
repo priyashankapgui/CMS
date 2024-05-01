@@ -22,7 +22,7 @@ export const ReturnBillList = () => {
 
     return (
         <>
-            <div className="work-list-return-bill">
+            <div className="top-nav-blue-text">
                 <h4>Worklist - Returned</h4>
             </div>
             <Layout>

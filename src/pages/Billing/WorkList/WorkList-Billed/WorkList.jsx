@@ -21,8 +21,8 @@ export const WorkList = () => {
 
     return (
         <>
-            <div className="work-list">
-                <h4>Work List</h4>
+            <div className="top-nav-blue-text">
+                <h4>Work List - Billed</h4>
             </div>
             <Layout>
                 <div className="worklist-filter-container">

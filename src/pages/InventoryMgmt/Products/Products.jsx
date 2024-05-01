@@ -4,7 +4,7 @@ export const Products = () => {
 
     return (
         <>
-            <div className="products">
+            <div className="top-nav-blue-text">
                 <h4>Products</h4>
             </div>
             <Layout>

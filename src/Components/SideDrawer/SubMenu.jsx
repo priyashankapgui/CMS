@@ -37,17 +37,16 @@ const SubMenu = ({ item }) => {
           {item.subNav && subnav
             ? item.iconOpened
             : item.subNav
-            ? item.iconClosed
-            : null}
+              ? item.iconClosed
+              : null}
         </div>
       </Link>
       {subnav &&
         item.subNav.map((subItem, index) => (
           <Link
             to={subItem.path}
-            className={`dropdown-link ${
-              currentLocation === subItem.path ? "active" : ""
-            }`}
+            className={`dropdown-link ${currentLocation === subItem.path ? "active" : ""
+              }`}
             key={index}
           >
             {subItem.icon}

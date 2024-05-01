@@ -10,7 +10,7 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import jsonData from '../../../../Components/Data.json';
 
-export default function ViewReturnBill() {
+export function ViewReturnBill() {
 
     const { RTBNo } = useParams();
     const selectedReturnBillData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
@@ -21,7 +21,7 @@ export default function ViewReturnBill() {
     const { branch,billNo, returnedAt, returnedBy, customerName, status,  contactNo } = selectedReturnBillData;
     return (
         <>
-            <div className="viewReturnbill">
+            <div className="top-nav-blue-text">
                 <div className="view-returnbill-top-link">
                     <Link to="/work-list/returnbill-list">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />

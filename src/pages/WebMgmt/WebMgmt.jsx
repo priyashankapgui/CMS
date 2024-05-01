@@ -13,7 +13,7 @@ export const WebMgmt = () => {
 
     return (
         <>
-            <div className="web-mgmt">
+            <div className="top-nav-blue-text">
                 <h4> WebMgmt</h4>
             </div>
             <Layout>

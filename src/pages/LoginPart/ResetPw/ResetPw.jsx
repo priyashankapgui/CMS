@@ -22,7 +22,7 @@ const ResetPw = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
 
-   
+
 
     // If token is not present, redirect to login page
     if (!token) {
@@ -43,7 +43,7 @@ const ResetPw = () => {
       if (response.ok) {
         const data = await response.json();
         setShowSubPopup(true);
-        
+
         console.log("Response data:", data);
       } else {
         const data = await response.json();
@@ -82,6 +82,7 @@ const ResetPw = () => {
 
   return (
     <div className="s-rp-container">
+      <h2 className="s-flexflow-text-rp">Flex Flow</h2>
       <form className="s-rp-form" onSubmit={handleResetPassword}>
         <div className="s-resetText">
           <h2>Reset Password</h2>
@@ -111,7 +112,7 @@ const ResetPw = () => {
                 padding: 0,
               }}
             >
-              {showPassword ?  <FaEye /> : < FaEyeSlash />}
+              {showPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
           <p>Confirm New Password:</p>
