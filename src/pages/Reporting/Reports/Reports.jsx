@@ -17,7 +17,7 @@ export const Reports = () => {
     };
     return (
         <>
-            <div className="reports">
+            <div className="top-nav-blue-text">
                 <h4>Reporting - Generate Reports</h4>
             </div>
             <Layout>

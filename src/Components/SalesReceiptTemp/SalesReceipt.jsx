@@ -2,6 +2,7 @@ import React from 'react';
 import "./SalesReceipt.css";
 import greenleaf from "../../Assets/greenleaf.svg";
 import itemsData from "../../Components/Data.json";
+import SugesstionQR from "../../Assets/qr-code.svg";
 
 function SalesReceipt() {
     return (
@@ -54,35 +55,42 @@ function SalesReceipt() {
                 </table>
             </div>
             <hr className='invoice-line' />
-            <div className="total">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>No Qty: </td>
-                            <td style={{ textAlign: 'left' }}>04</td>
-                        </tr>
-                        <tr>
-                            <td>Gross Total: </td>
-                            <td style={{ textAlign: 'left' }}>4811.00</td>
-                        </tr>
-                        <tr>
-                            <td>Discount: </td>
-                            <td style={{ textAlign: 'left' }}>0.00</td>
-                        </tr>
-                        <tr style={{ fontSize: "16px", fontWeight: "bold" }}>
-                            <td>Net Total: </td>
-                            <td style={{ textAlign: 'left' }}>4811.00</td>
-                        </tr>
-                        <tr>
-                            <td>Received: </td>
-                            <td style={{ textAlign: 'left' }}>5000.00</td>
-                        </tr>
-                        <tr>
-                            <td>Balance: </td>
-                            <td style={{ textAlign: 'left' }}>189.00</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div className="billMiddle">
+                <div className="inquaryQR">
+                    For any  inquiry
+                    <small>Scan me</small>
+                    <img className="qrImg" src={SugesstionQR} alt="Sugession QR" />
+                </div>
+                <div className="total">
+                    <table className='total-table'>
+                        <tbody>
+                            <tr>
+                                <td>No Qty </td>
+                                <td style={{ textAlign: 'left' }}>04</td>
+                            </tr>
+                            <tr>
+                                <td>Gross Total </td>
+                                <td style={{ textAlign: 'left' }}>4811.00</td>
+                            </tr>
+                            <tr>
+                                <td>Discount </td>
+                                <td style={{ textAlign: 'left' }}>0.00</td>
+                            </tr>
+                            <tr style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                <td>Net Total </td>
+                                <td style={{ textAlign: 'left' }}>4811.00</td>
+                            </tr>
+                            <tr>
+                                <td>Received </td>
+                                <td style={{ textAlign: 'left' }}>5000.00</td>
+                            </tr>
+                            <tr>
+                                <td>Balance </td>
+                                <td style={{ textAlign: 'left' }}>189.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <hr className='invoice-line-top' />
             <div className="footer">

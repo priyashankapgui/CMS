@@ -1,63 +1,79 @@
+import React, { useState } from 'react';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
 import './UserRoleMgmt.css';
-import Buttons from "../../../../Components/Buttons/RoundButtons/RoundButtons";
-import Label from "../../../../Components/Label/InputLabel";
+import InputLabel from "../../../../Components/Label/InputLabel";
 import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
-import dropdownOptions from "../../../../Components/Data.json";
+import jsonData from "../../../../Components/Data.json";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
+import AddNewUserRolePopup from './AddNewUserRolePopup';
+import UpdateUserRolePopup from './UpdateUserRolePopup';
 
 
 export const UserRoleMgmt = () => {
+    const [clickedLink, setClickedLink] = useState('User Role Mgmt');
+
+    const handleLinkClick = (linkText) => {
+        setClickedLink(linkText);
+    };
+
+    const handleDelete = () => {
+        console.log('deleted');
+    };
+
+
     return (
         <>
-            <div className="accounts">
-                <h4>Accounts</h4>
+            <div className="top-nav-blue-text">
+                <h4>Accounts - User Roles Mgmt</h4>
             </div>
             <Layout>
-            <div className="linkDiv">
-                    <Link className="link" to="/users">Users</Link>
-                    <Link className="link" to="/UserRoleMgmt">User Role Mgmt</Link>
+
+                <div className="linkActions-account-userRoles">
+                    <div className={clickedLink === 'Users' ? 'clicked' : ''}>
+                        <Link
+                            to="/accounts"
+                            onClick={() => handleLinkClick('Users')}
+                        >
+                            Users
+                        </Link>
+                    </div>
+                    <div className={clickedLink === 'User Role Mgmt' ? 'clicked' : ''}>
+                        <Link
+                            to=""
+                            onClick={() => handleLinkClick('User Role Mgmt')}
+                        >
+                            User Role Mgmt
+                        </Link>
+                    </div>
                 </div>
-                <div className="availableRoles">
-                    <div className="topContainer">
-                        <h3>Available Roles</h3>
-                        <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} > New + </Buttons>
+
+
+                <div className="user-roles-middle-container">
+                    <div className="user-roles-middle-top-content">
+                        <h3 className='user-roles-available-title'>Available Roles</h3>
+                        <AddNewUserRolePopup />
                     </div>
-                    <div>
-                        <Label color="#0377A8">Branch</Label>
-                        <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                    <div className="BranchField">
+                        <InputLabel color="#0377A8">Branch</InputLabel>
+                        <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
                     </div>
-                    <div>
-                    <TableWithPagi
-                        columns={[]}
-                        rows={[
-                            { Role: 'Super Admin',
-                            action: (
-                                <div style={{ display: "flex", gap: "0.5em" }}>
-                                    
-                                    
-                                </div>
-                            )  },
-                            { Role: 'Admin',
-                            action: (
-                                <div style={{ display: "flex", gap: "0.5em" }}>
-                                    
-                                    
-                                </div>
-                            )  },
-                            
-                            { Role: 'Cashier',
-                            action: (
-                                <div style={{ display: "flex", gap: "0.5em" }}>
-                                    
-                                    
-                                </div>
-                            )  },
-                           
-                                                      
-                        ]}
-                    />
+
+                    <div className='user-roles-middle-tablecontainer'>
+                        <TableWithPagi
+                            columns={['Roles', 'Action']}
+                            rows={jsonData.registerdSystemUserRoles.map(role => ({
+                                Role: role.Role,
+                                action: (
+                                    <div style={{ display: "flex", gap: "0.7em" }}>
+                                        <UpdateUserRolePopup />
+
+                                        <DeletePopup handleDelete={handleDelete} />
+                                    </div>
+                                )
+                            }))}
+                        />
                     </div>
                 </div>
             </Layout>

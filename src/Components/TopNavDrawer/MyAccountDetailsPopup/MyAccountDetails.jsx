@@ -9,15 +9,10 @@ import { useDropzone } from 'react-dropzone';
 import dropdownOptions from '../../Data.json';
 import './MyAccountDetails.css';
 
-
-
 function MyAccountDetails() {
     const [editable, setEditable] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
     const [showSubPopup, setShowSubPopup] = useState(false);
-
-    const user=JSON.parse(sessionStorage.getItem('user'));
-    let employeeName=user?.employeeName;
 
     const toggleEditable = () => {
         setEditable(!editable);
@@ -42,7 +37,6 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
-
     return (
         <div>
             <SubPopup
@@ -50,7 +44,7 @@ function MyAccountDetails() {
                     <div className="userProfile" >
                         <div className="profile-dp" />
                         <div className="userName">
-                            <h4>{employeeName}</h4>
+                            <h4>Imesh Mendis</h4>
                         </div>
                     </div>
 
@@ -67,12 +61,12 @@ function MyAccountDetails() {
                 show={showSubPopup}
                 onClose={handleCloseSubPopup}
                 bodyContent={(
-                    <div className="form-background">
+                    <div className="view-profile-form-background">
                         <div className="branch-field">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
                             <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
-                        <div className="flex-content">
+                        <div className="flex-content-ViewP">
                             <div className="user-role-field">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
                                 <InputDropdown id="userRole" name="userRole" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
