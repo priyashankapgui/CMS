@@ -26,9 +26,6 @@ import CashierRoute from "./CashierRoute";
 import AdminRoute from "./AdminRoute";
 import SuperAdminRoute from "./SuperAdminRoute";
 
-
-
-
 export function SidebarRouter() {
   return (
     <Routes>
