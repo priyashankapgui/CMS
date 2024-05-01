@@ -1,13 +1,11 @@
-// Sidebar.jsx
-import React, { useState } from "react";
+import React from "react";
 import { Icon } from "@iconify/react";
 import { SidebarData } from "./SidebarData";
 import SubMenu from "./SubMenu";
-import TopNav from "../../Components/TopNavDrawer/TopNav/TopNav";
+import TopNav from "../TopNavDrawer/TopNav";
 import "./Sidebar.css";
 
 const Sidebar = ({ expanded, toggleSidebar }) => {
-  const [activeMenuItem, setActiveMenuItem] = useState("");
 
   return (
     <>
@@ -22,12 +20,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
           </div>
           <div className="side-middle-content">
             {SidebarData.map((item, index) => (
-              <SubMenu
-                key={index}
-                item={item}
-                activeMenuItem={activeMenuItem}
-                setActiveMenuItem={setActiveMenuItem}
-              />
+              <SubMenu item={item} key={index} />
             ))}
           </div>
         </div>

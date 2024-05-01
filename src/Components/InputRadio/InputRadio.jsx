@@ -1,10 +1,19 @@
 import React from 'react';
-import './InputRadio.css'; 
+import styled from 'styled-components';
+
+const RadioContainer = styled.div`
+  margin-bottom: 1em;
+`;
+
+const RadioLabel = styled.label`
+  margin-right: 1em;
+`;
+
 const InputRadio = ({ name, options, onChange }) => {
   return (
-    <div className="radio-container"> 
+    <RadioContainer>
       {options.map(option => (
-        <label key={option.id} className="radio-label"> 
+        <RadioLabel key={option.id}>
           <input
             type="radio"
             id={option.id}
@@ -13,9 +22,9 @@ const InputRadio = ({ name, options, onChange }) => {
             onChange={onChange}
           />
           {option.label}
-        </label>
+        </RadioLabel>
       ))}
-    </div>
+    </RadioContainer>
   );
 };
 

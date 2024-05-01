@@ -5,16 +5,13 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-
 }
 
 body {
     background-color: #fafafa;
 }
-
 .adjust-branch,
 .accounts,
-.userRoleMgmt,
 .products,
 .suppliers,
 .good-receive,
@@ -23,13 +20,11 @@ body {
 .check-price,
 .sales,
 .work-list,
-.viewbill,
-.work-list-return-bill,
 .online-orders,
 .web-mgmt,
-.web-feedbacks,
 .analysis,
-.reports {
+.reports
+{
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;
@@ -39,13 +34,12 @@ body {
     align-items: center;
     flex-direction: column;
     margin-top: -53px;
-    z-index: 3;
+    z-index: 1;
 }
-
 /* Sidebar.js */
 
 .sidebar-nav {
-    background-color: #0377A8;
+    background: #0377A8;
     width: 15.625em;
     min-height: 160vh;
     height: 100%;
@@ -56,20 +50,16 @@ body {
     transition: 350ms;
     z-index: 10;
     position: absolute;
-
-
-
-}
-
-.show {
+  }
+  
+  .show {
     left: 0;
-}
+  }
 
 .sidebar-wrap {
     width: 100%;
     height: 100%;
 }
-
 
 .side-top {
     display: flex;
@@ -88,7 +78,7 @@ body {
 
 .collapse-side-icon2 {
     width: 2.188em;
-    height: 2.188em;
+    height:  2.188em;
     color: #0377A8;
     margin-top: 0.313em;
     border-radius: 50%;
@@ -135,7 +125,7 @@ body {
 }
 
 .sidebar-link:hover {
-    background: rgba(19, 86, 112, 0.5);
+    background: rgba(19, 86, 112, 0.6);
     cursor: pointer;
 }
 
@@ -154,18 +144,7 @@ body {
 }
 
 .dropdown-link:hover {
-    background: rgba(19, 86, 112, 0.5);
+    background: rgba(19, 86, 112, 0.6);
     cursor: pointer;
 }
 
-
-.sidebar-link.active,
-.dropdown-link.active {
-    background-color: rgba(19, 86, 112, 0.8);
-
-}
-
-.sidebar-link.active .sidebar-label,
-.dropdown-link.active .sidebar-label {
-    color: white;
-}

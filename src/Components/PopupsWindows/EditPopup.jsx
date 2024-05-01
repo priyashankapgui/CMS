@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Icon } from "@iconify/react";
 import SubPopup from './SubPopup';
-import Buttons from '../Buttons/SquareButtons/Buttons';
+import Buttons from '../Buttons/Buttons';
 
-function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
+function EditPopup({ topTitle, children, buttonId, buttonText }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div style={{ width: '' }}>
+    <div style={{ width: 'fit-content' }}>
       <SubPopup
         triggerComponent={
           <Icon
@@ -16,7 +16,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           />
-        }
+        } 
         headBG="#23A3DA"
         title={topTitle}
         headTextColor="White"
@@ -24,7 +24,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {children}
-            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={onClick}>{buttonText}</Buttons>
+            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={() => { /* Your action here */ }}>{buttonText}</Buttons>
           </div>
         )}
       />
