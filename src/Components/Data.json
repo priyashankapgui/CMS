@@ -389,89 +389,49 @@
     }
   ],
   "feedbackRowData": [
-    {
-      "feedbackType": "Suggestion",
-      "branch": "Galle",
-      "receivedAt": "2024-04-10 12:37",
-      "action": "Taken",
-      "actionTakenBy": "Kasun Perera",
-      "actionTakenAt": "2024-04-02 14:10",
-      "feedbackContent": "Arrange Delivery service. It's very useful for us. Thank you!",
-      "customerName": "John Doe",
-      "contactNo": "1234567890",
-      "email": "john.doe@example.com",
-      "actionSummary": "Informed to the Director board",
-      "lastUpdated": "2024-04-10 14:10"
-    },
-    {
-      "feedbackType": "Complain",
-      "branch": "Galle",
-      "receivedAt": "2024-04-08 11:15",
-      "action": "Pending",
-      "actionTakenBy": "",
-      "actionTakenAt": "",
-      "feedbackContent": "Cashiers are not working very well",
-      "customerName": "Jane Smith",
-      "contactNo": "0987654321",
-      "email": "jane.smith@example.com",
-      "actionSummary": "",
-      "lastUpdated": ""
-    },
-    {
-      "feedbackType": "Suggestion",
-      "branch": "Kaluthara",
-      "receivedAt": "2024-04-09 15:30",
-      "action": "Pending",
-      "actionTakenBy": "",
-      "actionTakenAt": "",
-      "feedbackContent": "Feedback Content B",
-      "customerName": "Jane Smith",
-      "contactNo": "0987654321",
-      "email": "jane.smith@example.com",
-      "actionSummary": "",
-      "lastUpdated": ""
-    },
-    {
-      "feedbackType": "Complain",
-      "branch": "Kaluthara",
-      "receivedAt": "2024-04-01 11:23",
-      "action": "Pending",
-      "actionTakenBy": "",
-      "actionTakenAt": "",
-      "feedbackContent": "Feedback Content B",
-      "customerName": "Jane Smith",
-      "contactNo": "0987654321",
-      "email": "jane.smith@example.com",
-      "actionSummary": "",
-      "lastUpdated": ""
-    },
-    {
-      "feedbackType": "Complain",
-      "branch": "Galle",
-      "receivedAt": "2024-04-15 13:05",
-      "action": "Pending",
-      "actionTakenBy": "",
-      "actionTakenAt": "",
-      "feedbackContent": "Feedback Content B",
-      "customerName": "Jane Smith",
-      "contactNo": "0987654321",
-      "email": "jane.smith@example.com",
-      "actionSummary": "",
-      "lastUpdated": ""
-    },
-    {
-      "feedbackType": "Suggestion",
-      "branch": "Kaluthara",
-      "receivedAt": "2024-04-15 23:15",
-      "action": "Pending",
-      "actionTakenBy": "",
-      "actionTakenAt": "",
-      "feedbackContent": "Feedback Content B",
-      "customerName": "Jane Smith",
-      "contactNo": "0987654321",
-      "email": "jane.smith@example.com",
-      "actionSummary": "",
-      "lastUpdated": ""
-    }
+    
+      {
+          "feedbackType": "Suggestion",
+          "branch": "Galle",
+          "receivedAt": "2024-03-30 12:37",
+          "action": "Taken",
+          "actionTakenBy": "Kasun Perera",
+          "actionTakenAt": "2024-04-02 14:10",
+          "feedbackContent": "Start delivery service",
+          "customerName": "Johnny",
+          "contactNo": "0754113256",
+          "email": "john.doe@example.com",
+          "actionSummary": "Informed to the Director board",
+          "lastUpdated": "2024-04-02 14:10"
+      },
+      {
+          "feedbackType": "Complaint",
+          "branch": "Kalutara",
+          "receivedAt": "2024-04-01 10:20",
+          "action": "Pending",
+          "actionTakenBy": "",
+          "actionTakenAt": "",
+          "feedbackContent": "Cashiers should be quick",
+          "customerName": "Dinuri De Silva",
+          "contactNo": "0712349870",
+          "email": "dinu.de@example.com",
+          "actionSummary": "",
+          "lastUpdated": ""
+      },
+      {
+          "feedbackType": "Bug Fix",
+          "branch": "Galle",
+          "receivedAt": "2024-04-01 13:15",
+          "action": "Pending",
+          "actionTakenBy": "",
+          "actionTakenAt": "",
+          "feedbackContent": "Checkout Page does not work",
+          "customerName": "Aruna Sampath",
+          "contactNo": "0777123456",
+          "email": "aruna.sampath@example.com",
+          "actionSummary": "",
+          "lastUpdated": ""
+      }
+  
   ]
 }
