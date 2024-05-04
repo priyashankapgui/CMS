@@ -37,8 +37,9 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    let employeeName = user?.employeeName;
+    const user=JSON.parse(sessionStorage.getItem('user'));
+    let employeeName=user?.employeeName;
+
 
     return (
         <div>
