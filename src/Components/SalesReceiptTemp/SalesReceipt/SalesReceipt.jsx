@@ -1,13 +1,16 @@
-import React ,{ useState} from 'react';
+import React, { useState } from 'react';
 import "./SalesReceipt.css";
+import { useParams } from 'react-router-dom';
 import greenleaf from "../../../Assets/greenleaf.svg";
-import itemsData from "../../Data.json";
 import SugesstionQR from "../../../Assets/qr-code.svg";
 import ReceiptPopup from '../ReceiptPopup/ReceiptPopup';
+import jsonData from '../../Data.json';
 
 function SalesReceipt() {
     const [isPopupOpen, setIsPopupOpen] = useState(true);
-
+    const { billNo } = useParams();
+    const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
+    const { billedAt, billedBy, customerName, paymentMethod, contactNo } = selectedBillData;
     const closePopup = () => {
         setIsPopupOpen(false);
     };
@@ -22,6 +25,26 @@ function SalesReceipt() {
             document.body.innerHTML = originalDocument;
         }
     };
+
+    // Calculate total quantity, gross total, discount, net total, and balance
+    let totalQuantity = 0;
+    let grossTotal = 0;
+    let discount = 0;
+    let netTotal = 0;
+    let received = 5000.00; // Assuming received amount is fixed for now
+    let balance = 0;
+
+    selectedBillData.billedItems.forEach(item => {
+        totalQuantity += item.quantity;
+        grossTotal += item.rate * item.quantity;
+    });
+
+    // Calculation of discount, net total, and balance depends on your business logic
+    // For now, let's assume some fixed values
+    discount = 0.00;
+    netTotal = grossTotal - discount;
+    balance = received - netTotal;
+
     return (
         <>
             {isPopupOpen && (
@@ -41,14 +64,14 @@ function SalesReceipt() {
                         <hr className='invoice-line-top' />
                         <div className="info">
                             <div className="info-section">
-                                <div className="date"><span>Date: </span>14.03.2023 18:02</div>
-                                <div className="bill-number"><span>Bill No: </span>1172-22230039</div>
-                                <div className="user-details"><span>User: </span>Pramu Alwis</div>
+                                <div className="date"><span>Date: </span>{billedAt}</div>
+                                <div className="bill-number"><span>Bill No: </span>{billNo}</div>
+                                <div className="user-details"><span>User: </span>{billedBy}</div>
                             </div>
                             <div className="info-section">
-                                <div className="customer-name"><span>Customer Name: </span>  </div>
-                                <div className="customer-contact"><span>Contact No: </span>    </div>
-                                <div className="payment-method"><span>Payment Method: </span>Cash    </div>
+                                <div className="customer-name"><span>Customer Name: </span> {customerName} </div>
+                                <div className="customer-contact"><span>Contact No: </span>{contactNo}</div>
+                                <div className="payment-method"><span>Payment Method: </span>{paymentMethod}</div>
                             </div>
                         </div>
                         <hr className='invoice-line' />
@@ -63,7 +86,7 @@ function SalesReceipt() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {itemsData.biiReceiptsData.map((item, index) => (
+                                    {selectedBillData.billedItems.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.name}</td>
                                             <td style={{ textAlign: 'right' }}>{item.rate}</td>
@@ -86,27 +109,27 @@ function SalesReceipt() {
                                     <tbody>
                                         <tr>
                                             <td>No Qty </td>
-                                            <td style={{ textAlign: 'left' }}>04</td>
+                                            <td style={{ textAlign: 'left' }}>{totalQuantity}</td>
                                         </tr>
                                         <tr>
                                             <td>Gross Total </td>
-                                            <td style={{ textAlign: 'left' }}>4811.00</td>
+                                            <td style={{ textAlign: 'left' }}>{grossTotal.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Discount </td>
-                                            <td style={{ textAlign: 'left' }}>0.00</td>
+                                            <td style={{ textAlign: 'left' }}>{discount.toFixed(2)}</td>
                                         </tr>
                                         <tr style={{ fontSize: "16px", fontWeight: "bold" }}>
                                             <td>Net Total </td>
-                                            <td style={{ textAlign: 'left' }}>4811.00</td>
+                                            <td style={{ textAlign: 'left' }}>{netTotal.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Received </td>
-                                            <td style={{ textAlign: 'left' }}>5000.00</td>
+                                            <td style={{ textAlign: 'left' }}>{received.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Balance </td>
-                                            <td style={{ textAlign: 'left' }}>189.00</td>
+                                            <td style={{ textAlign: 'left' }}>{balance.toFixed(2)}</td>
                                         </tr>
                                     </tbody>
                                 </table>

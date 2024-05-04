@@ -280,7 +280,6 @@
       "quantity": 1
     }
   ],
-  
   "worklistTableData": [
     {
       "billNo": "Gal-B24022091",
@@ -289,7 +288,7 @@
       "customerName": "",
       "status": "Completed",
       "billedBy": "Pramu Alwis",
-      "paymentMethod": "Card",
+      "paymentMethod": "Cash",
       "billedItems": [
         {
           "name": "Sustagen Chocolate 400g",
@@ -391,46 +390,46 @@
   ],
   "feedbackRowData": [
     {
-        "feedbackType": "Suggestion",
-        "branch": "Galle",
-        "receivedAt": "2024-03-30 12:37",
-        "action": "Taken",
-        "actionTakenBy": "Kasun Perera",
-        "actionTakenAt": "2024-04-02 14:10",
-        "feedbackContent": "Start delivery service",
-        "customerName": "Johnny",
-        "contactNo": "0754113256",
-        "email": "john.doe@example.com",
-        "actionSummary": "Informed to the Director board",
-        "lastUpdated": "2024-04-02 14:10"
+      "feedbackType": "Suggestion",
+      "branch": "Galle",
+      "receivedAt": "2024-03-30 12:37",
+      "action": "Taken",
+      "actionTakenBy": "Kasun Perera",
+      "actionTakenAt": "2024-04-02 14:10",
+      "feedbackContent": "Start delivery service",
+      "customerName": "Johnny",
+      "contactNo": "0754113256",
+      "email": "john.doe@example.com",
+      "actionSummary": "Informed to the Director board",
+      "lastUpdated": "2024-04-02 14:10"
     },
     {
-        "feedbackType": "Complaint",
-        "branch": "Kalutara",
-        "receivedAt": "2024-04-01 10:20",
-        "action": "Pending",
-        "actionTakenBy": "",
-        "actionTakenAt": "",
-        "feedbackContent": "Cashiers should be quick",
-        "customerName": "Dinuri De Silva",
-        "contactNo": "0712349870",
-        "email": "dinu.de@example.com",
-        "actionSummary": "",
-        "lastUpdated": ""
+      "feedbackType": "Complaint",
+      "branch": "Kalutara",
+      "receivedAt": "2024-04-01 10:20",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Cashiers should be quick",
+      "customerName": "Dinuri De Silva",
+      "contactNo": "0712349870",
+      "email": "dinu.de@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
     },
     {
-        "feedbackType": "Bug Fix",
-        "branch": "Galle",
-        "receivedAt": "2024-04-01 13:15",
-        "action": "Pending",
-        "actionTakenBy": "",
-        "actionTakenAt": "",
-        "feedbackContent": "Checkout Page does not work",
-        "customerName": "Aruna Sampath",
-        "contactNo": "0777123456",
-        "email": "aruna.sampath@example.com",
-        "actionSummary": "",
-        "lastUpdated": ""
+      "feedbackType": "Bug Fix",
+      "branch": "Galle",
+      "receivedAt": "2024-04-01 13:15",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Checkout Page does not work",
+      "customerName": "Aruna Sampath",
+      "contactNo": "0777123456",
+      "email": "aruna.sampath@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
     }
-]
+  ]
 }
