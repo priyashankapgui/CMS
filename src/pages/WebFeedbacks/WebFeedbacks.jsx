@@ -58,6 +58,11 @@ export const WebFeedbacks = () => {
     // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleString('en-US', options);
+    };
+
     return (
         <>
             <div className="top-nav-blue-text">
@@ -111,11 +116,11 @@ export const WebFeedbacks = () => {
                                                 {openRowIndex === index ? <IoIosArrowDropdown className="dropdown-icon" /> : <IoIosArrowDropup className="dropdown-icon" />}
                                             </td>
                                             <td>{row.feedbackType}</td>
-                                            <td>{row.branch}</td>
-                                            <td>{row.createdAt}</td>
+                                            <td>{row.branchName}</td>
+                                            <td>{formatDate(row.createdAt)}</td> 
                                             <td>{row.action}</td>
                                             <td>{row.actionTakenBy}</td>
-                                            <td>{row.actionTakenAt}</td>
+                                            <td>{formatDate(row.updatedAt)}</td>
                                         </tr>
                                         {openRowIndex === index && (
                                             <tr>
@@ -126,15 +131,15 @@ export const WebFeedbacks = () => {
                                                             <tbody>
                                                                 <tr>
                                                                     <td className='d-t-color-left'>Feedback Content:</td>
-                                                                    <td>{row.feedbackContent}</td>
+                                                                    <td>{row.message}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className='d-t-color-left'>Customer Name:</td>
-                                                                    <td>{row.customerName}</td>
+                                                                    <td>{row.name}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className='d-t-color-left'>Contact No:</td>
-                                                                    <td>{row.contactNo}</td>
+                                                                    <td>{row.phone}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td className='d-t-color-left'>Email:</td>
@@ -165,7 +170,7 @@ export const WebFeedbacks = () => {
                                                                 </tr>
                                                                 <tr>
                                                                     <td className='d-t-color-left'>Last Updated:</td>
-                                                                    <td>{row.lastUpdated}</td>
+                                                                    <td>{formatDate(row.updatedAt)}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
