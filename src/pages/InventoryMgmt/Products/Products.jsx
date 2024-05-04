@@ -4,7 +4,7 @@ import Layout from "../../../Layout/Layout";
 import "./Products.css";
 import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import Buttons from '../../../Components/Buttons/Buttons';
+import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from '../../../Components/Data.json';
@@ -12,6 +12,8 @@ import dropdownOptions from '../../../Components/Data.json';
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import { CiSearch } from "react-icons/ci";
 import { Icon } from "@iconify/react";
+import AddNewProductPopup from "./AddNewProductPopup";
+import UpdateProductPopup from "./UpdateProductPopup";
 
 
 export const Products = () => {
@@ -147,7 +149,8 @@ export const Products = () => {
                         <div className="p-BtnSection">
                             <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
                             <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
-                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }}> New + </Buttons>
+                            {/* <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }}> New + </Buttons> */}
+                            <AddNewProductPopup />
                         </div>
                     </div>
                     <div className="product-content-middle">
@@ -162,8 +165,9 @@ export const Products = () => {
                                     'Description': product.description,
                                     'Actions': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                            <Icon icon="bitcoin-icons:edit-outline"
-                                                style={{ fontSize: '24px' }} />
+                                            {/* <Icon icon="bitcoin-icons:edit-outline"
+                                                style={{ fontSize: '24px' }} /> */}
+                                            <UpdateProductPopup/>
                                             <DeletePopup />
                                         </div>
                                     )

@@ -4,7 +4,7 @@ import Layout from "../../../Layout/Layout";
 import "./Suppliers.css";
 import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import Buttons from '../../../Components/Buttons/Buttons';
+import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from '../../../Components/Data.json';
