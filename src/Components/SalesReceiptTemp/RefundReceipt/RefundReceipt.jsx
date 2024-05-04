@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import "./RefundReceipt.css";
+import { useParams } from 'react-router-dom';
 import greenleaf from "../../../Assets/greenleaf.svg";
-import itemsData from "../../Data.json";
 import SugesstionQR from "../../../Assets/qr-code.svg";
 import ReceiptPopup from '../ReceiptPopup/ReceiptPopup';
+import jsonData from '../../Data.json';
 
 function RefundReceipt() {
     const [isPopupOpen, setIsPopupOpen] = useState(true);
-
+    const { RTBNo } = useParams();
+    const selectedReturnBillData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
+    const { branch, billNo, returnedAt, returnedBy, customerName, status, contactNo } = selectedReturnBillData;
     const closePopup = () => {
         setIsPopupOpen(false);
     };
@@ -22,6 +25,14 @@ function RefundReceipt() {
             document.body.innerHTML = originalDocument;
         }
     };
+
+    // Calculate total quantity and total amount
+    let totalQuantity = 0;
+    let totalAmount = 0;
+    selectedReturnBillData.returnItems.forEach(item => {
+        totalQuantity += item.quantity;
+        totalAmount += item.rate * item.quantity;
+    });
 
     return (
         <>
@@ -44,14 +55,14 @@ function RefundReceipt() {
                         <hr className='invoice-line-top' />
                         <div className="info">
                             <div className="info-section">
-                                <div className="date"><span>Date: </span>14.03.2023 18:12</div>
-                                <div className="return-bill-number"><span>RTB No: </span>1172-22230125</div>
-                                <div className="bill-number"><span>Bill No: </span>1172-22230039</div>
+                                <div className="date"><span>Date: </span>{returnedAt}</div>
+                                <div className="return-bill-number"><span>RTB No: </span>{RTBNo}</div>
+                                <div className="bill-number"><span>Bill No: </span>{billNo}</div>
                             </div>
                             <div className="info-section">
-                                <div className="user-details"><span>User: </span>Pramu Alwis</div>
-                                <div className="customer-name"><span>Customer Name: </span>  </div>
-                                <div className="customer-contact"><span>Contact No: </span>    </div>
+                                <div className="user-details"><span>User: </span>{returnedBy}</div>
+                                <div className="customer-name"><span>Customer Name: </span>{customerName} </div>
+                                <div className="customer-contact"><span>Contact No: </span> {contactNo} </div>
                             </div>
                         </div>
                         <hr className='invoice-line' />
@@ -66,7 +77,7 @@ function RefundReceipt() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {itemsData.biiReceiptsData.map((item, index) => (
+                                    {selectedReturnBillData.returnItems.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.name}</td>
                                             <td style={{ textAlign: 'right' }}>{item.rate}</td>
@@ -89,14 +100,12 @@ function RefundReceipt() {
                                     <tbody>
                                         <tr>
                                             <td>No Qty </td>
-                                            <td style={{ textAlign: 'left' }}>04</td>
+                                            <td style={{ textAlign: 'left' }}>{totalQuantity}</td>
                                         </tr>
-
                                         <tr style={{ fontSize: "16px", fontWeight: "bold" }}>
                                             <td>Total</td>
-                                            <td style={{ textAlign: 'left' }}>4811.00</td>
+                                            <td style={{ textAlign: 'left' }}>{totalAmount.toFixed(2)}</td>
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
