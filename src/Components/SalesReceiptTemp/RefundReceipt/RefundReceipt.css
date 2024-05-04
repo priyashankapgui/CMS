@@ -1,0 +1,121 @@
+.sales-receipt {
+    width: 450px;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    font-family: Poppins;
+}
+
+.sys-logo {
+    width: 120px;
+    height: auto;
+}
+
+.refund-Txt {
+    text-align: center;
+}
+
+.header {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.store-details {
+    margin-top: 10px;
+}
+
+.branchAddress,
+.branchPhone,
+.branchEmail {
+    font-size: 14px;
+}
+
+.info {
+    margin: 10px 0;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.info span {
+    font-weight: 500;
+
+}
+
+.items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.items th,
+.items td {
+    padding: 2px;
+    border: 1px solid #fafafa;
+    text-align: left;
+    font-size: 14px;
+}
+
+.items thead th {
+    background-color: #ececec;
+}
+
+hr.invoice-line-top {
+    border-top: 1px solid black;
+}
+
+hr.invoice-line {
+    border-top: 1px dashed;
+}
+
+.billMiddle {
+    display: flex;
+    justify-content: space-around;
+}
+
+.inquaryQR {
+    font-size: 13px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center
+}
+
+.qrImg {
+    width: 100px;
+    height: 100px;
+    margin-top: 5px;
+
+}
+.total{
+   justify-content: center;
+}
+.total-table td {
+    padding: 2px;
+}
+
+.total-table {
+    width: 100%;
+    font-size: 14px;
+    margin-right: 47px;
+
+}
+
+.footer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.footer p {
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.footer .special-note {
+    margin-top: 10px;
+}
