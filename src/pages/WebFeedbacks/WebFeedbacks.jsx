@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useCallback} from 'react';
 import Layout from '../../Layout/Layout';
 import Buttons from '../../Components/Buttons/SquareButtons/Buttons';
 import { IoIosArrowDropdown, IoIosArrowDropup, IoMdCreate, IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
@@ -14,16 +14,12 @@ export const WebFeedbacks = () => {
     const [editModeIndex, setEditModeIndex] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5; // Number of rows to display per page
+    const feedbackApiUrl = process.env.REACT_APP_FEEDBACK_API;
 
     const [rows, setRows] = useState([]);
 
-    useEffect(() => {
-       fetchFeedbacks();
-        
-    }, []);
-
-    const fetchFeedbacks = () => {
-        fetch('http://localhost:8080/feedback')
+    const fetchFeedbacks = useCallback(() => {
+        fetch(feedbackApiUrl)
             .then(response => response.json())
             .then(data => {
                 setRows(data);
@@ -31,7 +27,11 @@ export const WebFeedbacks = () => {
             .catch(error => {
                 console.error('Failed to fetch data:', error);
             });
-    };
+    }, [feedbackApiUrl]);
+
+    useEffect(() => {
+       fetchFeedbacks();
+    }, [fetchFeedbacks]);
 
     const handleRowClick = (index) => {
         setOpenRowIndex(openRowIndex === index ? null : index);
