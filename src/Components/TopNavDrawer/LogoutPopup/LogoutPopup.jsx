@@ -6,10 +6,10 @@ const style = {
     position: 'absolute',
     top: '10%',
     left: '92%',
-    transform: 'translateX(-50%)', 
+    transform: 'translateX(-50%)',
     width: '80vw',
-    maxWidth: '12.5em', 
-    height: '3.125em', 
+    maxWidth: '12.5em',
+    height: '3.125em',
     backgroundColor: 'rgba(235, 19, 19, 0.7)',
     fontSize: '1em',
     border: '1px solid #fff',
@@ -38,7 +38,7 @@ const LogoutPopup = ({ open, onClose }) => {
         <Modal open={open} onClose={onClose}>
             <Button
                 sx={style}
-                tabIndex={0} // Ensure tabIndex is a number
+                tabIndex={0}
                 onClick={handleLogout}
             >
                 Logout

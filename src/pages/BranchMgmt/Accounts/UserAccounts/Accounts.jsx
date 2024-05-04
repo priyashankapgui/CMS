@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../../../Layout/Layout';
 import './Accounts.css';
 import { Link } from 'react-router-dom';
@@ -13,6 +13,34 @@ import { Icon } from '@iconify/react';
 
 export function Accounts() {
     const [clickedLink, setClickedLink] = useState('Users');
+    const [employeeData, setEmployeeData] = useState([]);
+
+    useEffect(() => {
+        const getEmployeeData = async () => {
+            try {
+                const token = sessionStorage.getItem("accessToken");
+                const response = await fetch("http://localhost:8080/api/employees", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json();
+                setEmployeeData(data);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+
+        getEmployeeData();
+    }, []);
+
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -24,7 +52,7 @@ export function Accounts() {
 
     return (
         <>
-            <div className="accounts">
+            <div className="top-nav-blue-text">
                 <h4>Accounts - {clickedLink}</h4>
             </div>
             <Layout>
@@ -62,13 +90,17 @@ export function Accounts() {
                         <div className="Button-Section">
                             <Buttons type="submit" id="save-btn" style={{ backgroundColor: '#23A3DA', color: 'white' }}> Save </Buttons>
                             <Buttons type="clear" id="clear-btn" style={{ backgroundColor: '#FFFFFF', color: 'red' }}>Clear</Buttons>
-                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: 'white', color: '#23A3DA' }}>New +</Buttons>
+                            <Link to="/accounts/create-new-accounts">
+                                <Buttons type="submit" id="new-btn" style={{ backgroundColor: 'white', color: '#23A3DA' }}>
+                                    New +
+                                </Buttons>
+                            </Link>
                         </div>
                     </div>
                     <div className="account-users-middle">
                         <TableWithPagi
                             columns={['Branch Name', 'Emp ID', 'Emp Name', 'Gender', 'Role', '']}
-                            rows={jsonData.registerdUsersData.map((employee) => ({
+                            rows={employeeData.map((employee) => ({
                                 branch: employee.branch,
                                 empId: employee.empId,
                                 empName: employee.empName,

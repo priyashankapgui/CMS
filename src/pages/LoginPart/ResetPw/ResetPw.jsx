@@ -7,6 +7,51 @@ import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 
 const ResetPw = () => {
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    if (!password || !confirmPassword) {
+      setError("Please fill in both password fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get("token");
+
+
+
+    // If token is not present, redirect to login page
+    if (!token) {
+      window.location.href = "/";
+    } else {
+      const response = await fetch("http://localhost:8080/api/login/resetpw", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resetToken: token,
+          newPassword: password,
+          confirmPassword: confirmPassword,
+        }),
+      }).catch((error) => console.error("Error:", error));
+
+      if (response.ok) {
+        const data = await response.json();
+        setShowSubPopup(true);
+
+        console.log("Response data:", data);
+      } else {
+        const data = await response.json();
+        setError(data.message);
+      }
+    }
+  };
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,22 +65,6 @@ const ResetPw = () => {
 
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
-  };
-
-  const handleResetPassword = (e) => {
-    e.preventDefault();
-
-    if (!password || !confirmPassword) {
-      setError("Please fill in both password fields.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    setShowSubPopup(true);
   };
 
   const handleOkButtonClick = () => {
@@ -53,6 +82,7 @@ const ResetPw = () => {
 
   return (
     <div className="s-rp-container">
+      <h2 className="s-flexflow-text-rp">Flex Flow</h2>
       <form className="s-rp-form" onSubmit={handleResetPassword}>
         <div className="s-resetText">
           <h2>Reset Password</h2>
@@ -71,14 +101,18 @@ const ResetPw = () => {
             onChange={handlePasswordChange}
             required
           >
-     
             <button
               type="button"
               onClick={toggleShowPassword}
               className="toggle-password-button"
-              style={{ border: "none", background: "none", cursor: "pointer", padding: 0 }}
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
+              {showPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
           <p>Confirm New Password:</p>
@@ -94,14 +128,18 @@ const ResetPw = () => {
             onChange={handleConfirmPasswordChange}
             required
           >
-      
             <button
               type="button"
               onClick={toggleShowConfirmPassword}
               className="toggle-password-button"
-              style={{ border: "none", background: "none", cursor: "pointer", padding: 0 }}
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
             >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
 
@@ -124,8 +162,14 @@ const ResetPw = () => {
           title="Alert"
           headTextColor="White"
           closeIconColor="white"
-          bodyContent={(
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          bodyContent={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <p>Your password has been reset successfully.</p>
               <Link to="/">
                 <Buttons
@@ -138,7 +182,7 @@ const ResetPw = () => {
                 </Buttons>
               </Link>
             </div>
-          )}
+          }
         />
       )}
     </div>

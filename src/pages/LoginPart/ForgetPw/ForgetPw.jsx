@@ -17,16 +17,18 @@ const ForgetPw = () => {
     setError("");
   };
 
-  const handleOpen = (e) => {
+  const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
-    // Validate if the email is empty
+
+
     if (!email) {
       setError("Please enter your email address.");
       return;
     }
-    // Validate if the email ends with "@gmail.com"
+
+
     if (
-      !email.endsWith("@gmail.com") ||
+      // !email.endsWith("@gmail.com") ||
       !email.includes("@") ||
       !email.includes(".") ||
       !email.includes("com")
@@ -34,13 +36,33 @@ const ForgetPw = () => {
       setError("Please enter a valid email address.");
       return;
     }
-    // If email is valid, show the SubPopup
-    console.log("Email is valid. Setting showSubPopup to true...");
-    setShowSubPopup(true);
+
+    const response = await fetch("http://localhost:8080/api/login/fp", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+      }),
+    }).catch((error) => console.error("Error:", error));
+
+
+    if (response.ok) {
+      setShowSubPopup(true);
+    } else {
+      const data = await response.json();
+      setError(data.message);
+    }
+  };
+
+  const handleOkButtonClick = () => {
+    setShowSubPopup(false);
   };
 
   return (
     <div className="s-fp-container">
+       <h2 className="s-flexflow-text-fp">Flex Flow</h2>
       <form className="s-fp-form">
         <div className="s-forgotText">
           <h2>Forgot Password</h2>
@@ -49,15 +71,35 @@ const ForgetPw = () => {
         <p>Enter your email to reset your password:</p>
 
         <div className="s-fp-inputField">
-          <InputField type="email" id="emailF" name="emailF" placeholder="example@gmail.com" editable={true} height="3em" width="30em" onChange={handleEmailChange} required><FaEnvelope className="s-fp-icon" /></InputField>
-          <Buttons type="submit" id="confirm-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleOpen}> Confirm </Buttons>
+          <InputField
+            type="email"
+            id="emailF"
+            name="emailF"
+            placeholder="example@gmail.com"
+            editable={true}
+            height="3em"
+            width="30em"
+            onChange={handleEmailChange}
+            required
+          >
+            <FaEnvelope className="s-fp-icon" />
+          </InputField>
+          <Buttons
+            type="submit"
+            id="confirm-btn"
+            style={{ backgroundColor: "#23A3DA", color: "white" }}
+            onClick={handleOpen}
+          >
+            {" "}
+            Confirm{" "}
+          </Buttons>
         </div>
 
         {error && <p className="fp-error">{error}</p>}
 
         <p className="backtologin">
           Remember your password?
-          <Link to="/">  Login</Link>
+          <Link to="/"> Login</Link>
         </p>
       </form>
 
@@ -70,18 +112,28 @@ const ForgetPw = () => {
           title="Alert"
           headTextColor="White"
           closeIconColor="white"
-          bodyContent={(
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          bodyContent={
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
               <p>Your password reset link has been sent to your email</p>
 
 
-              {/*  Change this one later when it can be sent by email. */}
+              <Buttons
+                type="button"
+                id="ok-btn"
+                style={{ backgroundColor: "#23A3DA", color: "white" }}
+                onClick={handleOkButtonClick}
+              >
+                Ok{" "}
+              </Buttons>
 
-              <Link to="/login/resetpw">
-                <Buttons type="button" id="ok-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}>Ok </Buttons>
-              </Link>
             </div>
-          )}
+          }
         />
       )}
     </div>

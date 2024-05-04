@@ -7,7 +7,7 @@ import InputField from '../../InputField/InputField';
 import InputDropdown from '../../InputDropdown/InputDropdown';
 import { useDropzone } from 'react-dropzone';
 import dropdownOptions from '../../Data.json';
-import './MyAccountDetails.css'; 
+import './MyAccountDetails.css';
 
 function MyAccountDetails() {
     const [editable, setEditable] = useState(false);
@@ -37,10 +37,22 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
+    const user=JSON.parse(sessionStorage.getItem('user'));
+    let employeeName=user?.employeeName;
+
+
     return (
-        <div> {/* Enclosing block-level element */}
+        <div>
             <SubPopup
-                triggerComponent={<div className="profile-dp" />}
+                triggerComponent={
+                    <div className="userProfile" >
+                        <div className="profile-dp" />
+                        <div className="userName">
+                            <h4>{employeeName}</h4>
+                        </div>
+                    </div>
+
+                }
                 popupPosition="70%"
                 headBG="none"
                 title={
@@ -53,18 +65,18 @@ function MyAccountDetails() {
                 show={showSubPopup}
                 onClose={handleCloseSubPopup}
                 bodyContent={(
-                    <div className="form-background"> {/* Changed from styled component to div */}
+                    <div className="view-profile-form-background">
                         <div className="branch-field">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
                             <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
-                        <div className="flex-content"> {/* Changed from styled component to div */}
+                        <div className="flex-content-ViewP">
                             <div className="user-role-field">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
                                 <InputDropdown id="userRole" name="userRole" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
                             </div>
-                            <div className="change-dp" {...(getRootProps())}> {/* Changed from styled component to div */}
-                                {imageUrl && <img className="preview-image" src={imageUrl} alt="Preview" />} {/* Changed from styled component to img */}
+                            <div className="change-dp" {...(getRootProps())}>
+                                {imageUrl && <img className="preview-image" src={imageUrl} alt="Preview" />}
                                 <label className="upload-label" htmlFor="profilePicture">
                                     <Icon icon="fluent:camera-add-20-regular" style={{ fontSize: "0.813em" }} />
                                 </label>

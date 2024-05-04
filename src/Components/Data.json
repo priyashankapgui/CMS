@@ -65,7 +65,7 @@
         ]
       },
       {
-        "name": "Kaluthara",
+        "name": "Colombo",
         "data": [
           120000,
           170000,
@@ -141,7 +141,7 @@
         ]
       },
       {
-        "name": "Kaluthara",
+        "name": "Colombo",
         "data": [
           220000,
           270000,
@@ -278,6 +278,200 @@
       "name": "Kotmale Non Fat Milk 1L",
       "rate": 410.00,
       "quantity": 1
+    }
+  ],
+  "worklistTableData": [
+    {
+      "billNo": "Gal-B24022091",
+      "billedAt": "20-12-2023  20:58",
+      "branch": "Galle",
+      "customerName": "",
+      "status": "Completed",
+      "billedBy": "Pramu Alwis",
+      "paymentMethod": "Card",
+      "billedItems": [
+        {
+          "name": "Sustagen Chocolate 400g",
+          "rate": 4200.00,
+          "quantity": 1,
+          "batchNo": "SH234157k"
+        },
+        {
+          "name": "Vim Dish Wash Bar 100g",
+          "rate": 100.50,
+          "quantity": 2,
+          "batchNo": "Bx23415N"
+        },
+        {
+          "name": "Kotmale Non Fat Milk 1L",
+          "rate": 410.00,
+          "quantity": 1,
+          "batchNo": "KK10415c"
+        }
+      ]
+    },
+    {
+      "billNo": "Gal-B24022092",
+      "billedAt": "21-12-2023  12:18",
+      "branch": "Galle",
+      "customerName": "Kasun Madushanka",
+      "status": "Completed",
+      "billedBy": "Pramu Alwis",
+      "paymentMethod": "Cash",
+      "billedItems": [
+        {
+          "name": "Milo Chocolate 400g",
+          "rate": 280.40,
+          "quantity": 2,
+          "batchNo": "xyz0415c"
+        },
+        {
+          "name": "SamaPosha 100g",
+          "rate": 120.00,
+          "quantity": 2,
+          "batchNo": "ssK04156"
+        },
+        {
+          "name": "Kothamle Yoghurt 80g",
+          "rate": 80.00,
+          "quantity": 10,
+          "batchNo": [
+            "KS104123",
+            "KS104127",
+            "KS104131"
+          ]
+        }
+      ]
+    }
+  ],
+  "ReturnBillListTableData": [
+    {
+      "RTBNo": "Gal-R24021023",
+      "billNo": "Gal-B24022091",
+      "returnedAt": "20-12-2023  21:10",
+      "branch": "Galle",
+      "customerName": "",
+      "status": "Completed",
+      "returnedBy": "Pramu Alwis",
+      "reason": " Customer Request",
+      "returnItems": [
+        {
+          "name": "Sustagen Chocolate 400g",
+          "rate": 4200.00,
+          "quantity": 1,
+          "batchNo": "SH234157k"
+        },
+        {
+          "name": "Vim Dish Wash Bar 100g",
+          "rate": 100.50,
+          "quantity": 2,
+          "batchNo": "Bx23415N"
+        }
+      ]
+    },
+    {
+      "RTBNo": "Gal-R24021024",
+      "billNo": "Gal-B24022099",
+      "returnedAt": "21-12-2023  12:25",
+      "branch": "Galle",
+      "customerName": "Kasun Madushanka",
+      "status": "Completed",
+      "returnedBy": "Pramu Alwis",
+      "reason": "Price Error",
+      "returnItems": [
+        {
+          "name": "Milo Chocolate 400g",
+          "rate": 280.40,
+          "quantity": 2,
+          "batchNo": "xyz0415c"
+        }
+      ]
+    }
+  ],
+  "feedbackRowData": [
+    {
+      "feedbackType": "Suggestion",
+      "branch": "Galle",
+      "receivedAt": "2024-04-10 12:37",
+      "action": "Taken",
+      "actionTakenBy": "Kasun Perera",
+      "actionTakenAt": "2024-04-02 14:10",
+      "feedbackContent": "Arrange Delivery service. It's very useful for us. Thank you!",
+      "customerName": "John Doe",
+      "contactNo": "1234567890",
+      "email": "john.doe@example.com",
+      "actionSummary": "Informed to the Director board",
+      "lastUpdated": "2024-04-10 14:10"
+    },
+    {
+      "feedbackType": "Complain",
+      "branch": "Galle",
+      "receivedAt": "2024-04-08 11:15",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Cashiers are not working very well",
+      "customerName": "Jane Smith",
+      "contactNo": "0987654321",
+      "email": "jane.smith@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    },
+    {
+      "feedbackType": "Suggestion",
+      "branch": "Kaluthara",
+      "receivedAt": "2024-04-09 15:30",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Feedback Content B",
+      "customerName": "Jane Smith",
+      "contactNo": "0987654321",
+      "email": "jane.smith@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    },
+    {
+      "feedbackType": "Complain",
+      "branch": "Kaluthara",
+      "receivedAt": "2024-04-01 11:23",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Feedback Content B",
+      "customerName": "Jane Smith",
+      "contactNo": "0987654321",
+      "email": "jane.smith@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    },
+    {
+      "feedbackType": "Complain",
+      "branch": "Galle",
+      "receivedAt": "2024-04-15 13:05",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Feedback Content B",
+      "customerName": "Jane Smith",
+      "contactNo": "0987654321",
+      "email": "jane.smith@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    },
+    {
+      "feedbackType": "Suggestion",
+      "branch": "Kaluthara",
+      "receivedAt": "2024-04-15 23:15",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Feedback Content B",
+      "customerName": "Jane Smith",
+      "contactNo": "0987654321",
+      "email": "jane.smith@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
     }
   ]
 }

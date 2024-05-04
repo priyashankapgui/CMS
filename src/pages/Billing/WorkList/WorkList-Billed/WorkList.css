@@ -9,14 +9,15 @@
     height: fit-content;
 }
 
-.Content1 {
+.W-Content1 {
     display: flex;
     height: 80px;
     gap: 30px;
     border-bottom: 3px solid #D9D9D9;
+    width:  100%;
 }
 
-.BtnSection {
+.WorklistBtnSection {
     display: flex;
     gap: 15px;
 }

@@ -37,6 +37,11 @@
     width: 100%;
 }
 
+.info span {
+    font-weight: 500;
+
+}
+
 .items table {
     width: 100%;
     border-collapse: collapse;
@@ -63,13 +68,36 @@ hr.invoice-line {
     border-top: 1px dashed;
 }
 
-.total td {
+.billMiddle {
+    display: flex;
+    justify-content: space-around;
+}
+
+.inquaryQR {
+    font-size: 13px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center
+}
+
+.qrImg {
+    width: 100px;
+    height: 100px;
+    margin-top: 5px;
+
+}
+
+.total-table td {
     padding: 2px;
 }
 
-.total table {
-    margin: 10px 0 10px 50%;
+.total-table {
+    width: 100%;
     font-size: 14px;
+    margin-right: 47px;
+
 }
 
 .footer {

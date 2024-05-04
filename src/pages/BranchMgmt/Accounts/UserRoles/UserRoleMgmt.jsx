@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
 import './UserRoleMgmt.css';
-import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
 import jsonData from "../../../../Components/Data.json";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
-import { Icon } from "@iconify/react";
+import AddNewUserRolePopup from './AddNewUserRolePopup';
+import UpdateUserRolePopup from './UpdateUserRolePopup';
 
 
 export const UserRoleMgmt = () => {
@@ -25,7 +25,7 @@ export const UserRoleMgmt = () => {
 
     return (
         <>
-            <div className="userRoleMgmt">
+            <div className="top-nav-blue-text">
                 <h4>Accounts - User Roles Mgmt</h4>
             </div>
             <Layout>
@@ -53,7 +53,7 @@ export const UserRoleMgmt = () => {
                 <div className="user-roles-middle-container">
                     <div className="user-roles-middle-top-content">
                         <h3 className='user-roles-available-title'>Available Roles</h3>
-                        <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} > New + </Buttons>
+                        <AddNewUserRolePopup />
                     </div>
                     <div className="BranchField">
                         <InputLabel color="#0377A8">Branch</InputLabel>
@@ -67,8 +67,7 @@ export const UserRoleMgmt = () => {
                                 Role: role.Role,
                                 action: (
                                     <div style={{ display: "flex", gap: "0.7em" }}>
-                                        <Icon icon="bitcoin-icons:edit-outline"
-                                            style={{ fontSize: '24px' }} />
+                                        <UpdateUserRolePopup />
 
                                         <DeletePopup handleDelete={handleDelete} />
                                     </div>

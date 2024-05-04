@@ -5,14 +5,15 @@ import InputLabel from "../../../../Components/Label/InputLabel";
 import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
 import DatePicker from "../../../../Components/DatePicker/DatePicker"
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
-import dropdownOptions from '../../../../Components/Data.json';
 import InputField from "../../../../Components/InputField/InputField";
 import { Link } from "react-router-dom"
 import { BsEye } from "react-icons/bs";
+import jsonData from "../../../../Components/Data.json";
+import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 
 export const WorkList = () => {
-
     const [clickedLink, setClickedLink] = useState('Billed');
+
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -20,15 +21,15 @@ export const WorkList = () => {
 
     return (
         <>
-            <div className="work-list">
-                <h4>Work List</h4>
+            <div className="top-nav-blue-text">
+                <h4>Work List - Billed</h4>
             </div>
             <Layout>
                 <div className="worklist-filter-container">
-                    <div className="Content1">
+                    <div className="W-Content1">
                         <div className="branchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
                         </div>
                         <div className="dateField">
                             <InputLabel for="to-date" color="#0377A8">To</InputLabel>
@@ -44,11 +45,10 @@ export const WorkList = () => {
                         </div>
                         <div className="productField">
                             <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} />
-
+                            <InputField type="text" id="billNo" name="billNo" editable={true} width="25em" />
                         </div>
                     </div>
-                    <div className="BtnSection">
+                    <div className="WorklistBtnSection">
                         <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
                         <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
                     </div>
@@ -65,7 +65,7 @@ export const WorkList = () => {
                         </div>
                         <div className={clickedLink === 'Returned' ? 'clicked' : ''}>
                             <Link
-                                to="/work-list/returnbill"
+                                to="/work-list/returnbill-list"
                                 onClick={() => handleLinkClick('Returned')}
                             >
                                 Returned
@@ -86,21 +86,33 @@ export const WorkList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Gal-B24022091</td>
-                                <td>20-12-2023  20:58</td>
-                                <td>Galle</td>
-                                <td></td>
-                                <td>Completed</td>
-                                <td>Pramu Alwis</td>
-                                <td>Card</td>
-                                <td><BsEye /></td>
-                            </tr>
+                            {jsonData.worklistTableData.map((row, index) => (
+                                <tr key={index}>
+                                    <td>{row.billNo}</td>
+                                    <td>{row.billedAt}</td>
+                                    <td>{row.branch}</td>
+                                    <td>{row.customerName}</td>
+                                    <td>{row.status}</td>
+                                    <td>{row.billedBy}</td>
+                                    <td>{row.paymentMethod}</td>
+                                    <td>
+                                        <Link to={`/work-list/viewbill/${row.billNo}`}>
+                                            <RoundButtons
+                                                id={`eyeViewBtn-${index}`}
+                                                type="submit"
+                                                name={`eyeViewBtn-${index}`}
+                                                icon={<BsEye />}
+                                            />
+                                        </Link>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
-
                 </div>
+
             </Layout>
         </>
     );
 };
+

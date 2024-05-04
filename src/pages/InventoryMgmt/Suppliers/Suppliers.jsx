@@ -44,7 +44,7 @@ export const Suppliers = () => {
        
     return (
         <>
-        <div className="suppliers">
+        <div className="top-nav-blue-text">
             <h4>Suppliers</h4>
         </div>
         <Layout>

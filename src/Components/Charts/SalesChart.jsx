@@ -8,7 +8,7 @@ class SalesChart extends React.Component {
         super(props);
 
         this.state = {
-            series: [], 
+            series: [],
             options: {
                 chart: {
                     height: 350,
@@ -52,7 +52,7 @@ class SalesChart extends React.Component {
                     size: 1
                 },
                 xaxis: {
-                    categories: Array.from(Array(32).keys()).map(String), 
+                    categories: Array.from(Array(32).keys()).map(String),
                     title: {
                         text: 'Days',
                         style: {
