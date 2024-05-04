@@ -174,8 +174,8 @@ export const Sales = () => {
                                         <td><InputField type="text" id={`unitPrice_${row.id}`} name="unitPrice" editable={false} width="95px" value={row.unitPrice} onChange={(e) => handleInputChange(row.id, 'unitPrice', e.target.value)} /></td>
                                         <td><InputField type="text" id={`discount_${row.id}`} name="discount" editable={true} width="60px" value={row.discount} onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)} /></td>
                                         <td><InputField type="text" id={`amount_${row.id}`} name="amount" editable={false} width="95px" value={row.amount} onChange={(e) => handleInputChange(row.id, 'amount', e.target.value)} /></td>
-                                        <td style={{ paddingRight: '15px' }}><FiPlus onClick={handleAddRow} /></td>
-                                        <td><AiOutlineDelete onClick={() => handleDeleteRow(row.id)} /></td>
+                                        <td style={{ paddingRight: '15px', cursor: 'pointer' }}><FiPlus onClick={handleAddRow} style={{ cursor: 'pointer' }} /></td>
+                                        <td><AiOutlineDelete onClick={() => handleDeleteRow(row.id)} style={{cursor: 'pointer' }}/></td>
                                     </tr>
                                 ))}
                             </tbody>

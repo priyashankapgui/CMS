@@ -11,14 +11,17 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import jsonData from '../../../../Components/Data.json';
-import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt';
+import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
     const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
     const [showSalesReceipt, setShowSalesReceipt] = useState(false);
 
-    
+    const handleReprintClick = () => {
+        setShowSalesReceipt(true);
+    };
+
     if (!selectedBillData) {
         return <div>Bill not found</div>;
     }
@@ -73,14 +76,15 @@ export const ViewBill = () => {
                     <div className="btnSection-viewBill">
                         <div className="returnBtn">
                             <InputLabel> Return </InputLabel>
-                            <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                            <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
+                                <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                            </Link>
                         </div>
 
                         <div className="reprintBtn">
                             <InputLabel> Reprint </InputLabel>
-                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />}  onClick={() => setShowSalesReceipt(true)} />
+                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
                         </div>
-                        {showSalesReceipt && <SalesReceipt />}
                         <div className="cancelBillBtn">
                             <InputLabel> Cancel Bill </InputLabel>
                             <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={() => console.log("Cancel Bill Button clicked")} />} />
@@ -113,7 +117,6 @@ export const ViewBill = () => {
                         </tbody>
                     </table>
                 </div>
-
                 <div className="payment-container-viewbill">
                     <div className="payment-container-viewbill-middle">
                         <table className='payment-container-viewbill-table'>
@@ -127,7 +130,7 @@ export const ViewBill = () => {
                                     <td>
                                         <div className="discount-fields-container-viewbill">
                                             <InputField type="text" id="discountRate" name="discountRate" className="discountRate" editable={true} placeholder="%" width="3em" textAlign='right' value={""} />
-                                            <InputField type="text" id="discountAmount" name="discountAmount" className="discountAmount" editable={false} width="23.7em" textAlign='right' value={""}/>
+                                            <InputField type="text" id="discountAmount" name="discountAmount" className="discountAmount" editable={false} width="23.7em" textAlign='right' value={""} />
                                         </div>
                                     </td>
                                 </tr>
@@ -151,12 +154,14 @@ export const ViewBill = () => {
                     </div>
                 </div>
 
-
-
-
             </Layout>
+            {showSalesReceipt && <SalesReceipt />}
         </>
     );
 };
 
+
+
 export default ViewBill;
+
+

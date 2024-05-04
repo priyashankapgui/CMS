@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Layout from "../../../../Layout/Layout";
 import "./ViewReturnBill.css";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -9,16 +9,24 @@ import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import jsonData from '../../../../Components/Data.json';
+import RefundReceipt from '../../../../Components/SalesReceiptTemp/RefundReceipt/RefundReceipt';
 
 export function ViewReturnBill() {
 
     const { RTBNo } = useParams();
     const selectedReturnBillData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
+    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+
+    
+    const handleReprintClick = () => {
+        setShowRefundReceipt(true);
+    };
 
     if (!selectedReturnBillData) {
         return <div>Return Bill not found</div>;
     }
     const { branch,billNo, returnedAt, returnedBy, customerName, status,  contactNo } = selectedReturnBillData;
+    
     return (
         <>
             <div className="top-nav-blue-text">
@@ -72,7 +80,7 @@ export function ViewReturnBill() {
                         <div className="btnSection-viewReturnBill ">
                             <div className="reprintBtn">
                                 <InputLabel> Reprint </InputLabel>
-                                <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={() => console.log("Reprint Button clicked")} />
+                                <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
                             </div>
                         </div>
                     </div>
@@ -109,7 +117,7 @@ export function ViewReturnBill() {
                 </div>
 
             </Layout>
-
+            {showRefundReceipt && <RefundReceipt />}
         </>
     );
 };
