@@ -22,7 +22,7 @@ export const WebMgmt = () => {
                 {/* Conditionally render the CustomAlert component based on alertOpen state */}
                 {alertOpen && (
                     <CustomAlert
-                        severity="success"
+                        severity="info"
                         title="Bill generated successfully"
                         message="This is a success message"
                         duration={3000} // Specify the duration in milliseconds (e.g., 3000 for 3 seconds)

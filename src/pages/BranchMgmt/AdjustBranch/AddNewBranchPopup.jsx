@@ -3,7 +3,8 @@ import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import axios from 'axios';
-const url = 'http://localhost:8080/branches';
+
+const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 function AddNewBranchPopup() {
     const [branchName, setBranchName] = useState('');
@@ -13,9 +14,8 @@ function AddNewBranchPopup() {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        // console.log(branchName,address,branchEmail,contactNo);
         try {
-            const resp = await axios.post(url, {
+            const resp = await axios.post(branchesApiUrl, {
                 branchName: branchName,
                 address: address,
                 email: branchEmail,
@@ -25,11 +25,11 @@ function AddNewBranchPopup() {
         } catch (error) {
             console.log("Error:", error.response);
         }
-    }
+    };
+
     return (
         <>
-            <AddNewPopup topTitle="Add New Branch " buttonId="save-btn" buttonText="Save" onClick={handleSave}>
-                
+            <AddNewPopup topTitle="Add New Branch" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
                 <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
                     <div style={{ flex: '1' }}>
                         <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
@@ -50,8 +50,7 @@ function AddNewBranchPopup() {
                         <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
                     </div>
                 </div>
-            
-        </AddNewPopup>
+            </AddNewPopup>
         </>
     );
 }

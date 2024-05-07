@@ -10,7 +10,7 @@ function RefundReceipt() {
     const [isPopupOpen, setIsPopupOpen] = useState(true);
     const { RTBNo } = useParams();
     const selectedReturnBillData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
-    const { branch, billNo, returnedAt, returnedBy, customerName, status, contactNo } = selectedReturnBillData;
+    const { billNo, returnedAt, returnedBy, customerName, contactNo } = selectedReturnBillData;
     const closePopup = () => {
         setIsPopupOpen(false);
     };

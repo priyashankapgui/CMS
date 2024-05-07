@@ -36,7 +36,7 @@ export default function CustomAlert({ severity, title, message, duration }) {
     <>
       {visible && (
         <Alert
-          severity={severity}
+          severity={severity} // Ensure severity matches one of the predefined values
           sx={{
             position: 'fixed',
             top: '80px',
