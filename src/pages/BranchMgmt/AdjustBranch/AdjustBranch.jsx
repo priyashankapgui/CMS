@@ -6,7 +6,8 @@ import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
-const url = "http://localhost:8080/branches";
+
+const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
@@ -14,7 +15,7 @@ export const AdjustBranch = () => {
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(branchesApiUrl);
                 setBranchData(response.data); // Set the fetched branch data
             } catch (error) {
                 console.error('Error fetching branches:', error);

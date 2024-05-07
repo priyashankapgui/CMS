@@ -109,27 +109,27 @@ function SalesReceipt() {
                                     <tbody>
                                         <tr>
                                             <td>No Qty </td>
-                                            <td style={{ textAlign: 'left' }}>{totalQuantity}</td>
+                                            <td style={{ textAlign: 'right' }}>{totalQuantity}</td>
                                         </tr>
                                         <tr>
                                             <td>Gross Total </td>
-                                            <td style={{ textAlign: 'left' }}>{grossTotal.toFixed(2)}</td>
+                                            <td style={{ textAlign: 'right' }}>{grossTotal.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Discount </td>
-                                            <td style={{ textAlign: 'left' }}>{discount.toFixed(2)}</td>
+                                            <td style={{ textAlign: 'right' }}>{discount.toFixed(2)}</td>
                                         </tr>
                                         <tr style={{ fontSize: "16px", fontWeight: "bold" }}>
                                             <td>Net Total </td>
-                                            <td style={{ textAlign: 'left' }}>{netTotal.toFixed(2)}</td>
+                                            <td style={{ textAlign: 'right' }}>{netTotal.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Received </td>
-                                            <td style={{ textAlign: 'left' }}>{received.toFixed(2)}</td>
+                                            <td style={{ textAlign: 'right' }}>{received.toFixed(2)}</td>
                                         </tr>
                                         <tr>
                                             <td>Balance </td>
-                                            <td style={{ textAlign: 'left' }}>{balance.toFixed(2)}</td>
+                                            <td style={{ textAlign: 'right' }}>{balance.toFixed(2)}</td>
                                         </tr>
                                     </tbody>
                                 </table>
