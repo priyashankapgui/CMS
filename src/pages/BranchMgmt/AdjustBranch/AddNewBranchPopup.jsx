@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
@@ -11,7 +12,7 @@ function AddNewBranchPopup() {
     const [address, setAddress] = useState('');
     const [branchEmail, setBranchEmail] = useState('');
     const [contactNo, setContactNo] = useState('');
-
+    const navigate = useNavigate;
     const handleSave = async (e) => {
         e.preventDefault();
         try {
@@ -24,6 +25,7 @@ function AddNewBranchPopup() {
             console.log("Response:", resp.data);
         } catch (error) {
             console.log("Error:", error.response);
+            navigate('/adjust-branch');
         }
     };
 

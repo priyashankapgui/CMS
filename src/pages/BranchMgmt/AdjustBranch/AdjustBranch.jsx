@@ -6,6 +6,7 @@ import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
@@ -25,9 +26,20 @@ export const AdjustBranch = () => {
         fetchBranchData();
     }, []);
 
-    const handleDelete = () => {
-        // Your delete logic here
-        console.log("Delete button clicked");
+    const navigate = useNavigate();
+
+    const handleDelete = async (branchId) => {
+        try {
+            // Send DELETE request to the backend to delete the branch
+            await axios.delete(`${branchesApiUrl}/${branchId}`);
+            // Update the state to reflect the deletion
+            const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
+            setBranchData(updatedBranchData);
+            console.log("Branch deleted successfully");
+            navigate('');
+        } catch (error) {
+            console.error('Error deleting branch:', error);
+        }
     };
 
     return (
@@ -55,7 +67,7 @@ export const AdjustBranch = () => {
                             action: (
                                 <div style={{ display: "flex", gap: "0.5em" }}>
                                     <UpdateBranchPopup />
-                                    <DeletePopup handleDelete={handleDelete} />
+                                    <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
                                 </div>
                             )
                         }))}
