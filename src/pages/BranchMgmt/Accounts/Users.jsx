@@ -103,7 +103,7 @@ export const Users = () => {
           <TableWithPagi
             columns={["Branch Name", "Emp ID", "Emp Name", "Email", "Role", ""]}
             rows={employeeData.map((employee) => ({
-              branch: "Colombo",
+              branch: employee.branchName,
               empId: employee.employeeId,
               empName: employee.employeeName,
               email: employee.email,

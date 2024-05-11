@@ -61,10 +61,12 @@ const ResetPw = () => {
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+    setError("");
   };
 
   const handleConfirmPasswordChange = (e) => {
     setConfirmPassword(e.target.value);
+    setError("");
   };
 
   const handleOkButtonClick = () => {
