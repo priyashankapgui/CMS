@@ -10,21 +10,8 @@
 body {
     background-color: #fafafa;
 }
-.adjust-branch,
-.accounts,
-.products,
-.suppliers,
-.good-receive,
-.stock-balance,
-.stock-transfer,
-.check-price,
-.sales,
-.work-list,
-.online-orders,
-.web-mgmt,
-.analysis,
-.reports
-{
+
+.top-nav-blue-text {
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;

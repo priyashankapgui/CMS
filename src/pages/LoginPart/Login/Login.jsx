@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import { Link } from "react-router-dom";
 import {
@@ -10,13 +10,24 @@ import {
 import cmslogo from "../../../Assets/cmslogo.svg";
 import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
-import Buttons from "../../../Components/Buttons/Buttons";
+import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
+import Spinner from "../../../Components/Spinner/Spinner";
 
 const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [empID, setEmpId] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true); // State for showing spinner
+
+  useEffect(() => {
+    // Simulating loading delay
+    const timer = setTimeout(() => {
+      setLoading(false); // Hide spinner after some time
+    }, 2000); // Adjust this time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleEmpIdChange = (e) => {
     setEmpId(e.target.value);
@@ -65,21 +76,30 @@ const Login = () => {
   };
 
   return (
-    <div className="s-mainContainer">
-      <div className="s-leftcontainer">
-        <img className="s-image" src={cmslogo} alt="cms logo" />
-        <h2 className="s-flexflow-text">Flex Flow</h2>
+    <>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="s-mainContainer">
+          {/* Login page content */}
+          <div className="s-leftcontainer">
+            <img className="s-image" src={cmslogo} alt="cms logo" />
+            <h2 className="s-flexflow-text">Flex Flow</h2>
 
-        <div className="s-companyName">
-          <p>Hexacode Solutions Pvt Ltd</p>
-        </div>
-      </div>
+            <div className="s-companyName">
+              <p>Hexacode Solutions Pvt Ltd</p>
+            </div>
+          </div>
 
-      <div className="s-rightcontainer">
-        <div className="s-greenmartlogo">
-          <img className="s-image" src={greenleaf} alt="greenmart logo" />
-          <h2 className="s-boldText">Green Leaf Super Mart </h2>
-        </div>
+          <div className="s-rightcontainer">
+            <div className="s-greenmartlogo">
+              <img
+                className="s-image"
+                src={greenleaf}
+                alt="greenmart logo"
+              />
+              <h2 className="s-boldText">Green Leaf Super Mart </h2>
+            </div>
 
         <div className="s-loginCard">
           <form className="s-form" onSubmit={handleLogin}>
@@ -146,6 +166,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

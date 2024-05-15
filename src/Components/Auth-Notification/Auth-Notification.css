@@ -1,33 +1,55 @@
 .unauthorized-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .unauthorized-frame {
-    padding: 20px;
-    border: 2px solid #23a3da; 
-    border-radius: 10px;
-    background-color: #f2f2f2; 
-  }
-  
-  .unauthorized-title {
-    color: #23a3da;
-  }
-  
-  .unauthorized-button {
-    background-color: #23a3da; 
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .unauthorized-button:hover {
-    background-color: #1a7a9f;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-color: aliceblue;
+
+}
+
+.flexflow-sys-name {
+
+  font-size: 5rem;
+  line-height: 0;
+  color: rgb(78, 70, 70);
+  font-family: 'Princess Sofia', cursive;
+  margin-bottom: 80px;
+}
+
+.unauthorized-frame {
+  padding: 20px;
+  border: 2px solid #23a3da;
+  border-radius: 10px;
+  background-color: #fff9f9;
+  max-width: fit-content;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+}
+
+.unauthorized-title {
+  color: red;
+
+}
+
+.unauthorized-button {
+  background-color: #23a3da;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.unauthorized-button:hover {
+  background-color: #1a7a9f;
+}
+
+.warning-icon {
+  color: #ff0000;
+  font-size: 64px;
+  margin-bottom: 20px;
+}

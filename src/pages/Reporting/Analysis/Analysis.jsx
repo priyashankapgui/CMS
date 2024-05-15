@@ -18,7 +18,7 @@ export const Analysis = () => {
 
     return (
         <>
-            <div className="analysis">
+            <div className="top-nav-blue-text">
                 <h4>Reporting - Analysis</h4>
             </div>
             <Layout>

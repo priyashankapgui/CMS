@@ -3,7 +3,7 @@ import Layout from "../../../Layout/Layout";
 export const StockTransfer = () => {
     return (
         <>
-        <div className="stock-transfer">
+        <div className="top-nav-blue-text">
             <h4>Stock Transfer</h4>
         </div>
         <Layout>

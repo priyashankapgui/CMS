@@ -2,14 +2,36 @@ import Layout from "../../../Layout/Layout";
 import './AdjustBranch.css'
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
-import UpdateBranchPopup from "../../../Components/PopupsWindows/UpdateBranchPopup";
-import Buttons from "../../../Components/Buttons/Buttons";
+import UpdateBranchPopup from "./UpdateBranchPopup";
+import AddNewBranchPopup from "./AddNewBranchPopup";
+import axios from "axios";
 
+const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
+    const [branchData, setBranchData] = useState([]);
+
+    useEffect(() => {
+        const fetchBranchData = async () => {
+            try {
+                const response = await axios.get(branchesApiUrl);
+                setBranchData(response.data); // Set the fetched branch data
+            } catch (error) {
+                console.error('Error fetching branches:', error);
+            }
+        };
+
+        fetchBranchData();
+    }, []);
+
+    const handleDelete = () => {
+        // Your delete logic here
+        console.log("Delete button clicked");
+    };
+
     return (
         <>
-            <div className="adjust-branch">
+            <div className="top-nav-blue-text">
                 <h4>Adjust Branch</h4>
             </div>
 
