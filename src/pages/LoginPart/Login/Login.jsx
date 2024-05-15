@@ -76,7 +76,7 @@ const Login = () => {
   };
 
   return (
-    <>
+    <div>
       {loading ? (
         <Spinner />
       ) : (
@@ -166,8 +166,10 @@ const Login = () => {
         </div>
       </div>
     </div>
-    </>
-  );
+)
+}
+</div>
+);
 };
 
 export default Login;

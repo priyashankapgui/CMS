@@ -23,11 +23,11 @@ function InputField({ type, id, name, placeholder, onChange, editable, borderRad
                 }}
             />
             {children && (
-                <IconContainer>
+                <span className="icon-container">
                     {children}
-                </IconContainer>
+                </span>
             )}
-        </InputContainer>
+        </div>
     );
 }
 

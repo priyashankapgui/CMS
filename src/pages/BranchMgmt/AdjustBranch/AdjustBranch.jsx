@@ -1,5 +1,7 @@
 import Layout from "../../../Layout/Layout";
-import './AdjustBranch.css'
+import './AdjustBranch.css';
+import { useEffect, useState } from "react";
+import Buttons from "../../../Components/Buttons/Buttons";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
