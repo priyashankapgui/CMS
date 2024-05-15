@@ -16,33 +16,59 @@ import radioBtnOptions from '../../../Components/Data.json';
 
 export const Sales = () => {
 
+    const fetchProductDetails = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/listedProducts/${productId}`);
+            const data = await response.json();
+            console.log("Fetched Product Details:", data);
+            return data;
+        } catch (error) {
+            console.error('Error fetching product details:', error);
+            return {};
+        }
+    };
+
+    const fetchSuggestionsProducts = async (searchTerm) => {
+        try {
+            const response = await fetch(`http://localhost:8080/listedProducts?query=${encodeURIComponent(searchTerm)}`);
+            const data = await response.json();
+            const formattedSuggestions = data.map(item => ({
+                id: item.productId,
+                name: `${item.productId} ${item.productName}`
+            }));
+
+            return formattedSuggestions;
+        } catch (error) {
+            console.error('Error fetching Reg Products suggestions:', error);
+            return [];
+        }
+    };
+
     const [rows, setRows] = useState([
-        { id: 1, productID: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' }
+        { id: 1, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' }
     ]);
 
     const handleAddRow = () => {
-        const newRow = { id: rows.length + 1, productID: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
+        const newRow = { id: rows.length + 1, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
         setRows([...rows, newRow]);
     };
 
     const handleDeleteRow = (id) => {
         if (id === 1) {
-            // Clear the entered data in the fields of the first row
             const updatedRows = rows.map(row => {
                 if (row.id === 1) {
-                    return { ...row, productID: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
+                    return { ...row, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
                 }
                 return row;
             });
             setRows(updatedRows);
         } else {
-            // Remove the respective row
             const updatedRows = rows.filter(row => row.id !== id);
             setRows(updatedRows);
         }
     };
 
-    const handleInputChange = (id, name, value) => {
+    const handleInputChange = async (id, name, value) => {
         const updatedRows = rows.map(row => {
             if (row.id === id) {
                 return { ...row, [name]: value };
@@ -118,22 +144,22 @@ export const Sales = () => {
                         </div>
                         <div className="contactNo">
                             <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
-                            <InputField type="text" id="contactNo" name="contactNo" editable={true} />
+                            <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={handleContactNoChange} />
                         </div>
                     </div>
                     <div className="billContainer">
                         <table>
                             <thead style={{ backgroundColor: "#E9E9E9", fontSize: "0.875em" }}>
                                 <tr >
-                                    <th>Product ID</th>
-                                    <th>Product Name</th>
+                                    <th>Product ID / Name</th>
                                     <th>Qty</th>
                                     <th>Batch No</th>
                                     <th>Avb. Qty</th>
                                     <th>Unit Price</th>
                                     <th>Dis%</th>
                                     <th>Amount</th>
-
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -143,7 +169,7 @@ export const Sales = () => {
                                             <SearchBar fetchSuggestions={fetchSuggestionsProducts} onSuggestionSelect={(productId) => handleInputChange(row.id, 'productId', productId)} />
                                         </td>
                                         <td><InputField type="text" id={`billQty_${row.id}`} name="billQty" editable={true} width="90px" value={row.billQty} onChange={(e) => handleInputChange(row.id, 'billQty', e.target.value)} /></td>
-                                        <td><InputDropdown id={`batchNo_${row.id}`} name="batchNo" width="154px" options={['', '', '']} editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td>                        {/* <td><InputField type="text" id={`batchNo_${row.id}`} name="batchNo" editable="true" width="154px" value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td> */}
+                                        <td><InputDropdown id={`batchNo_${row.id}`} name="batchNo" width="154px" options={['',]} editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td>
                                         <td><InputField type="text" id={`avbQty_${row.id}`} name="avbQty" editable={false} width="90px" value={row.avbQty} onChange={(e) => handleInputChange(row.id, 'avbQty', e.target.value)} /></td>
                                         <td><InputField type="text" id={`unitPrice_${row.id}`} name="unitPrice" editable={false} width="95px" value={row.unitPrice} onChange={(e) => handleInputChange(row.id, 'unitPrice', e.target.value)} /></td>
                                         <td><InputField type="text" id={`discount_${row.id}`} name="discount" editable={true} width="60px" value={row.discount} onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)} /></td>
@@ -209,7 +235,6 @@ export const Sales = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </Layout>
         </>
