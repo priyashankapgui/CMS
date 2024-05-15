@@ -1,7 +1,7 @@
 {
   "dropDownOptions": {
-    "userRoleOptions": ["Super Admin", "Admin", "Cashier"],
-    "branchOptions": ["All", "Galle", "Colombo"]
+    "role":["All","Super Admin", "admin", "cashier"],
+    "branchName":["All", "kandy", "colombo"]
   },
   "radioBtnOptions": [
     { "id": "paymentOption1", "label": "Cash" },

@@ -8,9 +8,20 @@ import Buttons from "../../../Components/Buttons/Buttons";
 import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import { useEffect, useState } from "react";
+//import { Telegram } from "@mui/icons-material";
 
 export const Users = () => {
   const [employeeData, setEmployeeData] = useState([]);
+  const [selectedBranch, setSelectedBranch] = useState("All");
+  const [selectedRole, setSelectedRole] = useState("All");
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+
+  // const filteredEmployees = selectedBranch
+  // ? employeeData.filter((employee) => employee.branchName === selectedBranch)
+  // : employeeData;
+
+  // Filtered employees based on selected branch and role
+
   useEffect(() => {
     const getEmployeeData = async () => {
       const token = sessionStorage.getItem("accessToken");
@@ -28,6 +39,32 @@ export const Users = () => {
     };
     getEmployeeData();
   }, []);
+
+  useEffect(() => {
+    const filterEmployees = () => {
+      const data = employeeData.filter((employee) => {
+        if (selectedBranch === 'All' && selectedRole === 'All') {
+          return true; // If both filters are empty, return all employees
+        } else if (selectedBranch && selectedRole === 'All') {
+          return employee.branchName === selectedBranch;
+        } else if (selectedRole && selectedBranch === 'All') {
+          return employee.role === selectedRole;
+        } else if (selectedBranch && selectedRole) {
+          return (
+            employee.branchName === selectedBranch && employee.role === selectedRole
+          );
+        } else {
+          // This shouldn't be reached, but added for completeness
+          return false;
+        }
+      });
+      console.log(data);
+      console.log(selectedBranch);
+      console.log(employeeData)
+      setFilteredEmployees(data);
+    };
+    filterEmployees();
+  }, [selectedBranch, selectedRole, employeeData]);
 
   return (
     <>
@@ -51,7 +88,8 @@ export const Users = () => {
                 id="branchName"
                 name="branchName"
                 editable={true}
-                options={dropdownOptions.dropDownOptions.branchOptions}
+                options={dropdownOptions.dropDownOptions.branchName}
+                onChange={(selectedOption) => setSelectedBranch(selectedOption)}
               />
             </div>
             <div className="UserRoleField">
@@ -60,7 +98,8 @@ export const Users = () => {
                 id="role"
                 name="role"
                 editable={true}
-                options={dropdownOptions.dropDownOptions.userRoleOptions}
+                options={dropdownOptions.dropDownOptions.role}
+                onChange={(selectedOption) => setSelectedRole(selectedOption)}
               />
             </div>
             <div className="EmpidField">
@@ -101,12 +140,20 @@ export const Users = () => {
           </div>
           <hr className="line" />
           <TableWithPagi
-            columns={["Branch Name", "Emp ID", "Emp Name", "Email", "Role", ""]}
-            rows={employeeData.map((employee) => ({
+            columns={[
+              "Branch Name",
+              "Emp ID",
+              "Emp Name",
+              "Email",
+              "Telephone",
+              "Role",
+            ]}
+            rows={filteredEmployees.map((employee) => ({
               branch: employee.branchName,
               empId: employee.employeeId,
               empName: employee.employeeName,
               email: employee.email,
+              Telephone: employee.phone,
               role: employee.role,
             }))}
           />

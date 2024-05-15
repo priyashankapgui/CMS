@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Dropdown = styled.select`
@@ -15,29 +15,38 @@ const Dropdown = styled.select`
 `;
 
 const InputDropdown = ({ id, name, style, height, width, onChange, editable, options }) => {
-    if (!options || !Array.isArray(options) || options.length === 0) {
-        return <div>No options available</div>;
-    }
+        const [selectedOption, setSelectedOption] = useState('');
 
-    return (
-        <div>
-            <Dropdown
-                id={id}
-                name={name}
-                style={style}
-                height={height}
-                width={width}
-                onChange={onChange}
-                editable={editable}
-            >
-                {options.map((option, index) => (
-                    <option key={index} value={option}>
-                        {option}
-                    </option>
-                ))}
-            </Dropdown>
-        </div>
-    );
+        const handleOptionChange = (event) => {
+                const selectedValue = event.target.value;
+                setSelectedOption(selectedValue);
+                onChange(selectedValue); // Pass the selected value to the parent component
+        };
+
+        if (!options || !Array.isArray(options) || options.length === 0) {
+                return <div>No options available</div>;
+        }
+
+        return (
+                <div>
+                        <Dropdown
+                                id={id}
+                                name={name}
+                                style={style}
+                                height={height}
+                                width={width}
+                                onChange={handleOptionChange} // Call the handleOptionChange function on change
+                                editable={editable}
+                                value={selectedOption} // Set the selected value of the dropdown
+                        >
+                                {options.map((option, index) => (
+                                        <option key={index} value={option}>
+                                                {option}
+                                        </option>
+                                ))}
+                        </Dropdown>
+                </div>
+        );
 };
 
 export default InputDropdown;
