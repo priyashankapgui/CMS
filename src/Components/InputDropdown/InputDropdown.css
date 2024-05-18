@@ -3,10 +3,23 @@
   margin-bottom: 0.313em;
   font-size: 0.813em;
   padding-left: 0.625em;
-  /* background-color: white; */
+  background-color: white;
+  cursor: pointer;
 }
 
 .dropdown.disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+select:focus {
+  outline: none;
+  border: 2px solid #0377A8;
+  box-shadow: 0 0 5px rgba(3, 119, 168, 0.5);
+  
+}
+
+select:focus,
+select:active {
+  background-color: white;
 }
