@@ -26,7 +26,7 @@ export function Accounts() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization:`Bearer ${token}`,
           },
         });
 
@@ -63,9 +63,6 @@ export function Accounts() {
           return false;
         }
       });
-      console.log(data);
-      console.log(selectedBranch);
-      console.log(employeeData);
       setFilteredEmployees(data);
     };
     filterEmployees();
@@ -75,8 +72,14 @@ export function Accounts() {
     setClickedLink(linkText);
   };
 
-  const handleDelete = () => {
-    console.log("deleted");
+  const handleDelete = (empIdToDelete) => {
+    // Filter out the employee to delete from the filteredEmployees state
+    const updatedEmployees = filteredEmployees.filter(
+      (employee) => employee.empId !== empIdToDelete
+    );
+    // Update the state with the filtered employees
+    setFilteredEmployees(updatedEmployees);
+    console.log("Employee deleted:", empIdToDelete);
   };
 
   return (
@@ -110,9 +113,11 @@ export function Accounts() {
                 <InputDropdown
                   id="branchName"
                   name="branchName"
-                  editable
+                  editable={true}
                   options={jsonData.dropDownOptions.branchOptions}
-                  onChange={(selectedOption) => setSelectedBranch(selectedOption)}
+                  onChange={(selectedOption) =>
+                    setSelectedBranch(selectedOption)
+                  }
                 />
               </div>
               <div className="UserRoleField">
@@ -120,9 +125,11 @@ export function Accounts() {
                 <InputDropdown
                   id="role"
                   name="role"
-                  editable
+                  editable={true}
                   options={jsonData.dropDownOptions.userRoleOptions}
-                  onChange={(selectedOption) => setSelectedRole(selectedOption)}
+                  onChange={(selectedOption) =>
+                    setSelectedRole(selectedOption)
+                  }
                 />
               </div>
               <div className="EmpidField">
@@ -131,7 +138,7 @@ export function Accounts() {
                   id="empID"
                   name="empID"
                   width="15.625em"
-                  editable
+                  editable={true}
                   borderRadius="0.625em"
                   style={{ border: "1px solid #8D9093" }}
                 />
@@ -141,11 +148,10 @@ export function Accounts() {
             <div className="Button-Section">
               <Buttons
                 type="submit"
-                id="save-btn"
+                id="search-btn"
                 style={{ backgroundColor: "#23A3DA", color: "white" }}
               >
-                {" "}
-                Save{" "}
+                Search
               </Buttons>
               <Buttons
                 type="clear"
@@ -188,7 +194,9 @@ export function Accounts() {
                       icon="bitcoin-icons:edit-outline"
                       style={{ fontSize: "24px" }}
                     />
-                    <DeletePopup handleDelete={handleDelete} />
+                    <DeletePopup
+                      handleDelete={() => handleDelete(employee.empId)}
+                    />
                   </div>
                 ),
               }))}
