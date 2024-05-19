@@ -16,6 +16,7 @@ export function Accounts() {
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("All");
   const [selectedRole, setSelectedRole] = useState("All");
+  const [empIdSearch, setEmpIdSearch] = useState("");
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
   useEffect(() => {
@@ -68,18 +69,77 @@ export function Accounts() {
     filterEmployees();
   }, [selectedBranch, selectedRole, employeeData]);
 
+
+
+
   const handleLinkClick = (linkText) => {
     setClickedLink(linkText);
   };
 
-  const handleDelete = (empIdToDelete) => {
-    // Filter out the employee to delete from the filteredEmployees state
-    const updatedEmployees = filteredEmployees.filter(
-      (employee) => employee.empId !== empIdToDelete
-    );
-    // Update the state with the filtered employees
-    setFilteredEmployees(updatedEmployees);
-    console.log("Employee deleted:", empIdToDelete);
+
+
+  // const handleDelete = (empIdToDelete) => {
+  //   // Filter out the employee to delete from the filteredEmployees state
+  //   const updatedEmployees = filteredEmployees.filter(
+  //     (employee) => employee.empId !== empIdToDelete
+  //   );
+  //   // Update the state with the filtered employees
+  //   setFilteredEmployees(updatedEmployees);
+  //   console.log("Employee deleted:", empIdToDelete);
+  // };
+
+  const handleDelete = async (employeeId) => {
+    try {
+        const token = sessionStorage.getItem("accessToken");
+        if (!employeeId) {
+          console.error("employeeId is undefined");
+          return;
+      }
+        const response = await fetch(`http://localhost:8080/employees/${employeeId}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:`Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) { // Success response
+            // Filter out the deleted employee from the state
+            const updatedEmployees = filteredEmployees.filter(
+                (employee) => employee.employeeId !== employeeId
+            );
+            setFilteredEmployees(updatedEmployees);
+            console.log("Employee deleted:", employeeId);
+        } else {
+            console.error("Error deleting employee:", response.error);
+            // Handle error (e.g., display an error message)
+        }
+    } catch (error) {
+        console.error("Error deleting employee:", error);
+        // Handle error (e.g., display an error message)
+    }
+};
+
+
+
+
+  const handleSearch = () => {
+      const data = employeeData.filter((employee) => {
+        const matchesEmpId = !empIdSearch || employee.employeeId.toString().includes(empIdSearch);
+
+        return matchesEmpId;
+      });
+      setFilteredEmployees(data);
+  };
+
+
+
+  const handleClear = () => {
+    setSelectedBranch("All");
+    setSelectedRole("All");
+    setEmpIdSearch("");
+    // Reset filteredEmployees to display all data
+    setFilteredEmployees(employeeData);
   };
 
   return (
@@ -134,29 +194,39 @@ export function Accounts() {
               </div>
               <div className="EmpidField">
                 <InputLabel color="#0377A8">Emp ID</InputLabel>
+                <div className="EmpidField-Section">
                 <InputField
                   id="empID"
                   name="empID"
                   width="15.625em"
                   editable={true}
+                  value={empIdSearch}
+                  onChange={(e) => setEmpIdSearch(e.target.value)}
                   borderRadius="0.625em"
                   style={{ border: "1px solid #8D9093" }}
                 />
+              
+              <Buttons
+                type="submit"
+                id="search-btn"
+                marginTop="4.0715px"
+                btnHeight='1.8em'
+                style={{ backgroundColor: "#23A3DA", color: "white",}}
+                onClick={handleSearch}
+              >
+                Search
+              </Buttons>
+              </div>
               </div>
             </div>
             <hr className="line" />
             <div className="Button-Section">
-              <Buttons
-                type="submit"
-                id="search-btn"
-                style={{ backgroundColor: "#23A3DA", color: "white" }}
-              >
-                Search
-              </Buttons>
+              
               <Buttons
                 type="clear"
                 id="clear-btn"
                 style={{ backgroundColor: "#FFFFFF", color: "red" }}
+                onClick={handleClear}
               >
                 Clear
               </Buttons>
@@ -178,6 +248,7 @@ export function Accounts() {
                 "Emp ID",
                 "Emp Name",
                 "Gender",
+                "Telephone",
                 "Role",
                 "",
               ]}
@@ -190,12 +261,14 @@ export function Accounts() {
                 role: employee.role,
                 action: (
                   <div style={{ display: "flex", gap: "0.7em" }}>
+                    
                     <Icon
                       icon="bitcoin-icons:edit-outline"
                       style={{ fontSize: "24px" }}
                     />
+                     
                     <DeletePopup
-                      handleDelete={() => handleDelete(employee.empId)}
+                      handleDelete={() => handleDelete(employee.employeeId)}
                     />
                   </div>
                 ),

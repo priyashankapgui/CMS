@@ -32,6 +32,8 @@
 
 .account-users-top {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     gap: 3em;
     margin-top: 0.7em;
     margin-bottom: 0.7em;
@@ -51,6 +53,11 @@
     margin-bottom: 0.625em;
 }
 
+.EmpidField-Section{
+    display: flex;
+    gap: 1.5em;
+    align-items: start;
+}
 
 .Button-Section {
     display: flex;
