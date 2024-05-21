@@ -9,6 +9,7 @@
   border: 1px solid #8D9093;
   font-size: 0.813em;
   padding: 0.625em;
+  margin-bottom: 0.313em;
 }
 
 .input.disabled {
@@ -20,6 +21,7 @@
   position: absolute;
   /* top: 50%; */
   right: 0.625em;
+  /* transform: translateY(-50%); */
   display: flex;
   align-items: center;
 }

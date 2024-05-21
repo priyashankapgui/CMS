@@ -1,0 +1,38 @@
+.check-price-bodycontainer {
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    border-radius: 0.625em;
+    width: 100%;
+    height: fit-content;
+  }
+  
+  .check-price-filter-container {
+    background-color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    padding: 0.9375em 1.25em;
+    border-radius: 0.625em;
+    gap: 0.625em;
+    width: 100%;
+    height: fit-content;
+  }
+  
+  .check-price-content-top {
+    display: flex;
+    height: 80px;
+    gap: 50px;
+    margin-top: 10px;
+    border-bottom: 3px solid #D9D9D9;
+  }
+  
+  .s-BtnSection {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .check-price-content-middle {
+    padding: 0.9375em;
+    height: fit-content;
+  }
+  
+  
+  

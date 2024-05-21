@@ -1,68 +1,63 @@
-import React, { useState, useEffect } from 'react';
-import { ReactSearchAutocomplete } from 'react-search-autocomplete';
+import React, { useState } from "react";
+import "./SearchBar.css";
 
-function SearchBar({ fetchSuggestions, onSelect }) {
-    const [searchTerm, setSearchTerm] = useState('');
+
+const SearchBar = ({ searchTerm, setSearchTerm, onSelectSuggestion, fetchSuggestions }) => {
+    const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
+    const [noSuggestions, setNoSuggestions] = useState(false);
 
-    useEffect(() => {
-        if (searchTerm.trim() === '') {
-            setSuggestions([]);
+    const handleInputChange = async (e) => {
+        const term = e.target.value;
+        setSearchTerm(term);
+
+        if (term) {
+            setShowSuggestions(true);
+            const fetchedSuggestions = await fetchSuggestions(term);
+            setSuggestions(fetchedSuggestions);
+            setNoSuggestions(fetchedSuggestions.length === 0);
         } else {
-            const getSuggestions = async () => {
-                const fetchedSuggestions = await fetchSuggestions(searchTerm);
-                setSuggestions(fetchedSuggestions);
-            };
-            getSuggestions();
+            setShowSuggestions(false);
+            setSuggestions([]);
         }
-    }, [searchTerm, fetchSuggestions]);
-
-    const handleOnSearch = (string) => {
-        setSearchTerm(string);
     };
 
-    const handleOnSelect = (item) => {
-        onSelect(item); // Call the onSelect prop with the selected item
-    };
 
-    const handleOnHover = (item) => {
-        console.log('Hovered:', item);
+    const handleSuggestionSelect = (suggestion) => {
+        onSelectSuggestion(suggestion);
+        setShowSuggestions(false);
     };
-
-    const handleOnFocus = () => {
-        console.log('The search input is focused');
-    };
-
-    const handleOnClear = () => {
-        console.log('The search input is cleared');
-        setSuggestions([]);
-    };
-
 
     return (
-        <div style={{ width: '18.75em', backgroundColor: "white", height: "2.25em", marginTop: "0.313em", zIndex: 1 }}>
-            <ReactSearchAutocomplete
-                items={suggestions}
-                onSearch={handleOnSearch}
-                onSelect={handleOnSelect}
-                onHover={handleOnHover}
-                onFocus={handleOnFocus}
-                onClear={handleOnClear}
+        <div style={{ position: "relative", width: "350px" }}>
+            <input
+                type="text"
                 placeholder=""
-                styling={{
-                    backgroundColor: "white",
-                    height: "2em",
-                    borderRadius: "0.625em",
-                    padding: "0.625em",
-                    fontFamily: "poppins",
-                    fontSize: "14px",
-                    boxShadow: "none",
-                    border: "1px solid #8D9093",
-                   
-                }}
+                value={searchTerm}
+                onChange={handleInputChange}
+                autoComplete="off"
+                className="search-input"
             />
+      
+            {showSuggestions && (
+                <div className="suggestions-dropdown">
+                    {noSuggestions ? (
+                        <div className="suggestion-item no-suggestions">Search Result Not Found</div>
+                    ) : (
+                        suggestions.map((suggestion, index) => (
+                            <div
+                                key={index}
+                                className="suggestion-item"
+                                onClick={() => handleSuggestionSelect(suggestion)}
+                            >
+                                {suggestion.displayText}
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
         </div>
     );
-}
+};
 
 export default SearchBar;
