@@ -7,7 +7,7 @@ import Spinner from "../Components/Spinner/Spinner";
 
 const Layout = ({ children }) => {
     const [sidebarExpanded, setSidebarExpanded] = useState(true);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
 
     const toggleSidebar = () => {
         setSidebarExpanded(!sidebarExpanded);

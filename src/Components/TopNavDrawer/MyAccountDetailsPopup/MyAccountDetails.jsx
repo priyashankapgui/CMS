@@ -37,8 +37,8 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
-    const user=JSON.parse(sessionStorage.getItem('user'));
-    let employeeName=user?.employeeName;
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    let employeeName = user?.employeeName;
 
 
     return (
@@ -48,7 +48,7 @@ function MyAccountDetails() {
                     <div className="userProfile" >
                         <div className="profile-dp" />
                         <div className="userName">
-                            <h4>{employeeName}</h4>
+                            <h4>{employeeName}</h4>   
                         </div>
                     </div>
 

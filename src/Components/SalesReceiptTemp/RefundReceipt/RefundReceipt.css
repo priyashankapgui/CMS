@@ -1,5 +1,5 @@
 .sales-receipt {
-    width: 450px;
+    /* width: 450px; */
     height: fit-content;
     margin: 0 auto;
     padding: 20px;
@@ -11,6 +11,10 @@
 .sys-logo {
     width: 120px;
     height: auto;
+}
+
+.refund-Txt {
+    text-align: center;
 }
 
 .header {
@@ -88,7 +92,9 @@ hr.invoice-line {
     margin-top: 5px;
 
 }
-
+.total{
+   justify-content: center;
+}
 .total-table td {
     padding: 2px;
 }

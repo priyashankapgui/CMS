@@ -22,7 +22,7 @@ body {
     align-items: center;
     flex-direction: column;
     margin-top: -53px;
-    z-index: 3;
+    z-index: 6;
 }
 
 /* Sidebar.js */

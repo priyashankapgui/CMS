@@ -1,0 +1,152 @@
+/* Print-specific CSS */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .sales-receipt,
+    .sales-receipt * {
+        visibility: visible;
+    }
+
+    .sales-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: #fff;
+        font-size: 12px;
+    }
+
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+}
+
+
+.sales-receipt {
+    width: 80mm;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    font-family: Poppins;
+}
+
+.sales-receipt-sys-logo {
+    width: 80px;
+    height: auto;
+}
+
+.sales-receipt-header {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.sales-receipt-store-details {
+    margin-top: 10px;
+}
+
+.payemnt-receipt-Txt {
+    text-align: center;
+}
+
+.branchAddress,
+.branchPhone,
+.branchEmail {
+    font-size: 12px;
+}
+
+.receipt-details-table {
+    width: 100%;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+.receipt-details-table .receipt-details-label {
+    font-weight: 500;
+}
+
+.receipt-details-table .receipt-details-value {
+    text-align: right;
+}
+
+.items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.items th,
+.items td {
+    padding: 2px;
+    text-align: left;
+    font-size: 12px;
+
+}
+
+.items thead th {
+    background-color: #ececec;
+
+}
+
+hr.invoice-line-top {
+    border-top: 1px solid black;
+}
+
+hr.invoice-line {
+    border-top: 1px dashed;
+}
+
+.billMiddle {
+    display: flex;
+    justify-content: space-around;
+}
+
+.inquaryQR {
+    font-size: 11px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center
+}
+
+.qrImg {
+    width: 50px;
+    height: 50px;
+    margin-top: 5px;
+
+}
+
+.total-table td {
+    padding: 2px;
+}
+
+.total-table {
+    width: 100%;
+    font-size: 12px;
+    margin-right: 47px;
+
+}
+
+.footer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.footer p {
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.footer .special-note {
+    margin-top: 8px;
+}

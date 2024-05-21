@@ -1,8 +1,7 @@
 import React from 'react';
 import './InputField.css';
 
-function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, children }) {
-    // Default onChange handler that does nothing
+function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, children }) {    // Default onChange handler that does nothing
     const noop = () => { };
 
     return (
