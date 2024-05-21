@@ -17,15 +17,22 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 
 
 export const Products = () => {
+<<<<<<< Updated upstream
+=======
+    
+    
+>>>>>>> Stashed changes
     const [productsData, setProductsData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
 
+    // Fetch products data when searchQuery changes
     useEffect(() => {
         fetchProductsData(searchQuery);
     }, [searchQuery]);
-
+    
+    // Function to fetch products data from the server
     const fetchProductsData = async (searchQuery) => {
         try {
             const endpoint = `http://localhost:8080/products/${searchQuery}`;
@@ -36,6 +43,15 @@ export const Products = () => {
         }
     };
 
+<<<<<<< Updated upstream
+=======
+    // Event handler for input field change
+    const handleInputChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
+    
+    // Event handler for search button click
+>>>>>>> Stashed changes
     const handleSearch = () => {
         fetchProductsData(searchQuery);
     };
@@ -60,6 +76,7 @@ export const Products = () => {
         }
     };
 
+<<<<<<< Updated upstream
     const fetchProducts = async (query) => {
         try {
             const response = await axios.get(`http://localhost:8080/products?search=${query}`);
@@ -69,6 +86,24 @@ export const Products = () => {
             return [];
         }
     };
+=======
+
+    const [categoryNames, setCategoryNames] = useState([]);
+    
+    // Fetch category names when component mounts
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/categories");
+                setCategoryNames(response.data); // Set the fetched category names
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+>>>>>>> Stashed changes
 
     return (
         <>
@@ -109,7 +144,7 @@ export const Products = () => {
                             </div>
                         </div>
                         <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
+                            <Buttons type="submit" id="search-btn" style={{backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
                             <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
                             <AddNewProductPopup />
                         </div>
