@@ -11,15 +11,13 @@
   padding: 0.625em;
   margin-bottom: 0.313em;
   cursor: pointer;
+
 }
 
 input:focus {
   outline: none;
-  /* Remove the default blue outline */
   border: 2px solid #0377A8;
-  /* Change border color to your preferred color */
   box-shadow: 0 0 5px rgba(3, 119, 168, 0.5);
-  /* Optional: Add a shadow for a glowing effect */
 }
 
 input:focus,
@@ -30,13 +28,15 @@ input:active {
 .input.disabled {
   opacity: 0.7;
   pointer-events: none;
+  background-color: #fdfcfc;
+  cursor: not-allowed;
 }
 
 .icon-container {
   position: absolute;
-  /* top: 50%; */
+  top: 50%;
   right: 0.625em;
-  /* transform: translateY(-50%); */
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
 }

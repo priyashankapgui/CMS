@@ -10,7 +10,7 @@ export const WebFeedbacks = () => {
                 <h4>Web Feedbacks</h4>
             </div>
             <Layout>
-
+        
             </Layout>
         </>
     );
