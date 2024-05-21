@@ -1,5 +1,7 @@
 import React from 'react';
 import Layout from "../../../Layout/Layout";
+import "./Products.css";
+
 export const Products = () => {
 
     return (
@@ -11,6 +13,7 @@ export const Products = () => {
 
             </Layout>
         </>
-
     );
 };
+
+export default Products;

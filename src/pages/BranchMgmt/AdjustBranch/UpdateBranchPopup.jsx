@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
-function UpdateBranchPopup() {
+function UpdateBranchPopup({}) {
     const { id } = useParams();
 
     const [post, setPost] = useState({

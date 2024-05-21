@@ -10,10 +10,13 @@ import { Link } from "react-router-dom";
 import SalesChart from '../../../Components/Charts/SalesChart';
 
 export const Analysis = () => {
-    const [clickedLink, setClickedLink] = useState('Analysis'); 
+    const [clickedLink, setClickedLink] = useState('Analysis');
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
+    };
+    const handleDropdownChange = (value) => {
+        console.log('Selected Drop Down Value:', value);
     };
 
     return (
@@ -47,7 +50,7 @@ export const Analysis = () => {
                             <div className="rep-Cont1-top">
                                 <div className="branchField">
                                     <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                                    <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                                    <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
                                 </div>
                                 <div className="dateField">
                                     <InputLabel for="date" color="#0377A8">Date</InputLabel>
@@ -62,7 +65,7 @@ export const Analysis = () => {
                     </div>
                 </div>
                 <div className="reportingMiddle">
-                    <SalesChart/>
+                    <SalesChart />
                 </div>
             </Layout>
         </>

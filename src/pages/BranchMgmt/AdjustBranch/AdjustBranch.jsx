@@ -1,22 +1,27 @@
+// AdjustBranch.js
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import './AdjustBranch.css'
+import { Icon } from "@iconify/react";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
+import { Link, useNavigate } from 'react-router-dom';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
+    const [isHovered, setIsHovered] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
                 const response = await axios.get(branchesApiUrl);
-                setBranchData(response.data); // Set the fetched branch data
+                setBranchData(response.data);
             } catch (error) {
                 console.error('Error fetching branches:', error);
             }
@@ -25,10 +30,26 @@ export const AdjustBranch = () => {
         fetchBranchData();
     }, []);
 
-    const handleDelete = () => {
-        // Your delete logic here
-        console.log("Delete button clicked");
+
+    const handleDelete = async (branchId) => {
+        try {
+            // Send DELETE request to the backend to delete the branch
+            await axios.delete(`${branchesApiUrl}/${branchId}`);
+            // Update the state to reflect the deletion
+            const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
+            setBranchData(updatedBranchData);
+            console.log("Branch deleted successfully");
+            navigate('/adjust-branch');
+        } catch (error) {
+            console.error('Error deleting branch:', error);
+        }
     };
+
+    const handleUpdatePopup = (branchId) => {
+        navigate(`/adjust-branch/${branchId}`);
+    };
+
+
 
     return (
         <>
@@ -54,8 +75,8 @@ export const AdjustBranch = () => {
 
                             action: (
                                 <div style={{ display: "flex", gap: "0.5em" }}>
-                                    <UpdateBranchPopup />
-                                    <DeletePopup handleDelete={handleDelete} />
+                                    <UpdateBranchPopup handleUpdatePopup={() => handleUpdatePopup(branch.branchId)} />
+                                    <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
                                 </div>
                             )
                         }))}

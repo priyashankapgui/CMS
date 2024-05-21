@@ -1,18 +1,18 @@
 import React from 'react';
-import './InputRadio.css'; 
+import './InputRadio.css';
+
 const InputRadio = ({ name, options, onChange }) => {
   return (
-    <div className="radio-container"> 
+    <div className="radio-container">
       {options.map(option => (
-        <label key={option.id} className="radio-label"> 
+        <label key={option.id} className="container">
+          {option.label}
           <input
             type="radio"
-            id={option.id}
-            name={name}
+            name={name} 
             value={option.label}
             onChange={onChange}
           />
-          {option.label}
         </label>
       ))}
     </div>

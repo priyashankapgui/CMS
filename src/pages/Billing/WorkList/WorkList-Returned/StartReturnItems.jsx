@@ -132,7 +132,7 @@ export const StartReturnItems = () => {
                                         </label>
                                     </td>
                                     <td><InputField id={`productName_${index}`} name="productName" editable={false} width="300px" value={item.name} /></td>
-                                    <td><InputField id={`returnQty_${index}`} name="returnQty" editable={retQtyEditable[index]} width="100%" textAlign='center' placeholder='Type here'/></td>
+                                    <td><InputField id={`returnQty_${index}`} name="returnQty" editable={retQtyEditable[index]} width="100%" textAlign='center' placeholder='Type here' /></td>
                                     <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.quantity} textAlign='center' /></td>
                                     <td><InputField id={`batchNo_${index}`} name="batchNo" editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
                                 </tr>
@@ -140,11 +140,10 @@ export const StartReturnItems = () => {
                         </tbody>
                     </table>
                 </div>
-
                 {alertWarningOpen && (
                     <CustomAlert
                         open={alertWarningOpen}
-                        onClose={() => alertWarningOpen(false)}
+                        onClose={() => setAlertWarningtOpen(false)}
                         severity="warning"
                         title="Please add the reason."
                         message="You cannot go forward until you do it."
@@ -162,6 +161,7 @@ export const StartReturnItems = () => {
                         duration={3000}
                     />
                 )}
+
             </Layout>
         </>
     );

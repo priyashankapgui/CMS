@@ -15,6 +15,10 @@ export const Reports = () => {
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
+    const handleDropdownChange = (value) => {
+        console.log('Selected Drop Down Value:', value);
+    };
+
     return (
         <>
             <div className="top-nav-blue-text">
@@ -45,11 +49,11 @@ export const Reports = () => {
                         <div className="repo-Content">
                             <div className="branchField">
                                 <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
                             </div>
                             <div className="repoTypeField">
                                 <InputLabel for="repoType" color="#0377A8">Report Type</InputLabel>
-                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} />
+                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} onChange={handleDropdownChange}  />
                             </div>
                             <div className="dateField">
                                 <InputLabel for="from-date" color="#0377A8">From</InputLabel>

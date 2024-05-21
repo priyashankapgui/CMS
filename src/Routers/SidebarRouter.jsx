@@ -7,7 +7,7 @@ import { UserRoleMgmt } from '../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgm
 import { Products } from '../pages/InventoryMgmt/Products/Products';
 import { Suppliers } from '../pages/InventoryMgmt/Suppliers/Suppliers';
 import { GoodReceive } from '../pages/InventoryMgmt/GoodReceive/GoodReceive';
-import { AddNewGRN } from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
+import { AddNewGRN}  from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
 import { StockBalance } from '../pages/InventoryMgmt/StockBalance/StockBalance';
 import { StockTransfer } from '../pages/InventoryMgmt/StockTransfer/StockTransfer';
 import { NewStockTransfer } from '../pages/InventoryMgmt/StockTransfer/NewStockTransfer';
@@ -26,19 +26,21 @@ import { Reports } from '../pages/Reporting/Reports/Reports';
 import CashierRoute from "./CashierRoute";
 import AdminRoute from "./AdminRoute";
 import SuperAdminRoute from "./SuperAdminRoute";
+import UpdateBranchPopup from '../pages/BranchMgmt/AdjustBranch/UpdateBranchPopup';
 
 export function SidebarRouter() {
   return (
     <Routes>
 
       {/* SuperAdmin Routes */}
-      <Route element={<SuperAdminRoute />}>
+      {/* <Route element={<SuperAdminRoute />}> */}
       <Route path="/adjust-branch" element={<AdjustBranch />} />
+      {/* <Route path="/adjust-branch/:branchId" element={<UpdateBranchPopup/>} /> */}
       <Route path="/web-mgmt" element={<WebMgmt />} />
-      </Route>
+      {/* </Route> */}
 
       {/* Admin Routes */}
-      <Route element={<AdminRoute />}>
+      {/* <Route element={<AdminRoute />}> */}
       <Route path="/accounts" element={<Accounts />} />
       <Route path="/accounts/create-new-accounts" element={<CreateNewAccounts />} />
       <Route path="/accounts/user-roles" element={<UserRoleMgmt />} />
@@ -51,10 +53,10 @@ export function SidebarRouter() {
       <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       <Route path="/reporting/analysis" element={<Analysis />} />
       <Route path="/reporting/reports" element={<Reports />} />
-      </Route>
+      {/* </Route> */}
 
       {/* Cashier Routes */}
-      <Route element={<CashierRoute />}>
+      {/* <Route element={<CashierRoute />}> */}
       <Route path="/stock-balance" element={<StockBalance />} />
       <Route path="/check-price" element={<CheckPrice />} />
       <Route path="/sales" element={<Sales />} />
@@ -64,7 +66,7 @@ export function SidebarRouter() {
       <Route path="/work-list/returnbill-list" element={<ReturnBillList />} />
       <Route path="/work-list/returnbill-list/viewreturnbill/:RTBNo" element={<ViewReturnBill />} />
       <Route path="/online-orders" element={<OnlineOrders />} />
-      </Route>
+      {/* </Route> */}
 
     </Routes>
   );
