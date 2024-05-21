@@ -26,7 +26,7 @@ export function Accounts() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization:`Bearer ${token}`,
           },
         });
 
@@ -151,7 +151,7 @@ export function Accounts() {
                 id="search-btn"
                 style={{ backgroundColor: "#23A3DA", color: "white" }}
               >
-               Search
+                Search
               </Buttons>
               <Buttons
                 type="clear"
