@@ -12,7 +12,7 @@ function AddNewBranchPopup() {
     const [address, setAddress] = useState('');
     const [branchEmail, setBranchEmail] = useState('');
     const [contactNo, setContactNo] = useState('');
-    const navigate = useNavigate;
+    const navigate = useNavigate();
     const handleSave = async (e) => {
         e.preventDefault();
         try {
@@ -22,10 +22,10 @@ function AddNewBranchPopup() {
                 email: branchEmail,
                 contactNumber: contactNo
             });
-            console.log("Response:", resp.data);
+            console.log("Branch added successfully");
+            navigate('');
         } catch (error) {
             console.log("Error:", error.response);
-            navigate('/adjust-branch');
         }
     };
 
