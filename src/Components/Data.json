@@ -1,15 +1,7 @@
 {
   "dropDownOptions": {
-    "userRoleOptions": [
-      "Super Admin",
-      "Admin",
-      "Cashier"
-    ],
-    "branchOptions": [
-      "All",
-      "Galle",
-      "Kaluthara"
-    ]
+    "userRoleOptions":["All","Super Admin", "admin", "cashier"],
+    "branchOptions":["All", "kandy", "colombo"]
   },
   "radioBtnOptions": [
     {
@@ -263,23 +255,6 @@
       "Role": "Cashier - K"
     }
   ],
-  "biiReceiptsData": [
-    {
-      "name": "Sustagen Chocolate 400g",
-      "rate": 4200.00,
-      "quantity": 1
-    },
-    {
-      "name": "Vim Dish Wash Bar 100g",
-      "rate": 100.50,
-      "quantity": 2
-    },
-    {
-      "name": "Kotmale Non Fat Milk 1L",
-      "rate": 410.00,
-      "quantity": 1
-    }
-  ],
   "worklistTableData": [
     {
       "billNo": "Gal-B24022091",
@@ -292,18 +267,21 @@
       "billedItems": [
         {
           "name": "Sustagen Chocolate 400g",
+          "productId": "P1034",
           "rate": 4200.00,
           "quantity": 1,
           "batchNo": "SH234157k"
         },
         {
           "name": "Vim Dish Wash Bar 100g",
+          "productId": "P1028",
           "rate": 100.50,
           "quantity": 2,
           "batchNo": "Bx23415N"
         },
         {
           "name": "Kotmale Non Fat Milk 1L",
+          "productId": "P1214",
           "rate": 410.00,
           "quantity": 1,
           "batchNo": "KK10415c"
@@ -315,24 +293,28 @@
       "billedAt": "21-12-2023  12:18",
       "branch": "Galle",
       "customerName": "Amal",
+      "contactNo": "0712349870",
       "status": "Completed",
       "billedBy": "Pramu Alwis",
       "paymentMethod": "Cash",
       "billedItems": [
         {
           "name": "Milo Chocolate 400g",
+          "productId": "P1014",
           "rate": 280.40,
           "quantity": 2,
           "batchNo": "xyz0415c"
         },
         {
-          "name": "SamaPosha 100g",
+          "name": "Sama Posha 100g",
+          "productId": "P1056",
           "rate": 120.00,
           "quantity": 2,
           "batchNo": "ssK04156"
         },
         {
           "name": "Kothamle Yoghurt 80g",
+          "productId": "P1102",
           "rate": 80.00,
           "quantity": 10,
           "batchNo": [
@@ -357,12 +339,14 @@
       "returnItems": [
         {
           "name": "Sustagen Chocolate 400g",
+          "productId": "P1034",
           "rate": 4200.00,
           "quantity": 1,
           "batchNo": "SH234157k"
         },
         {
           "name": "Vim Dish Wash Bar 100g",
+          "productId": "P1028",
           "rate": 100.50,
           "quantity": 2,
           "batchNo": "Bx23415N"
@@ -381,6 +365,7 @@
       "returnItems": [
         {
           "name": "Milo Chocolate 400g",
+          "productId": "P1014",
           "rate": 280.40,
           "quantity": 2,
           "batchNo": "xyz0415c"

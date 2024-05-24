@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UnAuthorized  from "../Components/Auth-Notification/Auth-Notificaion";
 
-
 const SuperAdminRoute = () => {
     const [isLoggedIn, setIsLoggedIn] = useState();
     useEffect(() => {

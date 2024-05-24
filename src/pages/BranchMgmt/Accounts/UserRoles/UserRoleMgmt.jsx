@@ -17,6 +17,9 @@ export const UserRoleMgmt = () => {
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
+    const handleDropdownChange = (value) => {
+        console.log('Selected Drop Down Value:', value);
+    };
 
     const handleDelete = () => {
         console.log('deleted');
@@ -57,7 +60,7 @@ export const UserRoleMgmt = () => {
                     </div>
                     <div className="BranchField">
                         <InputLabel color="#0377A8">Branch</InputLabel>
-                        <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
+                        <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
                     </div>
 
                     <div className='user-roles-middle-tablecontainer'>
@@ -66,7 +69,7 @@ export const UserRoleMgmt = () => {
                             rows={jsonData.registerdSystemUserRoles.map(role => ({
                                 Role: role.Role,
                                 action: (
-                                    <div style={{ display: "flex", gap: "0.7em" }}>
+                                    <div style={{ display: "flex", gap: "0.7em", cursor:"pointer" }}>
                                         <UpdateUserRolePopup />
 
                                         <DeletePopup handleDelete={handleDelete} />

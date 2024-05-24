@@ -31,10 +31,12 @@ const Login = () => {
 
   const handleEmpIdChange = (e) => {
     setEmpId(e.target.value);
+    setError("");
   };
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
+    setError("");
   };
 
   const toggleShowPassword = () => {

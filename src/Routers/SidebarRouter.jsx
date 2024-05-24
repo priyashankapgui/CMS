@@ -7,7 +7,7 @@ import { UserRoleMgmt } from '../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgm
 import { Products } from '../pages/InventoryMgmt/Products/Products';
 import { Suppliers } from '../pages/InventoryMgmt/Suppliers/Suppliers';
 import { GoodReceive } from '../pages/InventoryMgmt/GoodReceive/GoodReceive';
-import {AddNewGRN }from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
+import { AddNewGRN}  from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
 import { StockBalance } from '../pages/InventoryMgmt/StockBalance/StockBalance';
 import { StockTransfer } from '../pages/InventoryMgmt/StockTransfer/StockTransfer';
 import {NewStockTransfer} from '../pages/InventoryMgmt/StockTransfer/NewStockTransfer';
@@ -22,9 +22,10 @@ import { WebMgmt } from '../pages/WebMgmt/WebMgmt';
 import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
-// import CashierRoute from "./CashierRoute";
-// import AdminRoute from "./AdminRoute";
-// import SuperAdminRoute from "./SuperAdminRoute";
+import CashierRoute from "./CashierRoute";
+import AdminRoute from "./AdminRoute";
+import SuperAdminRoute from "./SuperAdminRoute";
+import UpdateBranchPopup from '../pages/BranchMgmt/AdjustBranch/UpdateBranchPopup';
 
 export function SidebarRouter() {
   return (
@@ -33,6 +34,7 @@ export function SidebarRouter() {
       {/* SuperAdmin Routes */}
       {/* <Route element={<SuperAdminRoute />}> */}
       <Route path="/adjust-branch" element={<AdjustBranch />} />
+      {/* <Route path="/adjust-branch/:branchId" element={<UpdateBranchPopup/>} /> */}
       <Route path="/web-mgmt" element={<WebMgmt />} />
       {/* </Route> */}
 
