@@ -11,7 +11,6 @@ function DeletePopup({ handleDelete }) {
   function DeleteAndClose() {
     // Call the handleDelete function passed as a prop
     handleDelete();
-    console.log("Deleted");
     // Close the popup
     setOpen(false);
     

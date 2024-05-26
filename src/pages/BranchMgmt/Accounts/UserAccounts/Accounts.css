@@ -69,3 +69,13 @@
     margin-top: 15px;
     padding: 0.9375em 1.25em;
 }
+
+.edit-button {
+    background-color: transparent;
+    border: none;
+}
+
+.edit-button:hover {
+    cursor: pointer;
+    color: #0377A8;
+}

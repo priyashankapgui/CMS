@@ -1,6 +1,6 @@
 {
   "dropDownOptions": {
-    "userRoleOptions":["All","Super Admin", "admin", "cashier"],
+    "userRoleOptions":["All", "admin", "cashier"],
     "branchOptions":["All", "kandy", "colombo"]
   },
   "radioBtnOptions": [
