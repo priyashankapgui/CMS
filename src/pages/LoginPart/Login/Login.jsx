@@ -14,6 +14,8 @@ import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import Spinner from "../../../Components/Spinner/Spinner";
 
 const Login = () => {
+
+  const API_LOGIN_KEY=`${process.env.REACT_APP_API_LOGIN_URL}`;
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [empID, setEmpId] = useState("");
@@ -45,8 +47,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    const response = await fetch("http://localhost:8080/api/login", {
+    const response = await fetch(API_LOGIN_KEY, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

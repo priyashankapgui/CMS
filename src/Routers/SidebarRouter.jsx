@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AdjustBranch } from '../pages/BranchMgmt/AdjustBranch/AdjustBranch';
 import { Accounts } from '../pages/BranchMgmt/Accounts/UserAccounts/Accounts';
 import { CreateNewAccounts } from '../pages/BranchMgmt/Accounts/UserAccounts/CreateNewAccounts';
+import { UpdateUser } from '../pages/BranchMgmt/Accounts/UserAccounts/UpdateUser';
 import { UserRoleMgmt } from '../pages/BranchMgmt/Accounts/UserRoles/UserRoleMgmt';
 import { Products } from '../pages/InventoryMgmt/Products/Products';
 import { Suppliers } from '../pages/InventoryMgmt/Suppliers/Suppliers';
@@ -43,6 +44,7 @@ export function SidebarRouter() {
       {/* <Route element={<AdminRoute />}> */}
       <Route path="/accounts" element={<Accounts />} />
       <Route path="/accounts/create-new-accounts" element={<CreateNewAccounts />} />
+      <Route path="/accounts/update-account" element={<UpdateUser />} />
       <Route path="/accounts/user-roles" element={<UserRoleMgmt />} />
       <Route path="/products" element={<Products />} />
       <Route path="/suppliers" element={<Suppliers />} />
