@@ -61,7 +61,7 @@ function MyAccountDetails() {
                 headBG="none"
                 title={
                     <>
-                        My Profile <Icon icon="tabler:edit" style={{ fontSize: "1em", cursor: "pointer" }} onClick={toggleEditable} />
+                        My Profile <button><Icon icon="tabler:edit" style={{ fontSize: "1em", cursor: "pointer" }} onClick={toggleEditable} /></button>
                     </>
                 }
                 headTextColor="black"
@@ -104,7 +104,7 @@ function MyAccountDetails() {
                             type="text"
                             id="empID" 
                             name="empID"
-                            value={empId} 
+                            value={empId}
                              />
                         </div>
                         <div className="emp-name-field">
@@ -114,6 +114,7 @@ function MyAccountDetails() {
                             id="empName" 
                             name="empName" 
                             value={employeeName}
+                            editable={editable}
                              />
                         </div>
                         <div className="email-field">
@@ -123,6 +124,7 @@ function MyAccountDetails() {
                             id="empEmail" 
                             name="empEmail" 
                             value={email}
+                            editable={editable}
                             />
                         </div>
                         <div className="password-field">

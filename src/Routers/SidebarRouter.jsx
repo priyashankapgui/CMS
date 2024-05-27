@@ -34,14 +34,14 @@ export function SidebarRouter() {
     <Routes>
 
       {/* SuperAdmin Routes */}
-      {/* <Route element={<SuperAdminRoute />}> */}
+      <Route element={<SuperAdminRoute />}>
       <Route path="/adjust-branch" element={<AdjustBranch />} />
       {/* <Route path="/adjust-branch/:branchId" element={<UpdateBranchPopup/>} /> */}
       <Route path="/web-mgmt" element={<WebMgmt />} />
-      {/* </Route> */}
+      </Route>
 
       {/* Admin Routes */}
-      {/* <Route element={<AdminRoute />}> */}
+      <Route element={<AdminRoute />}>
       <Route path="/accounts" element={<Accounts />} />
       <Route path="/accounts/create-new-accounts" element={<CreateNewAccounts />} />
       <Route path="/accounts/update-account" element={<UpdateUser />} />
@@ -55,10 +55,10 @@ export function SidebarRouter() {
       <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       <Route path="/reporting/analysis" element={<Analysis />} />
       <Route path="/reporting/reports" element={<Reports />} />
-      {/* </Route> */}
+      </Route>
 
       {/* Cashier Routes */}
-      {/* <Route element={<CashierRoute />}> */}
+      <Route element={<CashierRoute />}>
       <Route path="/stock-balance" element={<StockBalance />} />
       <Route path="/check-price" element={<CheckPrice />} />
       <Route path="/sales" element={<Sales />} />
@@ -68,7 +68,7 @@ export function SidebarRouter() {
       <Route path="/work-list/returnbill-list" element={<ReturnBillList />} />
       <Route path="/work-list/returnbill-list/viewreturnbill/:RTBNo" element={<ViewReturnBill />} />
       <Route path="/online-orders" element={<OnlineOrders />} />
-      {/* </Route> */}
+      </Route>
 
     </Routes>
   );
