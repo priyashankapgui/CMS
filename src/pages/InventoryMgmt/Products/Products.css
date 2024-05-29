@@ -64,7 +64,7 @@
   }
   
   .create-product-category-middle {
-    padding: 0.9375em 1.25em;
+    margin-top: 20px;
   }
   
   
@@ -102,6 +102,5 @@
     display: flex;
     height: fit-content;
     gap: 50px;
-  
-    padding: 0.9375em 1.25em;
+    margin-top: 15px;
   }
