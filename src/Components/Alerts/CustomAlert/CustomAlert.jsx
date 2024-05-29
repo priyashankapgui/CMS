@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 
-export default function CustomAlert({ severity, title, message, duration }) {
+export default function CustomAlert({ severity, title, message, duration, onClose }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
+      onClose(); // Callback to parent component to handle closing
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, onClose]);
 
   // Define text color based on severity
   let textColor;
@@ -39,6 +40,7 @@ export default function CustomAlert({ severity, title, message, duration }) {
           severity={severity}
           sx={{
             position: 'fixed',
+            zIndex: '999',
             top: '80px',
             right: '10px',
             marginBottom: '30px',
@@ -51,8 +53,10 @@ export default function CustomAlert({ severity, title, message, duration }) {
               ' 0 4px 7px -1px rgba(3, 119, 168, 0.5)',
             transition: 'top 0.3s ease-in-out, right 0.3s ease-in-out'
           }}
-          onClose={() => setVisible(false)}
-          open={visible}
+          onClose={() => {
+            setVisible(false);
+            onClose(); // Ensure the alert can be closed manually
+          }}
         >
           <AlertTitle>{title}</AlertTitle>
           {message}

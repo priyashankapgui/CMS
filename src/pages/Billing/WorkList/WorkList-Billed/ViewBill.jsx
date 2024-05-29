@@ -11,14 +11,22 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import jsonData from '../../../../Components/Data.json';
-import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt';
+import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
     const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
     const [showSalesReceipt, setShowSalesReceipt] = useState(false);
 
-    
+    const handleReprintClick = () => {
+        console.log("Reprint button clicked");
+        setShowSalesReceipt(true);
+    };
+
+    const handleCloseSalesReceipt = () => {
+        setShowSalesReceipt(false);
+    };
+
     if (!selectedBillData) {
         return <div>Bill not found</div>;
     }
@@ -73,14 +81,15 @@ export const ViewBill = () => {
                     <div className="btnSection-viewBill">
                         <div className="returnBtn">
                             <InputLabel> Return </InputLabel>
-                            <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                            <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
+                                <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                            </Link>
                         </div>
 
                         <div className="reprintBtn">
                             <InputLabel> Reprint </InputLabel>
-                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />}  onClick={() => setShowSalesReceipt(true)} />
+                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
                         </div>
-                        {showSalesReceipt && <SalesReceipt />}
                         <div className="cancelBillBtn">
                             <InputLabel> Cancel Bill </InputLabel>
                             <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={() => console.log("Cancel Bill Button clicked")} />} />
@@ -90,7 +99,7 @@ export const ViewBill = () => {
                 <div className="billed-item-container">
                     <table className='billed-item-table'>
                         <thead>
-                            <tr >
+                            <tr>
                                 <th>Product ID / Name</th>
                                 <th>Qty</th>
                                 <th>Batch No</th>
@@ -113,7 +122,6 @@ export const ViewBill = () => {
                         </tbody>
                     </table>
                 </div>
-
                 <div className="payment-container-viewbill">
                     <div className="payment-container-viewbill-middle">
                         <table className='payment-container-viewbill-table'>
@@ -127,34 +135,30 @@ export const ViewBill = () => {
                                     <td>
                                         <div className="discount-fields-container-viewbill">
                                             <InputField type="text" id="discountRate" name="discountRate" className="discountRate" editable={true} placeholder="%" width="3em" textAlign='right' value={""} />
-                                            <InputField type="text" id="discountAmount" name="discountAmount" className="discountAmount" editable={false} width="23.7em" textAlign='right' value={""}/>
+                                            <InputField type="text" id="discountAmt" name="discountAmt" className="discountAmt" editable={false} width="5em" textAlign='right' value={""} />
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><InputLabel for="netTotal" color="#0377A8" fontsize="1.125em" fontweight="510">Net Total</InputLabel></td>
+                                    <td><InputLabel for="netTotal" color="#0377A8">Net Total</InputLabel></td>
                                     <td><InputField type="text" id="netTotal" name="netTotal" editable={false} marginTop="0" textAlign='right' value={""} /></td>
                                 </tr>
                                 <tr>
-                                    <td><InputLabel for="received" color="#0377A8">Received</InputLabel></td>
-                                    <td><InputField type="text" id="received" name="received" editable={false} marginTop="0" textAlign='right' value={""} /></td>
+                                    <td><InputLabel for="receivedAmt" color="#0377A8">Received Amt</InputLabel></td>
+                                    <td><InputField type="text" id="receivedAmt" name="receivedAmt" editable={false} marginTop="0" textAlign='right' value={""} /></td>
                                 </tr>
                                 <tr>
-                                    <td><InputLabel for="balance" color="#0377A8">Balance</InputLabel></td>
-                                    <td><InputField type="text" id="balance" name="balance" editable={false} marginTop="0" textAlign='right' value={""} /></td>
-                                </tr>
-                                <tr>
-                                    <td colSpan="2"><InputLabel for="noQty" color="#0377A8">No Qty:<span> </span></InputLabel></td>
+                                    <td><InputLabel for="balanceAmt" color="#0377A8">Balance Amt</InputLabel></td>
+                                    <td><InputField type="text" id="balanceAmt" name="balanceAmt" editable={false} marginTop="0" textAlign='right' value={""} /></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-
-
-
             </Layout>
+            {showSalesReceipt && (
+                <SalesReceipt billData={selectedBillData} onClose={handleCloseSalesReceipt} />
+            )}
         </>
     );
 };

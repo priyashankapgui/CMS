@@ -1,15 +1,7 @@
 {
   "dropDownOptions": {
-    "userRoleOptions": [
-      "Super Admin",
-      "Admin",
-      "Cashier"
-    ],
-    "branchOptions": [
-      "All",
-      "Galle",
-      "Kaluthara"
-    ]
+    "userRoleOptions":["All", "admin", "cashier"],
+    "branchOptions":["All", "kandy", "colombo"]
   },
   "radioBtnOptions": [
     {
@@ -65,7 +57,7 @@
         ]
       },
       {
-        "name": "Colombo",
+        "name": "Kaluthara",
         "data": [
           120000,
           170000,
@@ -141,7 +133,7 @@
         ]
       },
       {
-        "name": "Colombo",
+        "name": "Kaluthara",
         "data": [
           220000,
           270000,
@@ -263,23 +255,6 @@
       "Role": "Cashier - K"
     }
   ],
-  "biiReceiptsData": [
-    {
-      "name": "Sustagen Chocolate 400g",
-      "rate": 4200.00,
-      "quantity": 1
-    },
-    {
-      "name": "Vim Dish Wash Bar 100g",
-      "rate": 100.50,
-      "quantity": 2
-    },
-    {
-      "name": "Kotmale Non Fat Milk 1L",
-      "rate": 410.00,
-      "quantity": 1
-    }
-  ],
   "worklistTableData": [
     {
       "billNo": "Gal-B24022091",
@@ -288,22 +263,25 @@
       "customerName": "",
       "status": "Completed",
       "billedBy": "Pramu Alwis",
-      "paymentMethod": "Card",
+      "paymentMethod": "Cash",
       "billedItems": [
         {
           "name": "Sustagen Chocolate 400g",
+          "productId": "P1034",
           "rate": 4200.00,
           "quantity": 1,
           "batchNo": "SH234157k"
         },
         {
           "name": "Vim Dish Wash Bar 100g",
+          "productId": "P1028",
           "rate": 100.50,
           "quantity": 2,
           "batchNo": "Bx23415N"
         },
         {
           "name": "Kotmale Non Fat Milk 1L",
+          "productId": "P1214",
           "rate": 410.00,
           "quantity": 1,
           "batchNo": "KK10415c"
@@ -314,25 +292,29 @@
       "billNo": "Gal-B24022092",
       "billedAt": "21-12-2023  12:18",
       "branch": "Galle",
-      "customerName": "Kasun Madushanka",
+      "customerName": "Amal",
+      "contactNo": "0712349870",
       "status": "Completed",
       "billedBy": "Pramu Alwis",
       "paymentMethod": "Cash",
       "billedItems": [
         {
           "name": "Milo Chocolate 400g",
+          "productId": "P1014",
           "rate": 280.40,
           "quantity": 2,
           "batchNo": "xyz0415c"
         },
         {
-          "name": "SamaPosha 100g",
+          "name": "Sama Posha 100g",
+          "productId": "P1056",
           "rate": 120.00,
           "quantity": 2,
           "batchNo": "ssK04156"
         },
         {
           "name": "Kothamle Yoghurt 80g",
+          "productId": "P1102",
           "rate": 80.00,
           "quantity": 10,
           "batchNo": [
@@ -357,12 +339,14 @@
       "returnItems": [
         {
           "name": "Sustagen Chocolate 400g",
+          "productId": "P1034",
           "rate": 4200.00,
           "quantity": 1,
           "batchNo": "SH234157k"
         },
         {
           "name": "Vim Dish Wash Bar 100g",
+          "productId": "P1028",
           "rate": 100.50,
           "quantity": 2,
           "batchNo": "Bx23415N"
@@ -374,13 +358,14 @@
       "billNo": "Gal-B24022099",
       "returnedAt": "21-12-2023  12:25",
       "branch": "Galle",
-      "customerName": "Kasun Madushanka",
+      "customerName": "Amal",
       "status": "Completed",
       "returnedBy": "Pramu Alwis",
       "reason": "Price Error",
       "returnItems": [
         {
           "name": "Milo Chocolate 400g",
+          "productId": "P1014",
           "rate": 280.40,
           "quantity": 2,
           "batchNo": "xyz0415c"
@@ -389,49 +374,47 @@
     }
   ],
   "feedbackRowData": [
-    
-      {
-          "feedbackType": "Suggestion",
-          "branch": "Galle",
-          "receivedAt": "2024-03-30 12:37",
-          "action": "Taken",
-          "actionTakenBy": "Kasun Perera",
-          "actionTakenAt": "2024-04-02 14:10",
-          "feedbackContent": "Start delivery service",
-          "customerName": "Johnny",
-          "contactNo": "0754113256",
-          "email": "john.doe@example.com",
-          "actionSummary": "Informed to the Director board",
-          "lastUpdated": "2024-04-02 14:10"
-      },
-      {
-          "feedbackType": "Complaint",
-          "branch": "Kalutara",
-          "receivedAt": "2024-04-01 10:20",
-          "action": "Pending",
-          "actionTakenBy": "",
-          "actionTakenAt": "",
-          "feedbackContent": "Cashiers should be quick",
-          "customerName": "Dinuri De Silva",
-          "contactNo": "0712349870",
-          "email": "dinu.de@example.com",
-          "actionSummary": "",
-          "lastUpdated": ""
-      },
-      {
-          "feedbackType": "Bug Fix",
-          "branch": "Galle",
-          "receivedAt": "2024-04-01 13:15",
-          "action": "Pending",
-          "actionTakenBy": "",
-          "actionTakenAt": "",
-          "feedbackContent": "Checkout Page does not work",
-          "customerName": "Aruna Sampath",
-          "contactNo": "0777123456",
-          "email": "aruna.sampath@example.com",
-          "actionSummary": "",
-          "lastUpdated": ""
-      }
-  
+    {
+      "feedbackType": "Suggestion",
+      "branch": "Galle",
+      "receivedAt": "2024-03-30 12:37",
+      "action": "Taken",
+      "actionTakenBy": "Kasun Perera",
+      "actionTakenAt": "2024-04-02 14:10",
+      "feedbackContent": "Start delivery service",
+      "customerName": "Johnny",
+      "contactNo": "0754113256",
+      "email": "john.doe@example.com",
+      "actionSummary": "Informed to the Director board",
+      "lastUpdated": "2024-04-02 14:10"
+    },
+    {
+      "feedbackType": "Complaint",
+      "branch": "Kalutara",
+      "receivedAt": "2024-04-01 10:20",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Cashiers should be quick",
+      "customerName": "Dinuri De Silva",
+      "contactNo": "0712349870",
+      "email": "dinu.de@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    },
+    {
+      "feedbackType": "Bug Fix",
+      "branch": "Galle",
+      "receivedAt": "2024-04-01 13:15",
+      "action": "Pending",
+      "actionTakenBy": "",
+      "actionTakenAt": "",
+      "feedbackContent": "Checkout Page does not work",
+      "customerName": "Aruna Sampath",
+      "contactNo": "0777123456",
+      "email": "aruna.sampath@example.com",
+      "actionSummary": "",
+      "lastUpdated": ""
+    }
   ]
 }

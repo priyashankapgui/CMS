@@ -30,6 +30,7 @@ export default function SubPopup(props) {
                 <div onClick={() => setOpen(true)}>
 
                     {props.triggerComponent}
+                    {props.onClick}
 
                 </div>
             )}

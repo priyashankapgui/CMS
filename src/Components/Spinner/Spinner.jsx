@@ -7,7 +7,6 @@ const Spinner = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate starting the loader automatically after some time (e.g., 2 seconds)
         const timer = setTimeout(() => {
             setLoading(false); // Stop the spinner after 2 seconds
         }, 2000);
@@ -23,8 +22,8 @@ const Spinner = () => {
             <BeatLoader
                 color="#0377A8"
                 loading={loading}
-                size={15} // Adjust size as needed
-                css={{ margin: "auto" }} // Center loader horizontally
+                size={15}
+                css={{ margin: "auto" }}
                 aria-label="Loading Spinner"
                 data-testid="loader"
             />
