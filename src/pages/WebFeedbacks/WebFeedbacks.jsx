@@ -15,7 +15,7 @@ export const WebFeedbacks = () => {
     const [editModeIndex, setEditModeIndex] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5; // Number of rows to display per page
-    const feedbackApiUrl = process.env.REACT_APP_FEEDBACK_API;
+    const feedbackApiUrl = 'http://localhost:8080/feedback';
 
     const [rows, setRows] = useState([]);
 
@@ -117,7 +117,7 @@ export const WebFeedbacks = () => {
                                                 {openRowIndex === index ? <IoIosArrowDropdown className="dropdown-icon" /> : <IoIosArrowDropup className="dropdown-icon" />}
                                             </td>
                                             <td>{row.feedbackType}</td>
-                                            <td>{row.branchName}</td>
+                                            <td>{row.branch}</td>
                                             <td>{formatDate(row.createdAt)}</td> 
                                             <td>{row.action}</td>
                                             <td>{row.actionTakenBy}</td>
