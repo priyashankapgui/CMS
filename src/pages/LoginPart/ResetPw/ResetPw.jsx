@@ -9,21 +9,16 @@ import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 const ResetPw = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
-
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
       return;
     }
-
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-
-
-
     // If token is not present, redirect to login page
     if (!token) {
       window.location.href = "/";
