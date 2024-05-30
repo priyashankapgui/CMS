@@ -10,6 +10,7 @@ import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import dropdownOptions from '../../../Components/Data.json';
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import { Icon } from "@iconify/react";
+import AddNewSupplierPopup from './AddNewSupplierPopup';
 
 export const Suppliers = () => {
 
@@ -68,7 +69,7 @@ export const Suppliers = () => {
                         <div className="s-BtnSection">
                             <Buttons type="submit" id="search-btn" style={{backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
                             <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
-                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }}> New + </Buttons>
+                            <AddNewSupplierPopup />
                         </div>
                     </div>
                     <div className="supplier-content-middle">

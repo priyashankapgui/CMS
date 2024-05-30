@@ -1,31 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import InputLabel from '../../../Components/Label/InputLabel';
+import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
-import SearchBar from "../../../Components/SearchBar/SearchBar";
 import CreatableBar from '../../../Components/CreatableBar/CreatableBar';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [productName, setProductName] = useState('');
     const [branch, setBranch] = useState('');
+    const [selectedBranch, setSelectedBranch] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [barcode, setBarcode] = useState('');
     const [image, setImage] = useState('');
     const [categoryOptions, setCategoryOptions] = useState([]);
+    const [branches, setBranches] = useState([]);
 
     const baseURL = "http://localhost:8080/products";
 
     const addProductHandler = async (e) => {
         e.preventDefault();
 
+        // Logging form data before submission
+        console.log('Form Data Before Submission:', {
+            productName,
+            branch: selectedBranch,
+            description,
+            category,
+            barcode
+        });
+
+        if (!category) {
+            console.error('Category name is required');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('image', image);
         formData.append('productName', productName);
-        formData.append('branchName', branch ? branch.name.split(' ').slice(1).join(' ') : '');
+        formData.append('branchName', selectedBranch);
         formData.append('description', description);
-        formData.append('categoryName', category ? category.name.split(' ').slice(1).join(' ') : '');
+        formData.append('categoryName', category);
         formData.append('barcode', barcode);
 
         try {
@@ -41,16 +57,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
     };
 
-    const fetchSuggestionsBranches = async (searchTerm) => {
+    const fetchBranchesData = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/branches?query=${encodeURIComponent(searchTerm)}`);
-            return response.data.map(item => ({
-                id: item.branchId,
-                name: `${item.branchId} ${item.branchName}`
-            }));
+            const response = await axios.get(`http://localhost:8080/branches`);
+            const branchNames = response.data.map(branch => branch.branchName);
+            setBranches(branchNames);
         } catch (error) {
-            console.error('Error fetching branch suggestions:', error);
-            return [];
+            console.error('Error fetching branches:', error);
+            setBranches([]);
         }
     };
 
@@ -58,8 +72,8 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         try {
             const response = await axios.get('http://localhost:8080/categories');
             const options = response.data.map(item => ({
-                label: item.categoryName,
-                value: item.categoryId
+                label: `${item.categoryId} ${item.categoryName}`, 
+                value: item.categoryName
             }));
             setCategoryOptions(options);
         } catch (error) {
@@ -67,12 +81,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
     };
 
-    const handleBranchSelect = (selectedBranch) => {
-        setBranch(selectedBranch);
+    const handleBranchDropdownChange = (value) => {
+        console.log('Selected Branch Dropdown Value:', value);
+        setSelectedBranch(value);
     };
 
     const handleCategorySelect = (selectedCategory) => {
-        setCategory(selectedCategory);
+        console.log('Selected Category:', selectedCategory);
+        setCategory(selectedCategory ? selectedCategory.split(' ').slice(1).join(' ') : '');
     };
 
     const clearForm = () => {
@@ -82,10 +98,12 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         setCategory('');
         setBarcode('');
         setImage('');
+        setSelectedBranch('');
     };
 
     useEffect(() => {
         fetchCategoryOptions();
+        fetchBranchesData(); 
     }, []);
 
     return (
@@ -105,24 +123,13 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                         </div>
                         <div style={{ flex: '1' }}>
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
-                            <SearchBar
-                                searchTerm={branch}
-                                setSearchTerm={setBranch}
-                                fetchSuggestions={fetchSuggestionsBranches}
-                                onSelectSuggestion={handleBranchSelect}
-                                displayField="name" // Add displayField to specify which field to display
+                            <InputDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                options={branches}
+                                onChange={handleBranchDropdownChange}
                             />
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                        <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Bar Code</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
-                        </div>
-                        <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
-                            <InputField type="text" id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
@@ -139,6 +146,17 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                             />
                         </div>
                     </div>
+                    <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
+                        <div style={{ flex: '1' }}>
+                            <InputLabel htmlFor="barcode" color="#0377A8">Bar Code</InputLabel>
+                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div style={{ flex: '1' }}>
+                            <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
+                            <InputField type="text" id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                    </div>
+                    
                 </form>
             </AddNewPopup>
         </>
