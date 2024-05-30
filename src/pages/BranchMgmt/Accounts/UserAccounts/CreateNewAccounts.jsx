@@ -38,7 +38,7 @@ export function CreateNewAccounts() {
     // Fetch branches when component mounts
     useEffect(() => {
         getBranches();
-    }, []);
+    });
 
 
     const getBranches = async () => {

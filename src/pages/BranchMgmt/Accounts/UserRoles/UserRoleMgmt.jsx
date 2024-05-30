@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
 import './UserRoleMgmt.css';
@@ -9,16 +9,42 @@ import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
 import AddNewUserRolePopup from './AddNewUserRolePopup';
 import UpdateUserRolePopup from './UpdateUserRolePopup';
+import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 
 
 export const UserRoleMgmt = () => {
+    const [selectedBranch, setSelectedBranch] = useState('All');
     const [clickedLink, setClickedLink] = useState('User Role Mgmt');
+    const [userRoles, setUserRoles] = useState([]);
+
+    useEffect(() => {
+        const getUserRoles = async () => {
+            try {
+                const response = await fetch("http://localhost:8080/userRoles", {
+                    method: "GET", 
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+                const data = await response.json();
+                console.log(data);
+                setUserRoles(data);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        };
+        getUserRoles();
+    }, []);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
     const handleDropdownChange = (value) => {
-        console.log('Selected Drop Down Value:', value);
+        setSelectedBranch(value);
+        // console.log(value)
     };
 
     const handleDelete = () => {
@@ -60,14 +86,17 @@ export const UserRoleMgmt = () => {
                     </div>
                     <div className="BranchField">
                         <InputLabel color="#0377A8">Branch</InputLabel>
-                        <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
+                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleDropdownChange(e)} addOptions={["All"]}/>
                     </div>
 
                     <div className='user-roles-middle-tablecontainer'>
                         <TableWithPagi
-                            columns={['Roles', 'Action']}
-                            rows={jsonData.registerdSystemUserRoles.map(role => ({
-                                Role: role.Role,
+                            columns={['Roles', 'Branch', 'Action']}
+                            rows={userRoles.filter(
+                                role => selectedBranch === 'All' || role.branchName === selectedBranch
+                            ).map(role => ({
+                                Role: role.userRoleName,
+                                Branch: role.branchName,
                                 action: (
                                     <div style={{ display: "flex", gap: "0.7em", cursor:"pointer" }}>
                                         <UpdateUserRolePopup />

@@ -36,8 +36,8 @@ function MyAccountDetails() {
     };
 
     const user = JSON.parse(sessionStorage.getItem('user'));
-    let employeeName = user?.employeeName;
-    let empId = user?.employeeId;
+    let employeeName = user?.userName;
+    let empId = user?.userID;
     let branchName = user?.branchName;
     let userRole = user?.role;
     let email= user?.email;

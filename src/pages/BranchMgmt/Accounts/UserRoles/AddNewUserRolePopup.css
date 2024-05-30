@@ -1,0 +1,9 @@
+.first-row{
+    display: flex;
+    gap: 10px;
+}
+
+.roleNameInput{
+    width: 200px;
+    margin-right: 20px;
+}

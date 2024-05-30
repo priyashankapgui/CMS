@@ -9,20 +9,20 @@ const UnauthorizedNotification = () => {
         window.history.back();
     }
 
-    useEffect(() => {
-        const redirectTimer = setTimeout(() => {
-            goBack();
-        }, redirectCountdown * 1000);
+    // useEffect(() => {
+    //     const redirectTimer = setTimeout(() => {
+    //         goBack();
+    //     }, redirectCountdown * 1000);
 
-        const countdownInterval = setInterval(() => {
-            setRedirectCountdown(prevCountdown => prevCountdown - 1);
-        }, 1000);
+    //     const countdownInterval = setInterval(() => {
+    //         setRedirectCountdown(prevCountdown => prevCountdown - 1);
+    //     }, 1000);
 
-        return () => {
-            clearTimeout(redirectTimer);
-            clearInterval(countdownInterval);
-        };
-    }, [redirectCountdown]);
+    //     return () => {
+    //         clearTimeout(redirectTimer);
+    //         clearInterval(countdownInterval);
+    //     };
+    // }, [redirectCountdown]);
 
     return (
         <>
