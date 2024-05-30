@@ -11,7 +11,7 @@ import cmslogo from "../../../Assets/cmslogo.svg";
 import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
-import Spinner from "../../../Components/Spinner/Spinner";
+import MainSpinner from "../../../Components/Spinner/MainSpinner/MainSpinner";
 
 const Login = () => {
 
@@ -79,7 +79,7 @@ const Login = () => {
   return (
     <>
       {loading ? (
-        <Spinner />
+        <MainSpinner />
       ) : (
         <div className="s-mainContainer">
           {/* Login page content */}

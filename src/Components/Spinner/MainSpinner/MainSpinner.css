@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&family=Princess+Sofia&display=swap');
 
-.SpinnerSystemText {
+.sweet-loading-Main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  background-color: transparent;
+}
+
+.SpinnerSystemTextMain {
   font-size: 4rem;
   line-height: 0;
   color: #0377A8;
