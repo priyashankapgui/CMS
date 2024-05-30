@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const url = 'http://localhost:8080/branches';
@@ -14,7 +13,7 @@ function AddNewBranchPopup() {
     const [address, setAddress] = useState('');
     const [branchEmail, setBranchEmail] = useState('');
     const [contactNo, setContactNo] = useState('');
-    const navigate = useNavigate();
+    
     const handleSave = async (e) => {
         e.preventDefault();
         try {
@@ -25,7 +24,8 @@ function AddNewBranchPopup() {
                 contactNumber: contactNo
             });
             console.log("Branch added successfully");
-            navigate('');
+            navigate('/adjust-branch');
+            window.location.reload();  // Refresh the page
         } catch (error) {
             console.error("Error:", error);
             // You might want to handle the error gracefully, e.g., display an error message to the user
@@ -36,21 +36,21 @@ function AddNewBranchPopup() {
         <AddNewPopup topTitle="Add New Branch" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
             <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
                 <div style={{ flex: '1' }}>
-                    <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
+                    <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
                     <InputField type="text" id="branchName" name="branchName" editable={true} value={branchName} onChange={(e) => setBranchName(e.target.value)} style={{ width: '100%' }} />
                 </div>
                 <div style={{ flex: '1' }}>
-                    <InputLabel for="address" color="#0377A8" fontsize="">Address</InputLabel>
+                    <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
                     <InputField type="text" id="address" name="address" editable={true} value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: '100%' }} />
                 </div>
             </div>
             <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
                 <div style={{ flex: '1' }}>
-                    <InputLabel for="branchEmail" color="#0377A8">Email</InputLabel>
+                    <InputLabel htmlFor="branchEmail" color="#0377A8">Email</InputLabel>
                     <InputField type="text" id="branchEmail" name="branchEmail" editable={true} value={branchEmail} onChange={(e) => setBranchEmail(e.target.value)} style={{ width: '100%' }} />
                 </div>
                 <div style={{ flex: '1' }}>
-                    <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
+                    <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
                     <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
                 </div>
             </div>

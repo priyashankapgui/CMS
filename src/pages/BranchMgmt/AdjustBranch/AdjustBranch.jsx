@@ -2,19 +2,19 @@
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import './AdjustBranch.css'
-import { Icon } from "@iconify/react";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
-    const [isHovered, setIsHovered] = useState(false);
+    // const [isHovered, setIsHovered] = useState(false);
+
     const navigate = useNavigate();
 
     useEffect(() => {
