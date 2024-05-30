@@ -6,7 +6,7 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
-import DehazeIcon from '@mui/icons-material/Dehaze'; 
+
 
 export const StockBalance = () => {
 
