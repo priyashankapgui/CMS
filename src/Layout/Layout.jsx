@@ -3,7 +3,7 @@ import "./Layout.css";
 import TopNav from "../../src/Components/TopNavDrawer/TopNav/TopNav";
 import Sidebar from '../Components/SideDrawer/Sidebar';
 import ConnectionWarning from '../Components/Alerts/ConnectionWarning/ConnectionWarning';
-import Spinner from "../Components/Spinner/Spinner";
+import MainSpinner from "../Components/Spinner/MainSpinner/MainSpinner";
 
 const Layout = ({ children }) => {
     const [sidebarExpanded, setSidebarExpanded] = useState(true);
@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
 
     // Render loading spinner while loading is true
     if (loading) {
-        return <Spinner />;
+        return <MainSpinner />;
     }
 
     return (
