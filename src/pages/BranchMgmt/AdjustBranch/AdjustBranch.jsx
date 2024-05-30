@@ -2,20 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import './AdjustBranch.css'
-import { Icon } from "@iconify/react";
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
     const [loading, setLoading] = useState(true); // Loading state
-    // const [isHovered, setIsHovered] = useState(false);
+  
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export const AdjustBranch = () => {
                     </div>
                     
                     {loading ? (
-                        <div> Loading....</div>
+                        <div> <SubSpinner/></div>
                     ) : (
                         <TableWithPagi
                             itemsPerPage={5}
