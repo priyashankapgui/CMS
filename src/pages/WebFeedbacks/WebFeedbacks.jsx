@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState,useCallback} from 'react';
 import Layout from '../../Layout/Layout';
 import Buttons from '../../Components/Buttons/SquareButtons/Buttons';
@@ -9,6 +8,7 @@ import DatePicker from '../../Components/DatePicker/DatePicker';
 import jsonData from '../../Components/Data.json';
 import './WebFeedbacks.css';
 
+
 export const WebFeedbacks = () => {
     const [openRowIndex, setOpenRowIndex] = useState(null);
     const [actionSummary, setActionSummary] = useState('');
@@ -16,8 +16,10 @@ export const WebFeedbacks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5; // Number of rows to display per page
     const feedbackApiUrl = 'http://localhost:8080/feedback';
+    const branchApiUrl = 'http://localhost:8080/branches';
 
     const [rows, setRows] = useState([]);
+    const [branchOptions, setBranchOptions] = useState([]);
 
     const fetchFeedbacks = useCallback(() => {
         fetch(feedbackApiUrl)
@@ -30,26 +32,63 @@ export const WebFeedbacks = () => {
             });
     }, [feedbackApiUrl]);
 
+    const fetchBranchOptions = useCallback(() => {
+        fetch(branchApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                 setBranchOptions(['All', ...data]);
+            })
+            .catch(error => {
+                console.error('Failed to fetch branch data:', error);
+            });
+    }, [branchApiUrl]);
+
     useEffect(() => {
-       fetchFeedbacks();
-    }, [fetchFeedbacks]);
+        fetchFeedbacks();
+        fetchBranchOptions();
+    }, [fetchFeedbacks, fetchBranchOptions]);
+
+    
 
     const handleRowClick = (index) => {
         setOpenRowIndex(openRowIndex === index ? null : index);
     };
 
-    const handleSaveActionSummary = (index) => {
+    const handleSaveActionSummary = async (index) => {
         const updatedRows = [...rows];
         const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        if (actionSummary.trim() === '') {
-            updatedRows[index] = { ...updatedRows[index], action: 'Pending', actionTakenBy: '', actionTakenAt: '', actionSummary: '', lastUpdated: '' };
-        } else {
-            updatedRows[index] = { ...updatedRows[index], action: 'Taken', actionTakenBy: 'User', actionTakenAt: currentDate, actionSummary: actionSummary, lastUpdated: currentDate };
+    
+        const updatedRow = {
+            ...updatedRows[index],
+            action: actionSummary.trim() === '' ? 'Pending' : 'Taken',
+            actionTakenBy: actionSummary.trim() === '' ? '' : 'User',
+            actionTakenAt: actionSummary.trim() === '' ? '' : currentDate,
+            actionSummary: actionSummary.trim(),
+            lastUpdated: currentDate,
+        };
+    
+        try {
+            const response = await fetch(`${feedbackApiUrl}/${updatedRows[index].feedbackId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedRow),
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to update feedback');
+            }
+    
+            updatedRows[index] = updatedRow;
+            setRows(updatedRows);
+            setActionSummary('');
+            setEditModeIndex(null);
+        } catch (error) {
+            console.error('Error updating feedback:', error);
         }
-        setRows(updatedRows);
-        setActionSummary('');
-        setEditModeIndex(null); // Exit edit mode after saving
     };
+    
 
     // Calculate start and end indices for current page
     const indexOfLastRow = currentPage * rowsPerPage;
@@ -64,6 +103,8 @@ export const WebFeedbacks = () => {
         return new Date(dateString).toLocaleString('en-US', options);
     };
 
+    
+
     return (
         <>
             <div className="top-nav-blue-text">
@@ -75,7 +116,7 @@ export const WebFeedbacks = () => {
                         <div className="Feed-top-Content">
                             <div className="branchField">
                                 <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
+                                <InputDropdown id="branchName" name="branchName" editable={true} options={branchOptions.map(branch => branch.branchName)} />
                             </div>
                             <div className="dateField">
                                 <InputLabel for="to-date" color="#0377A8">To</InputLabel>
