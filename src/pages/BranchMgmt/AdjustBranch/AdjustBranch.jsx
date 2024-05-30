@@ -8,13 +8,14 @@ import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
-    // const [isHovered, setIsHovered] = useState(false);
-
+    const [loading, setLoading] = useState(true); // Loading state
+  
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,6 +23,7 @@ export const AdjustBranch = () => {
             try {
                 const response = await axios.get(branchesApiUrl);
                 setBranchData(response.data);
+                setLoading(false); // Data loaded, set loading to false
             } catch (error) {
                 console.error('Error fetching branches:', error);
             }
@@ -32,6 +34,7 @@ export const AdjustBranch = () => {
 
 
     const handleDelete = async (branchId) => {
+        setLoading(true); // Set loading to true while deleting
         try {
             // Send DELETE request to the backend to delete the branch
             await axios.delete(`${branchesApiUrl}/${branchId}`);
@@ -42,14 +45,14 @@ export const AdjustBranch = () => {
             navigate('/adjust-branch');
         } catch (error) {
             console.error('Error deleting branch:', error);
+        } finally {
+            setLoading(false); // After deletion, set loading to false
         }
     };
 
     const handleUpdatePopup = (branchId) => {
         navigate(`/adjust-branch/${branchId}`);
     };
-
-
 
     return (
         <>
@@ -63,24 +66,29 @@ export const AdjustBranch = () => {
                         <h3 className="registeredBranch-title">Registered Branches</h3>
                         <AddNewBranchPopup />
                     </div>
-                    <TableWithPagi
-                        itemsPerPage={5}
-                        columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
-                        rows={branchData.map(branch => ({
-                            branchId: branch.branchId,
-                            branchName: branch.branchName,
-                            branchAddress: branch.address,
-                            branchEmail: branch.email,
-                            branchContact: branch.contactNumber,
+                    
+                    {loading ? (
+                        <div> <SubSpinner/></div>
+                    ) : (
+                        <TableWithPagi
+                            itemsPerPage={5}
+                            columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
+                            rows={branchData.map(branch => ({
+                                branchId: branch.branchId,
+                                branchName: branch.branchName,
+                                branchAddress: branch.address,
+                                branchEmail: branch.email,
+                                branchContact: branch.contactNumber,
 
-                            action: (
-                                <div style={{ display: "flex", gap: "0.5em" }}>
-                                    <UpdateBranchPopup handleUpdatePopup={() => handleUpdatePopup(branch.branchId)} />
-                                    <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
-                                </div>
-                            )
-                        }))}
-                    />
+                                action: (
+                                    <div style={{ display: "flex", gap: "0.5em" }}>
+                                        <UpdateBranchPopup handleUpdatePopup={() => handleUpdatePopup(branch.branchId)} />
+                                        <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
+                                    </div>
+                                )
+                            }))}
+                        />
+                    )}
                 </div>
             </Layout>
         </>

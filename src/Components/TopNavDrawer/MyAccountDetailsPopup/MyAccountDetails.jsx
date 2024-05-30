@@ -4,9 +4,7 @@ import SubPopup from '../../PopupsWindows/SubPopup';
 import Buttons from '../../Buttons/SquareButtons/Buttons';
 import InputLabel from '../../Label/InputLabel';
 import InputField from '../../InputField/InputField';
-import InputDropdown from '../../InputDropdown/InputDropdown';
 import { useDropzone } from 'react-dropzone';
-import dropdownOptions from '../../Data.json';
 import './MyAccountDetails.css';
 
 function MyAccountDetails() {
@@ -39,6 +37,12 @@ function MyAccountDetails() {
 
     const user = JSON.parse(sessionStorage.getItem('user'));
     let employeeName = user?.employeeName;
+    let empId = user?.employeeId;
+    let branchName = user?.branchName;
+    let userRole = user?.role;
+    let email= user?.email;
+    
+
 
 
     return (
@@ -68,12 +72,24 @@ function MyAccountDetails() {
                     <div className="view-profile-form-background">
                         <div className="branch-field">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <InputField 
+                            type="text"
+                            id="branchName" 
+                            name="branchName"
+                            value={branchName} 
+                            width="250px"
+                             />
                         </div>
                         <div className="flex-content-ViewP">
                             <div className="user-role-field">
                                 <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
-                                <InputDropdown id="userRole" name="userRole" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
+                                <InputField 
+                                type="text"
+                                id="role" 
+                                name="role"
+                                value={userRole} 
+                                width="250px"
+                                />
                             </div>
                             <div className="change-dp" {...(getRootProps())}>
                                 {imageUrl && <img className="preview-image" src={imageUrl} alt="Preview" />}
@@ -86,15 +102,30 @@ function MyAccountDetails() {
                         </div>
                         <div className="emp-id-field">
                             <InputLabel for="empID" color="#0377A8">Emp ID</InputLabel>
-                            <InputField type="text" id="empID" name="empID" editable={false} />
+                            <InputField 
+                            type="text"
+                            id="empID" 
+                            name="empID"
+                            value={empId} 
+                             />
                         </div>
                         <div className="emp-name-field">
                             <InputLabel for="empName" color="#0377A8">Emp Name</InputLabel>
-                            <InputField type="text" id="empName" name="empName" editable={editable} />
+                            <InputField 
+                            type="text" 
+                            id="empName" 
+                            name="empName" 
+                            value={employeeName}
+                             />
                         </div>
                         <div className="email-field">
                             <InputLabel for="empEmail" color="#0377A8">Official Email (Optional)</InputLabel>
-                            <InputField type="email" id="empEmail" name="empEmail" placeholder="abc@greenleaf.com" editable={editable} />
+                            <InputField 
+                            type="email" 
+                            id="empEmail" 
+                            name="empEmail" 
+                            value={email}
+                            />
                         </div>
                         <div className="password-field">
                             <InputLabel for="userPassword" color="#0377A8">Do you want to change your password?</InputLabel>

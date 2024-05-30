@@ -106,7 +106,7 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSelectSuggestion, fetchSuggest
                     onMouseLeave={handleMouseLeave}
                 >
                     {noSuggestions ? (
-                        <div className="suggestion-item no-suggestions">Search Result Not Found</div>
+                        <div className="suggestion-item no-suggestions">Search Record Not Found</div>
                     ) : (
                         suggestions.map((suggestion, index) => (
                             <div

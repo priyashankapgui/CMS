@@ -30,7 +30,7 @@ body {
 .sidebar-nav {
     background-color: #0377A8;
     width: 15.625em;
-    min-height: 160vh;
+    min-height: 165vh;
     height: 100%;
     display: flex;
     flex-direction: column;
