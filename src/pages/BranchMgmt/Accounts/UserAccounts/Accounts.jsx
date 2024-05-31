@@ -3,8 +3,6 @@ import Layout from "../../../../Layout/Layout";
 import "./Accounts.css";
 import { Link } from "react-router-dom";
 import InputLabel from "../../../../Components/Label/InputLabel";
-import jsonData from "../../../../Components/Data.json";
-import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputField from "../../../../Components/InputField/InputField";
 import TableWithPagi from "../../../../Components/Tables/TableWithPagi";
@@ -12,6 +10,8 @@ import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Icon } from "@iconify/react";
+import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
+import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 
 export function Accounts() {
   const [clickedLink, setClickedLink] = useState("Users");
@@ -71,6 +71,16 @@ export function Accounts() {
     };
     filterEmployees();
   }, [selectedBranch, selectedRole, employeeData]);
+
+  const handleDropdownBranchChange = (value) => {
+    setSelectedBranch(value);
+    // console.log(value)
+  };
+
+  const handleDropdownRoleChange = (value) => {
+    setSelectedRole(value);
+    // console.log(value)
+  };
 
   const handleCheck = (employeeId, editRole, editBranch) => {
     setShowAlert(false);
@@ -180,25 +190,12 @@ export function Accounts() {
             <div className="account-users-top">
               <div className="BranchField">
                 <InputLabel color="#0377A8">Branch</InputLabel>
-                <InputDropdown
-                  id="branchName"
-                  name="branchName"
-                  editable={true}
-                  options={jsonData.dropDownOptions.branchOptions}
-                  onChange={(selectedOption) =>
-                    setSelectedBranch(selectedOption)
-                  }
-                />
+                <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleDropdownBranchChange(e)} addOptions={["All"]}/>
+                
               </div>
               <div className="UserRoleField">
                 <InputLabel color="#0377A8">Role</InputLabel>
-                <InputDropdown
-                  id="role"
-                  name="role"
-                  editable={true}
-                  options={jsonData.dropDownOptions.userRoleOptions}
-                  onChange={(selectedOption) => setSelectedRole(selectedOption)}
-                />
+                <UserRoleDropdown id="roleName" name="roleName" editable={true} onChange={(e) => handleDropdownRoleChange(e)} addOptions={["All"]} />
               </div>
               <div className="EmpidField">
                 <InputLabel color="#0377A8">Emp ID</InputLabel>
@@ -265,7 +262,7 @@ export function Accounts() {
                 empName: employee.employeeName,
                 email: employee.email,
                 Telephone: employee.phone,
-                role: employee.role,
+                role: employee.userRoleName,
                 action: (
                   <div style={{ display: "flex", gap: "0.7em" }}>
                     <button

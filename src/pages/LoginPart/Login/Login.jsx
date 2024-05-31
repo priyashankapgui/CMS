@@ -70,21 +70,27 @@ const Login = () => {
         }),
       }).catch((error) => console.error("Error:", error));
     }
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Response data:", data);
+    try{
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Response data:", data);
 
-      // Store the token in local storage
-      sessionStorage.setItem("accessToken", data.token);
-      sessionStorage.setItem("user", JSON.stringify(data.user));
+        // Store the token in local storage
+        sessionStorage.setItem("accessToken", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
 
-      console.log(sessionStorage.getItem("accessToken"));
-      window.location.href = "/sales";
-    } else {
-      // Login failed, handle error
-      const data = await response.json();
-      console.log("Error:", data.message);
-      setError(data.message);
+        console.log(sessionStorage.getItem("accessToken"));
+        window.location.href = "/sales";
+      } else {
+        // Login failed, handle error
+        const data = await response.json();
+        console.log("Error:", data.message);
+        setError(data.message);
+      }
+    }
+    catch(error){
+      setError("Internal Server Error")
+      console.error("Error:", error);
     }
   };
 
