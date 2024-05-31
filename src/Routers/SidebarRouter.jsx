@@ -11,12 +11,11 @@ import { GoodReceive } from '../pages/InventoryMgmt/GoodReceive/GoodReceive';
 import { AddNewGRN}  from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
 import { StockBalance } from '../pages/InventoryMgmt/StockBalance/StockBalance';
 import { StockTransfer } from '../pages/InventoryMgmt/StockTransfer/StockTransfer';
-import { NewStockTransfer } from '../pages/InventoryMgmt/StockTransfer/NewStockTransfer';
+import {NewStockTransfer} from '../pages/InventoryMgmt/StockTransfer/NewStockTransfer';
 import { CheckPrice } from '../pages/InventoryMgmt/CheckPrice/CheckPrice';
 import { Sales } from '../pages/Billing/Sales/Sales';
 import { WorkList } from '../pages/Billing/WorkList/WorkList-Billed/WorkList';
 import { ViewBill } from '../pages/Billing/WorkList/WorkList-Billed/ViewBill';
-import { StartReturnItems } from '../pages/Billing/WorkList/WorkList-Returned/StartReturnItems';
 import { ReturnBillList } from '../pages/Billing/WorkList/WorkList-Returned/ReturnBillList';
 import { ViewReturnBill } from '../pages/Billing/WorkList/WorkList-Returned/ViewReturnBill';
 import { OnlineOrders } from '../pages/OnlineOrders/OnlineOrders';
@@ -52,7 +51,7 @@ export function SidebarRouter() {
       <Route path="/good-receive" element={<GoodReceive />} />
       <Route path="/good-receive/new" element={<AddNewGRN />} />
       <Route path="/stock-transfer" element={<StockTransfer />} />
-      <Route path="/stock-transfer/new" element={<NewStockTransfer />} />
+      <Route path="/stock-transfer/new" element={<NewStockTransfer/>} />
       <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       <Route path="/reporting/analysis" element={<Analysis />} />
       <Route path="/reporting/reports" element={<Reports />} />
@@ -65,7 +64,6 @@ export function SidebarRouter() {
       <Route path="/sales" element={<Sales />} />
       <Route path="/work-list" element={<WorkList />} />
       <Route path="/work-list/viewbill/:billNo" element={<ViewBill />} />
-      <Route path="/work-list/viewbill/start-return-items/:billNo" element={<StartReturnItems/>} />
       <Route path="/work-list/returnbill-list" element={<ReturnBillList />} />
       <Route path="/work-list/returnbill-list/viewreturnbill/:RTBNo" element={<ViewReturnBill />} />
       <Route path="/online-orders" element={<OnlineOrders />} />
