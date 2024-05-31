@@ -14,7 +14,7 @@ const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(true);
   
     const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ export const AdjustBranch = () => {
             try {
                 const response = await axios.get(branchesApiUrl);
                 setBranchData(response.data);
-                setLoading(false); // Data loaded, set loading to false
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching branches:', error);
             }
@@ -34,11 +34,9 @@ export const AdjustBranch = () => {
 
 
     const handleDelete = async (branchId) => {
-        setLoading(true); // Set loading to true while deleting
+        setLoading(true); 
         try {
-            // Send DELETE request to the backend to delete the branch
             await axios.delete(`${branchesApiUrl}/${branchId}`);
-            // Update the state to reflect the deletion
             const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
             setBranchData(updatedBranchData);
             console.log("Branch deleted successfully");
@@ -46,7 +44,7 @@ export const AdjustBranch = () => {
         } catch (error) {
             console.error('Error deleting branch:', error);
         } finally {
-            setLoading(false); // After deletion, set loading to false
+            setLoading(false);
         }
     };
 

@@ -40,26 +40,28 @@ function UpdateBranchPopup({}) {
 
     return (
         <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={handleSave}>
-            <div className="content1" style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                <div className="BranchField">
-                    <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                    <InputField type="text" id="branchName" name="branchName" value={post.branchName} onChange={handleUpdate} editable={true} />
+            <form onSubmit={handleSave}>
+                <div className="content1" style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                    <div className="BranchField">
+                        <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
+                        <InputField type="text" id="branchName" name="branchName" value={post.branchName} onChange={handleUpdate} editable={true} />
+                    </div>
+                    <div className="AddressField">
+                        <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
+                        <InputField type="text" id="address" name="address" value={post.address} onChange={handleUpdate} editable={true} />
+                    </div>
                 </div>
-                <div className="AddressField">
-                    <InputLabel for="address" color="#0377A8" fontsize="">Address</InputLabel>
-                    <InputField type="text" id="address" name="address" value={post.address} onChange={handleUpdate} editable={true} />
+                <div className="content2" style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
+                    <div className="EmailField">
+                        <InputLabel htmlFor="branchEmail" color="#0377A8">Email</InputLabel>
+                        <InputField type="text" id="branchEmail" name="branchEmail" value={post.branchEmail} onChange={handleUpdate} editable={true} />
+                    </div>
+                    <div className="ContactNoField">
+                        <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
+                        <InputField type="text" id="contactNo" name="contactNo" value={post.contactNo} onChange={handleUpdate} editable={true} />
+                    </div>
                 </div>
-            </div>
-            <div className="content2" style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                <div className="EmailField">
-                    <InputLabel for="branchEmail" color="#0377A8">Email</InputLabel>
-                    <InputField type="text" id="branchEmail" name="branchEmail" value={post.branchEmail} onChange={handleUpdate} editable={true} />
-                </div>
-                <div className="ContactNoField">
-                    <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
-                    <InputField type="text" id="contactNo" name="contactNo" value={post.contactNo} onChange={handleUpdate} editable={true} />
-                </div>
-            </div>
+            </form>
         </EditPopup>
     );
 }
