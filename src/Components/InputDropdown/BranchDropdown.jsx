@@ -27,7 +27,7 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
                 });
                 const branches = data.map((branch) => branch.label);
                 if (addOptions) {
-                    branches.push(...addOptions);
+                    branches.unshift(...addOptions);
                 }
                 setBranches(branches);
             } catch (error) {
