@@ -38,7 +38,7 @@ function AddNewBranchPopup() {
             console.log("Branch added successfully");
             const alertData = {
                 severity: 'success',
-                title: 'Success',
+                title: 'Added',
                 message: 'Branch added successfully!',
                 duration: 3000
             };
