@@ -77,6 +77,7 @@ function MyAccountDetails() {
                             id="branchName" 
                             name="branchName"
                             value={branchName} 
+                            width="250px"
                              />
                         </div>
                         <div className="flex-content-ViewP">
@@ -87,6 +88,7 @@ function MyAccountDetails() {
                                 id="role" 
                                 name="role"
                                 value={userRole} 
+                                width="250px"
                                 />
                             </div>
                             <div className="change-dp" {...(getRootProps())}>

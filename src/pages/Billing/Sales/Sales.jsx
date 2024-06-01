@@ -34,10 +34,10 @@ export const Sales = () => {
     const [discountBillRate, setDiscountBillRate] = useState(0);
     const [discountBillAmount, setDiscountBillAmount] = useState(0);
     const [netTotal, setNetTotal] = useState(0);
-    const [receivedAmount, setReceivedAmount] = useState(''); // Initialize to 0
-    const [balance, setBalance] = useState(''); // Initially null
+    const [receivedAmount, setReceivedAmount] = useState('');
+    const [balance, setBalance] = useState(''); 
     const [noBilledQty, setNoBilledQty] = useState(0);
-    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' }); // Alert state
+    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' }); 
 
     const handleDropdownChange = (value) => {
         console.log('Selected Drop Down Value:', value);

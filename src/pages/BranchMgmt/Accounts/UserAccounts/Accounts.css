@@ -21,7 +21,6 @@
 }
 
 
-
 .account-user-section {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
@@ -56,7 +55,7 @@
 .EmpidField-Section{
     display: flex;
     gap: 1.5em;
-    align-items: start;
+    align-items: flex-start;
 }
 
 .Button-Section {
