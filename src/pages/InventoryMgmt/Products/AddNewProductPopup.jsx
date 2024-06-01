@@ -1,47 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import CreatableBar from '../../../Components/CreatableBar/CreatableBar';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
+    const navigate = useNavigate();
     const [productName, setProductName] = useState('');
-    const [selectedBranch, setSelectedBranch] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
-    const [barcode, setBarcode] = useState('');
     const [image, setImage] = useState('');
     const [categoryOptions, setCategoryOptions] = useState([]);
-    const [branches, setBranches] = useState([]);
 
     const baseURL = "http://localhost:8080/products";
 
+    const resetFields = () => {
+        setProductName('');
+        setDescription('');
+        setCategory('');
+        setImage('');
+    };
+
     const addProductHandler = async (e) => {
         e.preventDefault();
-
-        // Logging form data before submission
-        console.log('Form Data Before Submission:', {
-            productName,
-            branch: selectedBranch,
-            description,
-            category,
-            barcode
-        });
-
-        if (!category) {
-            console.error('Category name is required');
-            return;
-        }
-
+    
         const formData = new FormData();
         formData.append('image', image);
         formData.append('productName', productName);
-        formData.append('branchName', selectedBranch);
         formData.append('description', description);
         formData.append('categoryName', category);
-        formData.append('barcode', barcode);
 
         try {
             await axios.post(baseURL, formData, {
@@ -49,21 +38,12 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            clearForm(); // Clear the form after successfully posting data
-            onSave(); // Close the popup and refresh products list
+            
+            resetFields();
+            navigate('/Products');
+            onSave(); 
         } catch (error) {
             console.error('Error posting data:', error);
-        }
-    };
-
-    const fetchBranchesData = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/branches`);
-            const branchNames = response.data.map(branch => branch.branchName);
-            setBranches(branchNames);
-        } catch (error) {
-            console.error('Error fetching branches:', error);
-            setBranches([]);
         }
     };
 
@@ -71,8 +51,10 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         try {
             const response = await axios.get('http://localhost:8080/categories');
             const options = response.data.map(item => ({
-                label: `${item.categoryId} ${item.categoryName}`, 
-                value: item.categoryName
+                id: item.categoryId,
+                displayText:`${item.categoryId} ${item.categoryName}`
+                // label: item.categoryName, 
+                // value: item.categoryName
             }));
             setCategoryOptions(options);
         } catch (error) {
@@ -80,28 +62,8 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
     };
 
-    const handleBranchDropdownChange = (value) => {
-        console.log('Selected Branch Dropdown Value:', value);
-        setSelectedBranch(value);
-    };
-
-    const handleCategorySelect = (selectedCategory) => {
-        console.log('Selected Category:', selectedCategory);
-        setCategory(selectedCategory ? selectedCategory.split(' ').slice(1).join(' ') : '');
-    };
-
-    const clearForm = () => {
-        setProductName('');
-        setSelectedBranch('');
-        setDescription('');
-        setCategory('');
-        setBarcode('');
-        setImage('');
-    };
-
     useEffect(() => {
         fetchCategoryOptions();
-        fetchBranchesData(); 
     }, []);
 
     return (
@@ -110,7 +72,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
             buttonId="save-btn"
             buttonText="Save"
             onClick={addProductHandler}
-            onClose={onClose} // Ensure onClose is passed to handle closing the popup
         >
             <form onSubmit={addProductHandler} method="POST" encType='multipart/form-data'>
                 <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
@@ -119,34 +80,18 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                         <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
                     </div>
                     <div style={{ flex: '1' }}>
-                        <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
-                        <InputDropdown
-                            id="branchName"
-                            name="branchName"
-                            editable={true}
-                            options={branches}
-                            onChange={handleBranchDropdownChange}
-                        />
+                        <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
+                        <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
                     </div>
                 </div>
                 <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
                     <div style={{ flex: '1' }}>
-                        <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
-                        <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
-                    </div>
-                    <div style={{ flex: '1' }}>
                         <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                         <CreatableBar
                             options={categoryOptions}
-                            value={category}
-                            onChange={handleCategorySelect}
+                            value={category ? { label: category, value: category } : null}
+                            onChange={(selectedOption) => setCategory(selectedOption ? selectedOption.value : '')}
                         />
-                    </div>
-                </div>
-                <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                    <div style={{ flex: '1' }}>
-                        <InputLabel htmlFor="barcode" color="#0377A8">Bar Code</InputLabel>
-                        <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
                     </div>
                     <div style={{ flex: '1' }}>
                         <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
