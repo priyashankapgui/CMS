@@ -14,107 +14,76 @@ import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const Products = () => {
     // State variables for Registered Products
-    const [registeredProducts, setRegisteredProducts] = useState([]);
-    const [registeredCategory, setRegisteredCategory] = useState('');
-    const [registeredProduct, setRegisteredProduct] = useState('');
-    const [loadingRegisteredProducts, setLoadingRegisteredProducts] = useState(false);
+    const [productsData, setProductsData] = useState([]);
+    const [loading, setLoading] = useState(true); // Loading state
+    const [selectedProduct, setSelectedProduct] = useState('');
 
     // State variables for Adjusting Product's Category
-    const [adjustmentCategories, setAdjustmentCategories] = useState([]);
-    const [adjustmentCategory, setAdjustmentCategory] = useState('');
-    const [loadingAdjustmentCategories, setLoadingAdjustmentCategories] = useState(false);
+    const [categoryData, setCategoryData] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
-    useEffect(() => {
-        fetchCategoryNames();
-    }, []);
-
-    const fetchRegisteredProductsData = async (category, product) => {
-        setLoadingRegisteredProducts(true);
+    const fetchProductsSuggestions = async (query) => {
         try {
-            let query = '';
-            if (category) {
-                query = `category=${category}`;
-            } else if (product) {
-                query = `product=${product}`;
-            }
-
-            const response = await axios.get(`http://localhost:8080/products?${query}`);
-            if (Array.isArray(response.data)) {
-                setRegisteredProducts(response.data);
-            } else {
-                console.error('Unexpected response format:', response.data);
-                setRegisteredProducts([]);
-            }
-        } catch (error) {
-            console.error('Error fetching products:', error);
-            setRegisteredProducts([]);
-        } finally {
-            setLoadingRegisteredProducts(false);
-        }
-    };
-
-    const fetchCategoryAdjustmentData = async (category) => {
-        setLoadingAdjustmentCategories(true);
-        try {
-            const response = await axios.get(`http://localhost:8080/products/categoryAdjustment?category=${category}`);
-            setAdjustmentCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching category adjustment data:', error);
-            setAdjustmentCategories([]);
-        } finally {
-            setLoadingAdjustmentCategories(false);
-        }
-    };
-
-    const fetchProductsSuggestion = async (query) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
+            const response = await axios.get(`http://localhost:8080/product?search=${query}`);
             return response.data.map(product => ({
                 id: product.productId,
                 displayText: `${product.productId} ${product.productName}`
             }));
         } catch (error) {
-            console.error('Error fetching products:', error);
+            console.error('Error fetching product:', error);
             return [];
         }
     };
 
-    const fetchCategories = async (query) => {
+    const fetchCategorySuggestions = async (query) => {
         try {
             const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            return response.data.map(category => ({ id: category.categoryId, displayText: category.categoryName }));
+            return response.data.map(category => ({
+                id: category.categoryId,
+                displayText: `${category.categoryId} ${category.categoryName}`
+            }));
         } catch (error) {
-            console.error('Error fetching categories:', error);
+            console.error('Error fetching category:', error);
             return [];
         }
     };
 
-    const fetchCategoryNames = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/categories`);
-            setAdjustmentCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-            setAdjustmentCategories([]);
-        }
+    const handleClearBtn = () => {
+        setSelectedProduct('');
+        setProductsData([]);
+        setSelectedCategory('');
+        setCategoryData([]);
     };
 
-    const handleRegisteredSearchBtn = () => {
-        fetchRegisteredProductsData(registeredCategory, registeredProduct);
-    };
+    useEffect(() => {
+        const fetchProductsData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/product`);
+                setProductsData(response.data); // Set the fetched product data
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setLoading(false);
+            }
+        };
 
-    const handleRegisteredClearBtn = () => {
-        console.log('Selected data cleared.');
-        setRegisteredCategory('');
-        setRegisteredProduct('');
-        setRegisteredProducts([]);
-    };
+        fetchProductsData();
+    }, []);
 
-    const handleCategoryInputChange = (e) => {
-        const query = e.target.value;
-        setAdjustmentCategory(query);
-        fetchCategoryAdjustmentData(query);
-    };
+    useEffect(() => {
+        const fetchCategoryData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/categories`);
+                setCategoryData(response.data); // Set the fetched product data
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching category:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchCategoryData();
+    }, []);
 
     return (
         <>
@@ -130,40 +99,40 @@ export const Products = () => {
                             <div className="productField">
                                 <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
                                 <SearchBar
-                                    searchTerm={registeredProduct}
-                                    setSearchTerm={setRegisteredProduct}
-                                    onSelectSuggestion={(suggestion) => setRegisteredProduct(suggestion.displayText)}
-                                    fetchSuggestions={fetchProductsSuggestion}
+                                    searchTerm={selectedProduct}
+                                    setSearchTerm={setSelectedProduct}
+                                    onSelectSuggestion={(suggestion) => setSelectedProduct(`${suggestion.displayText}`)}
+                                    fetchSuggestions={fetchProductsSuggestions}
                                 />
                             </div>
                             <div className="categoryField">
                                 <InputLabel htmlFor="category" color="#0377A8">Category</InputLabel>
                                 <SearchBar
-                                    searchTerm={registeredCategory}
-                                    setSearchTerm={setRegisteredCategory}
-                                    onSelectSuggestion={(suggestion) => setRegisteredCategory(suggestion.displayText)}
-                                    fetchSuggestions={fetchCategories}
+                                    searchTerm={selectedCategory}
+                                    setSearchTerm={setSelectedCategory}
+                                    onSelectSuggestion={(suggestion) => setSelectedCategory(`${suggestion.displayText}`)}
+                                    fetchSuggestions={fetchCategorySuggestions}
                                 />
                             </div>
                         </div>
                         <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleRegisteredSearchBtn}>Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleRegisteredClearBtn}>Clear</Buttons>
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleClearBtn}>Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
                             <AddNewProductPopup />
                         </div>
                     </div>
                     <div className="product-content-middle">
-                        {loadingRegisteredProducts ? (
-                            <div> <SubSpinner /> </div>
+                        {loading ? (
+                            <div>Loading...</div>
                         ) : (
                             <TableWithPagi
-                                columns={['Barcode', 'Product ID', 'Product Name', 'Product Category', 'Description', 'Action']}
-                                rows={Array.isArray(registeredProducts) ? registeredProducts.map(product => ({
-                                    'Barcode': product.barcode,
+                                columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Quantity', 'Action']}
+                                rows={Array.isArray(productsData) ? productsData.map(product => ({
                                     'Product ID': product.productId,
                                     'Product Name': product.productName,
                                     'Product Category': product.category?.categoryName,
                                     'Description': product.description,
+                                    'Quantity': product.qty,
                                     'Actions': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
                                             <DeletePopup />
@@ -175,31 +144,31 @@ export const Products = () => {
                     </div>
                 </div>
 
-                {/* Adjust Product's Category Section */}
                 <div className="create-product-category-section">
                     <div className="category-filter-container">
                         <h3 className="create-product-category-title">Registered Product's Categories</h3>
                         <div className="create-product-category-top">
                             <div className="categoryField">
                                 <InputLabel htmlFor="category" color="#0377A8">Search Category ID / Name</InputLabel>
-                                <InputField
-                                    type="text"
-                                    id="category-search-field"
-                                    name="category-search-field"
-                                    editable={true}
-                                    width="100%"
-                                    value={adjustmentCategory}
-                                    onChange={handleCategoryInputChange}
+                                <SearchBar
+                                    searchTerm={selectedCategory}
+                                    setSearchTerm={setSelectedCategory}
+                                    onSelectSuggestion={(suggestion) => setSelectedCategory(`${suggestion.displayText}`)}
+                                    fetchSuggestions={fetchCategorySuggestions}
                                 />
                             </div>
                         </div>
+                        <div className="p-BtnSection">
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleClearBtn}>Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
+                        </div>
                         <div className="create-product-category-middle">
-                            {loadingAdjustmentCategories ? (
-                                <div> <SubSpinner /> </div>
+                            {loading ? (
+                                <div>Loading...</div>
                             ) : (
                                 <TableWithPagi
                                     columns={['Reg Categories', 'Action']}
-                                    rows={adjustmentCategories.map(category => ({
+                                    rows={Array.isArray(categoryData) ? categoryData.map(category => ({
                                         'Reg Categories': category.categoryName,
                                         'Action': (
                                             <div style={{ display: "flex", gap: "0.5em" }}>
@@ -207,7 +176,7 @@ export const Products = () => {
                                                 <DeletePopup />
                                             </div>
                                         )
-                                    }))}
+                                    })) : []}
                                 />
                             )}
                         </div>
