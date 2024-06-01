@@ -1,7 +1,6 @@
-// AdjustBranch.js
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
-import './AdjustBranch.css'
+import './AdjustBranch.css';
 import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
@@ -9,13 +8,16 @@ import AddNewBranchPopup from "./AddNewBranchPopup";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
-    const [loading, setLoading] = useState(true); // Loading state
-  
+    const [loading, setLoading] = useState(true);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({});
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,39 +25,67 @@ export const AdjustBranch = () => {
             try {
                 const response = await axios.get(branchesApiUrl);
                 setBranchData(response.data);
-                setLoading(false); // Data loaded, set loading to false
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching branches:', error);
             }
         };
 
         fetchBranchData();
+
+        const storedAlertConfig = localStorage.getItem('alertConfig');
+        if (storedAlertConfig) {
+            setAlertConfig(JSON.parse(storedAlertConfig));
+            setAlertVisible(true);
+            localStorage.removeItem('alertConfig');
+        }
     }, []);
 
-
     const handleDelete = async (branchId) => {
-        setLoading(true); // Set loading to true while deleting
+        setLoading(true);
         try {
-            // Send DELETE request to the backend to delete the branch
             await axios.delete(`${branchesApiUrl}/${branchId}`);
-            // Update the state to reflect the deletion
             const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
             setBranchData(updatedBranchData);
             console.log("Branch deleted successfully");
+
+            const alertData = {
+                severity: 'warning',
+                title: 'Delete',
+                message: 'Branch deleted successfully!',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/adjust-branch');
+            window.location.reload();
         } catch (error) {
             console.error('Error deleting branch:', error);
-        } finally {
-            setLoading(false); // After deletion, set loading to false
-        }
-    };
 
-    const handleUpdatePopup = (branchId) => {
-        navigate(`/adjust-branch/${branchId}`);
+            const alertData = {
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to delete branch.',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            navigate('/adjust-branch');
+            window.location.reload();
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <>
+            {alertVisible && (
+                <CustomAlert
+                    severity={alertConfig.severity}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    duration={alertConfig.duration}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
             <div className="top-nav-blue-text">
                 <h4>Adjust Branch</h4>
             </div>
@@ -66,7 +96,7 @@ export const AdjustBranch = () => {
                         <h3 className="registeredBranch-title">Registered Branches</h3>
                         <AddNewBranchPopup />
                     </div>
-                    
+
                     {loading ? (
                         <div> <SubSpinner/></div>
                     ) : (
@@ -82,7 +112,7 @@ export const AdjustBranch = () => {
 
                                 action: (
                                     <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <UpdateBranchPopup handleUpdatePopup={() => handleUpdatePopup(branch.branchId)} />
+                                        <UpdateBranchPopup branchId={branch.branchId} />
                                         <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
                                     </div>
                                 )
