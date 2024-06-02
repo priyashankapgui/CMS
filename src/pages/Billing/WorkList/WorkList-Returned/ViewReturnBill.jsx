@@ -19,8 +19,14 @@ export function ViewReturnBill() {
 
     
     const handleReprintClick = () => {
+        console.log("Reprint button clicked");
         setShowRefundReceipt(true);
     };
+
+    const handleCloseRefundReceipt = () => {
+        setShowRefundReceipt(false);
+    };
+
 
     if (!selectedReturnBillData) {
         return <div>Return Bill not found</div>;
@@ -117,7 +123,9 @@ export function ViewReturnBill() {
                 </div>
 
             </Layout>
-            {showRefundReceipt && <RefundReceipt />}
+            {showRefundReceipt && (
+                <RefundReceipt billData={selectedReturnBillData} onClose={handleCloseRefundReceipt} />
+            )}
         </>
     );
 };

@@ -58,7 +58,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
             <div
                 className={`dropdown-selected ${editable ? '' : 'disabled'}`}
                 onClick={toggleDropdown}
-                tabIndex={editable ? 0 : -1}  // Add tabindex for focus
+                tabIndex={editable ? 0 : -1}
             >
                 <span>{selectedOption}</span>
                 <IoMdArrowDropdown className="dropdown-arrow" />
