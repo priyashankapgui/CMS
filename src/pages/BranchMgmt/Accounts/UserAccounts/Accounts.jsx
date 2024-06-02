@@ -138,7 +138,7 @@ export function Accounts() {
           (employee) => employee.employeeId !== employeeId
         );
         setFilteredEmployees(updatedEmployees);
-        setShowAlertSuccess(true);
+        setShowAlertSuccess("Employee deleted successfully");
         console.log("Employee deleted:", employeeId);
       } else {
         const data = await response.json();
@@ -324,7 +324,7 @@ export function Accounts() {
           <CustomAlert
             severity="success"
             title="Success"
-            message="Employee updated successfully"
+            message={showAlertSuccess}
             duration={3000}
             onClose={() => {
               window.location.reload();
