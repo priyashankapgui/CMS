@@ -1,0 +1,11 @@
+.first-row{
+    display: flex;
+    gap: 10px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.roleNameInput{
+    width: 200px;
+    margin-right: 20px;
+    font-family: 'Poppins', sans-serif;
+}
