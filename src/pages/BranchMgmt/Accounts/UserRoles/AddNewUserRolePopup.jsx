@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
 import './AddNewUserRolePopup.css';
-import { Alert, AlertTitle } from '@mui/material';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import AddNewPopup from '../../../../Components/PopupsWindows/AddNewPopup';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import InputField from '../../../../Components/InputField/InputField';
@@ -38,13 +38,13 @@ function AddNewUserRolePopup({showSuccess}) {
     ,[]);
 
     const handleSave = async() => {
+        try {
         const selectedPages = Array.from(checkedPages.entries())
             .filter(([pageId, isChecked]) => isChecked)
             .map(([pageId, isChecked]) => pageId);
         console.log(selectedPages, selectedBranch, roleName);
         if (!roleName || !selectedBranch || selectedPages.length === 0) {
-            setShowAlert('Please fill in all fields');
-            return;
+            throw new Error('Please fill all the fields');
         }
         let tempBranch = selectedBranch;
         if (selectedBranch === 'None') {
@@ -61,7 +61,6 @@ function AddNewUserRolePopup({showSuccess}) {
                 checkedPages: selectedPages,
             }),
         });
-        try {
             if (!response){
                 throw new Error('Server Error');
             }
@@ -72,7 +71,7 @@ function AddNewUserRolePopup({showSuccess}) {
             const data = await response.json();
             console.log(data);
             showSuccess(`User Role '${roleName}' created successfully`);
-            return;
+            return null;
         } catch (error) {
             setShowAlert(error.message);
             console.error('Error:', error);
@@ -104,28 +103,13 @@ function AddNewUserRolePopup({showSuccess}) {
                         <PermissionMap checkedPages={checkedPages} permissionArray={permissionArray}/>
                     </div>
                     {showAlert &&
-                    <Alert
-                        severity={"error"} // Ensure severity matches one of the predefined values
-                        sx={{
-                            position: "fixed",
-                            top: "80px",
-                            right: "10px",
-                            marginBottom: "30px",
-                            color: "#eb1313",
-                            width: "fit-content",
-                            borderRadius: "18px 0 ",
-                            padding: "0 15px 0 15px",
-                            marginTop: "0",
-                            boxShadow:
-                            "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
-                            " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
-                            transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
-                        }}
-                        onClose={() => setShowAlert(false)}
-                        >
-                        <AlertTitle>Error</AlertTitle>
-                        {showAlert}
-                    </Alert>
+                    <CustomAlert
+                    severity="error"
+                    title="Error"
+                    message={showAlert}
+                    duration={3000}
+                    onClose={() => setShowAlert(false)}
+                    />
                     }
                 </div>
 

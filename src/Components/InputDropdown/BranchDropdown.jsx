@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import InputDropdown from "./InputDropdown";
+import SubSpinner from "../Spinner/SubSpinner/SubSpinner";
 
 const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions, displayValue }) => {
     const [branches, setBranches] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        setLoading(true);
         const getBranches = async () => {
             try {
                 const token = sessionStorage.getItem("accessToken");
@@ -35,6 +38,7 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
                 }
                 console.log(branches, displayValue);
                 setBranches(branches);
+                setLoading(false);
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -46,6 +50,20 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
     }
     , []);
     return (
+        <div>
+        {loading ? 
+        <InputDropdown
+            id={id}
+            name={name}
+            height={height}
+            width={width}
+            onChange={onChange}
+            editable={false}
+            borderRadius={borderRadius}
+            marginTop={marginTop}
+            options={['Loading...']}
+        /> 
+        : 
         <InputDropdown
             id={id}
             name={name}
@@ -57,6 +75,8 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
             marginTop={marginTop}
             options={branches}
         />
+        }
+        </div>
     );
 }
 

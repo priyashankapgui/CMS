@@ -10,7 +10,7 @@ import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
 import AddNewUserRolePopup from './AddNewUserRolePopup';
 import UpdateUserRolePopup from './UpdateUserRolePopup';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
-import { Alert, AlertTitle } from '@mui/material';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 
 
 export const UserRoleMgmt = () => {
@@ -116,28 +116,15 @@ export const UserRoleMgmt = () => {
                     </div>
                 </div>
                 {success &&
-                <Alert
-                    severity={"success"} // Ensure severity matches one of the predefined values
-                    sx={{
-                        position: "fixed",
-                        top: "80px",
-                        right: "10px",
-                        marginBottom: "30px",
-                        color: "#2e7d32",
-                        width: "fit-content",
-                        borderRadius: "18px 0 ",
-                        padding: "0 15px 0 15px",
-                        marginTop: "0",
-                        boxShadow:
-                        "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
-                        " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
-                        transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
-                    }}
-                    onClose={() => setSuccess(false)}
-                    >
-                    <AlertTitle>Success</AlertTitle>
-                    {success}
-                </Alert>
+                <CustomAlert
+                severity="success"
+                title="Success"
+                message={success}
+                duration={3000}
+                onClose={() => {
+                  window.location.reload();
+                }}
+              />
                 }
             </Layout>
         </>
