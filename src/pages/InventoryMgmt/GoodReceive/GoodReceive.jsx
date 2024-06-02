@@ -15,7 +15,7 @@ import  { useState, useEffect } from 'react';
 
 export const GoodReceive = () => {
  
-    const [suppliersData, setSuppliersData] = useState([]);
+    const [GRNData, setGRNData] = useState([]);
     const navigate = useNavigate();
 
     const handleButtonClick = () => {
@@ -24,16 +24,16 @@ export const GoodReceive = () => {
 
     //////////////////////////need to be change/////////////////////////////
     useEffect(() => {
-        const fetchSuppliersData = async () => {
+        const fetchGRNData = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/suppliers");
-                setSuppliersData(response.data); // Set the fetched supplier data
+                const response = await axios.get("http://localhost:8080/grn");
+                setGRNData(response.data); // Set the fetched grn data
             } catch (error) {
-                console.error('Error fetching suppliers:', error);
+                console.error('Error fetching grn:', error);
             }
         };
 
-        fetchSuppliersData();
+        fetchGRNData();
     }, []);
     ///////////////////////////////////////////////////////////////////////////
 
@@ -100,15 +100,14 @@ export const GoodReceive = () => {
                     </div>
                     <div className="goodReceive-content-middle">
                         <TableWithPagi
-                            columns={['GRN No', 'Created At', 'Branch', 'Supplier', 'Invoice No', 'Submitted By', '']}
+                            columns={['GRN No', 'Created At', 'Branch', 'Supplier', 'Invoice No', '']}
                             //////////////////////////need to be change/////////////////////////////
-                            rows={suppliersData.map(supplier => ({
-                                'Supplier ID': supplier.supplierId,
-                                'Supplier Name': supplier.supplierName,
-                                'Reg No': supplier.regNo,
-                                'Email': supplier.email,
-                                'Address': supplier.address,
-                                'Contact No': supplier.contactNo,
+                            rows={GRNData.map(grn => ({
+                                'GRN No': grn.GRN_NO,
+                                'Created At': grn.createdAt,
+                                'Branch ': grn.branchName,
+                                'Supplier': grn.supplierName,
+                                'Invoice No': grn.invoiceNo,
                                 'Action': (
                                     <div style={{ display: "flex", gap: "0.5em" }}>
                                         <Icon icon="bitcoin-icons:edit-outline"
