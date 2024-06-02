@@ -10,6 +10,7 @@ const SalesReceipt = ({ billData, onClose }) => {
     }
 
     const { billNo, billedAt, billedBy, customerName, paymentMethod, contactNo, billedItems } = billData;
+    
     let totalQuantity = 0;
     let grossTotal = 0;
     let discount = 0;

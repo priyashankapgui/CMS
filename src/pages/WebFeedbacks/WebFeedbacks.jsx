@@ -5,7 +5,6 @@ import { IoIosArrowDropdown, IoIosArrowDropup, IoMdCreate, IoIosArrowForward, Io
 import InputLabel from '../../Components/Label/InputLabel';
 import InputDropdown from '../../Components/InputDropdown/InputDropdown';
 import DatePicker from '../../Components/DatePicker/DatePicker';
-import jsonData from '../../Components/Data.json';
 import './WebFeedbacks.css';
 
 

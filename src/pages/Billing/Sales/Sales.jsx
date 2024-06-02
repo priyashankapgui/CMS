@@ -8,7 +8,6 @@ import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Icon } from "@iconify/react";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import dropdownOptions from '../../../Components/Data.json';
 import InputRadio from '../../../Components/InputRadio/InputRadio';
 import radioBtnOptions from '../../../Components/Data.json';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
@@ -35,11 +34,28 @@ export const Sales = () => {
     const [discountBillAmount, setDiscountBillAmount] = useState(0);
     const [netTotal, setNetTotal] = useState(0);
     const [receivedAmount, setReceivedAmount] = useState('');
-    const [balance, setBalance] = useState(''); 
+    const [balance, setBalance] = useState('');
     const [noBilledQty, setNoBilledQty] = useState(0);
-    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' }); 
+    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+
+
+    useEffect(() => {
+        fetchBranches();
+    }, []);
+
+    const fetchBranches = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/branches');
+            setBranches(response.data);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+        }
+    };
 
     const handleDropdownChange = (value) => {
+        setSelectedBranch(value);
         console.log('Selected Drop Down Value:', value);
     };
 
@@ -61,7 +77,7 @@ export const Sales = () => {
         setGrossTotal(gross.toFixed(2));
         setDiscountBillAmount(discountAmount.toFixed(2));
         setNetTotal(net.toFixed(2));
-        setBalance(isNaN(bal) ? null : bal.toFixed(2)); // Only set balance if valid
+        setBalance(isNaN(bal) ? null : bal.toFixed(2));
         setNoBilledQty(billedQty);
     }, [rows, discountBillRate, receivedAmount]);
 
@@ -112,23 +128,33 @@ export const Sales = () => {
         setRows(rows.map(row => row.id === id ? { ...row, [name]: value } : row));
     };
 
+    const handleCloseAlert = () => {
+        setAlert({ show: false, severity: '', title: '', message: '' });
+    };
+
+
+
+
     const fetchDataByBarcode = async (barcode, id) => {
         try {
-            const response = await axios.get(`http://localhost:8080/listedProducts/barcode/${barcode}`);
+            const response = await axios.get(`http://localhost:8080/product-batch-sum/barcode/${barcode}`);
             const data = response.data;
-            setRows(rows.map(row =>
-                row.id === id
-                    ? {
-                        ...row,
-                        barcode: data.barcode || "",
-                        productId: data.productId || "",
-                        productName: data.productName || "",
-                        batchNo: data.batchNo || "",
-                        unitPrice: data.unitPrice || "",
-                        avbQty: data.avbQty || "",
-                    }
-                    : row
-            ));
+            if (data) {
+                setRows(rows.map(row =>
+                    row.id === id
+                        ? {
+                            ...row,
+                            barcode: data.barcode || "",
+                            productId: data.productId || "",
+                            productName: data.productName || "",
+                            batchNo: data.batchNo || "",
+                            unitPrice: data.sellingPrice || "",
+                            avbQty: data.totalAvailableQty || "",
+                            discount: data.discount || ""
+                        }
+                        : row
+                ));
+            }
         } catch (error) {
             console.error('Error fetching product data by barcode:', error);
         }
@@ -136,7 +162,7 @@ export const Sales = () => {
 
     const fetchSuggestions = async (searchTerm) => {
         try {
-            const response = await axios.get(`http://localhost:8080/listedProducts`);
+            const response = await axios.get(`http://localhost:8080/product-batch-sum`);
             const data = response.data;
             return data
                 .filter(item => {
@@ -154,23 +180,23 @@ export const Sales = () => {
         }
     };
 
-    const handleBarcodeChange = (e, id) => {
+    const handleBarcodeChange = async (e, id) => {
         const barcode = e.target.value;
         handleInputChange(e, id);
-        fetchDataByBarcode(barcode, id);
+        await fetchDataByBarcode(barcode, id);
     };
-
     const handleSuggestionSelect = (suggestion, id) => {
         setRows(rows.map(row =>
             row.id === id
                 ? {
                     ...row,
                     productId: suggestion.productId,
-                    productName: suggestion.productName,
+                    productName: suggestion.productName, 
                     barcode: "",
                     batchNo: "",
                     unitPrice: "",
                     avbQty: "",
+                    discount: "",
                 }
                 : row
         ));
@@ -179,7 +205,7 @@ export const Sales = () => {
 
     const fetchDataByProductId = async (productId, id) => {
         try {
-            const response = await axios.get(`http://localhost:8080/listedProducts/${productId}`);
+            const response = await axios.get(`http://localhost:8080/product-batch-sum/${productId}`);
             const data = response.data;
             setRows(rows.map(row =>
                 row.id === id
@@ -189,8 +215,9 @@ export const Sales = () => {
                         barcode: data.barcode || "",
                         productName: data.productName || "",
                         batchNo: data.batchNo || "",
-                        unitPrice: data.unitPrice || "",
-                        avbQty: data.avbQty || "",
+                        unitPrice: data.sellingPrice || "",
+                        avbQty: data.totalAvailableQty || "",
+                        discount: data.discount || ""
                     }
                     : row
             ));
@@ -199,9 +226,7 @@ export const Sales = () => {
         }
     };
 
-    const handleCloseAlert = () => {
-        setAlert({ show: false, severity: '', title: '', message: '' });
-    };
+
     return (
         <>
             {alert.show && (
@@ -221,7 +246,13 @@ export const Sales = () => {
                     <div className="sales-top-content">
                         <div className="branchName">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
+                            <InputDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                options={branches.map(branch => branch.branchName)}
+                                onChange={handleDropdownChange}
+                            />
                         </div>
                         <div className="customerName">
                             <InputLabel for="customerName" color="#0377A8">Customer Name</InputLabel>
@@ -314,13 +345,13 @@ export const Sales = () => {
                                         </td>
                                         <td>
                                             <InputField
-                                                type="number"
+                                                type="text"
                                                 id={`discountPerItem_${row.id}`}
                                                 name="discountPerItem"
-                                                editable={true}
+                                                editable={false}
                                                 width="100%"
-                                                value={row.discountPerItem}
-                                                onChange={(e) => handleInputChange(e, row.id)}
+                                                value={row.discount}
+                                               
                                             />
                                         </td>
                                         <td>
@@ -351,69 +382,67 @@ export const Sales = () => {
                                 <InputRadio name="paymentMethod" options={radioBtnOptions.radioBtnOptions} />
                             </div>
                             <div className="payment-method-middle">
-                                <div className="payment-method-middle">
-                                    <table>
-                                        <tbody>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td><InputLabel for="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
+                                            <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} marginTop="0" value={grossTotal} /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><InputLabel for="discountBill" color="#0377A8">Discount %</InputLabel></td>
+                                            <td>
+                                                <div className="discountFieldsContainer">
+                                                    <InputField
+                                                        type="text"
+                                                        id="discountBillRate"
+                                                        name="discountBillRate"
+                                                        className="discountBillRate"
+                                                        editable={true}
+                                                        placeholder="%"
+                                                        width="3em"
+                                                        value={discountBillRate}
+                                                        onChange={(e) => setDiscountBillRate(e.target.value)}
+                                                    />
+                                                    <InputField
+                                                        type="text"
+                                                        id="discountBillAmount"
+                                                        name="discountBillAmount"
+                                                        className="discountBillAmount"
+                                                        editable={false}
+                                                        width="23.7em"
+                                                        value={discountBillAmount}
+                                                    />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><InputLabel for="netTotal" color="#0377A8" fontSize="1.125em" fontWeight="510">Net Total</InputLabel></td>
+                                            <td><InputField type="text" id="netTotal" name="netTotal" editable={false} marginTop="0" value={netTotal} /></td>
+                                        </tr>
+                                        <tr>
+                                            <td><InputLabel for="receivedAmount" color="#0377A8">Received</InputLabel></td>
+                                            <td><InputField type="text" id="receivedAmount" name="receivedAmount" editable={true} placeholder={"0.00"} marginTop="0" value={receivedAmount} onChange={(e) => setReceivedAmount(e.target.value)} /></td>
+                                        </tr>
+                                        {receivedAmount > 0 && (
                                             <tr>
-                                                <td><InputLabel for="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
-                                                <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} marginTop="0" value={grossTotal} /></td>
+                                                <td><InputLabel for="balance" color="#0377A8">Balance</InputLabel></td>
+                                                <td><InputField type="text" id="balance" name="balance" editable={false} marginTop="0" value={balance} /></td>
                                             </tr>
-                                            <tr>
-                                                <td><InputLabel for="discountBill" color="#0377A8">Discount %</InputLabel></td>
-                                                <td>
-                                                    <div className="discountFieldsContainer">
-                                                        <InputField
-                                                            type="text"
-                                                            id="discountBillRate"
-                                                            name="discountBillRate"
-                                                            className="discountBillRate"
-                                                            editable={true}
-                                                            placeholder="%"
-                                                            width="3em"
-                                                            value={discountBillRate}
-                                                            onChange={(e) => setDiscountBillRate(e.target.value)}
-                                                        />
-                                                        <InputField
-                                                            type="text"
-                                                            id="discountBillAmount"
-                                                            name="discountBillAmount"
-                                                            className="discountBillAmount"
-                                                            editable={false}
-                                                            width="23.7em"
-                                                            value={discountBillAmount}
-                                                        />
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="netTotal" color="#0377A8" fontSize="1.125em" fontWeight="510">Net Total</InputLabel></td>
-                                                <td><InputField type="text" id="netTotal" name="netTotal" editable={false} marginTop="0" value={netTotal} /></td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="receivedAmount" color="#0377A8">Received</InputLabel></td>
-                                                <td><InputField type="text" id="receivedAmount" name="receivedAmount" editable={true} placeholder={"0.00"} marginTop="0" value={receivedAmount} onChange={(e) => setReceivedAmount(e.target.value)} /></td>
-                                            </tr>
-                                            {receivedAmount > 0 && (
-                                                <tr>
-                                                    <td><InputLabel for="balance" color="#0377A8">Balance</InputLabel></td>
-                                                    <td><InputField type="text" id="balance" name="balance" editable={false} marginTop="0" value={balance} /></td>
-                                                </tr>
-                                            )}
-                                            <tr>
-                                                <td><InputLabel for="noBilledQty" color="#0377A8">No Qty:</InputLabel></td>
-                                                <td><InputField type="text" id="noBilledQty" name="noBilledQty" editable={false} marginTop="0" value={noBilledQty} /></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="payment-method-bottom">
-                                    <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-                                    <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </ Buttons>
-                                </div>
-                                <div className="cardLogos">
-                                    <Icon icon="fa:cc-visa" />
-                                    <Icon icon="logos:mastercard" />
-                                </div>
+                                        )}
+                                        <tr>
+                                            <td><InputLabel for="noBilledQty" color="#0377A8">No Qty:</InputLabel></td>
+                                            <td><InputField type="text" id="noBilledQty" name="noBilledQty" editable={false} marginTop="0" value={noBilledQty} /></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="payment-method-bottom">
+                                <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
+                                <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </ Buttons>
+                            </div>
+                            <div className="cardLogos">
+                                <Icon icon="fa:cc-visa" />
+                                <Icon icon="logos:mastercard" />
                             </div>
                         </div>
                     </div>

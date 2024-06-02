@@ -16,6 +16,7 @@ import { CheckPrice } from '../pages/InventoryMgmt/CheckPrice/CheckPrice';
 import { Sales } from '../pages/Billing/Sales/Sales';
 import { WorkList } from '../pages/Billing/WorkList/WorkList-Billed/WorkList';
 import { ViewBill } from '../pages/Billing/WorkList/WorkList-Billed/ViewBill';
+import {StartReturnItems} from '../pages/Billing/WorkList/WorkList-Returned/StartReturnItems'
 import { ReturnBillList } from '../pages/Billing/WorkList/WorkList-Returned/ReturnBillList';
 import { ViewReturnBill } from '../pages/Billing/WorkList/WorkList-Returned/ViewReturnBill';
 import { OnlineOrders } from '../pages/OnlineOrders/OnlineOrders';
@@ -65,7 +66,9 @@ export function SidebarRouter() {
       <Route path="/work-list" element={<WorkList />} />
       <Route path="/work-list/viewbill/:billNo" element={<ViewBill />} />
       <Route path="/work-list/returnbill-list" element={<ReturnBillList />} />
+      <Route path="/work-list/viewbill/start-return-items/:billNo" element={<StartReturnItems/>} />
       <Route path="/work-list/returnbill-list/viewreturnbill/:RTBNo" element={<ViewReturnBill />} />
+
       <Route path="/online-orders" element={<OnlineOrders />} />
       {/* </Route> */}
 

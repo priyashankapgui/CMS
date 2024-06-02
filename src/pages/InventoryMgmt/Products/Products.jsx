@@ -123,7 +123,7 @@ export const Products = () => {
                     </div>
                     <div className="product-content-middle">
                         {loading ? (
-                            <div>Loading...</div>
+                            <div><SubSpinner/></div>
                         ) : (
                             <TableWithPagi
                                 columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Quantity', 'Action']}
