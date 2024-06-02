@@ -60,10 +60,11 @@ export const UserRoleMgmt = () => {
 
     return (
         <>
-            <Layout>
             <div className="top-nav-blue-text">
                 <h4>Accounts - User Roles Mgmt</h4>
             </div>
+            <Layout>
+            
 
                 <div className="linkActions-account-userRoles">
                     <div className={clickedLink === 'Users' ? 'clicked' : ''}>
