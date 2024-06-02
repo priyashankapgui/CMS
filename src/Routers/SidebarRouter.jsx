@@ -57,7 +57,7 @@ export function SidebarRouter() {
       </Route>
 
       <Route element={<ProtectedRoute groupName="suppliers"/>}>
-        <Route path="/suppliers" element={<Suppliers />} />
+        <Route path="/suppliers" element={<Suppliers />} /> 
       </Route>
 
       <Route element={<ProtectedRoute groupName="good-receive"/>}>
