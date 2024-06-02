@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import InputDropdown from "./InputDropdown";
 
-const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions }) => {
+const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions, displayValue }) => {
     const [branches, setBranches] = useState([]);
 
     useEffect(() => {
@@ -29,12 +29,20 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
                 if (addOptions) {
                     branches.unshift(...addOptions);
                 }
+                if (displayValue) {
+                    branches.splice(branches.indexOf(displayValue), 1);
+                    branches.unshift(displayValue);
+                }
+                console.log(branches, displayValue);
                 setBranches(branches);
             } catch (error) {
                 console.error("Error:", error);
             }
         };
         getBranches();
+        if(branches.length > 0){
+            onChange(branches[0]);
+        }
     }
     , []);
     return (

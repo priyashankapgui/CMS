@@ -1,4 +1,4 @@
-import { React, useState ,useEffect} from 'react'
+import { React, useState} from 'react'
 import { useDropzone } from 'react-dropzone';
 import Layout from "../../../../Layout/Layout";
 import './CreateNewAccounts.css';
@@ -9,10 +9,10 @@ import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButto
 import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import InputField from '../../../../Components/InputField/InputField';
-import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
-import dropdownOptions from '../../../../Components/Data.json';
 import { Link } from 'react-router-dom';
 import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
+import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
+import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropdown';
 
 
 export function CreateNewAccounts() {
@@ -21,8 +21,8 @@ export function CreateNewAccounts() {
         employeeName:"",
         email: "",
         password: "",
-        role: "",
-        branchId: "",
+        userRoleName: "",
+        branchName: "",
         phone: "",
         address: ""
     }); // State for storing employee data
@@ -30,50 +30,32 @@ export function CreateNewAccounts() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState("");
-    // const [selectedBranch, setSelectedBranch] = useState();
-    const [branches, setBranches] = useState([]);
-    const [displayBracnhes, setDisplayBranches] = useState([]);
+    // const [selectedBranch, setSelectedBranch] = useState([]);
+    // const [selectedRole, setSelectedRole] = useState([]);
+
     
+    const handleBranchChange = (branch) => {   
+        
+        setEmployeeData({
+          ...employeeData,
+          branchName: branch
+        });
 
-    // Fetch branches when component mounts
-    useEffect(() => {
-        getBranches();
-    });
+        
+    }
+    
+    const handleUserRoleChange = (role) => {
+      
+      setEmployeeData({
+        ...employeeData,
+        userRoleName: role
+      });
 
-
-    const getBranches = async () => {
-        try {
-            const token = sessionStorage.getItem("accessToken");
-            const response = await fetch("http://localhost:8080/branches", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            if (!response.ok) {
-                throw new Error("Failed to fetch data");
-            }
-            let data = await response.json();
-            data = data.map((branch) => {
-                return {
-                    value: branch.branchId,
-                    label: branch.branchName,
-                };
-            });
-            const displayBranches = data.map((branch) => branch.label);
-            setDisplayBranches(displayBranches);
-            console.log("Branches data:", data);
-            setBranches(data);
-            setEmployeeData({...employeeData, branchId: data[0].value});
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
+    }
 
     const handleCreateAccount = async () => {
         console.log("Employee data:", employeeData);
-        if (!employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.role || !employeeData.branchId || !employeeData.phone || !employeeData.address) {
+        if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
             setShowAlertError("Please fill in all fields")
             return;
           }
@@ -90,7 +72,9 @@ export function CreateNewAccounts() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(employeeData),
+                body: JSON.stringify(
+                  employeeData
+                ),
             });
 
             if (!response.ok) {
@@ -124,17 +108,6 @@ export function CreateNewAccounts() {
         onDrop: handleDrop
     });
 
-
-    const handleBranchChange = (branch) => {
-        const selectedBranch = branches.find(
-            (b) => b.label === branch
-        );
-        setEmployeeData({
-            ...employeeData,
-            branchId: selectedBranch.value,
-        });
-        // console.log("Selected branch:", selectedBranch);
-        }
 
 
     return (
@@ -171,12 +144,12 @@ export function CreateNewAccounts() {
               <InputLabel for="branchName" color="#0377A8">
                 Branch
               </InputLabel>
-              <InputDropdown
-                id="branchName"
-                name="branchName"
-                editable={true}
-                options={displayBracnhes}
-                onChange={(branch) => handleBranchChange(branch)}
+              <BranchDropdown 
+              id="branchName" 
+              name="branchName" 
+              editable={true} 
+              onChange={(branch) => handleBranchChange(branch)} 
+              
               />
             </div>
             <div className="flex-content-NA">
@@ -184,12 +157,12 @@ export function CreateNewAccounts() {
                 <InputLabel for="userRole" color="#0377A8">
                   User Role
                 </InputLabel>
-                <InputDropdown
-                  id="userRole"
-                  name="userRole"
-                  editable={true}
-                  options={dropdownOptions.dropDownOptions.userRoleOptions}
-                  onChange={(role) => setEmployeeData({ ...employeeData, role })}
+                <UserRoleDropdown 
+                id="userRole" 
+                name="userRole" 
+                editable={true} 
+                onChange={(role) => handleUserRoleChange(role)}
+                removeOptions={["superadmin"]}
                 />
               </div>
               <div className="add-dp-NA" {...getRootProps()}>
@@ -339,7 +312,7 @@ export function CreateNewAccounts() {
             severity="error"
             title="Error"
             message={showAlertError}
-            duration={10000}
+            duration={3000}
             onClose={() => setShowAlertError("")}
           />
         )}

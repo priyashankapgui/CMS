@@ -13,7 +13,7 @@ function UpdateUserRolePopup({userRoleId}) {
     const [permissionArray, setPermissionArray] = useState([]);
     const [checkedPages, setCheckedPages] = useState();
     const [roleName, setRoleName] = useState();
-    const [selectedBranch, setSelectedBranch] = useState("None");
+    const [selectedBranch, setSelectedBranch] = useState();
     const [showAlert, setShowAlert] = useState(false);
 
     const handleBranchChange = (branch) => {
@@ -35,58 +35,120 @@ function UpdateUserRolePopup({userRoleId}) {
         getPermissions();
     }
     ,[]);
-    return (
-        <>
-            <EditPopup topTitle="Update User Role Details" buttonId="update-btn" buttonText="Update" onClick={""}>
-            <div className='first-row'>
-                    <div className='roleNameInput'>
-                        <InputLabel colour="#0377A8">Role Name</InputLabel>
-                        <InputField
-                            type="text"
-                            id="roleName"
-                            name="roleName"
-                            value={roleName}
-                            onChange={(e) => setRoleName(e.target.value)}
-                            editable={true}
-                        />
-                    </div>
-                    <div>
-                        <InputLabel colour="#0377A8">Branch</InputLabel>
-                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleBranchChange(e)} addOptions={["None"]} />
-                    </div>
-                </div>
-                <div className='second-row'>
-                    <InputLabel colour="#0377A8">Permission Mapping</InputLabel>
-                    <div className='permissions'>
-                        <PermissionMap checkedPages={checkedPages} permissionArray={permissionArray}/>
-                    </div>
-                    {showAlert &&
-                    <Alert
-                        severity={"error"} // Ensure severity matches one of the predefined values
-                        sx={{
-                            position: "fixed",
-                            top: "80px",
-                            right: "10px",
-                            marginBottom: "30px",
-                            color: "#eb1313",
-                            width: "fit-content",
-                            borderRadius: "18px 0 ",
-                            padding: "0 15px 0 15px",
-                            marginTop: "0",
-                            boxShadow:
-                            "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
-                            " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
-                            transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
-                        }}
-                        onClose={() => setShowAlert(false)}
-                        >
-                        <AlertTitle>Error</AlertTitle>
-                        {showAlert}
-                    </Alert>
+
+    useEffect(() => {
+        const getUserPermission = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/getUserRolePermissions/${userRoleId}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                data.permissions.forEach(page => {
+                    if (checkedPages.has(page.pageAccessId)) {
+                        checkedPages.set(page.pageAccessId, true);
                     }
-                </div>
-            </EditPopup>
-        </>
+                });
+            } catch (error) {
+                console.error('Error fetching permissions:', error);
+            }
+        }
+        const getUserRole = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/userRole/${userRoleId}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data = await response.json();
+                console.log(data);
+                setRoleName(data.userRoleName);
+                setSelectedBranch(data.branchName);
+            } catch (error) {
+                console.error('Error fetching user role:', error);
+            }
+        }
+        getUserRole();
+        getUserPermission();
+    }
+    ,[checkedPages, userRoleId]);
+
+    const handleUpdate = async() => {
+        console.log(checkedPages, selectedBranch, roleName);
+    }
+
+    return (
+      <>
+        <EditPopup
+          topTitle="Update User Role Details"
+          buttonId="update-btn"
+          buttonText="Update"
+          onClick={handleUpdate}
+        >
+          <div className="first-row">
+            <div className="roleNameInput">
+              <InputLabel colour="#0377A8">Role Name</InputLabel>
+              <InputField
+                type="text"
+                id="roleName"
+                name="roleName"
+                value={roleName}
+                onChange={(e) => setRoleName(e.target.value)}
+                editable={true}
+              />
+            </div>
+            <div>
+              <InputLabel colour="#0377A8">Branch</InputLabel>
+              <BranchDropdown
+                id="branchName"
+                name="branchName"
+                editable={true}
+                onChange={(e) => handleBranchChange(e)}
+                addOptions={["None"]}
+                displayValue={selectedBranch}
+              />
+            </div>
+          </div>
+          <div className="second-row">
+            <InputLabel colour="#0377A8">Permission Mapping</InputLabel>
+            <div className="permissions">
+              <PermissionMap
+                checkedPages={checkedPages}
+                permissionArray={permissionArray}
+              />
+            </div>
+            {showAlert && (
+              <Alert
+                severity={"error"} // Ensure severity matches one of the predefined values
+                sx={{
+                  position: "fixed",
+                  top: "80px",
+                  right: "10px",
+                  marginBottom: "30px",
+                  color: "#eb1313",
+                  width: "fit-content",
+                  borderRadius: "18px 0 ",
+                  padding: "0 15px 0 15px",
+                  marginTop: "0",
+                  boxShadow:
+                    "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
+                    " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
+                  transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
+                }}
+                onClose={() => setShowAlert(false)}
+              >
+                <AlertTitle>Error</AlertTitle>
+                {showAlert}
+              </Alert>
+            )}
+          </div>
+        </EditPopup>
+      </>
     );
 }
 

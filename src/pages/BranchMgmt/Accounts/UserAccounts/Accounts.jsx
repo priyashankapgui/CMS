@@ -10,8 +10,9 @@ import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Icon } from "@iconify/react";
-import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
+import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
+import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 
 export function Accounts() {
   const [clickedLink, setClickedLink] = useState("Users");
@@ -20,6 +21,7 @@ export function Accounts() {
   const [selectedRole, setSelectedRole] = useState("All");
   const [empIdSearch, setEmpIdSearch] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
 
   useEffect(() => {
@@ -48,24 +50,38 @@ export function Accounts() {
     getEmployeeData();
   }, []);
 
+  // useEffect(() => {
+  //   const filterEmployees = () => {
+  //     const data = employeeData.filter((employee) => {
+  //       if (selectedBranch === "All" && selectedRole === "All") {
+  //         return true; // If both filters are empty, return all employees
+  //       } else if (selectedBranch && selectedRole === "All") {
+  //         return employee.branchName === selectedBranch;
+  //       } else if (selectedRole && selectedBranch === "All") {
+  //         return employee.role === selectedRole;
+  //       } else if (selectedBranch && selectedRole) {
+  //         return (
+  //           employee.branchName === selectedBranch &&
+  //           employee.role === selectedRole
+  //         );
+  //       } else {
+  //         // This shouldn't be reached, but added for completeness
+  //         return false;
+  //       }
+  //     });
+  //     setFilteredEmployees(data);
+  //   };
+  //   filterEmployees();
+  // }, [selectedBranch, selectedRole, employeeData]);
+
   useEffect(() => {
     const filterEmployees = () => {
       const data = employeeData.filter((employee) => {
-        if (selectedBranch === "All" && selectedRole === "All") {
-          return true; // If both filters are empty, return all employees
-        } else if (selectedBranch && selectedRole === "All") {
-          return employee.branchName === selectedBranch;
-        } else if (selectedRole && selectedBranch === "All") {
-          return employee.role === selectedRole;
-        } else if (selectedBranch && selectedRole) {
-          return (
-            employee.branchName === selectedBranch &&
-            employee.role === selectedRole
-          );
-        } else {
-          // This shouldn't be reached, but added for completeness
-          return false;
-        }
+        const branchMatch =
+          selectedBranch === "All" || employee.branchName === selectedBranch;
+        const roleMatch =
+          selectedRole === "All" || employee.userRoleName === selectedRole;
+        return branchMatch && roleMatch;
       });
       setFilteredEmployees(data);
     };
@@ -86,13 +102,7 @@ export function Accounts() {
     setShowAlert(false);
     console.log("Employee ID:", employeeId, "Branch:", editBranch);
     const user = JSON.parse(sessionStorage.getItem("user"));
-    if (
-      user.role === "superadmin" ||
-      (user.role === "admin" &&
-        user.branchName === editBranch &&
-        editRole !== "superadmin" &&
-        editRole !== "admin")
-    ) {
+    if (user.role === "superadmin" || user.branchName === editBranch) {
       window.location.href = `/accounts/update-account?employeeId=${employeeId}`;
     } else {
       console.log("User is not authorized to edit");
@@ -103,7 +113,6 @@ export function Accounts() {
   const handleLinkClick = (linkText) => {
     setClickedLink(linkText);
   };
-
 
   const handleDelete = async (employeeId) => {
     try {
@@ -129,6 +138,7 @@ export function Accounts() {
           (employee) => employee.employeeId !== employeeId
         );
         setFilteredEmployees(updatedEmployees);
+        setShowAlertSuccess(true);
         console.log("Employee deleted:", employeeId);
       } else {
         const data = await response.json();
@@ -190,12 +200,24 @@ export function Accounts() {
             <div className="account-users-top">
               <div className="BranchField">
                 <InputLabel color="#0377A8">Branch</InputLabel>
-                <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleDropdownBranchChange(e)} addOptions={["All"]}/>
-                
+                <BranchDropdown
+                  id="branchName"
+                  name="branchName"
+                  editable={true}
+                  onChange={(e) => handleDropdownBranchChange(e)}
+                  addOptions={["All"]}
+                />
               </div>
               <div className="UserRoleField">
                 <InputLabel color="#0377A8">Role</InputLabel>
-                <UserRoleDropdown id="roleName" name="roleName" editable={true} onChange={(e) => handleDropdownRoleChange(e)} addOptions={["All"]} />
+                <UserRoleDropdown
+                  id="roleName"
+                  name="roleName"
+                  editable={true}
+                  onChange={(e) => handleDropdownRoleChange(e)}
+                  addOptions={["All"]}
+                  removeOptions={["superadmin"]}
+                />
               </div>
               <div className="EmpidField">
                 <InputLabel color="#0377A8">Emp ID</InputLabel>
@@ -253,7 +275,7 @@ export function Accounts() {
                 "Emp Name",
                 "Gender",
                 "Telephone",
-                "Role",
+                "User Role",
                 "",
               ]}
               rows={filteredEmployees.map((employee) => ({
@@ -289,30 +311,26 @@ export function Accounts() {
             />
           </div>
           {showAlert && (
-            <Alert
-              severity={"error"} // Ensure severity matches one of the predefined values
-              sx={{
-                position: "fixed",
-                top: "80px",
-                right: "10px",
-                marginBottom: "30px",
-                color: "#eb1313",
-                width: "fit-content",
-                borderRadius: "18px 0 ",
-                padding: "0 15px 0 15px",
-                marginTop: "0",
-                boxShadow:
-                  "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
-                  " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
-                transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
-              }}
-              onClose={() => setShowAlert(false)}
-            >
-              <AlertTitle>Unauthorized</AlertTitle>
-              You are not authorized to edit this user.
-            </Alert>
+            <CustomAlert
+              severity="error"
+              title="Error"
+              message={showAlert}
+              duration={3000}
+              onClose={() => showAlert("")}
+            />
           )}
         </div>
+        {showAlertSuccess && (
+          <CustomAlert
+            severity="success"
+            title="Success"
+            message="Employee updated successfully"
+            duration={3000}
+            onClose={() => {
+              window.location.reload();
+            }}
+          />
+        )}
       </Layout>
     </>
   );

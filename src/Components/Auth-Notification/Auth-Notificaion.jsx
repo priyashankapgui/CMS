@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { IoWarning } from "react-icons/io5"; 
 import "./Auth-Notification.css";
+import Layout from "../../Layout/Layout";
 
 const UnauthorizedNotification = () => {
     const [redirectCountdown, setRedirectCountdown] = useState(4); // Initial countdown value in seconds
@@ -25,7 +26,7 @@ const UnauthorizedNotification = () => {
     // }, [redirectCountdown]);
 
     return (
-        <>
+        <Layout>
             <div className="unauthorized-container">
                 <h2 className="flexflow-sys-name">Flex Flow</h2>
                 <IoWarning className="warning-icon" />
@@ -33,13 +34,13 @@ const UnauthorizedNotification = () => {
                     <h2 className="unauthorized-title">
                         Access Denied: You lack the necessary permissions to view this content.
                     </h2>
-                    <h4>Redirecting to the previous page {redirectCountdown} seconds...</h4>
+                    {/* <h4>Redirecting to the previous page {redirectCountdown} seconds...</h4> */}
                     <button className="unauthorized-button" onClick={goBack}>
                         Go Back Now
                     </button>
                 </div>
             </div>
-        </>
+        </Layout>
     );
 }
 

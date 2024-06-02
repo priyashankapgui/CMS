@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Icon } from "@iconify/react";
 import SubPopup from '../../PopupsWindows/SubPopup';
 import Buttons from '../../Buttons/SquareButtons/Buttons';
 import InputLabel from '../../Label/InputLabel';
 import InputField from '../../InputField/InputField';
 import { useDropzone } from 'react-dropzone';
+import CustomAlert from '../../Alerts/CustomAlert/CustomAlert';
 import './MyAccountDetails.css';
 
 function MyAccountDetails() {
+    const [showSubPopup, setShowSubPopup] = useState(false);
+    const [employeeData, setEmployeeData] = useState({
+        employeeName: "",
+        employeeId: "",
+        branchName: "",
+        userRole: "",
+        email: "",
+    });
     const [editable, setEditable] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
-    const [showSubPopup, setShowSubPopup] = useState(false);
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
+    const [showAlertError, setShowAlertError] = useState("");
+    let user = JSON.parse(sessionStorage.getItem('user'));    
 
     const toggleEditable = () => {
         setEditable(!editable);
@@ -35,14 +48,118 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
-    const user = JSON.parse(sessionStorage.getItem('user'));
-    let employeeName = user?.userName;
-    let empId = user?.userID;
-    let branchName = user?.branchName;
-    let userRole = user?.role;
-    let email= user?.email;
+    // const user = JSON.parse(sessionStorage.getItem('user'));
+    // let employeeName = user?.userName;
+    // let empId = user?.userID;
+    // let branchName = user?.branchName;
+    // let userRole = user?.role;
+    // let email= user?.email;
+
+    useEffect(() => {
+        setEmployeeData({
+            employeeName: user?.userName || "",
+            employeeId: user?.userID || user?.employeeId || "",
+            branchName: user?.branchName || "None",
+            userRole: user?.role || "",
+            email: user?.email || ""
+        });
+    }, []);
+
+
     
 
+
+    const handleUpdate = async () => {
+        if (!employeeData.employeeName || !employeeData.email) {
+          setShowAlertError("Please fill in all fields")
+          return;
+        }
+        if (password !== confirmPassword) {
+          setShowAlertError("Passwords do not match");
+          return;
+        }
+        try {
+            let body = {}
+            const token = sessionStorage.getItem("accessToken");
+            let response;
+            if(String(employeeData.employeeId).startsWith("SA")){
+                if(password === ""){
+                    body = {
+                        superAdminName: employeeData.employeeName,
+                        email: employeeData.email,
+                    }
+                    }
+                    else{
+                    body = {
+                        superAdminName: employeeData.employeeName,
+                        email: employeeData.email,
+                        password: password,
+                    }
+                }
+                response = await fetch(`http://localhost:8080/superAdmin/update/${employeeData.employeeId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(body),
+                }
+                )
+            }
+            else{
+                if(password === ""){
+                    body = {
+                        employeeName: employeeData.employeeName,
+                        branchName: employeeData.branchName,
+                        email: employeeData.email,
+                    }
+                    }
+                    else{
+                    body = {
+                        employeeName: employeeData.employeeName,
+                        branchName: employeeData.branchName,
+                        email: employeeData.email,
+                        password: password,
+                    }
+                    }
+            response = await fetch(`http://localhost:8080/employees/${employeeData.employeeId}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(body),
+              }
+            )
+            }
+            if (!response.ok) {
+              const data = await response.json();
+              console.log("Error:", data.error);
+              setShowAlertError(data.error);
+            }else{
+                const updatedUser = {
+                    userName: body.employeeName || body.superAdminName,
+                    userID: employeeData.employeeId,
+                    branchName: body.branchName,
+                    role: employeeData.userRole,
+                    email: body.email
+                };
+                sessionStorage.setItem('user', JSON.stringify(updatedUser));
+                setShowAlertSuccess(true);
+            }
+          }
+            catch(error)
+            {
+              setShowAlertError(true);
+              console.error("Error:", error);
+            }
+        
+    }
+
+  
+    
 
 
     return (
@@ -52,7 +169,7 @@ function MyAccountDetails() {
                     <div className="userProfile" >
                         <div className="profile-dp" />
                         <div className="userName">
-                            <h4>{employeeName}</h4>   
+                            <h4>{user.userName || user.employeeName}</h4>   
                         </div>
                     </div>
 
@@ -76,7 +193,7 @@ function MyAccountDetails() {
                             type="text"
                             id="branchName" 
                             name="branchName"
-                            value={branchName} 
+                            value={employeeData.branchName}
                              />
                         </div>
                         <div className="flex-content-ViewP">
@@ -86,7 +203,7 @@ function MyAccountDetails() {
                                 type="text"
                                 id="role" 
                                 name="role"
-                                value={userRole} 
+                                value={employeeData.userRole} 
                                 />
                             </div>
                             <div className="change-dp" {...(getRootProps())}>
@@ -104,7 +221,7 @@ function MyAccountDetails() {
                             type="text"
                             id="empID" 
                             name="empID"
-                            value={empId}
+                            value={employeeData.employeeId}
                              />
                         </div>
                         <div className="emp-name-field">
@@ -113,8 +230,11 @@ function MyAccountDetails() {
                             type="text" 
                             id="empName" 
                             name="empName" 
-                            value={employeeName}
+                            value={employeeData.employeeName}
                             editable={editable}
+                            onChange={(e) =>
+                                setEmployeeData({ ...employeeData, employeeName: e.target.value })
+                              }
                              />
                         </div>
                         <div className="email-field">
@@ -123,21 +243,68 @@ function MyAccountDetails() {
                             type="email" 
                             id="empEmail" 
                             name="empEmail" 
-                            value={email}
+                            value={employeeData.email}
                             editable={editable}
+                            onChange={(e) =>
+                                setEmployeeData({ ...employeeData, email: e.target.value })
+                              }
                             />
                         </div>
                         <div className="password-field">
                             <InputLabel for="userPassword" color="#0377A8">Do you want to change your password?</InputLabel>
-                            <InputField type="password" id="currentPassword" name="currentPassword" placeholder="Current Password" editable={editable} />
-                            <InputField type="password" id="newPassword" name="newPassword" placeholder="New Password" editable={editable} />
-                            <InputField type="password" id="conf_newPassword" name="conf_newPassword" placeholder="Confirm New Password" editable={editable} />
+                            <InputField 
+                            type="password" 
+                            id="newPassword" 
+                            name="newPassword" 
+                            placeholder="New Password" 
+                            value={password}
+                            editable={editable} 
+                            onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <InputField 
+                            type="password" 
+                            id="conf_newPassword" 
+                            name="conf_newPassword" 
+                            placeholder="Confirm New Password" 
+                            value={confirmPassword}
+                            editable={editable} 
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
                         </div>
-                        <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
+                        <Buttons 
+                        type="submit" 
+                        id="save-btn" 
+                        style={{ backgroundColor: "#23A3DA", color: "white" }}
+                        onClick={handleUpdate}> 
+                            Save 
+                        </Buttons>
+
+                        {showAlertSuccess && (
+                            <CustomAlert
+                                severity="success"
+                                title="Success"
+                                message="Employee updated successfully"
+                                duration={3000}
+                                onClose={() => window.location.reload()}
+                            />
+                            )}
+
+                        {showAlertError && (
+                            <CustomAlert
+                                severity="error"
+                                title="Error"
+                                message={showAlertError}
+                                duration={10000}
+                                onClose={() => setShowAlertError("")}
+                            />
+                            )}
                     </div>
+
+                    
                 )}
             />
         </div>
+        
     );
 }
 

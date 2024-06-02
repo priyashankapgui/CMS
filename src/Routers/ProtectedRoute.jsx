@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import UnAuthorized  from "../Components/Auth-Notification/Auth-Notificaion";
 
 const ProtectedRoute = (groupName) => {
-    const [isLoggedIn, setIsLoggedIn] = useState();
+    const [giveAccess, setGiveAccess] = useState();
     useEffect(() => {
     const verfiyToken = async () => {
       const token = sessionStorage.getItem("accessToken");
@@ -22,23 +22,23 @@ const ProtectedRoute = (groupName) => {
         const data = await response.json();
         console.log(data);
         if (response.ok) {
-          setIsLoggedIn(true);
+          setGiveAccess(true);
         } else {
-          setIsLoggedIn(false);
+          setGiveAccess(false);
         }
       } else {
-        setIsLoggedIn(false);
+        setGiveAccess(false);
       }
     };
     verfiyToken();
     }
     , [groupName]);
-    if(isLoggedIn === undefined){
+    if(giveAccess === undefined){
         console.log("Loading...");
         return null;
     }
 
-  return isLoggedIn ? <Outlet /> : <UnAuthorized/>;
+  return giveAccess ? <Outlet /> : <UnAuthorized/>;
 }
 
 export default ProtectedRoute;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import InputDropdown from "./InputDropdown";
 
-const UserRoleDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions }) => {
+const UserRoleDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions, removeOptions }) => {
     const [roles, setUserRoles] = useState([]);
 
     useEffect(() => {
@@ -24,9 +24,12 @@ const UserRoleDropdown = ({ id, name, height, width, onChange, editable, borderR
                 }));
                 console.log(formattedRoles);
 
-                const roles = formattedRoles.map((role) => role.label);
+                let roles = formattedRoles.map((role) => role.label);
                 if (addOptions) {
                     roles.unshift(...addOptions);
+                }
+                if (removeOptions) {
+                    roles = roles.filter((role) => !removeOptions.includes(role));
                 }
                 setUserRoles(roles);
             } catch (error) {
