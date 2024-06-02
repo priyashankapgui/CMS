@@ -15,7 +15,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
 
     const handleOptionClick = (option) => {
         setSelectedOption(option);
-        onChange(option);
+        onChange({ target: { name, value: option } }); // Pass selected option as event-like object
         setIsOpen(false);
     };
 
@@ -80,4 +80,4 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
     );
 };
 
-export default InputDropdown;
+export default InputDropdown;
