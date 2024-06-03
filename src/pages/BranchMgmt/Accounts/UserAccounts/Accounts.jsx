@@ -11,7 +11,6 @@ import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import { Icon } from "@iconify/react";
 import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
-import CircularProgress from '@mui/material/CircularProgress';
 import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
 
 export function Accounts() {
@@ -240,7 +239,6 @@ export function Accounts() {
           <div className="account-users-middle">
             {loading ? (
               <div className="loading-container">
-                <CircularProgress />
                 <p><SubSpinner/></p>
               </div>
             ) : (

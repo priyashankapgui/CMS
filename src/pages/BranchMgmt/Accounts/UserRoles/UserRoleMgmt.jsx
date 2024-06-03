@@ -9,7 +9,6 @@ import AddNewUserRolePopup from './AddNewUserRolePopup';
 import UpdateUserRolePopup from './UpdateUserRolePopup';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
-import CircularProgress from '@mui/material/CircularProgress';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const UserRoleMgmt = () => {
@@ -97,7 +96,6 @@ export const UserRoleMgmt = () => {
                     <div className='user-roles-middle-tablecontainer'>
                         {loading ? (
                             <div className="loading-container">
-                                <CircularProgress />
                                 <p><SubSpinner /></p>
                             </div>
                         ) : (
