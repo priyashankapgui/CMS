@@ -17,7 +17,7 @@ import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropd
 
 export function CreateNewAccounts() {
     const [employeeData, setEmployeeData] = useState({
-        employeeId: "",
+        
         employeeName:"",
         email: "",
         password: "",
@@ -55,7 +55,7 @@ export function CreateNewAccounts() {
 
     const handleCreateAccount = async () => {
         console.log("Employee data:", employeeData);
-        if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
+        if (!employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
             setShowAlertError("Please fill in all fields")
             return;
           }
@@ -183,7 +183,7 @@ export function CreateNewAccounts() {
                 )}
               </div>
             </div>
-            <div className="emp-id-field">
+            {/* <div className="emp-id-field">
               <InputLabel for="empID" color="#0377A8">
                 Emp ID
               </InputLabel>
@@ -197,7 +197,7 @@ export function CreateNewAccounts() {
                     setEmployeeData({ ...employeeData, employeeId: e.target.value })
                   }
               />
-            </div>
+            </div> */}
             <div className="emp-name-field">
               <InputLabel for="empName" color="#0377A8">
                 Emp Name
