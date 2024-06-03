@@ -16,7 +16,7 @@ function InputField({ type, id, name, placeholder, onChange, editable, borderRad
                 className={`input ${editable ? '' : 'disabled'}`}
                 style={{
                     borderRadius: borderRadius || '0.625em',
-                    height: height || '2.25em',
+                    height: height || '2.375em',
                     width: width || '27em',
                     marginTop: marginTop || '0.313em',
                     textAlign: textAlign || 'left',
