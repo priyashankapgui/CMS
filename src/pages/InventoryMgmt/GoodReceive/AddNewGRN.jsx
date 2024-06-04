@@ -103,7 +103,7 @@ export function AddNewGRN() {
             setAlert({
                 show: true,
                 severity: 'warning',
-                title: 'Please Add Product Id or Product Name',
+                title: 'Please add a Product ID or Product Name',
                 message: 'You cannot go forward'
             });
         } else {

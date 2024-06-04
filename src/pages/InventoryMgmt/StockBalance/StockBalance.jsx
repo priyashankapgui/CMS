@@ -131,16 +131,16 @@ export const StockBalance = () => {
                                     onSelect={handleProductSelect}
                                 />
                             </div>
-                            <div className="batchNoField">
-                                <InputLabel htmlFor="batchNo" color="#0377A8">Batch No</InputLabel>
-                                <InputField type="text" id="batchNo" name="batchNo" editable={true} width="250px" value={batchNo} onChange={(e) => setBatchNo(e.target.value)} />
-                            </div>
                             <div className="categoryField">
                                 <InputLabel htmlFor="categoryField" color="#0377A8">Category ID / Name</InputLabel>
                                 <SearchBar
                                     fetchSuggestions={fetchSuggestionsCategories}
                                     onSelect={handleCategorySelect}
                                 />
+                            </div>
+                            <div className="batchNoField">
+                                <InputLabel htmlFor="batchNo" color="#0377A8">Batch No</InputLabel>
+                                <InputField type="text" id="batchNo" name="batchNo" editable={true} width="250px" value={batchNo} onChange={(e) => setBatchNo(e.target.value)} />
                             </div>
                         </div>
                         <div className="stock-balance-BtnSection">

@@ -76,7 +76,7 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
                     variant="h6"
                     sx={{ color: '#B1ABAB' }}
                   >
-                    No data is available....
+                    Data is not available....
                   </Typography>
                 </TableCell>
               </TableRow>
