@@ -32,22 +32,27 @@ export const ReturnBillList = () => {
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
                             <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
                         </div>
-                        <div className="dateField">
+                        <div className="dateFieldFrom">
                             <InputLabel for="to-date" color="#0377A8">To</InputLabel>
                             <DatePicker />
                         </div>
-                        <div className="dateField">
+                        <div className="dateFieldTo">
                             <InputLabel for="from-date" color="#0377A8">From</InputLabel>
                             <DatePicker />
+                        </div>
+                        <div className="customerField">
+                            <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
+                            <InputField
+                                type="text"
+                                id="customerName"
+                                name="customerName"
+                                editable={true}
+                                width="210px"
+                            />
                         </div>
                         <div className="billNoField">
                             <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
                             <InputField type="text" id="billNo" name="billNo" editable={true} width="200px" />
-                        </div>
-                        <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} width="25em" />
-
                         </div>
                     </div>
                     <div className="BtnSection">
