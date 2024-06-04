@@ -1,4 +1,4 @@
-import { React, useState} from 'react'
+import { React, useCallback, useState} from 'react'
 import { useDropzone } from 'react-dropzone';
 import Layout from "../../../../Layout/Layout";
 import './CreateNewAccounts.css';
@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropdown';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 
 
 export function CreateNewAccounts() {
@@ -32,63 +33,60 @@ export function CreateNewAccounts() {
     const [showAlertError, setShowAlertError] = useState("");
     // const [selectedBranch, setSelectedBranch] = useState([]);
     // const [selectedRole, setSelectedRole] = useState([]);
+    const [loading, setLoading] = useState(false); // State for showing spinner
 
     
-    const handleBranchChange = (branch) => {   
-        
-        setEmployeeData({
-          ...employeeData,
+    const handleBranchChange = useCallback((branch) => {   
+        setEmployeeData(e => ({
+          ...e,
           branchName: branch
-        });
+        })
+        );
+    }, []);
 
-        
-    }
-    
-    const handleUserRoleChange = (role) => {
-      
-      setEmployeeData({
-        ...employeeData,
+    const handleUserRoleChange = useCallback((role) => {
+      setEmployeeData(e => ({
+        ...e,
         userRoleName: role
-      });
-
-    }
+      })
+      );
+    }, []);
 
     const handleCreateAccount = async () => {
-        console.log("Employee data:", employeeData);
-        if (!employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
-            setShowAlertError("Please fill in all fields")
-            return;
-          }
-          if (employeeData.password !== confirmPassword) {
-            setShowAlertError("Passwords do not match");
-            return;
-          }
-
-        try {
-            const token = sessionStorage.getItem("accessToken");
-            const response = await fetch("http://localhost:8080/employees", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(
-                  employeeData
-                ),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                console.log("Error:", data.error);
-                setShowAlertError(data.error);
-            } else{
-                setShowAlertSuccess(true);
-            }
+      setLoading(true);
+      console.log("Employee data:", employeeData);
+      try {
+      if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
+          throw new Error("Please fill in all fields")
         }
-        catch(error) {
-            setShowAlertError(true);
-            console.error("Error:", error);
+        if (employeeData.password !== confirmPassword) {
+          throw new Error("Passwords do not match")
         }
+        const token = sessionStorage.getItem("accessToken");
+        const response = await fetch("http://localhost:8080/employees", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(
+              employeeData
+            ),
+        });
+        if (!response.ok) {
+          const data = await response.json();
+          console.log("Error:", data.error);
+          setShowAlertError(data.error);
+        } else{
+          setShowAlertSuccess(true);
+        }
+        setLoading(false);
+      }
+      catch(error) {
+          setShowAlertError(error.message);
+          console.error("Error:", error);
+          setLoading(false);
+      }
     }
 
 
@@ -149,7 +147,6 @@ export function CreateNewAccounts() {
               name="branchName" 
               editable={true} 
               onChange={(branch) => handleBranchChange(branch)} 
-              
               />
             </div>
             <div className="flex-content-NA">
@@ -286,15 +283,20 @@ export function CreateNewAccounts() {
                 
               />
             </div>
-            <Buttons
-              type="submit"
-              id="create-btn"
-              style={{ backgroundColor: "#23A3DA", color: "white" }}
-              onClick={handleCreateAccount}
-            >
-              {" "}
-              Create{" "}
-            </Buttons>
+            {
+              loading ? 
+              <SubSpinner />
+              :
+              <Buttons
+                type="submit"
+                id="create-btn"
+                style={{ backgroundColor: "#23A3DA", color: "white" }}
+                onClick={handleCreateAccount}
+              >
+                {" "}
+                Create{" "}
+              </Buttons>
+            }
           </div>
 
           {showAlertSuccess && (

@@ -24,26 +24,24 @@ const UserRoleDropdown = ({ id, name, height, width, onChange, editable, borderR
                 }));
                 console.log(formattedRoles);
 
-                let roles = formattedRoles.map((role) => role.label);
+                let tempRoles = formattedRoles.map((role) => role.label);
                 if (addOptions) {
-                    roles.unshift(...addOptions);
+                    tempRoles.unshift(...addOptions);
                 }
                 if (displayValue) {
-                    roles.splice(roles.indexOf(displayValue), 1);
-                    roles.unshift(displayValue);
+                    tempRoles.splice(tempRoles.indexOf(displayValue), 1);
+                    tempRoles.unshift(displayValue);
                 }
                 if (removeOptions) {
-                    roles = roles.filter((role) => !removeOptions.includes(role));
+                    tempRoles = tempRoles.filter((role) => !removeOptions.includes(role));
                 }
-                setUserRoles(roles);
+                onChange(tempRoles[0]);
+                setUserRoles(tempRoles);
             } catch (error) {
                 console.error("Error:", error);
             }
         };
         getUserRoles();
-        if(roles.length > 0){
-            onChange(roles[0]);
-        }
     }, []);
 
 
