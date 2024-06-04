@@ -9,27 +9,27 @@ import RoundButtons from "../../../../Components/Buttons/RoundButtons/RoundButto
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import InputField from "../../../../Components/InputField/InputField";
-import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
-import datafile from "../../../../Components/Data.json";
+// import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
+// import datafile from "../../../../Components/Data.json";
 import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import { Link } from "react-router-dom";
+import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
+import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 
 export function UpdateUser() {
   const [employeeData, setEmployeeData] = useState({}); // State for storing employee data
   const [imageUrl, setImageUrl] = useState(null);
-  const [selectedBranch, setSelectedBranch] = useState();
-  const [branches, setBranches] = useState([]);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [showAlertError, setShowAlertError] = useState("");
 
-  useEffect(() => {
-    let tempBranches = datafile.dropDownOptions.branchOptions;
-    tempBranches = tempBranches.filter((branch) => branch !== 'All' && branch !== employeeData.branchName);
-    tempBranches = employeeData.branchName ? [employeeData.branchName].concat(tempBranches) : tempBranches;
-    setBranches(tempBranches);
-  }, [employeeData.branchName]);
+  // useEffect(() => {
+  //   let tempBranches = datafile.dropDownOptions.branchOptions;
+  //   tempBranches = tempBranches.filter((branch) => branch !== 'All' && branch !== employeeData.branchName);
+  //   tempBranches = employeeData.branchName ? [employeeData.branchName].concat(tempBranches) : tempBranches;
+  //   setBranches(tempBranches);
+  // }, [employeeData.branchName]);
 
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -63,6 +63,19 @@ export function UpdateUser() {
     getEmployeeData();
   }, [employeeId]);
 
+  const handleBranchChange = (branch) => {        
+    setEmployeeData({
+      ...employeeData,
+      branchName: branch
+    });    
+  }
+
+  const handleUserRoleChange = (role) => {    
+    setEmployeeData({
+      ...employeeData,
+      userRoleName: role
+    });
+  }
 
   const handleUpdate = async () => {
     if (!employeeData.employeeName || !employeeData.email) {
@@ -73,6 +86,22 @@ export function UpdateUser() {
       setShowAlertError("Passwords do not match");
       return;
     }
+    let body = {}
+    if(password === ""){
+      body = {
+        employeeName: employeeData.employeeName,
+        branchName: employeeData.branchName,
+        email: employeeData.email,
+      }
+    }
+    else{
+      body = {
+        employeeName: employeeData.employeeName,
+        branchName: employeeData.branchName,
+        email: employeeData.email,
+        password: password,
+      }
+    }
       try {
         const token = sessionStorage.getItem("accessToken");
         const response = await fetch(`http://localhost:8080/employees/${employeeId}`,
@@ -82,12 +111,7 @@ export function UpdateUser() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              employeeName: employeeData.employeeName,
-              branchName: selectedBranch,
-              email: employeeData.email,
-              password: password,
-            })
+            body: JSON.stringify(body)
           }
         )
         if (!response.ok) {
@@ -166,14 +190,12 @@ export function UpdateUser() {
             <InputLabel for="branchName" color="#0377A8">
               Branch
             </InputLabel>
-            <InputDropdown
-              id="branchName"
-              name="branchName"
-              editable={true}
-              onChange={(selectedOption) =>
-                setSelectedBranch(selectedOption)
-              }
-              options={branches}
+            <BranchDropdown 
+            id="branchName" 
+            name="branchName" 
+            editable={true} 
+            onChange={(e) => handleBranchChange(e)}
+            displayValue={employeeData.branchName}
             />
           </div>
           <div className="flex-content-NA">
@@ -181,11 +203,11 @@ export function UpdateUser() {
               <InputLabel for="userRole" color="#0377A8">
                 User Role
               </InputLabel>
-              <InputDropdown
-                id="userRole"
-                name="userRole"
-                editable={false}
-                options={employeeData.role ? [employeeData.role] : []}
+              <UserRoleDropdown 
+              id="userRole" 
+              name="userRole" 
+              editable={false} 
+              onChange={(e) => handleUserRoleChange(e)}
               />
             </div>
             <div className="add-dp-NA" {...getRootProps()}>
@@ -288,6 +310,7 @@ export function UpdateUser() {
             title="Success"
             message="Employee updated successfully"
             duration={3000}
+            onClose={() => window.history.back()}
           />
         )}
 

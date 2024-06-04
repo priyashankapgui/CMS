@@ -14,8 +14,7 @@ import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import MainSpinner from "../../../Components/Spinner/MainSpinner/MainSpinner";
 
 const Login = () => {
-
-  const API_LOGIN_KEY=`${process.env.REACT_APP_API_LOGIN_URL}`;
+  const API_LOGIN_KEY = `${process.env.REACT_APP_API_LOGIN_URL}`;
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [empID, setEmpId] = useState("");
@@ -47,32 +46,51 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const response = await fetch(API_LOGIN_KEY, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        employeeId: empID,
-        password: password,
-      }),
-    }).catch((error) => console.error("Error:", error));
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Response data:", data);
-
-      // Store the token in local storage
-      sessionStorage.setItem("accessToken", data.token);
-      sessionStorage.setItem("user", JSON.stringify(data.user));
-
-      console.log(sessionStorage.getItem("accessToken"));
-      window.location.href = "/sales";
+    let response;
+    if (empID.startsWith("SA")) {
+      response = await fetch(`http://localhost:8080/superAdmin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userID: empID,
+          password: password,
+        }),
+      }).catch((error) => console.error("Error:", error));
     } else {
-      // Login failed, handle error
-      const data = await response.json();
-      console.log("Error:", data.message);
-      setError(data.message);
+      response = await fetch(API_LOGIN_KEY, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          employeeId: empID,
+          password: password,
+        }),
+      }).catch((error) => console.error("Error:", error));
+    }
+    try{
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Response data:", data);
+
+        // Store the token in local storage
+        sessionStorage.setItem("accessToken", data.token);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+
+        console.log(sessionStorage.getItem("accessToken"));
+        window.location.href = "/sales";
+      } else {
+        // Login failed, handle error
+        const data = await response.json();
+        console.log("Error:", data.message);
+        setError(data.message);
+      }
+    }
+    catch(error){
+      setError("Internal Server Error")
+      console.error("Error:", error);
     }
   };
 
@@ -94,11 +112,7 @@ const Login = () => {
 
           <div className="s-rightcontainer">
             <div className="s-greenmartlogo">
-              <img
-                className="s-image"
-                src={greenleaf}
-                alt="greenmart logo"
-              />
+              <img className="s-image" src={greenleaf} alt="greenmart logo" />
               <h2 className="s-boldText">Green Leaf Super Mart </h2>
             </div>
 
