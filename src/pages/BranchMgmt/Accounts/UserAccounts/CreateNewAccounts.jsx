@@ -17,7 +17,7 @@ import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropd
 
 export function CreateNewAccounts() {
     const [employeeData, setEmployeeData] = useState({
-        
+        employeeId:"",
         employeeName:"",
         email: "",
         password: "",
@@ -183,7 +183,7 @@ export function CreateNewAccounts() {
                 )}
               </div>
             </div>
-            {/* <div className="emp-id-field">
+            <div className="emp-id-field">
               <InputLabel for="empID" color="#0377A8">
                 Emp ID
               </InputLabel>
@@ -197,7 +197,7 @@ export function CreateNewAccounts() {
                     setEmployeeData({ ...employeeData, employeeId: e.target.value })
                   }
               />
-            </div> */}
+            </div>
             <div className="emp-name-field">
               <InputLabel for="empName" color="#0377A8">
                 Emp Name
