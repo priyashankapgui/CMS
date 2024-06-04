@@ -40,6 +40,14 @@ export const ReturnBillList = () => {
                             <InputLabel for="from-date" color="#0377A8">From</InputLabel>
                             <DatePicker />
                         </div>
+                        <div className="billNoField">
+                            <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
+                            <InputField type="text" id="billNo" name="billNo" editable={true} width="200px" />
+                        </div>
+                        {/* <div className="rtb-billNoField">
+                            <InputLabel htmlFor="rtb-billNo" color="#0377A8">RTB No</InputLabel>
+                            <InputField type="text" id="rtb-billNo" name="rtb-billNo" editable={true} width="200px" />
+                        </div> */}
                         <div className="customerField">
                             <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
                             <InputField
@@ -49,10 +57,6 @@ export const ReturnBillList = () => {
                                 editable={true}
                                 width="210px"
                             />
-                        </div>
-                        <div className="billNoField">
-                            <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} width="200px" />
                         </div>
                     </div>
                     <div className="BtnSection">

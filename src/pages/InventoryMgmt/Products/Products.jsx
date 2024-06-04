@@ -171,7 +171,7 @@ export const Products = () => {
 
                         <div className="create-product-category-middle">
                             {loadingCategories ? (
-                                <div>Loading...</div>
+                                <div><SubSpinner/></div>
                             ) : (
                                 <TableWithPagi
                                     columns={['Reg Categories', 'Action']}
