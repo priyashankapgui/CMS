@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./Suppliers.css";
-import InputField from "../../../Components/InputField/InputField";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
@@ -11,6 +10,7 @@ import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import AddNewSupplierPopup from './AddNewSupplierPopup';
 import UpdateSupplierPopup from "./UpdateSupplierPopup";
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 const suppliersApiUrl = process.env.REACT_APP_SUPPLIERS_API || "http://localhost:8080/suppliers";
 
@@ -132,7 +132,7 @@ export const Suppliers = () => {
                     </div> 
                     <div className="supplier-content-middle">
                         {loading ? (
-                            <div>Loading...</div>
+                            <div><SubSpinner/></div>
                         ) : (
                             <TableWithPagi
                                 columns={['Supplier ID', 'Supplier Name', 'Reg No', 'Email', 'Address', 'Contact No', 'Action']}
