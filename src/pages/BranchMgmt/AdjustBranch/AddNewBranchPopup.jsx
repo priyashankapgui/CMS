@@ -16,8 +16,8 @@ function AddNewBranchPopup() {
     const [contactNo, setContactNo] = useState('');
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({}); 
+
     useEffect(() => {
-        
         const storedAlertConfig = localStorage.getItem('alertConfig');
         if (storedAlertConfig) {
             setAlertConfig(JSON.parse(storedAlertConfig));
