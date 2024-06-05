@@ -16,6 +16,7 @@ export const UserRoleMgmt = () => {
     const [clickedLink, setClickedLink] = useState('User Role Mgmt');
     const [userRoles, setUserRoles] = useState([]);
     const [success, setSuccess] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
 
     useEffect(() => {
@@ -50,8 +51,25 @@ export const UserRoleMgmt = () => {
         setSelectedBranch(value);
     };
 
-    const handleDelete = () => {
-        console.log('deleted');
+    const handleDelete = async (userRoleId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/userRoleWithPermissions/${userRoleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete user role');
+            }
+            setSuccess('User role deleted successfully');
+            return;
+        }
+        catch (error) {
+            setShowAlert('Failed to delete user role');
+            console.error('Error:', error);
+            return;
+        }
     };
 
     const showSuccess = (message) => {
@@ -109,7 +127,7 @@ export const UserRoleMgmt = () => {
                                     action: (
                                         <div style={{ display: "flex", gap: "0.7em", cursor: "pointer" }}>
                                             <UpdateUserRolePopup userRoleId={role.userRoleId} />
-                                            <DeletePopup handleDelete={handleDelete} />
+                                            <DeletePopup handleDelete={() => handleDelete(role.userRoleId)} />
                                         </div>
                                     )
                                 }))}
@@ -117,12 +135,21 @@ export const UserRoleMgmt = () => {
                         )}
                     </div>
                 </div>
+                {showAlert &&
+                    <CustomAlert
+                        severity="error"
+                        title="Error"
+                        message={showAlert}
+                        duration={3000}
+                        onClose={() => setShowAlert(false)}
+                    />
+                }
                 {success &&
                     <CustomAlert
                         severity="success"
                         title="Success"
                         message={success}
-                        duration={3000}
+                        duration={1500}
                         onClose={() => {
                             window.location.reload();
                         }}

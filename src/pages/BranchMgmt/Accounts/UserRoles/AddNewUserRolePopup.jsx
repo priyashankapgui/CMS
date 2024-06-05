@@ -39,28 +39,28 @@ function AddNewUserRolePopup({showSuccess}) {
 
     const handleSave = async() => {
         try {
-        const selectedPages = Array.from(checkedPages.entries())
-            .filter(([pageId, isChecked]) => isChecked)
-            .map(([pageId, isChecked]) => pageId);
-        console.log(selectedPages, selectedBranch, roleName);
-        if (!roleName || !selectedBranch || selectedPages.length === 0) {
-            throw new Error('Please fill all the fields');
-        }
-        let tempBranch = selectedBranch;
-        if (selectedBranch === 'None') {
-            tempBranch = null;
-        }
-        const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userRoleName: roleName,
-                branch: tempBranch,
-                checkedPages: selectedPages,
-            }),
-        });
+            const selectedPages = Array.from(checkedPages.entries())
+                .filter(([pageId, isChecked]) => isChecked)
+                .map(([pageId, isChecked]) => pageId);
+            console.log(selectedPages, selectedBranch, roleName);
+            if (!roleName || !selectedBranch || selectedPages.length === 0) {
+                throw new Error('Please fill all the fields');
+            }
+            let tempBranch = selectedBranch;
+            if (selectedBranch === 'None') {
+                tempBranch = null;
+            }
+            const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userRoleName: roleName,
+                    branch: tempBranch,
+                    checkedPages: selectedPages,
+                }),
+            });
             if (!response){
                 throw new Error('Server Error');
             }
