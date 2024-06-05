@@ -90,8 +90,8 @@ const Login = () => {
       } else {
         // Login failed, handle error
         const data = await response.json();
-        console.log("Error:", data.message);
-        setError(data.message);
+        console.log("Error:", data.error);
+        setError(data.error);
       }
     }
     catch (error) {
