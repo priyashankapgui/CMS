@@ -23,7 +23,11 @@ function MyAccountDetails() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState("");
-    let user = JSON.parse(sessionStorage.getItem('user'));    
+    let user = JSON.parse(sessionStorage.getItem('user'));
+    
+    if (!user){
+        window.location.href = '/';
+    }
 
     const toggleEditable = () => {
         setEditable(!editable);

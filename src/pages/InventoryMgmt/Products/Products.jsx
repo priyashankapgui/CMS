@@ -8,34 +8,21 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import AddNewProductPopup from './AddNewProductPopup';
-import UpdateProductPopup from './UpdateProductPopup';
 import { Icon } from "@iconify/react";
-import InputField from '../../../Components/InputField/InputField';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-
-
 
 export const Products = () => {
-
-    const [loading, setLoading] = useState(true);
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [alertConfig, setAlertConfig] = useState({});
-    const [editingSupplier, setEditingSupplier] = useState(null);     
-
-
-
     // State variables for Registered Products
     const [productsData, setProductsData] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(true); // Loading state for products
     const [selectedProduct, setSelectedProduct] = useState('');
-
+    const [selectedCategory, setSelectedCategory] = useState('');
+    
     // State variables for Adjusting Product's Category
     const [categoryData, setCategoryData] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
-
-    // State variables for Adjusting  Category
-    const [categoryTwoData, setCategoryTwoData] = useState([]);
-    const [selectedCategoryTwo, setSelectedCategoryTwo] = useState('');
+    const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
+    const [selectedAdjustCategory, setSelectedAdjustCategory] = useState('');
+    const [filteredCategories, setFilteredCategories] = useState([]);
 
     const fetchProductsSuggestions = async (query) => {
         try {
@@ -63,95 +50,21 @@ export const Products = () => {
         }
     };
 
-    const handleSearch = async () => {
-        setLoading(true);
-        try {
-            if (selectedCategory) {
-                const categoryName = selectedCategory.split(' ')[1]; // Extract the categoryName from the selected category string
-                const response = await axios.get(`http://localhost:8080/products/category?categoryName=${categoryName}`);
-                console.log("Fetched Products by Category Data: ", response.data); // Debugging: Log the fetched data
-                setProductsData(response.data); // Set the fetched data
-            } else if (selectedProduct) {
-                const productId = selectedProduct.split(' ')[0]; // Extract the productId from the selected product string
-                const response = await axios.get(`http://localhost:8080/products?productId=${productId}`);
-                console.log("Fetched Products Data: ", response.data); // Debugging: Log the fetched data
-                setProductsData([response.data]); // Ensure it's an array
-            }
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSearchCategory = async () => {
-        setLoading(true);
-        try {
-            if (selectedCategoryTwo) {
-                const categoryId = selectedCategoryTwo.split(' ')[0]; // Extract the categoryId from the selected category string
-                const response = await axios.get(`http://localhost:8080/categories/${categoryId}`);
-                console.log("Fetched Products by Category ID Data: ", response.data); // Debugging: Log the fetched data
-                setCategoryTwoData([response.data]); // Set the fetched data
-            }
-        } catch (error) {
-            console.error('Error fetching category by ID:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    
-
-
-    const handleDelete = async (productId) => {
-        setLoading(true);
-        try {
-            await axios.delete(`http://localhost:8080/products/${productId}`);
-            const updatedProductData = productsData.filter(product => product.productId !== productId);
-            setProductsData(updatedProductData);
-            console.log("Product deleted successfully");
-
-            setAlertConfig({
-                severity: 'warning',
-                title: 'Delete',
-                message: 'Product deleted successfully!',
-                duration: 3000
-            });
-            setAlertVisible(true);
-        } catch (error) {
-            console.error('Error deleting Product:', error);
-
-            setAlertConfig({
-                severity: 'error',
-                title: 'Error',
-                message: 'Failed to delete Product.',
-                duration: 3000
-            });
-            setAlertVisible(true);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
-
-    const handleClearBtn = () => {
+    const handleClearBtnProductSection = () => {
         setSelectedProduct('');
-        setProductsData([]);
         setSelectedCategory('');
-        setCategoryData([]);
     };
 
     useEffect(() => {
         const fetchProductsData = async () => {
             try {
+                setLoadingProducts(true); // Set loading to true before fetching products
                 const response = await axios.get(`http://localhost:8080/product`);
-                console.log("Initial Products Data: ", response.data); // Debugging: Log the initial fetched data
                 setProductsData(response.data); // Set the fetched product data
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching products:', error);
-                setLoading(false);
+            } finally {
+                setLoadingProducts(false); // Set loading to false after fetching products
             }
         };
 
@@ -161,30 +74,29 @@ export const Products = () => {
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
+                setLoadingCategories(true); // Set loading to true before fetching categories
                 const response = await axios.get(`http://localhost:8080/categories`);
-                console.log("Fetched Category Data: ", response.data); // Debugging: Log the fetched data
-                setCategoryTwoData(response.data); // Set the fetched product data
-                setLoading(false);
+                setCategoryData(response.data); // Set the fetched category data
+                setFilteredCategories(response.data); // Initialize filtered categories with all data
             } catch (error) {
                 console.error('Error fetching category:', error);
-                setLoading(false);
+            } finally {
+                setLoadingCategories(false); // Set loading to false after fetching categories
             }
         };
 
         fetchCategoryData();
     }, []);
 
+    useEffect(() => {
+        const filtered = categoryData.filter(category =>
+            category.categoryName.toLowerCase().includes(selectedAdjustCategory.toLowerCase())
+        );
+        setFilteredCategories(filtered);
+    }, [selectedAdjustCategory, categoryData]);
+
     return (
         <>
-        {alertVisible && (
-                <CustomAlert
-                    severity={alertConfig.severity}
-                    title={alertConfig.title}
-                    message={alertConfig.message}
-                    duration={alertConfig.duration}
-                    onClose={() => setAlertVisible(false)}
-                />
-            )}
             <div className="top-nav-blue-text">
                 <h4>Products</h4>
             </div>
@@ -214,27 +126,27 @@ export const Products = () => {
                             </div>
                         </div>
                         <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtn}>Clear</Buttons>
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} >Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtnProductSection} >Clear</Buttons>
                             <AddNewProductPopup />
                         </div>
                     </div>
                     <div className="product-content-middle">
-                    {loading ? (
-                            <div> <SubSpinner /></div>
+                        {loadingProducts ? (
+                            <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
-                                columns={['Product ID', 'Product Name', 'Category', 'Description', 'Actions']}
+                                columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Quantity', 'Action']}
                                 rows={Array.isArray(productsData) ? productsData.map(product => ({
                                     'Product ID': product.productId,
                                     'Product Name': product.productName,
-                                    'Category': product.categoryName,
+                                    'Product Category': product.category?.categoryName,
                                     'Description': product.description,
+                                    'Quantity': product.qty,
                                     'Actions': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <UpdateProductPopup productId={product.productId} /> {/* Pass supplier data */}
-                                        <DeletePopup handleDelete={() => handleDelete(product.productId)} />
-                                    </div>
+                                            <DeletePopup />
+                                        </div>
                                     )
                                 })) : []}
                             />
@@ -249,35 +161,30 @@ export const Products = () => {
                             <div className="categoryField">
                                 <InputLabel htmlFor="category" color="#0377A8">Search Category ID / Name</InputLabel>
                                 <SearchBar
-                                    searchTerm={selectedCategoryTwo}
-                                    setSearchTerm={setSelectedCategoryTwo}
-                                    onSelectSuggestion={(suggestion) => setSelectedCategoryTwo(`${suggestion.displayText}`)}
+                                    searchTerm={selectedAdjustCategory}
+                                    setSearchTerm={setSelectedAdjustCategory}
+                                    onSelectSuggestion={(suggestion) => setSelectedAdjustCategory(`${suggestion.displayText}`)}
                                     fetchSuggestions={fetchCategorySuggestions}
                                 />
-                               
                             </div>
                         </div>
-                        <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearchCategory}>Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtn}>Clear</Buttons>
-                        </div>
+
                         <div className="create-product-category-middle">
-                        {loading ? (
-                            <div> <SubSpinner /></div>
-                        ) : (
-                            <TableWithPagi
-                            columns={['Reg Categories', 'Action']}
-                            rows={Array.isArray(categoryTwoData) ? categoryTwoData.map(category => ({
-                                'Reg Categories': category.categoryName,
-                                'Action': (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
-                                        <DeletePopup />
-                                    </div>
-                                )
-                            })) : []}
-                        />
-                        
+                            {loadingCategories ? (
+                                <div>Loading...</div>
+                            ) : (
+                                <TableWithPagi
+                                    columns={['Reg Categories', 'Action']}
+                                    rows={Array.isArray(filteredCategories) ? filteredCategories.map(category => ({
+                                        'Reg Categories': category.categoryName,
+                                        'Action': (
+                                            <div style={{ display: "flex", gap: "0.5em" }}>
+                                                <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
+                                                <DeletePopup />
+                                            </div>
+                                        )
+                                    })) : []}
+                                />
                             )}
                         </div>
                     </div>

@@ -9,15 +9,16 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: '#F5F3F3',
+    backgroundColor: '#f9f7f7',
     color: '#0377A8',
     fontWeight: 'bold',
     fontFamily: 'Poppins',
-    fontSize: 14
+    fontSize: 14,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 13,
@@ -60,54 +61,72 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.slice(startIndex, endIndex).map((row, rowIndex) => (
-              <StyledTableRow key={rowIndex}>
-                {Object.values(row).map((cell, cellIndex) => (
-                  <StyledTableCell key={cellIndex}>{cell}</StyledTableCell>
-                ))}
-              </StyledTableRow>
-            ))}
+            {rows.length > 0 ? (
+              rows.slice(startIndex, endIndex).map((row, rowIndex) => (
+                <StyledTableRow key={rowIndex}>
+                  {Object.values(row).map((cell, cellIndex) => (
+                    <StyledTableCell key={cellIndex}>{cell}</StyledTableCell>
+                  ))}
+                </StyledTableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} align="center">
+                  <Typography
+                    variant="h6"
+                    sx={{ color: '#B1ABAB' }}
+                  >
+                    No data is available....
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>
 
       {/* Pagination */}
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          justifyContent: 'flex-end',
-          marginTop: '20px',
-        }}
-      >
-        <Pagination
-          count={Math.ceil(rows.length / itemsPerPage)}
-          page={page}
-          onChange={handlePageChange}
-          variant="outlined"
-          shape="rounded"
-          size="medium"
-          siblingCount={0}
-          boundaryCount={1}
-          showFirstButton
-          showLastButton
+      {rows.length > 0 && (
+        <Stack
+          direction="row"
+          spacing={2}
           sx={{
-            '& .MuiPaginationItem-root': {
-              color: '#B1ABAB',
-              '&:hover': {
-                backgroundColor: 'lightblue',
-              },
-              '&.Mui-selected': {
-                backgroundColor: '#23A3DA',
-                color: 'white',
+            justifyContent: 'flex-end',
+            marginTop: '20px',
+          }}
+        >
+          <Pagination
+            count={Math.ceil(rows.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+            size="medium"
+            siblingCount={0}
+            boundaryCount={1}
+            showFirstButton
+            showLastButton
+            sx={{
+              '& .MuiPaginationItem-root': {
+                color: '#B1ABAB',
                 '&:hover': {
                   backgroundColor: 'lightblue',
                 },
+                '&.Mui-selected': {
+                  backgroundColor: '#23A3DA',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'lightblue',
+                  },
+                },
+                '&.Mui-disabled': {
+                  cursor: 'not-allowed',
+                },
               },
-            },
-          }}
-        />
-      </Stack>
+            }}
+          />
+        </Stack>
+      )}
     </>
   );
 }

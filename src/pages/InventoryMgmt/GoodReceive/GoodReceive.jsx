@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import axios from 'axios';
 import "./GoodReceive.css";
@@ -6,124 +7,148 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
-import dropdownOptions from '../../../Components/Data.json';
-import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
-import { Icon } from "@iconify/react";
+import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
 import DatePicker from '../../../Components/DatePicker/DatePicker';
+import SearchBar from '../../../Components/SearchBar/SearchBar'
 import { useNavigate } from 'react-router-dom';
-import  { useState, useEffect } from 'react';
+import { BsEye } from "react-icons/bs";
+import { RiPrinterFill } from "react-icons/ri";
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const GoodReceive = () => {
- 
-    const [GRNData, setGRNData] = useState([]);
+
+    const [grnData, setGrnData] = useState([]);
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const handleButtonClick = () => {
+    const handleNewButtonClick = () => {
         navigate('/good-receive/new');
     }
 
-    //////////////////////////need to be change/////////////////////////////
     useEffect(() => {
-        const fetchGRNData = async () => {
+        const fetchGrnData = async () => {
             try {
                 const response = await axios.get("http://localhost:8080/grn");
-                setGRNData(response.data); // Set the fetched grn data
+                setGrnData(response.data); // Set the fetched GRN data
+                setLoading(false);
             } catch (error) {
-                console.error('Error fetching grn:', error);
+                console.error('Error fetching GRN data:', error);
+                setLoading(false);
             }
         };
 
-        fetchGRNData();
+        fetchGrnData();
     }, []);
-    ///////////////////////////////////////////////////////////////////////////
 
-    // const DeletePopup = ({ supplierId }) => {
-    //     const handleDelete = async () => {
-    //         try {
-    //             await handleDeleteSupplier(supplierId);
-    //             // Optionally, you can handle success or notify the user
-    //             console.log('Supplier deleted successfully');
-    //         } catch (error) {
-    //             console.error('Error deleting supplier:', error);
-    //             // Optionally, you can handle errors or notify the user
-    //         }
-    //     };
-    // };
+    useEffect(() => {
+        fetchBranches();
+    }, []);
 
+    const fetchBranches = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/branches');
+            setBranches(response.data);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+        }
+    };
+
+    const handleDropdownChange = (value) => {
+        setSelectedBranch(value);
+        console.log('Selected Drop Down Value:', value);
+    };
 
     return (
         <>
-        <div className="top-nav-blue-text">
-            <h4>Good Receive Note</h4>
-        </div>
-        <Layout>
-
+            <div className="top-nav-blue-text">
+                <h4>Good Receive Note</h4>
+            </div>
+            <Layout>
                 <div className="reg-goodReceives-bodycontainer">
                     <div className="goodReceive-filter-container">
-                        <div style={{ borderBottom: 'none' }} className="goodReceive-content-top">
+                        <div className="goodReceive-content-top1">
+                            <div className="branchField">
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                                <InputDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    options={branches.map(branch => branch.branchName)}
+                                    onChange={handleDropdownChange}
+                                />
+                            </div>
                             <div className="datePickerFrom">
-                                <InputLabel for="From" color="#0377A8">From</InputLabel>
-                                <DatePicker id="dateFrom" name="dateFrom"></DatePicker>
+                                <InputLabel htmlFor="From" color="#0377A8">From</InputLabel>
+                                <DatePicker id="dateFrom" name="dateFrom" />
                             </div>
                             <div className="datePickerTo">
-                                <InputLabel for="To" color="#0377A8">To</InputLabel>
-                                <DatePicker id="dateTo" name="dateTo"></DatePicker>
+                                <InputLabel htmlFor="To" color="#0377A8">To</InputLabel>
+                                <DatePicker id="dateTo" name="dateTo" />
                             </div>
-                            <div className="branchField">
-                                <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <div className="grnNoField">
+                                <InputLabel htmlFor="grnNo" color="#0377A8">GRN No</InputLabel>
+                                <InputField type="text" id="grnNo" name="grnNo" editable={true} width="250px" />
                             </div>
-                            <div className="GRN NoField">
-                                <InputLabel htmlFor="GRN No" color="#0377A8">GRN No</InputLabel>
-                                <InputField type="text" id="GRN No" name="GRN No" editable={true} width="250px" />
+                            <div className="invoiceNoField">
+                                <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>
+                                <InputField type="text" id="invoiceNo" name="invoiceNo" editable={true} width="250px" />
                             </div>
                         </div>
-                        <div className="goodReceive-content-top">
-                            <div className="Invoice NoField">
-                                <InputLabel htmlFor="Invoice No" color="#0377A8">Invoice No</InputLabel>
-                                <InputField type="text" id="Invoice No" name="Invoice No" editable={true} width="250px" />
-                            </div>
+                        <div className="goodReceive-content-top2">
                             <div className="productsField">
-                                <InputLabel htmlFor="Product ID / Name" color="#0377A8">Product ID / Name</InputLabel>
-                                <InputField type="text" id="Product ID / Name" name="Product ID / Name" editable={true} width="250px" />
+                                <InputLabel htmlFor="productIdName" color="#0377A8">Product ID / Name</InputLabel>
+                                <SearchBar />
                             </div>
                             <div className="suppliersField">
                                 <InputLabel htmlFor="supplier" color="#0377A8">Supplier ID / Name</InputLabel>
-                                <InputField type="text" id="supplier" name="supplier" editable={true} />
+                                <SearchBar />
                             </div>
                         </div>
-                        <div className="s-BtnSection">
+                        <div className="goodReceive-BtnSection">
                             <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
-                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleButtonClick}> New + </Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </ Buttons>
+                            <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleNewButtonClick}> New + </Buttons>
                         </div>
                     </div>
                     <div className="goodReceive-content-middle">
-                        <TableWithPagi
-                            columns={['GRN No', 'Created At', 'Branch', 'Supplier', 'Invoice No', '']}
-                            //////////////////////////need to be change/////////////////////////////
-                            rows={GRNData.map(grn => ({
-                                'GRN No': grn.GRN_NO,
-                                'Created At': grn.createdAt,
-                                'Branch ': grn.branchName,
-                                'Supplier': grn.supplierName,
-                                'Invoice No': grn.invoiceNo,
-                                'Action': (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <Icon icon="bitcoin-icons:edit-outline"
-                                            style={{ fontSize: '24px' }} />
-                                        <DeletePopup />
-                                    </div>
-                                )
-                            }))}
-                        />
+                        {loading ? (
+                            <div><SubSpinner /></div>
+                        ) : (
+                            <TableWithPagi
+                                columns={['GRN No', 'Created At', 'Branch', 'Supplier', 'Invoice No', 'Submitted By', '']}
+                                rows={grnData.map((grn, index) => ({
+                                    'GRN No': grn.GRN_NO,
+                                    'Created At': grn.createdAt,
+                                    'Branch': grn.branchName,
+                                    'Supplier': grn.supplierName,
+                                    'Invoice No': grn.invoiceNo,
+                                    'Submitted By': grn.submittedBy,
+                                    'Action': (
+                                        <div style={{ display: "flex", gap: "0.5em" }}>
+                                            <RoundButtons
+                                                id={`eyeViewBtn-${index}`}
+                                                type="submit"
+                                                name={`eyeViewBtn-${index}`}
+                                                icon={<BsEye />}
+                                            />
+                                            <RoundButtons
+                                                id={`printBtn-${index}`}
+                                                type="submit"
+                                                name={`printBtn-${index}`}
+                                                icon={<RiPrinterFill />}
+                                            />
+                                        </div>
+                                    )
+                                }))}
+                            />
+                        )}
                     </div>
-
-
-
                 </div>
-   
-        </Layout>
+            </Layout>
         </>
     );
 };
+
+export default GoodReceive;
