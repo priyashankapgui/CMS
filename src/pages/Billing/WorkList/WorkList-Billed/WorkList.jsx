@@ -1,22 +1,69 @@
 import React, { useState } from 'react';
-import Layout from "../../../../Layout/Layout";
-import "./WorkList.css";
-import InputLabel from "../../../../Components/Label/InputLabel";
-import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
-import DatePicker from "../../../../Components/DatePicker/DatePicker"
-import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
-import InputField from "../../../../Components/InputField/InputField";
-import { Link } from "react-router-dom"
-import { BsEye } from "react-icons/bs";
-import jsonData from "../../../../Components/Data.json";
+import Layout from '../../../../Layout/Layout';
+import './WorkList.css';
+import InputLabel from '../../../../Components/Label/InputLabel';
+import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
+import DatePicker from '../../../../Components/DatePicker/DatePicker';
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import InputField from '../../../../Components/InputField/InputField';
+import { Link } from 'react-router-dom';
+import { BsEye } from 'react-icons/bs';
+import jsonData from '../../../../Components/Data.json';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 
 export const WorkList = () => {
     const [clickedLink, setClickedLink] = useState('Billed');
-
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [branch, setBranch] = useState('');
+    const [billNo, setBillNo] = useState('');
+    const [customerName, setCustomerName] = useState('');
+    const [filteredData, setFilteredData] = useState(jsonData.worklistTableData);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
+    };
+
+    const handleStartDateChange = (date) => {
+        setStartDate(date);
+    };
+
+    const handleEndDateChange = (date) => {
+        setEndDate(date);
+    };
+
+    const handleSearch = () => {
+        let filtered = jsonData.worklistTableData;
+
+        if (branch) {
+            filtered = filtered.filter(item => item.branch === branch);
+        }
+
+        if (startDate && endDate) {
+            filtered = filtered.filter(item => {
+                const itemDate = new Date(item.billedAt);
+                return itemDate >= new Date(startDate) && itemDate <= new Date(endDate);
+            });
+        }
+
+        if (billNo) {
+            filtered = filtered.filter(item => item.billNo.includes(billNo));
+        }
+
+        if (customerName) {
+            filtered = filtered.filter(item => item.customerName.toLowerCase().includes(customerName.toLowerCase()));
+        }
+
+        setFilteredData(filtered);
+    };
+
+    const handleClear = () => {
+        setBranch('');
+        setStartDate('');
+        setEndDate('');
+        setBillNo('');
+        setCustomerName('');
+        setFilteredData(jsonData.worklistTableData);
     };
 
     return (
@@ -28,46 +75,63 @@ export const WorkList = () => {
                 <div className="worklist-filter-container">
                     <div className="W-Content1">
                         <div className="branchField">
-                            <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={jsonData.dropDownOptions.branchOptions} />
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                options={jsonData.dropDownOptions.branchOptions}
+                                value={branch}
+                                onChange={(e) => setBranch(e.target.value)}
+                            />
                         </div>
-                        <div className="dateField">
-                            <InputLabel for="to-date" color="#0377A8">To</InputLabel>
-                            <DatePicker />
+                        <div className="dateFieldFrom">
+                            <InputLabel htmlFor="from-date" color="#0377A8">From</InputLabel>
+                            <DatePicker onDateChange={handleStartDateChange} />
                         </div>
-                        <div className="dateField">
-                            <InputLabel for="from-date" color="#0377A8">From</InputLabel>
-                            <DatePicker />
+                        <div className="dateFieldTo">
+                            <InputLabel htmlFor="to-date" color="#0377A8">To</InputLabel>
+                            <DatePicker onDateChange={handleEndDateChange} />
                         </div>
                         <div className="billNoField">
                             <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} width="200px" />
+                            <InputField
+                                type="text"
+                                id="billNo"
+                                name="billNo"
+                                editable={true}
+                                width="200px"
+                                value={billNo}
+                                onChange={(e) => setBillNo(e.target.value)}
+                            />
                         </div>
-                        <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} width="25em" />
+                        <div className="customerField">
+                            <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
+                            <InputField
+                                type="text"
+                                id="customerName"
+                                name="customerName"
+                                editable={true}
+                                width="210px"
+                                value={customerName}
+                                onChange={(e) => setCustomerName(e.target.value)}
+                            />
                         </div>
                     </div>
                     <div className="WorklistBtnSection">
-                        <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
-                        <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
+                        <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
+                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}> Clear </ Buttons>
                     </div>
                 </div>
                 <div className="worklist-middle">
                     <div className="linkActions-billed">
                         <div className={clickedLink === 'Billed' ? 'clicked' : ''}>
-                            <Link
-                                to="/work-list"
-                                onClick={() => handleLinkClick('Billed')}
-                            >
+                            <Link to="/work-list" onClick={() => handleLinkClick('Billed')}>
                                 Billed
                             </Link>
                         </div>
                         <div className={clickedLink === 'Returned' ? 'clicked' : ''}>
-                            <Link
-                                to="/work-list/returnbill-list"
-                                onClick={() => handleLinkClick('Returned')}
-                            >
+                            <Link to="/work-list/returnbill-list" onClick={() => handleLinkClick('Returned')}>
                                 Returned
                             </Link>
                         </div>
@@ -86,7 +150,7 @@ export const WorkList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {jsonData.worklistTableData.map((row, index) => (
+                            {filteredData.map((row, index) => (
                                 <tr key={index}>
                                     <td>{row.billNo}</td>
                                     <td>{row.billedAt}</td>
@@ -110,9 +174,9 @@ export const WorkList = () => {
                         </tbody>
                     </table>
                 </div>
-
             </Layout>
         </>
     );
 };
 
+export default WorkList;

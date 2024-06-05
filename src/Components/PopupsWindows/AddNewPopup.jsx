@@ -14,7 +14,7 @@ function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick }) {
     }
     return (
         <SubPopup
-            open={open}
+            show={open}
             triggerComponent={
                 <Buttons type="submit" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} margintop="0" > New + </Buttons>
             }

@@ -12,6 +12,7 @@ import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import MainSpinner from "../../../Components/Spinner/MainSpinner/MainSpinner";
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 
 const Login = () => {
   const API_LOGIN_KEY = `${process.env.REACT_APP_API_LOGIN_URL}`;
@@ -20,6 +21,7 @@ const Login = () => {
   const [empID, setEmpId] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true); // State for showing spinner
+  const [loggingSuccess, setLoggingSuccess] = useState(false);
 
   useEffect(() => {
     // Simulating loading delay
@@ -70,7 +72,7 @@ const Login = () => {
         }),
       }).catch((error) => console.error("Error:", error));
     }
-    try{
+    try {
       if (response.ok) {
         const data = await response.json();
         console.log("Response data:", data);
@@ -80,15 +82,19 @@ const Login = () => {
         sessionStorage.setItem("user", JSON.stringify(data.user));
 
         console.log(sessionStorage.getItem("accessToken"));
-        window.location.href = "/sales";
+        setLoggingSuccess(true);
+        setTimeout(() => {
+          setLoggingSuccess(false);
+          window.location.href = "/sales";
+        }, 5000); // Redirect after 5 seconds
       } else {
         // Login failed, handle error
         const data = await response.json();
-        console.log("Error:", data.message);
-        setError(data.message);
+        console.log("Error:", data.error);
+        setError(data.error);
       }
     }
-    catch(error){
+    catch (error) {
       setError("Internal Server Error")
       console.error("Error:", error);
     }
@@ -180,6 +186,15 @@ const Login = () => {
             </div>
           </div>
         </div>
+      )}
+      {loggingSuccess && (
+        <CustomAlert
+          onClose={() => setLoggingSuccess(false)}
+          severity="success"
+          title="Logging Successfully"
+          message="Welcome to the FlexFlow - GreenLeaf"
+          duration={3000}
+        />
       )}
     </>
   );

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './DatePicker.css';
 
-function DatePicker() {
+const DatePicker = ({ onDateChange }) => {
   const [selectedDate, setSelectedDate] = useState('');
 
   const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+    const date = event.target.value;
+    setSelectedDate(date);
+    onDateChange(date);
   };
 
   return (
@@ -20,6 +22,6 @@ function DatePicker() {
       />
     </div>
   );
-}
+};
 
 export default DatePicker;

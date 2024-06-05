@@ -50,7 +50,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
             className="dropdown-container"
             style={{
                 borderRadius: borderRadius || '0.625em',
-                height: height || '2.25em',
+                height: height || '2.375em',
                 width: width || '15.625em',
                 marginTop: marginTop || '0.313em',
             }}
@@ -58,7 +58,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
             <div
                 className={`dropdown-selected ${editable ? '' : 'disabled'}`}
                 onClick={toggleDropdown}
-                tabIndex={editable ? 0 : -1}
+                tabIndex={editable ? 0 : -1}  // Add tabindex for focus
             >
                 <span>{selectedOption}</span>
                 <IoMdArrowDropdown className="dropdown-arrow" />

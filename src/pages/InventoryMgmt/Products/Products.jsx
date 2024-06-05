@@ -9,18 +9,20 @@ import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import AddNewProductPopup from './AddNewProductPopup';
 import { Icon } from "@iconify/react";
-import InputField from '../../../Components/InputField/InputField';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const Products = () => {
     // State variables for Registered Products
     const [productsData, setProductsData] = useState([]);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loadingProducts, setLoadingProducts] = useState(true); // Loading state for products
     const [selectedProduct, setSelectedProduct] = useState('');
-
+    const [selectedCategory, setSelectedCategory] = useState('');
+    
     // State variables for Adjusting Product's Category
     const [categoryData, setCategoryData] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
+    const [selectedAdjustCategory, setSelectedAdjustCategory] = useState('');
+    const [filteredCategories, setFilteredCategories] = useState([]);
 
     const fetchProductsSuggestions = async (query) => {
         try {
@@ -48,22 +50,21 @@ export const Products = () => {
         }
     };
 
-    const handleClearBtn = () => {
+    const handleClearBtnProductSection = () => {
         setSelectedProduct('');
-        setProductsData([]);
         setSelectedCategory('');
-        setCategoryData([]);
     };
 
     useEffect(() => {
         const fetchProductsData = async () => {
             try {
+                setLoadingProducts(true); // Set loading to true before fetching products
                 const response = await axios.get(`http://localhost:8080/product`);
                 setProductsData(response.data); // Set the fetched product data
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching products:', error);
-                setLoading(false);
+            } finally {
+                setLoadingProducts(false); // Set loading to false after fetching products
             }
         };
 
@@ -73,17 +74,26 @@ export const Products = () => {
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
+                setLoadingCategories(true); // Set loading to true before fetching categories
                 const response = await axios.get(`http://localhost:8080/categories`);
-                setCategoryData(response.data); // Set the fetched product data
-                setLoading(false);
+                setCategoryData(response.data); // Set the fetched category data
+                setFilteredCategories(response.data); // Initialize filtered categories with all data
             } catch (error) {
                 console.error('Error fetching category:', error);
-                setLoading(false);
+            } finally {
+                setLoadingCategories(false); // Set loading to false after fetching categories
             }
         };
 
         fetchCategoryData();
     }, []);
+
+    useEffect(() => {
+        const filtered = categoryData.filter(category =>
+            category.categoryName.toLowerCase().includes(selectedAdjustCategory.toLowerCase())
+        );
+        setFilteredCategories(filtered);
+    }, [selectedAdjustCategory, categoryData]);
 
     return (
         <>
@@ -116,14 +126,14 @@ export const Products = () => {
                             </div>
                         </div>
                         <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleClearBtn}>Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} >Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtnProductSection} >Clear</Buttons>
                             <AddNewProductPopup />
                         </div>
                     </div>
                     <div className="product-content-middle">
-                        {loading ? (
-                            <div><SubSpinner/></div>
+                        {loadingProducts ? (
+                            <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
                                 columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Quantity', 'Action']}
@@ -151,24 +161,21 @@ export const Products = () => {
                             <div className="categoryField">
                                 <InputLabel htmlFor="category" color="#0377A8">Search Category ID / Name</InputLabel>
                                 <SearchBar
-                                    searchTerm={selectedCategory}
-                                    setSearchTerm={setSelectedCategory}
-                                    onSelectSuggestion={(suggestion) => setSelectedCategory(`${suggestion.displayText}`)}
+                                    searchTerm={selectedAdjustCategory}
+                                    setSearchTerm={setSelectedAdjustCategory}
+                                    onSelectSuggestion={(suggestion) => setSelectedAdjustCategory(`${suggestion.displayText}`)}
                                     fetchSuggestions={fetchCategorySuggestions}
                                 />
                             </div>
                         </div>
-                        <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleClearBtn}>Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
-                        </div>
+
                         <div className="create-product-category-middle">
-                            {loading ? (
-                                <div>Loading...</div>
+                            {loadingCategories ? (
+                                <div><SubSpinner/></div>
                             ) : (
                                 <TableWithPagi
                                     columns={['Reg Categories', 'Action']}
-                                    rows={Array.isArray(categoryData) ? categoryData.map(category => ({
+                                    rows={Array.isArray(filteredCategories) ? filteredCategories.map(category => ({
                                         'Reg Categories': category.categoryName,
                                         'Action': (
                                             <div style={{ display: "flex", gap: "0.5em" }}>

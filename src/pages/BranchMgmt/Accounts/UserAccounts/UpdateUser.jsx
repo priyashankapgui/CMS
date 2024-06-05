@@ -208,6 +208,7 @@ export function UpdateUser() {
               name="userRole" 
               editable={false} 
               onChange={(e) => handleUserRoleChange(e)}
+              displayValue={employeeData.userRoleName}
               />
             </div>
             <div className="add-dp-NA" {...getRootProps()}>
@@ -319,7 +320,8 @@ export function UpdateUser() {
             severity="error"
             title="Error"
             message={showAlertError}
-            duration={10000}
+            duration={3000}
+            onClose={() => setShowAlertError("")}
           />
         )}
 
