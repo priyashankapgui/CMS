@@ -191,7 +191,7 @@ export const Sales = () => {
                 ? {
                     ...row,
                     productId: suggestion.productId,
-                    productName: suggestion.productName, 
+                    productName: suggestion.productName,
                     barcode: "",
                     batchNo: "",
                     unitPrice: "",
@@ -351,7 +351,7 @@ export const Sales = () => {
                                                 editable={false}
                                                 width="100%"
                                                 value={row.discount}
-                                               
+
                                             />
                                         </td>
                                         <td>
