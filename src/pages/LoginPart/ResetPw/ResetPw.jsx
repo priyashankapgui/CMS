@@ -19,6 +19,7 @@ const ResetPw = () => {
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
+    
     // If token is not present, redirect to login page
     if (!token) {
       window.location.href = "/";

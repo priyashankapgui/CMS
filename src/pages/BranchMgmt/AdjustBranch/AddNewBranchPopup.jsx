@@ -15,21 +15,20 @@ function AddNewBranchPopup() {
     const [branchEmail, setBranchEmail] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [alertVisible, setAlertVisible] = useState(false);
-    const [alertConfig, setAlertConfig] = useState({}); 
+    const [alertConfig, setAlertConfig] = useState({});
+
     useEffect(() => {
-        
         const storedAlertConfig = localStorage.getItem('alertConfig');
         if (storedAlertConfig) {
             setAlertConfig(JSON.parse(storedAlertConfig));
             setAlertVisible(true);
-            localStorage.removeItem('alertConfig'); 
+            localStorage.removeItem('alertConfig');
         }
     }, []);
 
     const handleSave = async (e) => {
-        e.preventDefault();
         try {
-            const resp = await axios.post(url, {
+            await axios.post(url, {
                 branchName: branchName,
                 address: address,
                 email: branchEmail,

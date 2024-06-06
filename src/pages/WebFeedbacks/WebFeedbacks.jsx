@@ -12,7 +12,7 @@ export const WebFeedbacks = () => {
     const [actionSummary, setActionSummary] = useState('');
     const [editModeId, setEditModeId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 5; // Number of rows to display per page
+    const rowsPerPage = 6; // Number of rows to display per page
     const feedbackApiUrl = 'http://localhost:8080/feedback';
     const branchApiUrl = 'http://localhost:8080/branches';
 

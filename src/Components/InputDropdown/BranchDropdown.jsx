@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import InputDropdown from "./InputDropdown";
-import SubSpinner from "../Spinner/SubSpinner/SubSpinner";
 
 const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, addOptions, displayValue }) => {
     const [branches, setBranches] = useState([]);
@@ -28,25 +27,23 @@ const BranchDropdown = ({ id, name, height, width, onChange, editable, borderRad
                         label: branch.branchName,
                     };
                 });
-                const branches = data.map((branch) => branch.label);
+                const tempBranches = data.map((branch) => branch.label);
                 if (addOptions) {
-                    branches.unshift(...addOptions);
+                    tempBranches.unshift(...addOptions);
                 }
                 if (displayValue) {
-                    branches.splice(branches.indexOf(displayValue), 1);
-                    branches.unshift(displayValue);
+                    tempBranches.splice(tempBranches.indexOf(displayValue), 1);
+                    tempBranches.unshift(displayValue);
                 }
-                console.log(branches, displayValue);
-                setBranches(branches);
+                onChange(tempBranches[0]);
+                console.log(tempBranches, displayValue);
+                setBranches(tempBranches);
                 setLoading(false);
             } catch (error) {
                 console.error("Error:", error);
             }
         };
         getBranches();
-        if(branches.length > 0){
-            onChange(branches[0]);
-        }
     }
     , []);
     return (

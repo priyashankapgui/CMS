@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./StockBalance.css";
@@ -6,20 +6,29 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
-
+import InputField from '../../../Components/InputField/InputField';
+import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
+import { IoReorderThreeOutline } from "react-icons/io5";
+import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
 
 export const StockBalance = () => {
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [product, setProduct] = useState(null);
+    const [batchNo, setBatchNo] = useState('');
+    const [category, setCategory] = useState(null);
+    const [stockDetails, setStockDetails] = useState([]);
 
-    const fetchSuggestionsBranches = async (searchTerm) => {
+    useEffect(() => {
+        fetchBranches();
+    }, []);
+
+    const fetchBranches = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/branches?query=${encodeURIComponent(searchTerm)}`);
-            return response.data.map(item => ({
-                id: item.branchId,
-                name: `${item.branchId} ${item.branchName}` 
-            }));
+            const response = await axios.get('http://localhost:8080/branches');
+            setBranches(response.data);
         } catch (error) {
-            console.error('Error fetching branch suggestions:', error);
-            return [];
+            console.error('Error fetching branches:', error);
         }
     };
 
@@ -36,49 +45,66 @@ export const StockBalance = () => {
         }
     };
 
-    const [branch, setBranch] = useState(null);
-    const [product, setProduct] = useState(null);
-    const [stockDetails, setStockDetails] = useState([]);
+    const fetchSuggestionsCategories = async (searchTerm) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/categories?query=${encodeURIComponent(searchTerm)}`);
+            return response.data.map(item => ({
+                id: item.categoryId,
+                name: `${item.categoryId} ${item.categoryName}`
+            }));
+        } catch (error) {
+            console.error('Error fetching category suggestions:', error);
+            return [];
+        }
+    };
 
-    const handleBranchSelect = (selectedBranch) => {
-        setBranch(selectedBranch);
+    const handleDropdownChange = (value) => {
+        setSelectedBranch(value);
+        console.log('Selected Drop Down Value:', value);
     };
 
     const handleProductSelect = (selectedProduct) => {
         setProduct(selectedProduct);
     };
 
+    const handleCategorySelect = (selectedCategory) => {
+        setCategory(selectedCategory);
+    };
+
     const handleSearch = async () => {
-        if (!branch || !product) {
+        if (!selectedBranch || !product) {
             console.error('Please select both branch and product');
             return;
         }
 
-        // Log branch and product to verify values before sending the request
-        console.log('Branch:', branch);
+        console.log('Branch:', selectedBranch);
         console.log('Product:', product);
 
         try {
             const response = await axios.get('http://localhost:8080/active-stock', {
                 params: {
-                    branchName: branch.name.split(' ').slice(1).join(' '), // Send only branch name
-                    productName: product.name.split(' ').slice(1).join(' '), // Send only product name
+                    branchName: selectedBranch,
+                    productName: product.name.split(' ').slice(1).join(' '),
+                    batchNo: batchNo,
+                    categoryName: category ? category.name.split(' ').slice(1).join(' ') : ''
                 }
             });
 
-            setStockDetails([{ ...response.data }]); // Update stock details with response data
+            setStockDetails(response.data);
         } catch (error) {
             console.error('Error fetching stock details:', error);
         }
     };
 
     const handleClear = () => {
-        setBranch(null);
+        setSelectedBranch('');
         setProduct(null);
+        setBatchNo('');
+        setCategory(null);
         setStockDetails([]);
     };
 
-    return ( 
+    return (
         <>
             <div className="top-nav-blue-text">
                 <h4>Stock Balance</h4>
@@ -86,13 +112,16 @@ export const StockBalance = () => {
             <Layout>
                 <div className="stock-balance-bodycontainer">
                     <div className="stock-balance-filter-container">
-                        <h3 className="stock-balance-title">Stock Balance - Active Stock</h3>
                         <div className="stock-balance-content-top">
                             <div className="branchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
-                                <SearchBar
-                                    fetchSuggestions={fetchSuggestionsBranches}
-                                    onSelect={handleBranchSelect}
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                                <InputDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    options={branches.map(branch => branch.branchName)}
+                                    onChange={handleDropdownChange}
+                                    value={selectedBranch}
                                 />
                             </div>
                             <div className="productField">
@@ -102,25 +131,41 @@ export const StockBalance = () => {
                                     onSelect={handleProductSelect}
                                 />
                             </div>
+                            <div className="categoryField">
+                                <InputLabel htmlFor="categoryField" color="#0377A8">Category ID / Name</InputLabel>
+                                <SearchBar
+                                    fetchSuggestions={fetchSuggestionsCategories}
+                                    onSelect={handleCategorySelect}
+                                />
+                            </div>
+                            <div className="batchNoField">
+                                <InputLabel htmlFor="batchNo" color="#0377A8">Batch No</InputLabel>
+                                <InputField type="text" id="batchNo" name="batchNo" editable={true} width="250px" value={batchNo} onChange={(e) => setBatchNo(e.target.value)} />
+                            </div>
                         </div>
-                        <div className="s-BtnSection">
+                        <div className="stock-balance-BtnSection">
                             <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
                             <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}>Clear</Buttons>
                         </div>
                     </div>
-                    <div className="content-middle">
+                    <div className="stock-balance-content-middle">
+                        <p className="stock-active-balance-title">Active Stock</p>
+
                         <TableWithPagi
-                            columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Quantity' ]}
+                            columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Qty', '']}
                             rows={stockDetails.map(detail => ({
-                                'Product ID': detail.totalQuantity.productId,
-                                'Product Name': detail.totalQuantity.productName,
-                                'Branch Name': detail.totalQuantity.branch ? detail.totalQuantity.branch.branchName : '',
-                                'Category Name': detail.totalQuantity.category ? detail.totalQuantity.category.categoryName : '',
-                                'Quantity': detail.totalQuantity.qty,
-                                
+                                'Product ID': detail.productId,
+                                'Product Name': detail.productName,
+                                'Branch Name': detail.branch ? detail.branch.branchName : '',
+                                'Category Name': detail.category ? detail.category.categoryName : '',
+                                'Qty': detail.qty,
+                                '': (
+                                    <div>
+                                        <RoundButtons id="summeryBtn" type="submit" name="summeryBtn" icon={<IoReorderThreeOutline />} onClick={() => console.log("Summery Button clicked")} />
+                                    </div>
+                                )
                             }))} />
-                        </div>
-                    
+                    </div>
                 </div>
             </Layout>
         </>
@@ -128,4 +173,3 @@ export const StockBalance = () => {
 };
 
 export default StockBalance;
-

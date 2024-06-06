@@ -50,8 +50,8 @@ export const AdjustBranch = () => {
             console.log("Branch deleted successfully");
 
             const alertData = {
-                severity: 'warning',
-                title: 'Delete',
+                severity: 'success',
+                title: 'Successfully Deleted!',
                 message: 'Branch deleted successfully!',
                 duration: 3000
             };
@@ -62,8 +62,8 @@ export const AdjustBranch = () => {
             console.error('Error deleting branch:', error);
 
             const alertData = {
-                severity: 'error',
-                title: 'Error',
+                severity: 'warning',
+                title: 'Error!',
                 message: 'Failed to delete branch.',
                 duration: 3000
             };
