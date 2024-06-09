@@ -33,13 +33,16 @@ function UpdateSupplierPopup({ supplierId }) {
     useEffect(() => {
         if (supplierId) {
             axios.get(`${suppliersApiUrl}/${supplierId}`)
-                .then(res => setPost({
-                    supplierName: res.data.supplierName,
-                    regNo: res.data.regNo,
-                    address: res.data.address,
-                    email: res.data.email,
-                    contactNo: res.data.contactNo
-                }))
+                .then(res => {
+                    const { supplierName, regNo, address, email, contactNo } = res.data.data;
+                    setPost({
+                        supplierName,
+                        regNo,
+                        address,
+                        email,
+                        contactNo
+                    });
+                })
                 .catch(err => console.log(err));
         }
     }, [supplierId]);

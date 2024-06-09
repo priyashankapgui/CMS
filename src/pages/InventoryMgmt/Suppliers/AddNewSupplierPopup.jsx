@@ -7,7 +7,7 @@ import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 
-const url = 'http://localhost:8080/suppliers';
+const suppliersApiUrl = process.env.REACT_APP_SUPPLIERS_API;
 
 function AddNewSupplierPopup() {
     const navigate = useNavigate();
@@ -48,21 +48,24 @@ function AddNewSupplierPopup() {
     };
 
     const handleSave = async (e) => {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
+         
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
                 severity: 'error',
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
-                duration: 5000
+                duration: 3000
             });
             setAlertVisible(true);
             return;
         }
-
+    
         try {
-            const resp = await axios.post(url, {
+            const resp = await axios.post(suppliersApiUrl, {
                 supplierName,
                 regNo,
                 address,
@@ -92,6 +95,7 @@ function AddNewSupplierPopup() {
             window.location.reload();
         }
     };
+    
 
     return (
         <>

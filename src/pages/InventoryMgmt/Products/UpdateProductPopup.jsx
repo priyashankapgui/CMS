@@ -17,8 +17,7 @@ function UpdateProductPopup({ productId }) {
         productName: '',
         description: '',
         categoryName: '',
-        barcode: '',
-        image: null
+        barcode: ''
     });
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
@@ -28,19 +27,17 @@ function UpdateProductPopup({ productId }) {
         productName: Joi.string().required().label('Product Name'),
         description: Joi.string().optional().label('Description'),
         categoryName: Joi.string().required().label('Category Name'),
-        barcode: Joi.string().required().label('Barcode'),
-        image: Joi.any().optional().label('Image')
+        barcode: Joi.string().required().label('Barcode')
     });
 
     useEffect(() => {
         if (productId) {
             axios.get(`${productsApiUrl}/${productId}`)
                 .then(res => setPost({
-                    productName: res.data.productName,
-                    description: res.data.description,
-                    categoryName: res.data.categoryName,
-                    barcode: res.data.barcode,
-                    image: null
+                    productName: res.data.data.productName,
+                    description: res.data.data.description,
+                    categoryName: res.data.data.categoryName,
+                    barcode: res.data.data.barcode
                 }))
                 .catch(err => console.log(err));
         }
@@ -71,10 +68,6 @@ function UpdateProductPopup({ productId }) {
         setPost({ ...post, [name]: value });
     };
 
-    const handleImageUpdate = (event) => {
-        setPost({ ...post, image: event.target.files[0] });
-    };
-
     const handleSave = async (event) => {
         event.preventDefault();
         const validationErrors = validate();
@@ -89,20 +82,9 @@ function UpdateProductPopup({ productId }) {
             return;
         }
 
-        const formData = new FormData();
-        formData.append('image', post.image);
-        formData.append('productName', post.productName);
-        formData.append('description', post.description);
-        formData.append('categoryName', post.categoryName);
-        formData.append('barcode', post.barcode);
-
         setIsLoading(true);
         try {
-            await axios.put(`${productsApiUrl}/${productId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await axios.put(`${productsApiUrl}/${productId}`, post);
             
             const alertData = {
                 severity: 'success',
@@ -132,10 +114,13 @@ function UpdateProductPopup({ productId }) {
     const fetchCategorySuggestions = async (query) => {
         try {
             const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            return response.data.map(category => ({
-                id: category.categoryId,
-                displayText: `${category.categoryId} ${category.categoryName}`
-            }));
+            if (response.data && response.data.data) {
+                return response.data.data.map(category => ({
+                    id: category.categoryId,
+                    displayText: `${category.categoryId} ${category.categoryName}`
+                }));
+            }
+            return [];
         } catch (error) {
             console.error('Error fetching category:', error);
             return [];
@@ -160,18 +145,13 @@ function UpdateProductPopup({ productId }) {
                 onClick={handleSave}
                 isLoading={isLoading}
             >
-                <form onSubmit={handleSave} encType='multipart/form-data'>
+                <form onSubmit={handleSave}>
                     <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }} className="mb-3">
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleImageUpdate} />
+                    <div style={{ flex: '1' }}>
+                            <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
+                            <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={post.barcode} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
-                        </div>
+                       
                         <div style={{ flex: '1' }}>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <SearchBar
@@ -183,15 +163,16 @@ function UpdateProductPopup({ productId }) {
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
-                            <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
+                    <div style={{ flex: '1' }}>
+                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
+                            <InputField type="text" id="barcode" name="barcode" value={post.barcode} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
                         <div style={{ flex: '1' }}>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" value={post.description} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
                     </div>
+                    <button type="submit" style={{ display: 'none' }}>Submit</button>
                 </form>
             </EditPopup>
         </>

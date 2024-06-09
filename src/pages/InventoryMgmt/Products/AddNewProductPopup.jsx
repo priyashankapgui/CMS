@@ -58,7 +58,9 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     };
 
     const addProductHandler = async (e) => {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
@@ -114,10 +116,11 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const fetchCategorySuggestions = async (query) => {
         try {
             const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            return response.data.map(category => ({
+            const formattedData = response.data.data.map(category => ({
                 id: category.categoryId,
                 displayText: `${category.categoryId} ${category.categoryName}`
             }));
+            return formattedData;
         } catch (error) {
             console.error('Error fetching category:', error);
             return [];
@@ -151,23 +154,25 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                     </div>
                     <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
                         <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
+                            <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
+                            <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
                         </div>
+                        
                         <div style={{ flex: '1' }}>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <SearchBar
                                 searchTerm={categoryName}
                                 setSearchTerm={setCategoryName}
-                                onSelectSuggestion={(suggestion) => setCategoryName(suggestion.displayText.split(' ')[1])}
+                                onSelectSuggestion={(suggestion) => setCategoryName(suggestion.displayText.split(' ').slice(1).join(' '))}
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
+
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
-                            <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
+                    <div style={{ flex: '1' }}>
+                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
+                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
                         </div>
                         <div style={{ flex: '1' }}>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
