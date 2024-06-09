@@ -1,13 +1,16 @@
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import UnAuthorized  from "../Components/Auth-Notification/Auth-Notificaion";
+import MainSpinner from "../Components/Spinner/MainSpinner/MainSpinner";
 
 const ProtectedRoute = (groupName) => {
     const [giveAccess, setGiveAccess] = useState();
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
     const verfiyToken = async () => {
+      setLoading(true);
       const token = sessionStorage.getItem("accessToken");
-    //   console.log({groupName, token});
+      // console.log({groupName, token});
       if (token) {
         const response = await fetch("http://localhost:8080/verifyPermissions", {
           method: "POST",
@@ -29,6 +32,7 @@ const ProtectedRoute = (groupName) => {
       } else {
         setGiveAccess(false);
       }
+      setLoading(false);
     };
     verfiyToken();
     }
@@ -38,7 +42,7 @@ const ProtectedRoute = (groupName) => {
         return null;
     }
 
-  return giveAccess ? <Outlet /> : <UnAuthorized/>;
+  return loading ? <MainSpinner loading={loading}/> : (giveAccess ? <Outlet /> : <UnAuthorized/>);
 }
 
 export default ProtectedRoute;
