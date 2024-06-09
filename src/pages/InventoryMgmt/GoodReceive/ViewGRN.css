@@ -1,11 +1,10 @@
-
-.new-grn-top-link {
+.view-grn-top-link {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-.addNewGRN-bodycontainer {
+.viewNewGRN-bodycontainer {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     border-radius: 0.625em;
@@ -14,7 +13,7 @@
     padding: 0 20px 0 20px;
 }
 
-.new-grn-filter-container {
+.view-grn-filter-container {
     background-color: white;
     padding: 20px;
     border-radius: 0.625em;
@@ -48,13 +47,25 @@
     padding: 2px;
 }
 
-.Grn-BtnSection{
+.Grn-BtnSection {
     display: flex;
     gap: 20px;
 
 }
-.tot-amount-txt{
+
+.tot-amount-txt {
     align-content: center;
     margin-top: 12px;
     font-weight: 500;
+}
+
+.data-box {
+
+   
+    border-radius: 10px;
+    border: 1px solid #8D9093;
+    font-size: 0.813em;
+    padding: 0.625em;
+    padding-right: 250px;
+    margin-bottom: 0.313em;
 }

@@ -9,6 +9,7 @@ import { Products } from '../pages/InventoryMgmt/Products/Products';
 import { Suppliers } from '../pages/InventoryMgmt/Suppliers/Suppliers';
 import { GoodReceive } from '../pages/InventoryMgmt/GoodReceive/GoodReceive';
 import { AddNewGRN } from '../pages/InventoryMgmt/GoodReceive/AddNewGRN';
+import {ViewGRN} from '../pages/InventoryMgmt/GoodReceive/ViewGRN';
 import { StockBalance } from '../pages/InventoryMgmt/StockBalance/StockBalance';
 import { StockTransfer } from '../pages/InventoryMgmt/StockTransfer/StockTransfer';
 import { NewStockTransfer } from '../pages/InventoryMgmt/StockTransfer/NewStockTransfer';
@@ -60,6 +61,7 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="good-receive" />}>
         <Route path="/good-receive" element={<GoodReceive />} />
         <Route path="/good-receive/new" element={<AddNewGRN />} />
+        <Route path="/good-receive/ViewGRN/:GRNNo" element={<ViewGRN />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="stock-transfer" />}>

@@ -1,0 +1,30 @@
+.productid{
+    margin-left: 40px;
+}
+
+.value3{
+    margin-right: 40px;
+}
+
+.adjust-stock-table {
+    border-collapse: collapse;
+    width: 100%;
+    
+   
+    
+  }
+  
+  .adjust-stock-table th,
+  .adjust-stock-table td {
+    border: 1px solid #dddddd;
+    border-radius: 20%;
+    text-align: left;
+    padding: 8px;
+    font-size: 6;
+    font-family:'Poppins';
+  }
+  
+  .adjust-stock-table th {
+    background-color: #f2f2f2;
+    color: #0377A8;
+  }

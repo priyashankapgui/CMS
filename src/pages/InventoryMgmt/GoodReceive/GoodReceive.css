@@ -14,13 +14,14 @@
     /* gap: 0.625em; */
     min-width: 100%;
     height: fit-content;
-
+    
 }
 
 .goodReceive-content-top1 {
     display: flex;
     height: 70px;
     margin-top: 10px;
+    padding-right: 100;
     justify-content: space-between;
 }
 
@@ -30,6 +31,10 @@
     gap: 50px;
     margin-top: 10px;
     border-bottom: 3px solid #D9D9D9;
+    align-items: center;
+    padding-left: 250px;
+  
+    
    
 }
 

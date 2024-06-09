@@ -19,21 +19,19 @@ export function AddNewGRN() {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [productsData, setProductsData] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState('');
     const [invoiceNo, setInvoiceNo] = useState('');
     const [supplierId, setSupplierId] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [branchName, setBranchName] = useState('');
-    const [rows, setRows] = useState([{ id: 1, productId: '', productName: '', batchNo: '', qty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
+    const [rows, setRows] = useState([{ id: 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
     const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
     const navigate = useNavigate();
 
     const initialRowData = {
         id: 1,
         productId: '',
-        productName: '',
         batchNo: '',
-        qty: '',
+        totalQty: '',
         purchasePrice: '',
         sellingPrice: '',
         freeQty: '',
@@ -41,7 +39,7 @@ export function AddNewGRN() {
         comment: '',
         amount: ''
     };
-    
+
     useEffect(() => {
         fetchBranches();
     }, []);
@@ -73,10 +71,32 @@ export function AddNewGRN() {
 
     const handleSave = async (e) => {
         e.preventDefault();
+
+        // Fetch supplier ID if not already set
+        if (!supplierId) {
+            await fetchSupplierIdByName();
+        }
+
+        // Prepare data to be sent to the backend
+        const grnData = {
+            invoiceNo,
+            branchName: selectedBranch,
+            supplierId: selectedSupplier, // Only send supplierId
+            products: rows.map(row => ({
+                productId: row.productId,
+                batchNo: row.batchNo,
+                totalQty: row.totalQty,
+                purchasePrice: row.purchasePrice,
+                sellingPrice: row.sellingPrice,
+                freeQty: row.freeQty,
+                expDate: row.expDate,
+                comment: row.comment,
+                amount: row.amount,
+            }))
+        };
+
         try {
-            if (!supplierId) {
-                await fetchSupplierIdByName();
-            }
+            await axios.post(url, grnData);
             setAlert({
                 show: true,
                 severity: 'success',
@@ -85,8 +105,9 @@ export function AddNewGRN() {
             });
             setInvoiceNo('');
             setSupplierId('');
+            setSelectedSupplier('');
             setBranchName('');
-            setRows([{ id: 1, productId: '', productName: '', batchNo: '', qty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
+            setRows([{ id: 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
         } catch (error) {
             console.error('Error:', error.response);
             setAlert({
@@ -99,15 +120,15 @@ export function AddNewGRN() {
     };
 
     const handleAddRow = () => {
-        if (rows[rows.length - 1].productName.trim() === '') {
+        if (rows[rows.length - 1].productId.trim() === '') {
             setAlert({
                 show: true,
                 severity: 'warning',
-                title: 'Please add a Product ID or Product Name',
+                title: 'Please add a Product ID',
                 message: 'You cannot go forward'
             });
         } else {
-            const newRow = { id: rows.length + 1, productName: '', batchNo: '', qty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' };
+            const newRow = { id: rows.length + 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' };
             setRows([...rows, newRow]);
         }
     };
@@ -121,34 +142,32 @@ export function AddNewGRN() {
             setRows(rows.filter(row => row.id !== id));
         }
     };
-    
 
-
-    const fetchSuppliersSuggestion = async (searchTerm) => {
+    const fetchSuppliersSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/suppliers?query=${encodeURIComponent(searchTerm)}`);
-            const data = await response.json();
-            return data.map(item => ({
-                id: item.supplierId,
-                name: `${item.supplierId}, ${item.supplierName}`
-            }));
+            const response = await axios.get(`http://localhost:8080/suppliers?search=${query}`);
+            if (response.data && response.data.data) {
+                return response.data.data.map(supplier => ({
+                    id: supplier.supplierId,
+                    displayText: `${supplier.supplierId} ${supplier.supplierName}`
+                }));
+            }
+            return [];
         } catch (error) {
-            console.error('Error fetching Supplier suggestions:', error);
+            console.error('Error fetching supplier suggestions:', error);
             return [];
         }
     };
-
-
 
     const handleInputChange = (id, name, value) => {
         const updatedRows = rows.map(row => {
             if (row.id === id) {
                 row[name] = value;
-                if (name === 'qty' || name === 'freeQty' || name === 'purchasePrice') {
-                    const qty = parseFloat(row.qty || 0);
+                if (name === 'totalQty' || name === 'freeQty' || name === 'purchasePrice') {
+                    const totalQty = parseFloat(row.totalQty || 0);
                     const freeQty = parseFloat(row.freeQty || 0);
                     const purchasePrice = parseFloat(row.purchasePrice || 0);
-                    row.amount = ((qty - freeQty) * purchasePrice).toFixed(2);
+                    row.amount = ((totalQty - freeQty) * purchasePrice).toFixed(2);
                 }
             }
             return row;
@@ -156,11 +175,10 @@ export function AddNewGRN() {
         setRows(updatedRows);
     };
 
-
     useEffect(() => {
         const fetchProductsData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/product`);
+                const response = await axios.get('http://localhost:8080/products');
                 setProductsData(response.data);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -172,11 +190,14 @@ export function AddNewGRN() {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/product?search=${query}`);
-            return response.data.map(product => ({
-                id: product.productId,
-                displayText: `${product.productId} ${product.productName}`
-            }));
+            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
+            if (response.data && response.data.data) {
+                return response.data.data.map(product => ({
+                    id: product.productId,
+                    displayText: `${product.productId} ${product.productName}`
+                }));
+            }
+            return [];
         } catch (error) {
             console.error('Error fetching product:', error);
             return [];
@@ -234,11 +255,10 @@ export function AddNewGRN() {
                         <div className="SupplierField">
                             <InputLabel htmlFor="supplierName" color="#0377A8">Supplier ID / Name</InputLabel>
                             <SearchBar
-                                id="supplierName"
                                 searchTerm={selectedSupplier}
                                 setSearchTerm={setSelectedSupplier}
-                                onSelectSuggestion={(suggestion) => setSelectedSupplier(`${suggestion.displayText}`)}
-                                fetchSuggestions={fetchSuppliersSuggestion}
+                                onSelectSuggestion={(suggestion) => setSelectedSupplier(suggestion.id)} // Only set supplier ID
+                                fetchSuggestions={fetchSuppliersSuggestions}
                             />
                         </div>
                     </div>
@@ -264,15 +284,14 @@ export function AddNewGRN() {
                                     <tr key={index}>
                                         <td>
                                             <SearchBar
-                                                id={`productName-${row.id}`}
-                                                searchTerm={selectedProduct}
-                                                setSearchTerm={setSelectedProduct}
-                                                onSelectSuggestion={(suggestion) => setSelectedProduct(`${suggestion.displayText}`)}
+                                                searchTerm={row.productId}
+                                                setSearchTerm={(value) => handleInputChange(row.id, 'productId', value)}
+                                                onSelectSuggestion={(suggestion) => handleInputChange(row.id, 'productId', suggestion.id)}
                                                 fetchSuggestions={fetchProductsSuggestions}
                                             />
                                         </td>
                                         <td><InputField type="text" id="batchNo" name="batchNo" editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} width="100%" /></td>
-                                        <td><InputField type="number" id="qty" name="qty" textAlign="center" editable={true} value={row.qty} onChange={(e) => handleInputChange(row.id, 'qty', e.target.value)} width="100%" /></td>
+                                        <td><InputField type="number" id="totalQty" name="totalQty" textAlign="center" editable={true} value={row.totalQty} onChange={(e) => handleInputChange(row.id, 'totalQty', e.target.value)} width="100%" /></td>
                                         <td><InputField type="text" id="purchasePrice" name="purchasePrice" textAlign="right" editable={true} value={row.purchasePrice} onChange={(e) => handleInputChange(row.id, 'purchasePrice', e.target.value)} width="100%" /></td>
                                         <td><InputField type="text" id="sellingPrice" name="sellingPrice" textAlign="right" editable={true} value={row.sellingPrice} onChange={(e) => handleInputChange(row.id, 'sellingPrice', e.target.value)} width="100%" /></td>
                                         <td><InputField type="number" id="freeQty" name="freeQty" textAlign="center" editable={true} value={row.freeQty} onChange={(e) => handleInputChange(row.id, 'freeQty', e.target.value)} width="100%" /></td>
