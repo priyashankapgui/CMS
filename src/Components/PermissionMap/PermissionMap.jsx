@@ -46,18 +46,29 @@ export default function PermissionMap({ checkedPages, permissionArray }) {
         maxHeight: "55vh",
         flexWrap: "wrap",
         fontFamily: "Poppins",
-        gap: "2px",
+        rowGap: "2px",
+        columnGap: "20px"
       }}
     >
       <PermissionGroup
         checkedPages={checkedPages}
-        parentName="Branch Management"
+        parentName="Branch Mgmt"
         pages={BranchManagementPages}
       />
       <PermissionGroup
         checkedPages={checkedPages}
-        parentName="Inventory Management"
+        parentName="Inventory Mgmt"
         pages={InventoryManagementPages}
+      />
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Billing"
+        pages={BillingPages}
+      />
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Reporting"
+        pages={ReportingPages}
       />
       <PermissionSingle
         pageId="web-mgmt"
@@ -77,16 +88,6 @@ export default function PermissionMap({ checkedPages, permissionArray }) {
         checkedPages={checkedPages}
         handleCheck={handleCheck}
       />
-      <PermissionGroup
-        checkedPages={checkedPages}
-        parentName="Billing"
-        pages={BillingPages}
-      />
-      <PermissionGroup
-        checkedPages={checkedPages}
-        parentName="Reporting"
-        pages={ReportingPages}
-      />
     </div>
   );
 }
@@ -98,7 +99,8 @@ const PermissionSingle = ({ pageId, pageName, checkedPages, handleCheck }) => {
     handleCheck(event, pageId);
   };
   return (
-    <div>
+    <div
+      style={{width: "215px"}}>
       {disabled ? (
         <FormControlLabel
           sx={{
@@ -106,7 +108,7 @@ const PermissionSingle = ({ pageId, pageName, checkedPages, handleCheck }) => {
             mt: 1,
             "& .MuiFormControlLabel-label": {
               fontFamily: "Poppins",
-              fontSize: "16px",
+              fontSize: "15px",
             },
           }}
           label={pageName}
@@ -170,7 +172,8 @@ const PermissionGroup = ({ parentName, pages, checkedPages }) => {
   );
 
   return (
-    <div>
+    <div
+    style={{width: "215px"}}>
       {pages.length === 0 ? null : (
         <div>
           <FormControlLabel
@@ -179,7 +182,7 @@ const PermissionGroup = ({ parentName, pages, checkedPages }) => {
               mt: 1,
               "& .MuiFormControlLabel-label": {
                 fontFamily: "Poppins",
-                fontSize: "16px",
+                fontSize: "15px",
               },
             }}
             label={parentName}

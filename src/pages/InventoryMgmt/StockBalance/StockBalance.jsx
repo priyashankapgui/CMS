@@ -6,10 +6,7 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
-import InputField from '../../../Components/InputField/InputField';
-import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { IoReorderThreeOutline } from "react-icons/io5";
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import StockSummary from './StockSummary';
 import AdjustStock from './AdjustStock';
 
@@ -127,14 +124,13 @@ export const StockBalance = () => {
                         <div className="stock-balance-content-top">
                             <div className="branchField">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                                <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                    value={selectedBranch}
-                                />
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                             </div>
                             <div className="productField">
                                 <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>

@@ -7,7 +7,6 @@ import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from "../../../Components/Label/InputLabel";
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
 import DatePicker from '../../../Components/DatePicker/DatePicker';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
@@ -16,7 +15,8 @@ import { BsEye } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-
+import ViewGRN from './ViewGRN';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
 export const GoodReceive = () => {
     const [grnData, setGrnData] = useState([]);
@@ -209,14 +209,13 @@ export const GoodReceive = () => {
                         <div className="goodReceive-content-top1">
                             <div className="branchField">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                                  <BranchDropdown
                                     id="branchName"
-                                    name="branchName" 
+                                    name="branchName"
                                     editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    value={selectedBranch}
-                                    onChange={handleDropdownChange}
-                                />
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                             </div>
                             <div className="datePickerFrom">
                                 <InputLabel htmlFor="From" color="#0377A8">From</InputLabel>
