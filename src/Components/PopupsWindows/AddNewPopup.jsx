@@ -5,12 +5,15 @@ import Buttons from '../Buttons/SquareButtons/Buttons';
 function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick }) {
     const [open, setOpen] = React.useState(undefined);
 
-    function CreateAndClose() {
+    async function CreateAndClose() {
         console.log('CreateAndClose');
-        onClick();
-        console.log('onClick safely called');
-        setOpen(false);
-        console.log('setOpen set to false');
+        try{
+            await onClick();
+            setOpen(false);
+        }
+        catch(error){
+            console.log('Error in onClick');
+        }
     }
     return (
         <SubPopup

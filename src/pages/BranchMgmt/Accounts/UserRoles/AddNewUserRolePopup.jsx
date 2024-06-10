@@ -25,8 +25,17 @@ function AddNewUserRolePopup({showSuccess}) {
     useEffect(() => {
         const getPermissions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/getPages');
+                const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                    },
+                }
+                );
                 const data = await response.json();
+                console.log(data);
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
@@ -50,10 +59,13 @@ function AddNewUserRolePopup({showSuccess}) {
             if (selectedBranch === 'None') {
                 tempBranch = null;
             }
+           const token = sessionStorage.getItem("accessToken");
+           console.log(token);
             const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     userRoleName: roleName,
@@ -75,11 +87,12 @@ function AddNewUserRolePopup({showSuccess}) {
         } catch (error) {
             setShowAlert(error.message);
             console.error('Error:', error);
+            throw new Error(error.message);
         }
     }
     return (
         <>
-            <AddNewPopup topTitle="Add New User Role " buttonId="save-btn" buttonText="Create" onClick={() => handleSave()}>
+            <AddNewPopup topTitle="Add New User Role " buttonId="save-btn" buttonText="Create" onClick={handleSave}>
                 <div className='first-row'>
                     <div className='roleNameInput'>
                         <InputLabel colour="#0377A8">Role Name</InputLabel>

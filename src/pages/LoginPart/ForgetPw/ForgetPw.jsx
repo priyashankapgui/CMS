@@ -5,11 +5,14 @@ import "./ForgetPw.css";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 
 const ForgetPw = () => {
   const [empId, setEmpid] = useState("");
   const [error, setError] = useState("");
   const [showSubPopup, setShowSubPopup] = useState(false); // State to control the visibility of SubPopup
+  const [subLoading, setSubLoading] = useState(false);
+ 
 
   const handleEmployeeIdSubmit = (e) => {
     setEmpid(e.target.value);
@@ -19,12 +22,11 @@ const ForgetPw = () => {
 
   const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
-
+    setSubLoading(true);
     if (! empId.startsWith("SA")) {
 
         if (!empId) {
           setError("Please enter your employee ID.");
-          return;
         }
         const response = await fetch("http://localhost:8080/api/login/fp", {
           method: "POST",
@@ -43,11 +45,11 @@ const ForgetPw = () => {
           const data = await response.json();
           setError(data.message);
         }
+         setSubLoading(false);
       }else{
 
         if (!empId) {
           setError("Please enter your employee ID.");
-          return;
         }
         const response = await fetch("http://localhost:8080/superAdmin/forgotPassword", {
           method: "POST",
@@ -65,6 +67,7 @@ const ForgetPw = () => {
           const data = await response.json();
           setError(data.message);
         }
+         setSubLoading(false);
       }
   };
 
@@ -95,19 +98,21 @@ const ForgetPw = () => {
             >
             <FaRegUserCircle className="s-fp-icon" />
           </InputField>
-          <Buttons
-            type="submit"
-            id="confirm-btn"
-            style={{ backgroundColor: "#23A3DA", color: "white" }}
-            onClick={handleOpen}
-          >
-            {" "}
-            Confirm{" "}
-          </Buttons>
+          {error && <p className="fp-error">{error}</p>}
+          {subLoading ? 
+                <SubSpinner loading={subLoading} />
+                :
+                    <Buttons
+                      type="submit"
+                      id="confirm-btn"
+                      style={{ backgroundColor: "#23A3DA", color: "white" }}
+                      onClick={handleOpen}
+                    >
+                      {" "}
+                      Confirm{" "}
+                    </Buttons>
+          }
         </div>
-
-        {error && <p className="fp-error">{error}</p>}
-
         <p className="backtologin">
           Remember your password?
           <Link to="/"> Login</Link>

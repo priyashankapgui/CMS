@@ -24,7 +24,15 @@ function UpdateUserRolePopup({userRoleId}) {
     useEffect(() => {
         const getPermissions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/getPages');
+              const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                    },
+                }
+                );
                 const data = await response.json();
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
@@ -48,9 +56,7 @@ function UpdateUserRolePopup({userRoleId}) {
                 });
                 const data = await response.json();
                 data.permissions.forEach(page => {
-                    if (checkedPages.has(page.pageAccessId)) {
-                        checkedPages.set(page.pageAccessId, true);
-                    }
+                  checkedPages.set(page.pageAccessId, true);
                 });
             } catch (error) {
                 console.error('Error fetching permissions:', error);
@@ -95,6 +101,7 @@ function UpdateUserRolePopup({userRoleId}) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') || '',
             },
             body: JSON.stringify({
                 userRoleName: roleName,
@@ -106,7 +113,7 @@ function UpdateUserRolePopup({userRoleId}) {
             throw new Error('Server Error');
         }
         if (!response.ok) {
-            const data = await response.json();   
+            const data = await response.json();
             throw new Error(data.error);
         }
         const data = await response.json();
@@ -144,7 +151,7 @@ function UpdateUserRolePopup({userRoleId}) {
               <BranchDropdown
                 id="branchName"
                 name="branchName"
-                editable={true}
+                editable={false}
                 onChange={(e) => handleBranchChange(e)}
                 addOptions={["None"]}
                 displayValue={selectedBranch}

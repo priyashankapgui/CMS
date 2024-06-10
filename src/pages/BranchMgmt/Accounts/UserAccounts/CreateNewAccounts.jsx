@@ -15,6 +15,7 @@ import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropdown';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 export function CreateNewAccounts() {
@@ -35,6 +36,8 @@ export function CreateNewAccounts() {
     // const [selectedBranch, setSelectedBranch] = useState([]);
     // const [selectedRole, setSelectedRole] = useState([]);
     const [loading, setLoading] = useState(false); // State for showing spinner
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     
     const handleBranchChange = useCallback((branch) => {   
@@ -52,6 +55,14 @@ export function CreateNewAccounts() {
       })
       );
     }, []);
+
+    const toggleShowPassword = () => {
+      setShowPassword(!showPassword);
+    };
+  
+    const toggleShowConfirmPassword = () => {
+      setShowConfirmPassword(!showConfirmPassword);
+    };
 
     const handleCreateAccount = async () => {
       setLoading(true);
@@ -161,6 +172,7 @@ export function CreateNewAccounts() {
                   editable={true}
                   onChange={(role) => handleUserRoleChange(role)}
                   removeOptions={["superadmin"]}
+                  filterByBranch={employeeData.branchName}
                 />
               </div>
               <div className="add-dp-NA" {...getRootProps()}>
@@ -268,7 +280,7 @@ export function CreateNewAccounts() {
                 Password
               </InputLabel>
               <InputField
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="tempPassword"
                 name="tempPassword"
                 editable={true}
@@ -276,7 +288,22 @@ export function CreateNewAccounts() {
                 onChange={(e) =>
                   setEmployeeData({ ...employeeData, password: e.target.value })
                 }
-              />
+              >
+              <button
+              type="button"
+              onClick={toggleShowPassword}
+              className="toggle-password-button"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              {showPassword ? <FaEye /> : < FaEyeSlash />}
+            </button>
+            </InputField>
+
               {employeeData.password && (
                 <PasswordStrengthBar
                   password={employeeData.password}
@@ -293,13 +320,27 @@ export function CreateNewAccounts() {
                 Confirm Password
               </InputLabel>
               <InputField
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 id="tempConPassword"
                 name="tempPassword"
                 editable={true}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-              />
+               >
+                <button
+                type="button"
+                onClick={toggleShowConfirmPassword}
+                className="toggle-password-button"
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+                 >
+                    {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
+                </button>
+            </InputField>
             </div>
             {loading ? (
               <SubSpinner />

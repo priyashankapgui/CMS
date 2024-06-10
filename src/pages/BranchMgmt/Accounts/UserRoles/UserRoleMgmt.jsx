@@ -18,15 +18,18 @@ export const UserRoleMgmt = () => {
     const [success, setSuccess] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
     useEffect(() => {
         const getUserRoles = async () => {
             try {
                 setLoading(true); // Set loading to true before fetching data
+                const token = sessionStorage.getItem("accessToken");
                 const response = await fetch("http://localhost:8080/userRoles", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 if (!response.ok) {
@@ -57,16 +60,18 @@ export const UserRoleMgmt = () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
                 },
             });
             if (!response.ok) {
-                throw new Error('Failed to delete user role');
+                const data = await response.json();
+                throw new Error(data.error);
             }
             setSuccess('User role deleted successfully');
             return;
         }
         catch (error) {
-            setShowAlert('Failed to delete user role');
+            setShowAlert(error.message);
             console.error('Error:', error);
             return;
         }
@@ -118,17 +123,23 @@ export const UserRoleMgmt = () => {
                             </div>
                         ) : (
                             <TableWithPagi
-                                columns={['Roles', 'Branch', 'Action']}
+                                columns={['Role ID','Roles', 'Branch', 'Action']}
                                 rows={userRoles.filter(
                                     role => selectedBranch === 'All' || role.branchName === selectedBranch
                                 ).map(role => ({
+                                    RoleID: role.userRoleId,
                                     Role: role.userRoleName,
                                     Branch: role.branchName,
                                     action: (
+                                    <div>
+                                        {currentUser.role === role.userRoleName ? <p>No Access</p> : ( 
                                         <div style={{ display: "flex", gap: "0.7em", cursor: "pointer" }}>
                                             <UpdateUserRolePopup userRoleId={role.userRoleId} />
-                                            <DeletePopup handleDelete={() => handleDelete(role.userRoleId)} />
+                                            <DeletePopup handleDelete={async() => handleDelete(role.userRoleId)} />
                                         </div>
+                                        )
+                                        }
+                                    </div>
                                     )
                                 }))}
                             />

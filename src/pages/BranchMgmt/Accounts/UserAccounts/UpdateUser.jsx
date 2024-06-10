@@ -15,6 +15,9 @@ import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import { Link } from "react-router-dom";
 import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
+import PasswordStrengthBar from 'react-password-strength-bar';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 export function UpdateUser() {
   const [employeeData, setEmployeeData] = useState({}); // State for storing employee data
@@ -23,6 +26,8 @@ export function UpdateUser() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [showAlertError, setShowAlertError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // useEffect(() => {
   //   let tempBranches = datafile.dropDownOptions.branchOptions;
@@ -77,6 +82,14 @@ export function UpdateUser() {
     });
   }
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const handleUpdate = async () => {
     if (!employeeData.employeeName || !employeeData.email) {
       setShowAlertError("Please fill in all fields")
@@ -92,6 +105,9 @@ export function UpdateUser() {
         employeeName: employeeData.employeeName,
         branchName: employeeData.branchName,
         email: employeeData.email,
+        phone: employeeData.phone,
+        address: employeeData.address,
+        userRoleName: employeeData.userRoleName,
       }
     }
     else{
@@ -99,7 +115,10 @@ export function UpdateUser() {
         employeeName: employeeData.employeeName,
         branchName: employeeData.branchName,
         email: employeeData.email,
+        phone: employeeData.phone,
+        address: employeeData.address,
         password: password,
+        userRoleName: employeeData.userRoleName,
       }
     }
       try {
@@ -129,8 +148,6 @@ export function UpdateUser() {
         }
     
 }
-
-
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -206,8 +223,9 @@ export function UpdateUser() {
               <UserRoleDropdown 
               id="userRole" 
               name="userRole" 
-              editable={false} 
+              editable={true} 
               onChange={(e) => handleUserRoleChange(e)}
+              filterByBranch={employeeData.branchName}
               displayValue={employeeData.userRoleName}
               />
             </div>
@@ -257,7 +275,7 @@ export function UpdateUser() {
           </div>
           <div className="email-field">
             <InputLabel for="empEmail" color="#0377A8">
-              Official Email (Optional)
+              Official Email
             </InputLabel>
             <InputField
               type="email"
@@ -270,30 +288,100 @@ export function UpdateUser() {
               editable={true}
             />
           </div>
+          <div className="phone-field">
+              <InputLabel for="empPhone" color="#0377A8">
+                Telephone
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empPhone"
+                name="empPhone"
+                editable={true}
+                value={employeeData.phone}
+                onChange={(e) =>
+                  setEmployeeData({ ...employeeData, phone: e.target.value })
+                }
+              />
+            </div>
+            <div className="address-field">
+              <InputLabel for="empAddress" color="#0377A8">
+                Address (Optional)
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empAddress"
+                name="empAddress"
+                editable={true}
+                value={employeeData.address}
+                onChange={(e) =>
+                  setEmployeeData({ ...employeeData, address: e.target.value })
+                }
+              />
+            </div>
           <div className="password-field">
             <InputLabel for="tempPassword" color="#0377A8">
               Password
             </InputLabel>
             <InputField
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="tempPassword"
               name="tempPassword"
               value={password}
               onChange={handlePasswordChange}
               editable={true}
-            />
+            >
+                <button
+                type="button"
+                onClick={toggleShowPassword}
+                className="toggle-password-button"
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+              >
+                {showPassword ? <FaEye /> : < FaEyeSlash />}
+              </button>
+            </InputField>
+            {password &&(
+              <PasswordStrengthBar 
+              password={password}
+              minLength={8}
+              scoreWordStyle={{
+                fontSize: "14px",
+                fontFamily: "Poppins",
+              }}
+              scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
+              shortScoreWord="should be atlest 8 characters long" 
+              />
+            )}
             <InputLabel for="tempConPassword" color="#0377A8">
               Confirm Password
             </InputLabel>
             <InputField
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               id="tempConPassword"
               name="tempPassword"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
               editable={true}
 
-            />
+              >
+              <button
+              type="button"
+              onClick={toggleShowConfirmPassword}
+              className="toggle-password-button"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+               >
+                  {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
+              </button>
+          </InputField>
           </div>
           <Buttons
             type="submit"

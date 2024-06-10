@@ -80,8 +80,8 @@ const Login = () => {
         const data = await response.json();
         console.log("Error:", data.error);
         setError(data.error);
+        setSubLoading(false);
       }
-      setSubLoading(false);
     }
     catch (error) {
       setError("Internal Server Error")
