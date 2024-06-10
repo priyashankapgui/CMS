@@ -23,6 +23,7 @@ export function Accounts() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
+  const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
   useEffect(() => {
     const getEmployeeData = async () => {
@@ -261,25 +262,29 @@ export function Accounts() {
                   Telephone: employee.phone,
                   role: employee.userRoleName,
                   action: (
+                    <div>
+                       {currentUser.role === employee.userRoleName ? <p>No Access</p> : ( 
                     <div style={{ display: "flex", gap: "0.7em" }}>
-                      <button
-                        className="edit-button"
-                        onClick={() =>
-                          handleCheck(
-                            employee.employeeId,
-                            employee.role,
-                            employee.branchName
-                          )
-                        }
-                      >
-                        <Icon
-                          icon="bitcoin-icons:edit-outline"
-                          style={{ fontSize: "24px" }}
-                        />
-                      </button>
+                        <button
+                          className="edit-button"
+                          onClick={() =>
+                            handleCheck(
+                              employee.employeeId,
+                              employee.role,
+                              employee.branchName
+                            )
+                          }
+                        >
+                          <Icon
+                            icon="bitcoin-icons:edit-outline"
+                            style={{ fontSize: "24px" }}
+                          />
+                        </button>
                       <DeletePopup
                         handleDelete={() => handleDelete(employee.employeeId)}
                       />
+                    </div>
+                    )}
                     </div>
                   ),
                 }))}

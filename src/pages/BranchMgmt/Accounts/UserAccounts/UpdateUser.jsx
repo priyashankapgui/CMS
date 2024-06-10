@@ -28,6 +28,7 @@ export function UpdateUser() {
   const [showAlertError, setShowAlertError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
   // useEffect(() => {
   //   let tempBranches = datafile.dropDownOptions.branchOptions;
@@ -227,6 +228,7 @@ export function UpdateUser() {
               onChange={(e) => handleUserRoleChange(e)}
               filterByBranch={employeeData.branchName}
               displayValue={employeeData.userRoleName}
+              removeOptions={[currentUser.role]}
               />
             </div>
             <div className="add-dp-NA" {...getRootProps()}>

@@ -38,6 +38,8 @@ export function CreateNewAccounts() {
     const [loading, setLoading] = useState(false); // State for showing spinner
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    console.log("Current User:", currentUser);
 
     
     const handleBranchChange = useCallback((branch) => {   
@@ -171,7 +173,7 @@ export function CreateNewAccounts() {
                   name="userRole"
                   editable={true}
                   onChange={(role) => handleUserRoleChange(role)}
-                  removeOptions={["superadmin"]}
+                  removeOptions={["superadmin",currentUser.role]}
                   filterByBranch={employeeData.branchName}
                 />
               </div>
