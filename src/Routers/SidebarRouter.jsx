@@ -44,6 +44,7 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="accounts" />}>
         <Route path="/accounts/create-new-accounts" element={<CreateNewAccounts />} />
         <Route path="/accounts/update-account" element={<UpdateUser />} />
+        <Route path="/accounts" element={<Accounts />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="accounts/user-roles" />}>
@@ -106,7 +107,6 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="reporting/analysis" />}>
         <Route path="/reporting/analysis" element={<Analysis />} />
       </Route>
-      <Route path="/accounts" element={<Accounts />} />
 
     </Routes>
   );

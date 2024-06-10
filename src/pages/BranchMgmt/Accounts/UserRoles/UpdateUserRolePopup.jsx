@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import EditPopup from '../../../../Components/PopupsWindows/EditPopup';
-import { Alert, AlertTitle } from '@mui/material';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import InputField from '../../../../Components/InputField/InputField';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 
 
 
@@ -14,6 +14,7 @@ function UpdateUserRolePopup({userRoleId}) {
     const [roleName, setRoleName] = useState();
     const [selectedBranch, setSelectedBranch] = useState();
     const [showAlert, setShowAlert] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleBranchChange = (branch) => {
         setSelectedBranch(branch);
@@ -23,7 +24,15 @@ function UpdateUserRolePopup({userRoleId}) {
     useEffect(() => {
         const getPermissions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/getPages');
+              const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                    },
+                }
+                );
                 const data = await response.json();
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
@@ -47,9 +56,7 @@ function UpdateUserRolePopup({userRoleId}) {
                 });
                 const data = await response.json();
                 data.permissions.forEach(page => {
-                    if (checkedPages.has(page.pageAccessId)) {
-                        checkedPages.set(page.pageAccessId, true);
-                    }
+                  checkedPages.set(page.pageAccessId, true);
                 });
             } catch (error) {
                 console.error('Error fetching permissions:', error);
@@ -78,7 +85,45 @@ function UpdateUserRolePopup({userRoleId}) {
     ,[checkedPages, userRoleId]);
 
     const handleUpdate = async() => {
-        console.log(checkedPages, selectedBranch, roleName);
+      try {
+        const selectedPages = Array.from(checkedPages.entries())
+            .filter(([pageId, isChecked]) => isChecked)
+            .map(([pageId, isChecked]) => pageId);
+        console.log(selectedPages, selectedBranch, roleName);
+        if (!roleName || !selectedBranch || selectedPages.length === 0) {
+            throw new Error('Please fill all the fields');
+        }
+        let tempBranch = selectedBranch;
+        if (selectedBranch === 'None') {
+            tempBranch = null;
+        }
+        const response = await fetch(`http://localhost:8080/userRoleWithPermissions/${userRoleId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+            },
+            body: JSON.stringify({
+                userRoleName: roleName,
+                branch: tempBranch,
+                checkedPages: selectedPages,
+            }),
+        });
+        if (!response){
+            throw new Error('Server Error');
+        }
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error);
+        }
+        const data = await response.json();
+        console.log(data);
+        setShowSuccess(`User Role '${roleName}' Updated successfully`);
+        return null;
+      } catch (error) {
+          setShowAlert(error.message);
+          console.error('Error:', error);
+      }
     }
 
     return (
@@ -106,7 +151,7 @@ function UpdateUserRolePopup({userRoleId}) {
               <BranchDropdown
                 id="branchName"
                 name="branchName"
-                editable={true}
+                editable={false}
                 onChange={(e) => handleBranchChange(e)}
                 addOptions={["None"]}
                 displayValue={selectedBranch}
@@ -122,28 +167,22 @@ function UpdateUserRolePopup({userRoleId}) {
               />
             </div>
             {showAlert && (
-              <Alert
-                severity={"error"} // Ensure severity matches one of the predefined values
-                sx={{
-                  position: "fixed",
-                  top: "80px",
-                  right: "10px",
-                  marginBottom: "30px",
-                  color: "#eb1313",
-                  width: "fit-content",
-                  borderRadius: "18px 0 ",
-                  padding: "0 15px 0 15px",
-                  marginTop: "0",
-                  boxShadow:
-                    "0 6px 8px -1px rgba(3, 119, 168, 0.1)," +
-                    " 0 4px 7px -1px rgba(3, 119, 168, 0.5)",
-                  transition: "top 0.3s ease-in-out, right 0.3s ease-in-out",
-                }}
+              <CustomAlert
+                severity="error"
+                title="Error"
+                message={showAlert}
+                duration={3000}
                 onClose={() => setShowAlert(false)}
-              >
-                <AlertTitle>Error</AlertTitle>
-                {showAlert}
-              </Alert>
+              />
+            )}
+            {showSuccess && (
+              <CustomAlert
+                severity="success"
+                title="Success"
+                message={showSuccess}
+                duration={1500}
+                onClose={() => window.location.reload()}
+              />
             )}
           </div>
         </EditPopup>

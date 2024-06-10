@@ -29,7 +29,7 @@ export function Accounts() {
       try {
         setLoading(true); // Set loading to true before fetching data
         const token = sessionStorage.getItem("accessToken");
-        const response = await fetch("http://localhost:8080/api/employees", {
+        const response = await fetch("http://localhost:8080/employees", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export function Accounts() {
       } else {
         const data = await response.json();
         console.error("Error deleting employee:", data.error);
-        setShowAlert(true);
+        setShowAlert(data.error);
         return;
       }
     } catch (error) {
@@ -186,9 +186,10 @@ export function Accounts() {
                   id="roleName"
                   name="roleName"
                   editable={true}
-                  onChange={(e) => handleDropdownRoleChange(e)}
+                  onChange={handleDropdownRoleChange}
                   addOptions={["All"]}
                   removeOptions={["superadmin"]}
+                  filterByBranch={selectedBranch === "All" ? "" : selectedBranch}
                 />
               </div>
               <div className="EmpidField">
@@ -247,7 +248,7 @@ export function Accounts() {
                   "Branch Name",
                   "Emp ID",
                   "Emp Name",
-                  "Gender",
+                  "Email",
                   "Telephone",
                   "User Role",
                   "",
@@ -291,7 +292,7 @@ export function Accounts() {
               title="Error"
               message={showAlert}
               duration={3000}
-              onClose={() => showAlert("")}
+              onClose={() => setShowAlert("")}
             />
           )}
         </div>

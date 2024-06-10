@@ -5,17 +5,28 @@ import "./ResetPw.css";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
+import PasswordStrengthBar from 'react-password-strength-bar';
 
 const ResetPw = () => {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showSubPopup, setShowSubPopup] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
+
   const handleResetPassword = async (e) => {
     e.preventDefault();
+    setSubLoading(true);
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
-      return;
+      
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      return;
+      
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
@@ -45,15 +56,11 @@ const ResetPw = () => {
         const data = await response.json();
         setError(data.message);
       }
+      setSubLoading(false);
     }
   };
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showSubPopup, setShowSubPopup] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
@@ -109,10 +116,23 @@ const ResetPw = () => {
                 cursor: "pointer",
                 padding: 0,
               }}
-            >
+              >
               {showPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
+              {password &&(
+                <PasswordStrengthBar
+                  password={password}
+                  minLength={8}
+                  scoreWordStyle={{
+                    fontSize: "14px",
+                    fontFamily: "Poppins",
+                  }
+                  }
+                  scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
+                  shortScoreWord="should be atlest 8 characters long"
+                />
+              )}
           <p>Confirm New Password:</p>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
@@ -140,14 +160,17 @@ const ResetPw = () => {
               {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
-
-          <Buttons
-            type="submit"
-            id="save-btn"
-            style={{ backgroundColor: "#23A3DA", color: "white" }}
-          >
-            Save
-          </Buttons>
+          {subLoading ? 
+            <SubSpinner loading={subLoading} />
+            : 
+            <Buttons
+              type="submit"
+              id="save-btn"
+              style={{ backgroundColor: "#23A3DA", color: "white" }}
+            >
+              Save
+            </Buttons>
+          }
         </div>
         {error && <p className="rp-error">{error}</p>}
       </form>
