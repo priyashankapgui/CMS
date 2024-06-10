@@ -5,6 +5,7 @@ import './CreateNewAccounts.css';
 import { Icon } from "@iconify/react";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
+import PasswordStrengthBar from 'react-password-strength-bar';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from '../../../../Components/Label/InputLabel';
@@ -14,6 +15,7 @@ import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropdown';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 export function CreateNewAccounts() {
@@ -34,6 +36,10 @@ export function CreateNewAccounts() {
     // const [selectedBranch, setSelectedBranch] = useState([]);
     // const [selectedRole, setSelectedRole] = useState([]);
     const [loading, setLoading] = useState(false); // State for showing spinner
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    console.log("Current User:", currentUser);
 
     
     const handleBranchChange = useCallback((branch) => {   
@@ -51,6 +57,14 @@ export function CreateNewAccounts() {
       })
       );
     }, []);
+
+    const toggleShowPassword = () => {
+      setShowPassword(!showPassword);
+    };
+  
+    const toggleShowConfirmPassword = () => {
+      setShowConfirmPassword(!showConfirmPassword);
+    };
 
     const handleCreateAccount = async () => {
       setLoading(true);
@@ -142,11 +156,11 @@ export function CreateNewAccounts() {
               <InputLabel for="branchName" color="#0377A8">
                 Branch
               </InputLabel>
-              <BranchDropdown 
-              id="branchName" 
-              name="branchName" 
-              editable={true} 
-              onChange={(branch) => handleBranchChange(branch)} 
+              <BranchDropdown
+                id="branchName"
+                name="branchName"
+                editable={true}
+                onChange={(branch) => handleBranchChange(branch)}
               />
             </div>
             <div className="flex-content-NA">
@@ -154,12 +168,13 @@ export function CreateNewAccounts() {
                 <InputLabel for="userRole" color="#0377A8">
                   User Role
                 </InputLabel>
-                <UserRoleDropdown 
-                id="userRole" 
-                name="userRole" 
-                editable={true} 
-                onChange={(role) => handleUserRoleChange(role)}
-                removeOptions={["superadmin"]}
+                <UserRoleDropdown
+                  id="userRole"
+                  name="userRole"
+                  editable={true}
+                  onChange={(role) => handleUserRoleChange(role)}
+                  removeOptions={["superadmin",currentUser.role]}
+                  filterByBranch={employeeData.branchName}
                 />
               </div>
               <div className="add-dp-NA" {...getRootProps()}>
@@ -191,8 +206,11 @@ export function CreateNewAccounts() {
                 editable={true}
                 value={employeeData.employeeId}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, employeeId: e.target.value })
-                  }
+                  setEmployeeData({
+                    ...employeeData,
+                    employeeId: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="emp-name-field">
@@ -206,7 +224,10 @@ export function CreateNewAccounts() {
                 editable={true}
                 value={employeeData.employeeName}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, employeeName: e.target.value })
+                  setEmployeeData({
+                    ...employeeData,
+                    employeeName: e.target.value,
+                  })
                 }
               />
             </div>
@@ -222,13 +243,13 @@ export function CreateNewAccounts() {
                 editable={true}
                 value={employeeData.email}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, email: e.target.value })
+                  setEmployeeData({ ...employeeData, email: e.target.value })
                 }
               />
             </div>
             <div className="phone-field">
               <InputLabel for="empPhone" color="#0377A8">
-                Telephone 
+                Telephone
               </InputLabel>
               <InputField
                 type="text"
@@ -237,7 +258,7 @@ export function CreateNewAccounts() {
                 editable={true}
                 value={employeeData.phone}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, phone: e.target.value })
+                  setEmployeeData({ ...employeeData, phone: e.target.value })
                 }
               />
             </div>
@@ -252,7 +273,7 @@ export function CreateNewAccounts() {
                 editable={true}
                 value={employeeData.address}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, address: e.target.value })
+                  setEmployeeData({ ...employeeData, address: e.target.value })
                 }
               />
             </div>
@@ -261,32 +282,71 @@ export function CreateNewAccounts() {
                 Password
               </InputLabel>
               <InputField
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="tempPassword"
                 name="tempPassword"
                 editable={true}
                 value={employeeData.password}
                 onChange={(e) =>
-                    setEmployeeData({ ...employeeData, password: e.target.value })
+                  setEmployeeData({ ...employeeData, password: e.target.value })
                 }
-              />
+              >
+              <button
+              type="button"
+              onClick={toggleShowPassword}
+              className="toggle-password-button"
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              {showPassword ? <FaEye /> : < FaEyeSlash />}
+            </button>
+            </InputField>
+
+              {employeeData.password && (
+                <PasswordStrengthBar
+                  password={employeeData.password}
+                  minLength={8}
+                  scoreWordStyle={{
+                    fontSize: "14px",
+                    fontFamily: "Poppins",
+                  }}
+                  scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
+                  shortScoreWord="should be atlest 8 characters long"
+                />
+              )}
               <InputLabel for="tempConPassword" color="#0377A8">
                 Confirm Password
               </InputLabel>
               <InputField
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 id="tempConPassword"
                 name="tempPassword"
                 editable={true}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                
-              />
+               >
+                <button
+                type="button"
+                onClick={toggleShowConfirmPassword}
+                className="toggle-password-button"
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                }}
+                 >
+                    {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
+                </button>
+            </InputField>
             </div>
-            {
-              loading ? 
+            {loading ? (
               <SubSpinner />
-              :
+            ) : (
               <Buttons
                 type="submit"
                 id="create-btn"
@@ -296,29 +356,30 @@ export function CreateNewAccounts() {
                 {" "}
                 Create{" "}
               </Buttons>
-            }
+            )}
           </div>
 
           {showAlertSuccess && (
-          <CustomAlert
-            severity="success"
-            title="Success"
-            message="Employee updated successfully"
-            duration={3000}
-            onClose={() => {window.location.href = "/accounts"}}
-          />
-        )}
+            <CustomAlert
+              severity="success"
+              title="Success"
+              message="Employee updated successfully"
+              duration={1500}
+              onClose={() => {
+                window.location.href = "/accounts";
+              }}
+            />
+          )}
 
-        {showAlertError && (
-          <CustomAlert
-            severity="error"
-            title="Error"
-            message={showAlertError}
-            duration={3000}
-            onClose={() => setShowAlertError("")}
-          />
-        )}
-
+          {showAlertError && (
+            <CustomAlert
+              severity="error"
+              title="Error"
+              message={showAlertError}
+              duration={3000}
+              onClose={() => setShowAlertError("")}
+            />
+          )}
         </Layout>
       </>
     );

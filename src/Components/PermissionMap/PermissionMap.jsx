@@ -36,92 +36,96 @@ export default function PermissionMap({ checkedPages, permissionArray }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "305px",
-          fontFamily: 'Poppins',
-        }}
-      >
-        <PermissionGroup
-          checkedPages={checkedPages}
-          parentName="Branch Management"
-          pages={BranchManagementPages}
-        />
-        <PermissionGroup
-          checkedPages={checkedPages}
-          parentName="Inventory Management"
-          pages={InventoryManagementPages}
-        />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: "305px",
-          marginLeft: "20px",
-        }}
-      >
-        <PermissionSingle
-          pageId="web-mgmt"
-          pageName="Web Mgmt"
-          checkedPages={checkedPages}
-          handleCheck={handleCheck}
-        />
-        <PermissionSingle
-          pageId="online-orders"
-          pageName="Online Orders"
-          checkedPages={checkedPages}
-          handleCheck={handleCheck}
-        />
-        <PermissionGroup
-          checkedPages={checkedPages}
-          parentName="Billing"
-          pages={BillingPages}
-        />
-        <PermissionGroup
-          checkedPages={checkedPages}
-          parentName="Reporting"
-          pages={ReportingPages}
-        />
-      </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "fit-content",
+        padding: "10px",
+        flexGrow: 1,
+        maxHeight: "55vh",
+        flexWrap: "wrap",
+        fontFamily: "Poppins",
+        gap: "2px",
+      }}
+    >
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Branch Management"
+        pages={BranchManagementPages}
+      />
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Inventory Management"
+        pages={InventoryManagementPages}
+      />
+      <PermissionSingle
+        pageId="web-mgmt"
+        pageName="Web Mgmt"
+        checkedPages={checkedPages}
+        handleCheck={handleCheck}
+      />
+      <PermissionSingle
+        pageId="web-feedback"
+        pageName="Web Feedback"
+        checkedPages={checkedPages}
+        handleCheck={handleCheck}
+      />
+      <PermissionSingle
+        pageId="online-orders"
+        pageName="Online Orders"
+        checkedPages={checkedPages}
+        handleCheck={handleCheck}
+      />
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Billing"
+        pages={BillingPages}
+      />
+      <PermissionGroup
+        checkedPages={checkedPages}
+        parentName="Reporting"
+        pages={ReportingPages}
+      />
     </div>
   );
 }
 const PermissionSingle = ({ pageId, pageName, checkedPages, handleCheck }) => {
-    const [checked, setChecked] = React.useState(checkedPages.get(pageId));
-
-    const handleChange = (event) => {
-        setChecked(event.target.checked);
-        handleCheck(event, pageId);
-    };
+  const [checked, setChecked] = React.useState(checkedPages.get(pageId));
+  const disabled = checkedPages.get(pageId) !== undefined;
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+    handleCheck(event, pageId);
+  };
   return (
-    <FormControlLabel
-    sx={{
-        height: "30px",
-        mt: 1,
-        "& .MuiFormControlLabel-label": { fontFamily: 'Poppins', fontSize: "16px" },
-      }}
-      label={pageName}
-      control={
-        <Checkbox
-          size="medium"
-          checked={checked}
-          onChange={handleChange}
+    <div>
+      {disabled ? (
+        <FormControlLabel
+          sx={{
+            height: "30px",
+            mt: 1,
+            "& .MuiFormControlLabel-label": {
+              fontFamily: "Poppins",
+              fontSize: "16px",
+            },
+          }}
+          label={pageName}
+          control={
+            <Checkbox size="medium" checked={checked} onChange={handleChange} />
+          }
         />
-      }
-    />
+      ) : null}
+    </div>
   );
 };
-const PermissionGroup = ({ parentName, pages, checkedPages }) => {
-const [checked, setChecked] = React.useState(Array(pages.length).fill(false));
 
-React.useEffect(() => {
+const PermissionGroup = ({ parentName, pages, checkedPages }) => {
+  const [checked, setChecked] = React.useState(Array(pages.length).fill(false));
+
+  React.useEffect(() => {
     const initialChecked = pages.map((page) => !!checkedPages.get(page.pageId));
     setChecked(initialChecked);
-}, [checkedPages, pages]);
+  }, [checkedPages, pages]);
 
   const handleChangeParent = (event) => {
     setChecked(Array(pages.length).fill(event.target.checked));
@@ -146,7 +150,10 @@ React.useEffect(() => {
         <FormControlLabel
           sx={{
             height: "30px",
-            "& .MuiFormControlLabel-label": { fontFamily: 'Poppins', fontSize: "14px" },
+            "& .MuiFormControlLabel-label": {
+              fontFamily: "Poppins",
+              fontSize: "14px",
+            },
           }}
           key={index}
           label={page.pageName}
@@ -164,20 +171,35 @@ React.useEffect(() => {
 
   return (
     <div>
-      <FormControlLabel
-        sx={{ height: "30px", mt: 1, "& .MuiFormControlLabel-label": { fontFamily: 'Poppins', fontSize: "16px" }, }}
-        label={parentName}
-        control={
-          <Checkbox
-            checked={checked.every((value) => value)}
-            indeterminate={
-              checked.some((value) => value) && !checked.every((value) => value)
+      {pages.length === 0 ? null : (
+        <div>
+          <FormControlLabel
+            sx={{
+              height: "30px",
+              mt: 1,
+              "& .MuiFormControlLabel-label": {
+                fontFamily: "Poppins",
+                fontSize: "16px",
+              },
+            }}
+            label={parentName}
+            disabled={pages.length === 0}
+            control={
+              <Checkbox
+                checked={
+                  checked.length !== 0 && checked.every((value) => value)
+                }
+                indeterminate={
+                  checked.some((value) => value) &&
+                  !checked.every((value) => value)
+                }
+                onChange={handleChangeParent}
+              />
             }
-            onChange={handleChangeParent}
           />
-        }
-      />
-      {children}
+          {children}
+        </div>
+      )}
     </div>
   );
 };
