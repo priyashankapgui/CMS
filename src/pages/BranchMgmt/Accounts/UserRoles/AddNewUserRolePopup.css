@@ -1,6 +1,7 @@
 .first-row{
     display: flex;
-    gap: 20px;
+    /* gap: 20px; */
+    justify-content: space-between;
     font-family: 'Poppins', sans-serif;
 }
 

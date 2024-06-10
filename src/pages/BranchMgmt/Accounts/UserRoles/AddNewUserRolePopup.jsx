@@ -103,6 +103,7 @@ function AddNewUserRolePopup({showSuccess}) {
                             value={roleName}
                             onChange={(e) => setRoleName(e.target.value)}
                             editable={true}
+                            height="29px"
                         />
                     </div>
                     <div>
