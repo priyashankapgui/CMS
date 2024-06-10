@@ -266,10 +266,11 @@ export const Products = () => {
                             <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
-                                columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Action']}
+                                columns={['Product ID', 'Product Name', 'Barcode', 'Product Category', 'Description', 'Action']}
                                 rows={Array.isArray(productsData) ? productsData.map(product => ({
                                     'Product ID': product.productId,
                                     'Product Name': product.productName,
+                                    'Barcode': product.barcode,
                                     'Product Category': product.categoryName,
                                     'Description': product.description,
                                     'Actions': (
