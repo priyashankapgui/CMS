@@ -16,7 +16,7 @@ import { BsEye } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import ViewGRN from './ViewGRN';
+
 
 export const GoodReceive = () => {
     const [grnData, setGrnData] = useState([]);
