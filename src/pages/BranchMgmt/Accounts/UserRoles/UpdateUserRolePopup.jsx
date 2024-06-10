@@ -159,7 +159,7 @@ function UpdateUserRolePopup({userRoleId}) {
             </div>
           </div>
           <div className="second-row">
-            <InputLabel colour="#0377A8">Permission Mapping</InputLabel>
+          <div className='permission-title'>Permission Mapping</div>
             <div className="permissions">
               <PermissionMap
                 checkedPages={checkedPages}

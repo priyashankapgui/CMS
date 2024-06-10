@@ -18,12 +18,18 @@ export const AdjustBranch = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
 
+
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
-                const response = await axios.get(branchesApiUrl);
+                const token = sessionStorage.getItem("accessToken");
+                const response = await axios.get(branchesApiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 setBranchData(response.data);
                 setLoading(false);
             } catch (error) {
@@ -32,6 +38,7 @@ export const AdjustBranch = () => {
         };
 
         fetchBranchData();
+        
 
         const storedAlertConfig = localStorage.getItem('alertConfig');
         if (storedAlertConfig) {
@@ -39,7 +46,9 @@ export const AdjustBranch = () => {
             setAlertVisible(true);
             localStorage.removeItem('alertConfig');
         }
-    }, []);
+    }, [branchData]);
+
+
 
     const handleDelete = async (branchId) => {
         setLoading(true);
@@ -103,7 +112,7 @@ export const AdjustBranch = () => {
                         <TableWithPagi
                             itemsPerPage={5}
                             columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
-                            rows={branchData.map(branch => ({
+                            rows={branchData.branchesList.map(branch => ({
                                 branchId: branch.branchId,
                                 branchName: branch.branchName,
                                 branchAddress: branch.address,

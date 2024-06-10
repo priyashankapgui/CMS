@@ -71,7 +71,7 @@ export function SidebarRouter() {
         <Route path="/stock-transfer/new" element={<NewStockTransfer />} />
       </Route>
 
-      <Route element={<ProtectedRoute groupName="web-feedbacks" />}>
+      <Route element={<ProtectedRoute groupName="web-feedback" />}>
         <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       </Route>
 
