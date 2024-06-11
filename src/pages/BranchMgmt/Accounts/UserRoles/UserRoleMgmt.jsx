@@ -16,16 +16,20 @@ export const UserRoleMgmt = () => {
     const [clickedLink, setClickedLink] = useState('User Role Mgmt');
     const [userRoles, setUserRoles] = useState([]);
     const [success, setSuccess] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
     useEffect(() => {
         const getUserRoles = async () => {
             try {
                 setLoading(true); // Set loading to true before fetching data
+                const token = sessionStorage.getItem("accessToken");
                 const response = await fetch("http://localhost:8080/userRoles", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 if (!response.ok) {
@@ -50,8 +54,27 @@ export const UserRoleMgmt = () => {
         setSelectedBranch(value);
     };
 
-    const handleDelete = () => {
-        console.log('deleted');
+    const handleDelete = async (userRoleId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/userRoleWithPermissions/${userRoleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                },
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+            setSuccess('User role deleted successfully');
+            return;
+        }
+        catch (error) {
+            setShowAlert(error.message);
+            console.error('Error:', error);
+            return;
+        }
     };
 
     const showSuccess = (message) => {
@@ -100,29 +123,44 @@ export const UserRoleMgmt = () => {
                             </div>
                         ) : (
                             <TableWithPagi
-                                columns={['Roles', 'Branch', 'Action']}
+                                columns={['Role ID','Roles', 'Branch', 'Action']}
                                 rows={userRoles.filter(
                                     role => selectedBranch === 'All' || role.branchName === selectedBranch
                                 ).map(role => ({
+                                    RoleID: role.userRoleId,
                                     Role: role.userRoleName,
                                     Branch: role.branchName,
                                     action: (
+                                    <div>
+                                        {currentUser.role === role.userRoleName ? <p>No Access</p> : ( 
                                         <div style={{ display: "flex", gap: "0.7em", cursor: "pointer" }}>
                                             <UpdateUserRolePopup userRoleId={role.userRoleId} />
-                                            <DeletePopup handleDelete={handleDelete} />
+                                            <DeletePopup handleDelete={async() => handleDelete(role.userRoleId)} />
                                         </div>
+                                        )
+                                        }
+                                    </div>
                                     )
                                 }))}
                             />
                         )}
                     </div>
                 </div>
+                {showAlert &&
+                    <CustomAlert
+                        severity="error"
+                        title="Error"
+                        message={showAlert}
+                        duration={3000}
+                        onClose={() => setShowAlert(false)}
+                    />
+                }
                 {success &&
                     <CustomAlert
                         severity="success"
                         title="Success"
                         message={success}
-                        duration={3000}
+                        duration={1500}
                         onClose={() => {
                             window.location.reload();
                         }}

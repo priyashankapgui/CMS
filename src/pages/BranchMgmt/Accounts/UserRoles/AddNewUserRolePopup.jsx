@@ -25,8 +25,17 @@ function AddNewUserRolePopup({showSuccess}) {
     useEffect(() => {
         const getPermissions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/getPages');
+                const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                    },
+                }
+                );
                 const data = await response.json();
+                console.log(data);
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
@@ -39,28 +48,31 @@ function AddNewUserRolePopup({showSuccess}) {
 
     const handleSave = async() => {
         try {
-        const selectedPages = Array.from(checkedPages.entries())
-            .filter(([pageId, isChecked]) => isChecked)
-            .map(([pageId, isChecked]) => pageId);
-        console.log(selectedPages, selectedBranch, roleName);
-        if (!roleName || !selectedBranch || selectedPages.length === 0) {
-            throw new Error('Please fill all the fields');
-        }
-        let tempBranch = selectedBranch;
-        if (selectedBranch === 'None') {
-            tempBranch = null;
-        }
-        const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userRoleName: roleName,
-                branch: tempBranch,
-                checkedPages: selectedPages,
-            }),
-        });
+            const selectedPages = Array.from(checkedPages.entries())
+                .filter(([pageId, isChecked]) => isChecked)
+                .map(([pageId, isChecked]) => pageId);
+            console.log(selectedPages, selectedBranch, roleName);
+            if (!roleName || !selectedBranch || selectedPages.length === 0) {
+                throw new Error('Please fill all the fields');
+            }
+            let tempBranch = selectedBranch;
+            if (selectedBranch === 'None') {
+                tempBranch = null;
+            }
+           const token = sessionStorage.getItem("accessToken");
+           console.log(token);
+            const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    userRoleName: roleName,
+                    branch: tempBranch,
+                    checkedPages: selectedPages,
+                }),
+            });
             if (!response){
                 throw new Error('Server Error');
             }
@@ -75,11 +87,12 @@ function AddNewUserRolePopup({showSuccess}) {
         } catch (error) {
             setShowAlert(error.message);
             console.error('Error:', error);
+            throw new Error(error.message);
         }
     }
     return (
         <>
-            <AddNewPopup topTitle="Add New User Role " buttonId="save-btn" buttonText="Create" onClick={() => handleSave()}>
+            <AddNewPopup topTitle="Add New User Role " buttonId="save-btn" buttonText="Create" onClick={handleSave}>
                 <div className='first-row'>
                     <div className='roleNameInput'>
                         <InputLabel colour="#0377A8">Role Name</InputLabel>
@@ -90,6 +103,7 @@ function AddNewUserRolePopup({showSuccess}) {
                             value={roleName}
                             onChange={(e) => setRoleName(e.target.value)}
                             editable={true}
+                            height="29px"
                         />
                     </div>
                     <div>
@@ -98,7 +112,7 @@ function AddNewUserRolePopup({showSuccess}) {
                     </div>
                 </div>
                 <div className='second-row'>
-                    <InputLabel colour="#0377A8">Permission Mapping</InputLabel>
+                    <div className='permission-title'>Permission Mapping</div>
                     <div className='permissions'>
                         <PermissionMap checkedPages={checkedPages} permissionArray={permissionArray}/>
                     </div>

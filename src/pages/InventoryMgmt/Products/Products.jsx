@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./Products.css";
@@ -8,29 +9,40 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import AddNewProductPopup from './AddNewProductPopup';
+import AddNewCategoryPopup from './AddNewCategoryPopup';
+import UpdateProductPopup from './UpdateProductPopup';
 import { Icon } from "@iconify/react";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 
 export const Products = () => {
-    // State variables for Registered Products
+    const navigate = useNavigate();
+
     const [productsData, setProductsData] = useState([]);
-    const [loadingProducts, setLoadingProducts] = useState(true); // Loading state for products
+    const [loadingProducts, setLoadingProducts] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
-    
-    // State variables for Adjusting Product's Category
+
     const [categoryData, setCategoryData] = useState([]);
-    const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
+    const [loadingCategories, setLoadingCategories] = useState(true);
     const [selectedAdjustCategory, setSelectedAdjustCategory] = useState('');
     const [filteredCategories, setFilteredCategories] = useState([]);
+    const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({});
+    const [loading, setLoading] = useState(true);
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/product?search=${query}`);
-            return response.data.map(product => ({
-                id: product.productId,
-                displayText: `${product.productId} ${product.productName}`
-            }));
+            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
+            if (response.data && response.data.data) {
+                return response.data.data.map(product => ({
+                    id: product.productId,
+                    displayText: `${product.productId} ${product.productName}`
+                }));
+            }
+            return [];
         } catch (error) {
             console.error('Error fetching product:', error);
             return [];
@@ -40,10 +52,13 @@ export const Products = () => {
     const fetchCategorySuggestions = async (query) => {
         try {
             const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            return response.data.map(category => ({
-                id: category.categoryId,
-                displayText: `${category.categoryId} ${category.categoryName}`
-            }));
+            if (response.data && response.data.data) {
+                return response.data.data.map(category => ({
+                    id: category.categoryId,
+                    displayText: `${category.categoryId} ${category.categoryName}`
+                }));
+            }
+            return [];
         } catch (error) {
             console.error('Error fetching category:', error);
             return [];
@@ -55,53 +70,168 @@ export const Products = () => {
         setSelectedCategory('');
     };
 
+    const handleSearchBtnProductSection = async () => {
+        if (selectedProduct) {
+            try {
+                setLoadingProducts(true);
+                const response = await axios.get(`http://localhost:8080/products/${selectedProduct.split(' ')[0]}`);
+                if (response.data && response.data.data) {
+                    setProductsData([response.data.data]);
+                } else {
+                    console.error('Invalid response format:', response);
+                }
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            } finally {
+                setLoadingProducts(false);
+            }
+        } else if (selectedCategory) {
+            try {
+                setLoadingProducts(true);
+                const categoryId = selectedCategory.split(' ')[0];
+                const response = await axios.get(`http://localhost:8080/products-category?categoryId=${categoryId}`);
+                if (response.data && response.data.data) {
+                    setProductsData(response.data.data);
+                } else {
+                    console.error('Invalid response format:', response);
+                }
+            } catch (error) {
+                console.error('Error fetching products by category:', error);
+            } finally {
+                setLoadingProducts(false);
+            }
+        }
+    };
+
     useEffect(() => {
         const fetchProductsData = async () => {
             try {
-                setLoadingProducts(true); // Set loading to true before fetching products
-                const response = await axios.get(`http://localhost:8080/product`);
-                setProductsData(response.data); // Set the fetched product data
+                setLoadingProducts(true);
+                const response = await axios.get(`http://localhost:8080/products`);
+                if (response.data && response.data.data) {
+                    setProductsData(response.data.data);
+                } else {
+                    console.error('Invalid response format:', response);
+                }
             } catch (error) {
                 console.error('Error fetching products:', error);
             } finally {
-                setLoadingProducts(false); // Set loading to false after fetching products
+                setLoadingProducts(false);
             }
         };
 
         fetchProductsData();
+
+        const storedAlertConfig = localStorage.getItem('alertConfig');
+        if (storedAlertConfig) {
+            setAlertConfig(JSON.parse(storedAlertConfig));
+            setAlertVisible(true);
+            localStorage.removeItem('alertConfig');
+        }
     }, []);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
-                setLoadingCategories(true); // Set loading to true before fetching categories
+                setLoadingCategories(true);
                 const response = await axios.get(`http://localhost:8080/categories`);
-                setCategoryData(response.data); // Set the fetched category data
-                setFilteredCategories(response.data); // Initialize filtered categories with all data
+                if (response.data && response.data.data) {
+                    setCategoryData(response.data.data);
+                    setFilteredCategories(response.data.data);
+                } else {
+                    console.error('Invalid response format:', response);
+                }
             } catch (error) {
                 console.error('Error fetching category:', error);
             } finally {
-                setLoadingCategories(false); // Set loading to false after fetching categories
+                setLoadingCategories(false);
             }
         };
 
         fetchCategoryData();
+
+        const storedAlertConfig = localStorage.getItem('alertConfig');
+        if (storedAlertConfig) {
+            setAlertConfig(JSON.parse(storedAlertConfig));
+            setAlertVisible(true);
+            localStorage.removeItem('alertConfig');
+        }
     }, []);
 
     useEffect(() => {
-        const filtered = categoryData.filter(category =>
-            category.categoryName.toLowerCase().includes(selectedAdjustCategory.toLowerCase())
-        );
-        setFilteredCategories(filtered);
+        if (Array.isArray(categoryData)) {
+            const filtered = categoryData.filter(category =>
+                category.categoryName.toLowerCase().includes(selectedAdjustCategory.toLowerCase())
+            );
+            setFilteredCategories(filtered);
+        }
     }, [selectedAdjustCategory, categoryData]);
+
+    const handleCategorySelect = async (categoryId) => {
+        try {
+            setLoadingCategories(true);
+            const response = await axios.get(`http://localhost:8080/categories/${categoryId}`);
+            if (response.data && response.data.data) {
+                setSelectedCategoryData(response.data.data);
+            } else {
+                console.error('Invalid response format:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching category:', error);
+        } finally {
+            setLoadingCategories(false);
+        }
+    };
+
+    const handleDelete = async (productId) => {
+        setLoading(true);
+        try {
+            await axios.delete(`http://localhost:8080/products/${productId}`);
+            const updatedProductsData = productsData.filter(product => product.productId !== productId);
+            setProductsData(updatedProductsData);
+            console.log("Product deleted successfully");
+
+            const alertData = {
+                severity: 'warning',
+                title: 'Delete',
+                message: 'Product deleted successfully!',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            navigate('/products');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting Product:', error);
+
+            const alertData = {
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to delete Product.',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            navigate('/products');
+            window.location.reload();
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
+            {alertVisible && (
+                <CustomAlert
+                    severity={alertConfig.severity}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    duration={alertConfig.duration}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
             <div className="top-nav-blue-text">
                 <h4>Products</h4>
             </div>
             <Layout>
-                {/* Registered Products Section */}
                 <div className="reg-product-bodycontainer">
                     <div className="product-filter-container">
                         <h3 className="reg-product-title">Registered Products</h3>
@@ -126,8 +256,8 @@ export const Products = () => {
                             </div>
                         </div>
                         <div className="p-BtnSection">
-                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} >Search</Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtnProductSection} >Clear</Buttons>
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearchBtnProductSection}>Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtnProductSection}>Clear</Buttons>
                             <AddNewProductPopup />
                         </div>
                     </div>
@@ -136,16 +266,17 @@ export const Products = () => {
                             <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
-                                columns={['Product ID', 'Product Name', 'Product Category', 'Description', 'Quantity', 'Action']}
+                                columns={['Product ID', 'Product Name', 'Barcode', 'Product Category', 'Description', 'Action']}
                                 rows={Array.isArray(productsData) ? productsData.map(product => ({
                                     'Product ID': product.productId,
                                     'Product Name': product.productName,
-                                    'Product Category': product.category?.categoryName,
+                                    'Barcode': product.barcode,
+                                    'Product Category': product.categoryName,
                                     'Description': product.description,
-                                    'Quantity': product.qty,
                                     'Actions': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                            <DeletePopup />
+                                            <UpdateProductPopup productId={product.productId} />
+                                            <DeletePopup handleDelete={() => handleDelete(product.productId)} />
                                         </div>
                                     )
                                 })) : []}
@@ -163,27 +294,41 @@ export const Products = () => {
                                 <SearchBar
                                     searchTerm={selectedAdjustCategory}
                                     setSearchTerm={setSelectedAdjustCategory}
-                                    onSelectSuggestion={(suggestion) => setSelectedAdjustCategory(`${suggestion.displayText}`)}
+                                    onSelectSuggestion={(suggestion) => {
+                                        setSelectedAdjustCategory(`${suggestion.displayText}`);
+                                        handleCategorySelect(suggestion.id);
+                                    }}
                                     fetchSuggestions={fetchCategorySuggestions}
                                 />
+                            </div>
+                            <div>
+                            <AddNewCategoryPopup/>
                             </div>
                         </div>
 
                         <div className="create-product-category-middle">
                             {loadingCategories ? (
-                                <div><SubSpinner/></div>
+                                <div><SubSpinner /></div>
                             ) : (
                                 <TableWithPagi
                                     columns={['Reg Categories', 'Action']}
-                                    rows={Array.isArray(filteredCategories) ? filteredCategories.map(category => ({
-                                        'Reg Categories': category.categoryName,
+                                    rows={selectedCategoryData ? [{
+                                        'Reg Categories': selectedCategoryData.categoryName,
                                         'Action': (
                                             <div style={{ display: "flex", gap: "0.5em" }}>
                                                 <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
                                                 <DeletePopup />
                                             </div>
                                         )
-                                    })) : []}
+                                    }] : filteredCategories.map(category => ({
+                                        'Reg Categories': category.categoryName,
+                                        'Action': (
+                                            <div style={{ display: "flex", gap: "0.5em" }}>
+                                                
+                                                <DeletePopup />
+                                            </div>
+                                        )
+                                    }))}
                                 />
                             )}
                         </div>

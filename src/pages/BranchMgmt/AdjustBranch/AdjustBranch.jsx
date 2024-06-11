@@ -23,11 +23,18 @@ export const AdjustBranch = () => {
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
-                const response = await axios.get(branchesApiUrl);
-                setBranchData(response.data);
+                const token = sessionStorage.getItem("accessToken");
+                const response = await axios.get(branchesApiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                // Ensure the response data is an array
+                setBranchData(Array.isArray(response.data) ? response.data : response.data.branchesList || []);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching branches:', error);
+                setLoading(false);
             }
         };
 
@@ -41,6 +48,14 @@ export const AdjustBranch = () => {
         }
     }, []);
 
+    const showAlert = (config) => {
+        setAlertConfig(config);
+        setAlertVisible(true);
+        setTimeout(() => {
+            setAlertVisible(false);
+        }, config.duration || 3000);
+    };
+
     const handleDelete = async (branchId) => {
         setLoading(true);
         try {
@@ -49,27 +64,21 @@ export const AdjustBranch = () => {
             setBranchData(updatedBranchData);
             console.log("Branch deleted successfully");
 
-            const alertData = {
+            showAlert({
                 severity: 'success',
                 title: 'Successfully Deleted!',
                 message: 'Branch deleted successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            });
         } catch (error) {
             console.error('Error deleting branch:', error);
 
-            const alertData = {
+            showAlert({
                 severity: 'warning',
                 title: 'Error!',
                 message: 'Failed to delete branch.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            });
         } finally {
             setLoading(false);
         }

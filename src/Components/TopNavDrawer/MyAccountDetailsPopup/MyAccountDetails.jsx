@@ -7,6 +7,7 @@ import InputField from '../../InputField/InputField';
 import { useDropzone } from 'react-dropzone';
 import CustomAlert from '../../Alerts/CustomAlert/CustomAlert';
 import './MyAccountDetails.css';
+import PasswordStrengthBar from 'react-password-strength-bar';
 
 function MyAccountDetails() {
     const [showSubPopup, setShowSubPopup] = useState(false);
@@ -14,7 +15,7 @@ function MyAccountDetails() {
         employeeName: "",
         employeeId: "",
         branchName: "",
-        userRole: "",
+        userRoleName: "",
         email: "",
     });
     const [editable, setEditable] = useState(false);
@@ -28,7 +29,7 @@ function MyAccountDetails() {
     if (!user){
         window.location.href = '/';
     }
-
+    
     const toggleEditable = () => {
         setEditable(!editable);
     };
@@ -52,26 +53,15 @@ function MyAccountDetails() {
         setShowSubPopup(false);
     };
 
-    // const user = JSON.parse(sessionStorage.getItem('user'));
-    // let employeeName = user?.userName;
-    // let empId = user?.userID;
-    // let branchName = user?.branchName;
-    // let userRole = user?.role;
-    // let email= user?.email;
-
     useEffect(() => {
         setEmployeeData({
             employeeName: user?.userName || "",
             employeeId: user?.userID || user?.employeeId || "",
             branchName: user?.branchName || "None",
-            userRole: user?.role || "",
+            userRoleName: user?.role || "",
             email: user?.email || ""
         });
     }, []);
-
-
-    
-
 
     const handleUpdate = async () => {
         if (!employeeData.employeeName || !employeeData.email) {
@@ -86,50 +76,25 @@ function MyAccountDetails() {
             let body = {}
             const token = sessionStorage.getItem("accessToken");
             let response;
-            if(String(employeeData.employeeId).startsWith("SA")){
-                if(password === ""){
-                    body = {
-                        superAdminName: employeeData.employeeName,
-                        email: employeeData.email,
-                    }
-                    }
-                    else{
-                    body = {
-                        superAdminName: employeeData.employeeName,
-                        email: employeeData.email,
-                        password: password,
-                    }
+            if(password === ""){
+                body = {
+                    employeeName: employeeData.employeeName,
+                    branchName: employeeData.branchName,
+                    userRoleName: employeeData.userRoleName,
+                    email: employeeData.email,
                 }
-                response = await fetch(`http://localhost:8080/superAdmin/update/${employeeData.employeeId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(body),
-                }
-                )
             }
             else{
-                if(password === ""){
-                    body = {
-                        employeeName: employeeData.employeeName,
-                        branchName: employeeData.branchName,
-                        email: employeeData.email,
-                    }
-                    }
-                    else{
-                    body = {
-                        employeeName: employeeData.employeeName,
-                        branchName: employeeData.branchName,
-                        email: employeeData.email,
-                        password: password,
-                    }
-                    }
-            response = await fetch(`http://localhost:8080/employees/${employeeData.employeeId}`,
-              {
-                method: "PUT",
+                body = {
+                    employeeName: employeeData.employeeName,
+                    branchName: employeeData.branchName,
+                    userRoleName: employeeData.userRoleName,
+                    email: employeeData.email,
+                    password: password,
+                }
+            }
+            response = await fetch(`http://localhost:8080/employees/selfUpdate`, {
+                method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
@@ -137,28 +102,27 @@ function MyAccountDetails() {
                 body: JSON.stringify(body),
               }
             )
-            }
             if (!response.ok) {
               const data = await response.json();
               console.log("Error:", data.error);
               setShowAlertError(data.error);
-            }else{
+            }
+            else{
                 const updatedUser = {
                     userName: body.employeeName || body.superAdminName,
                     userID: employeeData.employeeId,
                     branchName: body.branchName,
-                    role: employeeData.userRole,
+                    role: employeeData.userRoleName,
                     email: body.email
                 };
                 sessionStorage.setItem('user', JSON.stringify(updatedUser));
                 setShowAlertSuccess(true);
             }
-          }
-            catch(error)
-            {
-              setShowAlertError(true);
-              console.error("Error:", error);
-            }
+        }
+        catch(error){
+            setShowAlertError(true);
+            console.error("Error:", error);
+        }
         
     }
 
@@ -208,7 +172,7 @@ function MyAccountDetails() {
                                 type="text"
                                 id="role" 
                                 name="role"
-                                value={employeeData.userRole} 
+                                value={employeeData.userRoleName} 
                                 width="250px"
                                 />
                             </div>
@@ -267,6 +231,18 @@ function MyAccountDetails() {
                             editable={editable} 
                             onChange={(e) => setPassword(e.target.value)}
                             />
+                            {password && (
+                                <PasswordStrengthBar
+                                password={password}
+                                minLength={8}
+                                scoreWordStyle={{
+                                    fontSize: "14px",
+                                    fontFamily: "Poppins",
+                                }}
+                                scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
+                                shortScoreWord="should be atlest 8 characters long"
+                                />
+                            )}
                             <InputField 
                             type="password" 
                             id="conf_newPassword" 

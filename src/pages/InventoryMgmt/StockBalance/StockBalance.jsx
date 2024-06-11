@@ -6,10 +6,9 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
-import InputField from '../../../Components/InputField/InputField';
-import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { IoReorderThreeOutline } from "react-icons/io5";
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import StockSummary from './StockSummary';
+import AdjustStock from './AdjustStock';
 
 export const StockBalance = () => {
     const [branches, setBranches] = useState([]);
@@ -18,9 +17,12 @@ export const StockBalance = () => {
     const [batchNo, setBatchNo] = useState('');
     const [category, setCategory] = useState(null);
     const [stockDetails, setStockDetails] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState('');
 
     useEffect(() => {
         fetchBranches();
+        fetchAllProducts();
     }, []);
 
     const fetchBranches = async () => {
@@ -32,15 +34,27 @@ export const StockBalance = () => {
         }
     };
 
-    const fetchSuggestionsProducts = async (searchTerm) => {
+    const fetchAllProducts = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?query=${encodeURIComponent(searchTerm)}`);
-            return response.data.map(item => ({
-                id: item.productId,
-                name: `${item.productId} ${item.productName}`
-            }));
+            const response = await axios.get('http://localhost:8080/products');
+            setProducts(response.data);
         } catch (error) {
-            console.error('Error fetching product suggestions:', error);
+            console.error('Error fetching all products:', error);
+        }
+    };
+
+    const fetchProductsSuggestions = async (query) => {
+        try {
+            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
+            if (response.data && response.data.data) {
+                return response.data.data.map(product => ({
+                    id: product.productId,
+                    displayText: `${product.productId} ${product.productName}`
+                }));
+            }
+            return [];
+        } catch (error) {
+            console.error('Error fetching product:', error);
             return [];
         }
     };
@@ -67,30 +81,25 @@ export const StockBalance = () => {
         setProduct(selectedProduct);
     };
 
-    const handleCategorySelect = (selectedCategory) => {
-        setCategory(selectedCategory);
-    };
-
     const handleSearch = async () => {
         if (!selectedBranch || !product) {
             console.error('Please select both branch and product');
             return;
         }
-
+    
         console.log('Branch:', selectedBranch);
         console.log('Product:', product);
-
+    
         try {
             const response = await axios.get('http://localhost:8080/active-stock', {
                 params: {
                     branchName: selectedBranch,
-                    productName: product.name.split(' ').slice(1).join(' '),
-                    batchNo: batchNo,
-                    categoryName: category ? category.name.split(' ').slice(1).join(' ') : ''
+                    productId: product.id, // Send productId instead of productName
                 }
             });
-
-            setStockDetails(response.data);
+    
+            const data = response.data.data; // Access the data property
+            setStockDetails(Array.isArray(data) ? data : [data]); // Ensure stockDetails is an array
         } catch (error) {
             console.error('Error fetching stock details:', error);
         }
@@ -115,33 +124,37 @@ export const StockBalance = () => {
                         <div className="stock-balance-content-top">
                             <div className="branchField">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                                <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                    value={selectedBranch}
-                                />
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                             </div>
                             <div className="productField">
-                                <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>
+                                <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
                                 <SearchBar
-                                    fetchSuggestions={fetchSuggestionsProducts}
-                                    onSelect={handleProductSelect}
+                                    searchTerm={selectedProduct}
+                                    setSearchTerm={setSelectedProduct}
+                                    onSelectSuggestion={(suggestion) => {
+                                        setSelectedProduct(`${suggestion.displayText}`);
+                                        setProduct(suggestion); // Set the selected product object
+                                    }}
+                                    fetchSuggestions={fetchProductsSuggestions}
                                 />
                             </div>
-                            <div className="categoryField">
+                            {/* <div className="categoryField">
                                 <InputLabel htmlFor="categoryField" color="#0377A8">Category ID / Name</InputLabel>
                                 <SearchBar
                                     fetchSuggestions={fetchSuggestionsCategories}
-                                    onSelect={handleCategorySelect}
+                                    // onSelect={handleCategorySelect}
                                 />
-                            </div>
-                            <div className="batchNoField">
+                            </div> */}
+                            {/* <div className="batchNoField">
                                 <InputLabel htmlFor="batchNo" color="#0377A8">Batch No</InputLabel>
                                 <InputField type="text" id="batchNo" name="batchNo" editable={true} width="250px" value={batchNo} onChange={(e) => setBatchNo(e.target.value)} />
-                            </div>
+                            </div> */}
                         </div>
                         <div className="stock-balance-BtnSection">
                             <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
@@ -156,15 +169,26 @@ export const StockBalance = () => {
                             rows={stockDetails.map(detail => ({
                                 'Product ID': detail.productId,
                                 'Product Name': detail.productName,
-                                'Branch Name': detail.branch ? detail.branch.branchName : '',
-                                'Category Name': detail.category ? detail.category.categoryName : '',
+                                'Branch Name': detail.branchName, // Adjusted key to match API response
+                                'Category Name': detail.categoryName, // Adjusted key to match API response
                                 'Qty': detail.qty,
                                 '': (
-                                    <div>
-                                        <RoundButtons id="summeryBtn" type="submit" name="summeryBtn" icon={<IoReorderThreeOutline />} onClick={() => console.log("Summery Button clicked")} />
+                                    <div style={{ display: "flex", gap: "0.5em" }}>
+                                       <StockSummary
+                                            productId={detail.productId}
+                                            productName={detail.productName}
+                                            branchName={detail.branchName}
+                                            qty={detail.qty}
+                                        />
+                                        <AdjustStock
+                                            productId={detail.productId}
+                                            productName={detail.productName}
+                                            branchName={detail.branchName}
+                                         />
                                     </div>
                                 )
-                            }))} />
+                            }))}
+                        />
                     </div>
                 </div>
             </Layout>

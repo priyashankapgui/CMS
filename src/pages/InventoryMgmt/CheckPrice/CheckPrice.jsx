@@ -7,16 +7,15 @@ import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
 export const CheckPrice = () => {
-
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [product, setProduct] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState('');
     const [batchDetails, setBatchDetails] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchBranches();
@@ -26,10 +25,8 @@ export const CheckPrice = () => {
         try {
             const response = await axios.get('http://localhost:8080/branches');
             setBranches(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching branches:', error);
-            setLoading(false);
         }
     };
 
@@ -38,19 +35,21 @@ export const CheckPrice = () => {
         console.log('Selected Drop Down Value:', value);
     };
 
-    const fetchSuggestionsProducts = async (searchTerm) => {
+    const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?query=${encodeURIComponent(searchTerm)}`);
-            return response.data.map(item => ({
-                id: item.productId,
-                name: `${item.productId} ${item.productName}`
-            }));
+            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
+            if (response.data && response.data.data) {
+                return response.data.data.map(product => ({
+                    id: product.productId,
+                    displayText: `${product.productId} ${product.productName}`
+                }));
+            }
+            return [];
         } catch (error) {
-            console.error('Error fetching product suggestions:', error);
+            console.error('Error fetching product:', error);
             return [];
         }
     };
-
 
     const handleSearch = async () => {
         if (!selectedBranch || !product) {
@@ -60,13 +59,13 @@ export const CheckPrice = () => {
 
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:8080/product-GRN`, {
+            const response = await axios.get(`http://localhost:8080/product-batch-details`, {
                 params: {
-                    branchName: selectedBranch.split(' ').slice(1).join(' '), // Send only branch name
-                    productName: product.name.split(' ').slice(1).join(' '), // Send only product name
+                    branchName: selectedBranch,
+                    productId: product.id, // Send product ID
                 }
             });
-            setBatchDetails(response.data);
+            setBatchDetails(response.data.data); // Assuming the batch details are in response.data.data
             setLoading(false);
         } catch (error) {
             console.error('Error fetching batch details:', error);
@@ -77,6 +76,7 @@ export const CheckPrice = () => {
     const handleClear = () => {
         setSelectedBranch('');
         setProduct(null);
+        setSelectedProduct('');
         setBatchDetails([]);
     };
 
@@ -91,22 +91,25 @@ export const CheckPrice = () => {
                         <div className="check-price-content-top">
                             <div className="branch-field">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                               
+                                <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                    value={selectedBranch}
-                                />
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                             </div>
                             <div className="product-field">
                                 <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>
                                 <SearchBar
                                     searchTerm={selectedProduct}
                                     setSearchTerm={setSelectedProduct}
-                                    onSelectSuggestion={(suggestion) => setSelectedProduct(`${suggestion.displayText}`)}
-                                    fetchSuggestions={fetchSuggestionsProducts }
+                                    onSelectSuggestion={(suggestion) => {
+                                        setSelectedProduct(`${suggestion.displayText}`);
+                                        setProduct(suggestion); // Set the selected product object
+                                    }}
+                                    fetchSuggestions={fetchProductsSuggestions}
                                 />
                             </div>
                         </div>
@@ -117,7 +120,7 @@ export const CheckPrice = () => {
                     </div>
                     <div className="check-price-content-middle">
                         {loading ? (
-                            <div><SubSpinner/></div>
+                            <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
                                 columns={['Branch Name', 'Batch No', 'Exp Date', 'Available Qty', 'Selling Price']}

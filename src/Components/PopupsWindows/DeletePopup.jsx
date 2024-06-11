@@ -8,11 +8,13 @@ function DeletePopup({ handleDelete }) {
   const [open, setOpen] = useState(undefined);
   
 
-  function DeleteAndClose() {
+  async function DeleteAndClose() {
+    setOpen(undefined)
     // Call the handleDelete function passed as a prop
-    handleDelete();
+    await handleDelete();
     // Close the popup
     setOpen(false);
+    console.log("closed")
     
   }
 
