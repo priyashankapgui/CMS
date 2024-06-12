@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Layout from "../../../../Layout/Layout";
 import "./Accounts.css";
 import { Link } from "react-router-dom";
@@ -24,6 +24,8 @@ export function Accounts() {
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
   const currentUser = JSON.parse(sessionStorage.getItem('user'));
+  const branchDropdownRef = useRef(null);
+  const roleDropdownRef = useRef(null);
 
   useEffect(() => {
     const getEmployeeData = async () => {
@@ -44,6 +46,7 @@ export function Accounts() {
 
         const data = await response.json();
         setEmployeeData(data);
+        setFilteredEmployees(data);
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -54,19 +57,13 @@ export function Accounts() {
     getEmployeeData();
   }, []);
 
-  useEffect(() => {
-    const filterEmployees = () => {
-      const data = employeeData.filter((employee) => {
-        const branchMatch =
-          selectedBranch === "All" || employee.branchName === selectedBranch;
-        const roleMatch =
-          selectedRole === "All" || employee.userRoleName === selectedRole;
-        return branchMatch && roleMatch;
-      });
-      setFilteredEmployees(data);
-    };
-    filterEmployees();
-  }, [selectedBranch, selectedRole, employeeData]);
+  // useEffect(() => {
+  //   const filterEmployees = () => {
+      
+  //     setFilteredEmployees(data);
+  //   };
+  //   filterEmployees();
+  // }, [selectedBranch, selectedRole, employeeData]);
 
   const handleDropdownBranchChange = (value) => {
     setSelectedBranch(value);
@@ -129,12 +126,24 @@ export function Accounts() {
   };
 
   const handleSearch = () => {
-    const data = employeeData.filter((employee) => {
-      const matchesEmpId =
-        !empIdSearch || employee.employeeId.toString().includes(empIdSearch);
+    let data = [];
+    if (empIdSearch){
+      data = employeeData.filter((employee) => {
+        const matchesEmpId =
+          !empIdSearch || employee.employeeId.toString().includes(empIdSearch);
 
-      return matchesEmpId;
-    });
+        return matchesEmpId;
+      });
+    }
+    else{
+      data = employeeData.filter((employee) => {
+        const branchMatch =
+          selectedBranch === "All" || employee.branchName === selectedBranch;
+        const roleMatch =
+          selectedRole === "All" || employee.userRoleName === selectedRole;
+        return branchMatch && roleMatch;
+      });
+    }
     setFilteredEmployees(data);
   };
 
@@ -143,6 +152,12 @@ export function Accounts() {
     setSelectedRole("All");
     setEmpIdSearch("");
     setFilteredEmployees(employeeData);
+    if (branchDropdownRef.current) {
+      branchDropdownRef.current.reset();
+    }
+    if (roleDropdownRef.current) {
+      roleDropdownRef.current.reset();
+    }
   };
 
   return (
@@ -174,16 +189,18 @@ export function Accounts() {
               <div className="BranchField">
                 <InputLabel color="#0377A8">Branch</InputLabel>
                 <BranchDropdown
+                  ref={branchDropdownRef}
                   id="branchName"
                   name="branchName"
                   editable={true}
-                  onChange={(e) => handleDropdownBranchChange(e)}
+                  onChange={handleDropdownBranchChange}
                   addOptions={["All"]}
                 />
               </div>
               <div className="UserRoleField">
                 <InputLabel color="#0377A8">Role</InputLabel>
                 <UserRoleDropdown
+                  ref={roleDropdownRef}
                   id="roleName"
                   name="roleName"
                   editable={true}
