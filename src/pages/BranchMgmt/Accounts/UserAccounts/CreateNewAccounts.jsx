@@ -69,7 +69,7 @@ export function CreateNewAccounts() {
       setLoading(true);
       console.log("Employee data:", employeeData);
       try {
-      if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
+      if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName) {
           throw new Error("Please fill in all fields")
         }
         if (employeeData.password !== confirmPassword) {
@@ -255,7 +255,7 @@ export function CreateNewAccounts() {
             </div>
             <div className="phone-field">
               <InputLabel for="empPhone" color="#0377A8">
-                Telephone
+                Telephone (Optional)
               </InputLabel>
               <InputField
                 type="text"

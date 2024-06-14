@@ -275,9 +275,9 @@ export function Accounts() {
                   branch: employee.branchName,
                   empId: employee.employeeId,
                   empName: employee.employeeName,
-                  email: employee.email,
-                  Telephone: employee.phone,
-                  role: employee.userRoleName,
+                  email: employee.email ? employee.email : "-",
+                  Telephone: employee.phone ? employee.phone : "-",
+                  role: employee.userRoleName ? employee.userRoleName : "-",
                   action: (
                     <div>
                        {currentUser.role === employee.userRoleName ? <p>No Access</p> : ( 
