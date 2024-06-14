@@ -29,10 +29,6 @@ function MyAccountDetails() {
   const [profilePicExists, setProfilePicExists] = useState(true);
   let user = JSON.parse(sessionStorage.getItem("user"));
 
-  if (!user) {
-    window.location.href = "/";
-  }
-
   const toggleEditable = () => {
     setEditable(!editable);
   };

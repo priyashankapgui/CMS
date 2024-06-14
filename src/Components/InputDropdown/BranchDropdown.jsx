@@ -68,7 +68,7 @@ const BranchDropdown = forwardRef(
     useEffect(() => {
       if (branchData) {
         let branches = branchData;
-        if (addOptions) {
+        if (addOptions && isSuperAdmin) {
           branches = [...addOptions, ...branches];
         }
         if (isSuperAdmin) {
@@ -87,7 +87,7 @@ const BranchDropdown = forwardRef(
       reset: () => {
         if (branchData) {
           let branches = branchData;
-          if (addOptions) {
+          if (addOptions && isSuperAdmin) {
             branches = [...addOptions, ...branches];
           }
           setBranches(branches);
