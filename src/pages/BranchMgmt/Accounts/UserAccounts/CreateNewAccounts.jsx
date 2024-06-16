@@ -30,16 +30,15 @@ export function CreateNewAccounts() {
         address: ""
     }); // State for storing employee data
     const [imageUrl, setImageUrl] = useState(null);
+    const [file, setFile] = useState(null); // State for storing the image file
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState("");
-    // const [selectedBranch, setSelectedBranch] = useState([]);
-    // const [selectedRole, setSelectedRole] = useState([]);
     const [loading, setLoading] = useState(false); // State for showing spinner
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const currentUser = JSON.parse(sessionStorage.getItem('user'));
-    console.log("Current User:", currentUser);
+    //console.log("Current User:", currentUser);
 
     
     const handleBranchChange = useCallback((branch) => {   
@@ -70,22 +69,28 @@ export function CreateNewAccounts() {
       setLoading(true);
       console.log("Employee data:", employeeData);
       try {
-      if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.email || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName || !employeeData.phone || !employeeData.address) {
+      if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName) {
           throw new Error("Please fill in all fields")
         }
         if (employeeData.password !== confirmPassword) {
           throw new Error("Passwords do not match")
         }
         const token = sessionStorage.getItem("accessToken");
+        const formData = new FormData();
+
+        // Append the employee data as a string
+        formData.append('employee', JSON.stringify(employeeData));
+
+        // Append the image file
+        if(file){
+          formData.append('image', file);
+        }
         const response = await fetch("http://localhost:8080/employees", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(
-              employeeData
-            ),
+            body: formData,
         });
         if (!response.ok) {
           const data = await response.json();
@@ -106,6 +111,7 @@ export function CreateNewAccounts() {
 
     const handleDrop = (acceptedFiles) => {
         const file = acceptedFiles[0];
+        setFile(file);
         const reader = new FileReader();
         reader.onload = () => {
             setImageUrl(reader.result);
@@ -178,20 +184,20 @@ export function CreateNewAccounts() {
                 />
               </div>
               <div className="add-dp-NA" {...getRootProps()}>
-                {imageUrl && (
-                  <img className="preview-image" src={imageUrl} alt="Preview" />
-                )}
                 <label className="upload-label" htmlFor="profilePicture">
                   <Icon
                     icon="fluent:camera-add-20-regular"
                     style={{ fontSize: "0.813em" }}
                   />
+                {imageUrl && (
+                  <img className="preview-image" src={imageUrl} alt="Preview" />
+                )}
                 </label>
                 <input {...getInputProps()} />
                 {isDragActive ? (
                   <p>Drop the image here...</p>
                 ) : (
-                  <p>Drag 'n' drop or click to select an image</p>
+                  null
                 )}
               </div>
             </div>
@@ -249,7 +255,7 @@ export function CreateNewAccounts() {
             </div>
             <div className="phone-field">
               <InputLabel for="empPhone" color="#0377A8">
-                Telephone
+                Telephone (Optional)
               </InputLabel>
               <InputField
                 type="text"

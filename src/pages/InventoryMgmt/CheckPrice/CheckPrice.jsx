@@ -7,7 +7,7 @@ import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
 export const CheckPrice = () => {
     const [branches, setBranches] = useState([]);
@@ -91,14 +91,14 @@ export const CheckPrice = () => {
                         <div className="check-price-content-top">
                             <div className="branch-field">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                               
+                                <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                    value={selectedBranch}
-                                />
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                             </div>
                             <div className="product-field">
                                 <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>

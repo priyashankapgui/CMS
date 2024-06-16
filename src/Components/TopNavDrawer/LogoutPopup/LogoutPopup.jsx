@@ -25,15 +25,29 @@ const style = {
 };
 
 const LogoutPopup = ({ open, onClose }) => {
-    const handleLogout = () => {
-        // Perform logout actions (e.g., redirect to the login page)
-        // ...
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('user');
-        window.location.href = '/';
-
-        // Close the modal
-        onClose();
+    const handleLogout = async() => {
+        try{
+            const token = sessionStorage.getItem("accessToken");
+            const response = await fetch("http://localhost:8080/api/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            }
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
+            }
+            else{
+                sessionStorage.removeItem('accessToken');
+                sessionStorage.removeItem('user');
+                window.location.href = '/';
+            }
+        }
+        catch (error) {
+            console.error("Error:", error);
+            window.alert(error.message);
+        }
     };
 
     return (

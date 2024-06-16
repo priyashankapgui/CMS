@@ -9,6 +9,7 @@ const TopNav = ({ showSidebar }) => {
   const [logoutPopupOpen, setLogoutPopupOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const currentUser = JSON.parse(sessionStorage.getItem('user'));
 
   const openLogoutPopup = () => setLogoutPopupOpen(true);
   const closeLogoutPopup = () => setLogoutPopupOpen(false);
@@ -56,7 +57,7 @@ const TopNav = ({ showSidebar }) => {
       </Link>
       <h3 className="SystemName-1">Flex Flow</h3>
       <div className="TopNav-right-container">
-        <h4 className="ShopName">Green Leaf Super Mart</h4>
+        <h4 className="ShopName">Green Leaf Super Mart {currentUser?.branchName ? `- ${currentUser.branchName}` : null}</h4>
         <div className="TopNav-right-elements">
           <div className="QuickAccessBtn">
             <Link to="/Sales">
