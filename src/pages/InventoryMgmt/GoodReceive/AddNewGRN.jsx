@@ -12,6 +12,8 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import DatePicker from '../../../Components/DatePicker/DatePicker';
 
 export function AddNewGRN() {
 
@@ -81,9 +83,9 @@ export function AddNewGRN() {
         const grnData = {
             invoiceNo,
             branchName: selectedBranch,
-            supplierId: selectedSupplier, // Only send supplierId
+            supplierId: selectedSupplier.split(' ')[0], // Only send supplierId
             products: rows.map(row => ({
-                productId: row.productId,
+                productId: row.productId.split(' ')[0],
                 batchNo: row.batchNo,
                 totalQty: row.totalQty,
                 purchasePrice: row.purchasePrice,
@@ -94,6 +96,7 @@ export function AddNewGRN() {
                 amount: row.amount,
             }))
         };
+        console.log("data",grnData);
 
         try {
             await axios.post(url, grnData);
@@ -240,13 +243,13 @@ export function AddNewGRN() {
                     <div className="new-grn-filter-container">
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
-                            <InputDropdown
-                                id="branchName"
-                                name="branchName"
-                                editable={true}
-                                options={branches.map(branch => branch.branchName)}
-                                onChange={handleDropdownChange}
-                            />
+                            <BranchDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    onChange={(e) => handleDropdownChange(e)}
+                                    addOptions={["All"]}
+                                    />
                         </div>
                         <div className="InvoiceNoField">
                             <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>
@@ -257,7 +260,7 @@ export function AddNewGRN() {
                             <SearchBar
                                 searchTerm={selectedSupplier}
                                 setSearchTerm={setSelectedSupplier}
-                                onSelectSuggestion={(suggestion) => setSelectedSupplier(suggestion.id)} // Only set supplier ID
+                                onSelectSuggestion={(suggestion) => setSelectedSupplier(`${suggestion.displayText}`)} // Only set supplier ID
                                 fetchSuggestions={fetchSuppliersSuggestions}
                             />
                         </div>
@@ -286,7 +289,7 @@ export function AddNewGRN() {
                                             <SearchBar
                                                 searchTerm={row.productId}
                                                 setSearchTerm={(value) => handleInputChange(row.id, 'productId', value)}
-                                                onSelectSuggestion={(suggestion) => handleInputChange(row.id, 'productId', suggestion.id)}
+                                                onSelectSuggestion={(suggestion) => handleInputChange(row.id, 'productId', `${suggestion.displayText}`)}
                                                 fetchSuggestions={fetchProductsSuggestions}
                                             />
                                         </td>

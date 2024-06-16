@@ -38,10 +38,6 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
         };
     }, []);
 
-    if (options.length === 0) {
-        return <div className='hint-text'>Options not available</div>;
-    }
-
     return (
         <div
             id={id}
@@ -50,7 +46,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
             className="dropdown-container"
             style={{
                 borderRadius: borderRadius || '0.625em',
-                height: height || '2.375em',
+                height: height || '2.6em',
                 width: width || '15.625em',
                 marginTop: marginTop || '0.313em',
             }}
@@ -58,7 +54,7 @@ const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadi
             <div
                 className={`dropdown-selected ${editable ? '' : 'disabled'}`}
                 onClick={toggleDropdown}
-                tabIndex={editable ? 0 : -1}  // Add tabindex for focus
+                tabIndex={editable ? 0 : -1}
             >
                 <span>{selectedOption}</span>
                 <IoMdArrowDropdown className="dropdown-arrow" />
