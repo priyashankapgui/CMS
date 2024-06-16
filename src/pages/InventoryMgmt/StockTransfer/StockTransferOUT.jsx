@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import axios from 'axios';
-import "./StockTransfer.css";
+import "./StockTransferOUT.css";
 import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
@@ -11,19 +11,13 @@ import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons'
 import DatePicker from '../../../Components/DatePicker/DatePicker';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { useNavigate } from 'react-router-dom';
-import { BsEye } from "react-icons/bs";
+import { BsEye, BsCheckCircle, BsXCircle } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import StockTransferIssuing from './StockTransferIssuing';
-import Completed from './completed';
-import { TiTickOutline } from "react-icons/ti";
-import { MdOutlineCancel } from "react-icons/md";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-
-export const StockTransfer = () => {
+export const StockTransferOUT = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
     const [stockData, setStockData] = useState([]);
     const [branches, setBranches] = useState([]);
@@ -65,7 +59,7 @@ export const StockTransfer = () => {
             if (user.role === 'superadmin') {
                 response = await axios.get('http://localhost:8080/allTransfers');
             } else if (user.branchName) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${user.branchName}`);
+                response = await axios.get(`http://localhost:8080/stock-transfer/request-branch/${user.branchName}`);
             } else {
                 console.error('Branch name is not available for the user');
                 setLoading(false);
@@ -78,11 +72,12 @@ export const StockTransfer = () => {
             setLoading(false);
         }
        
+    
     };
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await axios.get('http://localhost:8080/branches');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -121,26 +116,16 @@ export const StockTransfer = () => {
         try {
             setLoading(true);
 
+            // Prepare the search parameters
             const params = {
                 fromDate: searchParams.fromDate,
                 toDate: searchParams.toDate,
                 STNNo: searchParams.STNNo,
-                productId: searchParams.productId.split(' ')[0], 
-                supplyingBranch: selectedBranch
+                productId: searchParams.productId.split(' ')[0], // Take only the product ID
             };
 
-            let response;
-            if (selectedBranch) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${selectedBranch}`, { params });
-            } else if (searchParams.STNNo) {
-                response = await axios.get(`http://localhost:8080/stock-transferAllDetails/${searchParams.STNNo}`, { params });
-            } else if (searchParams.productId) {
-                response = await axios.get(`http://localhost:8080/stock-transfers-by-productId/${searchParams.productId.split(' ')[0]}`, { params });
-            } else if (searchParams.requestBranch) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/request-branch/${searchParams.requestBranch}`, { params });
-            } else {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${selectedBranch}`, { params });
-            }
+            // Perform the search
+            const response = await axios.get(`http://localhost:8080/stock-transfer`, { params });
 
             setStockData(response.data?.data || []);
         } catch (error) {
@@ -157,7 +142,6 @@ export const StockTransfer = () => {
             toDate: '',
             productId: '',
         });
-        setSelectedBranch('');
     };
 
     const handleNewButtonClick = () => {
@@ -211,10 +195,9 @@ export const StockTransfer = () => {
                                 <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
                                 <InputDropdown
                                     id="branchName"
-                                    name="branchName" 
+                                    name="branchName"
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
-                                    value={selectedBranch}
                                     onChange={handleDropdownChange}
                                 />
                             </div>
@@ -236,11 +219,10 @@ export const StockTransfer = () => {
                         </div>
                         <div className="stockTransfer-BtnSection">
                             <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
-                            <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}> Clear </Buttons>
+                            <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}> Clear </ Buttons>
                             <Buttons type="button" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleNewButtonClick}> New + </Buttons>
                         </div>
                     </div>
-                    
                     <div className="stockTransfer-content-middle">
                         <div className="linkActions-">
                             <div className={clickedLink === 'StockRequest-IN' ? 'clicked' : ''}>
@@ -249,14 +231,14 @@ export const StockTransfer = () => {
                                 </Link>
                             </div>
                             <div className={clickedLink === 'StockRequest - OUT' ? 'clicked' : ''}>
-                                <Link to="/stock-transfer/OUT" onClick={() => handleLinkClick('StockRequest - OUT')}>
+                                <Link to="/stock-transfer/StockTransferOUT" onClick={() => handleLinkClick('StockRequest - OUT')}>
                                     Stock Request - OUT
                                 </Link>
                             </div>
                         </div>
 
                         <TableWithPagi
-                            columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch', 'Status', 'Requested By', 'Submitted By', 'Submitted At', '']}
+                            columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch',  'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
                             rows={stockData.map((data, index) => ({
                                 'STN No': data.STN_NO,
                                 'Created At': data.createdAt,
@@ -269,7 +251,7 @@ export const StockTransfer = () => {
                                 'Actions': (
                                     <div style={{ display: "flex", gap: "0.5em" }}>
                                         {data.status === 'raised' && (
-                                            <Link to={`/stock-transfer/issuing/${data.STN_NO}`}>
+                                            <Link to={`/stock-transfer/OUT/raised/${data.STN_NO}`}>
                                                 <RoundButtons
                                                     id={`eyeViewBtn-${index}`}
                                                     type="submit"
@@ -280,40 +262,39 @@ export const StockTransfer = () => {
                                         )}
                                         {data.status === 'completed' && (
                                             <>
-                                                <Link to={`/stock-transfer/completed/${data.STN_NO}`}>
-                                                    <RoundButtons
-                                                        id={`tickBtn-${index}`}
-                                                        type="submit"
-                                                        name={`tickBtn-${index}`}
-                                                        icon={<TiTickOutline />}
-                                                    />
-                                                </Link>
-                                                <RoundButtons
-                                                    id={`printBtn-${index}`}
-                                                    type="submit"
-                                                    name={`printBtn-${index}`}
-                                                    icon={<RiPrinterFill />}
+                                            <Link to={`/stock-transfer/receiving/${data.STN_NO}`}>
+                                            <RoundButtons
+                                                id={`tickBtn-${index}`}
+                                                type="submit"
+                                                name={`tickBtn-${index}`}
+                                                icon={<BsCheckCircle />}
+                                            />
+                                            </Link>
+                                             <RoundButtons
+                                             id={`printBtn-${index}`}
+                                             type="submit"
+                                             name={`printBtn-${index}`}
+                                             icon={<RiPrinterFill />}
+                                         />
+                                         </>
+                                        )}
+                                        {data.status === 'cancelled' && (
+                                             <Link to={`/stock-transfer/OUT/cancelled/${data.STN_NO}`}>
+                                            <RoundButtons
+                                                id={`cancelBtn-${index}`}
+                                                type="submit"
+                                                name={`cancelBtn-${index}`}
+                                                icon={<BsXCircle />}
+                                            />
+                                            </Link>
+                                        )}
+                                        
+                                    </div>
+                                ),
+                            }))}
+                            customTableStyle={{ top: '20%', width: '100%' }}
+                            itemsPerPage={10}
                         />
-                    </>
-                )}
-                {data.status === 'cancelled' && (
-                    <Link to={`/stock-transfer/cancelled/${data.STN_NO}`}>
-                        <RoundButtons
-                            id={`tickBtn-${index}`}
-                            type="submit"
-                            name={`tickBtn-${index}`}
-                            icon={<MdOutlineCancel />}
-                        />
-                    </Link>
-                )}
-            </div>
-        ),
-    }))}
-    customTableStyle={{ top: '20%', width: '100%' }}
-    itemsPerPage={10}
-/>
-
-
                     </div>
                 </div>
             </Layout>
@@ -321,4 +302,4 @@ export const StockTransfer = () => {
     );
 };
 
-export default StockTransfer;
+export default StockTransferOUT;

@@ -1,4 +1,4 @@
-.reg-goodReceives-bodycontainer {
+.stockTransfer-bodycontainer {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     border-radius: 0.625em;
@@ -6,7 +6,7 @@
     height: fit-content;
 }
 
-.goodReceive-filter-container {
+.stockTransfer-filter-container {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
     padding: 0.9375em 1.25em;
@@ -17,7 +17,7 @@
     
 }
 
-.goodReceive-content-top1 {
+.stockTransfer-content-top1 {
     display: flex;
     height: 70px;
     margin-top: 10px;
@@ -25,7 +25,7 @@
     justify-content: space-between;
 }
 
-.goodReceive-content-top2 {
+.stockTransfer-content-top2 {
     display: flex;
     height: 80px;
     gap: 50px;
@@ -38,12 +38,34 @@
    
 }
 
-.goodReceive-BtnSection {
+.stockTransfer-BtnSection {
     display: flex;
     gap: 15px;
 }
 
-.goodReceive-content-middle {
+.stockTransfer-content-middle {
     padding: 0.9375em;
     height: fit-content;
+}
+
+.linkActions-Stock Request-IN {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 0.625em;
+}
+
+.linkActions-StockRequest-IN div a {
+    color: black;
+    text-decoration: none;
+    font-weight: 400;
+}
+
+.linkActions-StockRequest-IN div a:hover {
+    color: rgba(19, 86, 112, 0.8);
+}
+
+.linkActions-StockRequest-IN div.clicked a {
+    color: #0377A8;
+    text-decoration: underline;
+    font-weight: bold;
 }

@@ -13,10 +13,11 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { BsEye } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import ViewGRN from './ViewGRN';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import GrnDoc from '../../../Components/InventoryDocuments/GrnDoc/GrnDoc';
 
 export const GoodReceive = () => {
     const [grnData, setGrnData] = useState([]);
@@ -35,6 +36,20 @@ export const GoodReceive = () => {
     const [suppliers, setSuppliers] = useState([]);
     const navigate = useNavigate();
 
+    const { GRN_NO } = useParams();
+    //const selectedGRNData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
+    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+
+
+    const handleReprintClick = () => {
+        console.log("Reprint button clicked");
+        setShowRefundReceipt(true);
+    };
+
+    const handleCloseRefundReceipt = () => {
+        setShowRefundReceipt(false);
+    };
+
     useEffect(() => {
         fetchGrnData();
         fetchBranches();
@@ -42,20 +57,40 @@ export const GoodReceive = () => {
         fetchSuppliers();
     }, []);
 
+  
     const fetchGrnData = async () => {
-        try {
-            const response = await axios.get("http://localhost:8080/grn");
-            setGrnData(response.data?.data || []);
+        const user = JSON.parse(sessionStorage.getItem("user"));
+        console.log("name", user);
+    
+        if (!user) {
+            console.error('User is not available');
             setLoading(false);
+            return;
+        }
+        console.log("useranee", user.role);
+    
+        try {
+            let response;
+            if (user.role === 'superadmin') {
+                response = await axios.get('http://localhost:8080/grn');
+            } else if (user.branchName) {
+                response = await axios.get(`http://localhost:8080/grn-branch?branchName=${user.branchName}`);
+            } else {
+                console.error('Branch name is not available for the user');
+                setLoading(false);
+                return;
+            }
+            setGrnData(response.data?.data || []);
         } catch (error) {
             console.error('Error fetching GRN data:', error);
+        } finally {
             setLoading(false);
         }
     };
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branches');
+            const response = await axios.get('http://localhost:8080/branchesWeb');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -103,45 +138,49 @@ export const GoodReceive = () => {
         try {
             setLoading(true);
             let response;
-
+    
             const productId = searchParams.productId.split(' ')[0]; // Assuming the productId is the first part
             const supplierId = searchParams.supplierId.split(' ')[0];
-
+    
             if (searchParams.grnNo) {
+                console.log(`Searching by GRN No: ${searchParams.grnNo}`);
                 response = await axios.get(`http://localhost:8080/grn/${searchParams.grnNo}`);
-            } else if (productId && selectedBranch) { // Added condition for productId and selectedBranch
-                response = await axios.get(`http://localhost:8080/grn-branch-product`, {
-                    params: {
-                        branchName: selectedBranch,
-                        productId: productId
-                    }
-                });
             } else if (searchParams.invoiceNo) {
+                console.log(`Searching by Invoice No: ${searchParams.invoiceNo}`);
                 response = await axios.get(`http://localhost:8080/grn/invoice/${searchParams.invoiceNo}`);
-            } else if (searchParams.productId) {
-                response = await axios.get(`http://localhost:8080/grn-details/product/${productId}`);
-            } else if (searchParams.supplierId) {
-                response = await axios.get(`http://localhost:8080/grn-supplier/${supplierId}`);
-            } else if (selectedBranch) {
-                response = await axios.get(`http://localhost:8080/grn-branch?branchName=${selectedBranch}`);
             } else if (searchParams.fromDate && searchParams.toDate) {
+                console.log(`Searching by Date Range: from ${searchParams.fromDate} to ${searchParams.toDate}`);
                 response = await axios.get(`http://localhost:8080/grn-date-range`, {
                     params: {
                         startDate: searchParams.fromDate,
                         endDate: searchParams.toDate
                     }
                 });
-            } else if (supplierId && selectedBranch) {
-                response = await axios.get(`http://localhost:8080/grn-branch-supplier`, {
+            } else if (searchParams.supplierId && selectedBranch) {
+                console.log(`Searching by Supplier ID: ${supplierId} and Branch: ${selectedBranch}`);
+                response = await axios.get(`http://localhost:8080/grn-supplier-all`, {
                     params: {
                         branchName: selectedBranch,
                         supplierId: supplierId
                     }
                 });
            
+            } else if (searchParams.productId || selectedBranch ) {
+                console.log(`Searching by Product ID: ${productId} and Branch: ${selectedBranch}`);
+                response = await axios.get(`http://localhost:8080/grn-product-all`, {
+                    params: {
+                        branchName: selectedBranch,
+                        productId: productId
+                    }
+                }); 
+         
+            
+           
+           
             } else {
                 response = await axios.get(`http://localhost:8080/grn`);
             }
+    
             setGrnData(response.data?.data ? (Array.isArray(response.data.data) ? response.data.data : [response.data.data]) : []);
             setLoading(false);
         } catch (error) {
@@ -150,7 +189,7 @@ export const GoodReceive = () => {
             setLoading(false);
         }
     };
-
+    
     const handleClear = () => {
         setSearchParams({
             grnNo: '',
@@ -288,6 +327,7 @@ export const GoodReceive = () => {
                                                 type="submit"
                                                 name={`printBtn-${index}`}
                                                 icon={<RiPrinterFill />}
+                                                onClick={handleReprintClick}
                                             />
                                         </div>
                                     )
@@ -297,6 +337,9 @@ export const GoodReceive = () => {
                     </div>
                 </div>
             </Layout>
+            {showRefundReceipt && (
+                <GrnDoc  onClose={handleCloseRefundReceipt} />
+            )}
         </>
     );
 };
