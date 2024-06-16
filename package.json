@@ -31,6 +31,7 @@
     "react-search-autocomplete": "^8.5.2",
     "react-select": "^5.8.0",
     "react-spinners": "^0.13.8",
+    "react-tabs": "^6.0.2",
     "styled-components": "^6.1.8",
     "web-vitals": "^2.1.4"
   },
