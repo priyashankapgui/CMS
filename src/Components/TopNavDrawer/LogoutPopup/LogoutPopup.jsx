@@ -16,7 +16,7 @@ const style = {
     borderRadius: '0.625em',
     fontFamily: 'Poppins',
     color: '#fff',
-    boxShadow: '1.25em',
+    boxShadow: '0.1em 0.1em 0.5em rgba(0, 0, 0, 0.3)',
     padding: '0.25em',
     textTransform: 'none',
     '&:hover': {
@@ -27,7 +27,7 @@ const style = {
 const LogoutPopup = ({ open, onClose }) => {
     const handleLogout = () => {
         // Perform logout actions (e.g., redirect to the login page)
-        // ...
+
         sessionStorage.removeItem('accessToken');
         sessionStorage.removeItem('user');
         window.location.href = '/';

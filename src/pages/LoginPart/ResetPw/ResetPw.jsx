@@ -22,15 +22,15 @@ const ResetPw = () => {
     setSubLoading(true);
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
-      
+
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      
+
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-    
+
     // If token is not present, redirect to login page
     if (!token) {
       window.location.href = "/";
@@ -100,8 +100,8 @@ const ResetPw = () => {
             name="password"
             placeholder="New password"
             editable={true}
-            height="3em"
-            width="30em"
+            height="50px"
+            width="410px"
             value={password}
             onChange={handlePasswordChange}
             required
@@ -116,32 +116,32 @@ const ResetPw = () => {
                 cursor: "pointer",
                 padding: 0,
               }}
-              >
+            >
               {showPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
-              {password &&(
-                <PasswordStrengthBar
-                  password={password}
-                  minLength={8}
-                  scoreWordStyle={{
-                    fontSize: "14px",
-                    fontFamily: "Poppins",
-                  }
-                  }
-                  scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
-                  shortScoreWord="should be atlest 8 characters long"
-                />
-              )}
-          <p>Confirm New Password:</p>
+          {password && (
+            <PasswordStrengthBar
+              password={password}
+              minLength={8}
+              scoreWordStyle={{
+                fontSize: "14px",
+                fontFamily: "Poppins",
+              }
+              }
+              scoreWords={['very weak', 'weak', 'good', 'strong', 'very strong']}
+              shortScoreWord="should be atlest 8 characters long"
+            />
+          )}
+          <p className="s-confirmPW-text">Confirm New Password:</p>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
             id="confirmPassword"
             name="confirmPassword"
             placeholder="Confirm new password"
             editable={true}
-            height="3em"
-            width="30em"
+            height="50px"
+            width="410px"
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
             required
@@ -160,13 +160,16 @@ const ResetPw = () => {
               {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
-          {subLoading ? 
-            <SubSpinner loading={subLoading} />
-            : 
+          {subLoading ?
+            <SubSpinner loading={subLoading} spinnerText="Saving" />
+            :
             <Buttons
               type="submit"
               id="save-btn"
               style={{ backgroundColor: "#23A3DA", color: "white" }}
+              btnHeight="50px"
+              btnWidth="410px"
+              fontSize="18px"
             >
               Save
             </Buttons>

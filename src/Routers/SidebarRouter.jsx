@@ -39,7 +39,6 @@ export function SidebarRouter() {
       {/* <Route path="/adjust-branch/:branchId" element={<UpdateBranchPopup/>} /> */}
       <Route element={<ProtectedRoute groupName="web-mgmt" />}>
         <Route path="/web-mgmt" element={<WebMgmt />} />
-        <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="accounts" />}>

@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 2.6em;
 }
 
 .dropdown-selected:focus {
@@ -54,10 +55,4 @@
 .dropdown-option:hover {
   background-color: rgba(134, 182, 246, 0.5);
   font-weight: 500;
-}
-
-.hint-text {
-  font-size: 0.75em;
-  font-weight: 520;
-  color: red;
 }

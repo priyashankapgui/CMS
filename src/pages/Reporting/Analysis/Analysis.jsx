@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Analysis.css";
 import InputLabel from "../../../Components/Label/InputLabel";
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import DatePicker from "../../../Components/DatePicker/DatePicker"
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
-import dropdownOptions from '../../../Components/Data.json';
 import { Link } from "react-router-dom";
 import SalesChart from '../../../Components/Charts/SalesChart';
 
@@ -50,7 +49,12 @@ export const Analysis = () => {
                             <div className="rep-Cont1-top">
                                 <div className="branchField">
                                     <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                                    <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
+                                    <BranchDropdown
+                                        id="branchName"
+                                        name="branchName"
+                                        editable={true}
+                                        onChange={(e) => handleDropdownChange(e)}
+                                    />
                                 </div>
                                 <div className="dateField">
                                     <InputLabel for="date" color="#0377A8">Date</InputLabel>

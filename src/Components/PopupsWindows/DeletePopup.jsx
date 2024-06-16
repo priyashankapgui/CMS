@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Icon } from "@iconify/react";
 import SubPopup from './SubPopup';
 import Buttons from '../Buttons/SquareButtons/Buttons';
@@ -6,7 +6,7 @@ import Buttons from '../Buttons/SquareButtons/Buttons';
 function DeletePopup({ handleDelete }) {
   const [isHovered, setIsHovered] = useState(false);
   const [open, setOpen] = useState(undefined);
-  
+
 
   async function DeleteAndClose() {
     setOpen(undefined)
@@ -15,7 +15,7 @@ function DeletePopup({ handleDelete }) {
     // Close the popup
     setOpen(false);
     console.log("closed")
-    
+
   }
 
   return (

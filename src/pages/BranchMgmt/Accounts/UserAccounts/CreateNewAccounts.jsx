@@ -345,7 +345,7 @@ export function CreateNewAccounts() {
             </InputField>
             </div>
             {loading ? (
-              <SubSpinner />
+              <SubSpinner spinnerText='Creating' />
             ) : (
               <Buttons
                 type="submit"

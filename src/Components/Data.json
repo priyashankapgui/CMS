@@ -20,7 +20,7 @@
   "salesChartData": {
     "2023": [
       {
-        "name": "Galle",
+        "name": "Online ",
         "data": [
           250000,
           290000,
@@ -57,7 +57,7 @@
         ]
       },
       {
-        "name": "Kaluthara",
+        "name": "Physical",
         "data": [
           120000,
           170000,
@@ -96,7 +96,7 @@
     ],
     "2024": [
       {
-        "name": "Galle",
+        "name": "Online",
         "data": [
           350000,
           390000,
@@ -133,7 +133,7 @@
         ]
       },
       {
-        "name": "Kaluthara",
+        "name": "Physical",
         "data": [
           220000,
           270000,

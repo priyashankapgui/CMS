@@ -16,8 +16,8 @@ const SearchBar = ({ searchTerm, setSearchTerm, onSelectSuggestion, fetchSuggest
         if (term) {
             setShowSuggestions(true);
             const fetchedSuggestions = await fetchSuggestions(term);
-            setSuggestions(fetchedSuggestions);
-            setNoSuggestions(fetchedSuggestions.length === 0);
+            setSuggestions(Array.isArray(fetchedSuggestions) ? fetchedSuggestions : []);
+            setNoSuggestions(Array.isArray(fetchedSuggestions) && fetchedSuggestions.length === 0);
             resetTimeout();
         } else {
             setShowSuggestions(false);

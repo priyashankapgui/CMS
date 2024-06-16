@@ -1,13 +1,25 @@
 .dropdown-style {
-    border-radius: 0.625em;
+    /* border-radius: 0.625em;
     border: 1px solid #8D9093;
     font-size: 0.813em;
     padding-left: 0.625em;
-    height: 2.25em;
+    height: 2.25em; */
+    padding: 4px 8px;
+    border-radius: 0.625em;
+    border: 1px solid #8D9093;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.6em;
+    margin-bottom: 0.313em;
+    margin-top: 0.313em;
 }
 
 .chart-container {
     margin-bottom: 10px;
+    display: flex;
 }
 
 .chart-container select {

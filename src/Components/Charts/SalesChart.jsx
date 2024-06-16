@@ -2,6 +2,7 @@ import React from 'react';
 import ReactApexChart from 'react-apexcharts';
 import './SalesChart.css';
 import salesChartData from '../Data.json'; // Import data from Data.json
+import BranchDropdown from '../InputDropdown/BranchDropdown';
 
 class SalesChart extends React.Component {
     constructor(props) {
@@ -95,7 +96,8 @@ class SalesChart extends React.Component {
             },
             selectedYear: 2023,
             selectedMonth: 1,
-            totalSales: 0
+            totalSales: 0,
+            selectedBranch: 'All' // Adding selectedBranch to state
         };
     }
 
@@ -132,17 +134,26 @@ class SalesChart extends React.Component {
         this.setState({ selectedMonth });
     };
 
-    render() {
-        const { selectedYear, selectedMonth, totalSales } = this.state;
+    // Handle Branch Dropdown Change
+    handleBranchDropdownChange = (value) => {
+        // Update selected branch in state
+        this.setState({ selectedBranch: value });
+        console.log('Selected Branch:', value);
+    };
 
+    render() {
+        const currentYear = new Date().getFullYear();
+        const { selectedYear, selectedMonth, totalSales } = this.state;
+        const years = Array.from(new Array(10), (val, index) => currentYear - index);
         return (
             <div>
                 <div className="chart-container">
                     <select value={selectedYear} onChange={this.handleYearChange} className="dropdown-style">
-                        <option value={2023}>2023</option>
-                        <option value={2024}>2024</option>
-                        <option value={2025}>2025</option>
-                        {/* Add more options for years if needed */}
+                        {years.map((year, index) => (
+                            <option key={index} value={year}>
+                                {year}
+                            </option>
+                        ))}
                     </select>
                     <select value={selectedMonth} onChange={this.handleMonthChange} className="dropdown-style">
                         <option value={1}>January</option>
@@ -158,6 +169,12 @@ class SalesChart extends React.Component {
                         <option value={11}>November</option>
                         <option value={12}>December</option>
                     </select>
+                    <BranchDropdown
+                        id="branchName"
+                        name="branchName"
+                        editable={true}
+                        onChange={(value) => this.handleBranchDropdownChange(value)}
+                    />
                 </div>
                 <div id="chart">
                     <ReactApexChart options={this.state.options} series={this.state.series} type="line" height={400} />
