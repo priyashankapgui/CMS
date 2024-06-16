@@ -36,6 +36,10 @@
     "sweetalert2": "^11.11.1",
     "web-vitals": "^2.1.4"
   },
+  "overrides": {
+    "postcss":"^8.4.31",
+    "nth-check":"^2.0.1"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

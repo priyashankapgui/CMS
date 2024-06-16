@@ -18,7 +18,6 @@ export const AdjustBranch = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
 
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,15 +29,16 @@ export const AdjustBranch = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                setBranchData(response.data);
+                // Ensure the response data is an array
+                setBranchData(Array.isArray(response.data) ? response.data : response.data.branchesList || []);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching branches:', error);
+                setLoading(false);
             }
         };
 
         fetchBranchData();
-        
 
         const storedAlertConfig = localStorage.getItem('alertConfig');
         if (storedAlertConfig) {
@@ -46,9 +46,15 @@ export const AdjustBranch = () => {
             setAlertVisible(true);
             localStorage.removeItem('alertConfig');
         }
-    }, [branchData]);
+    }, []);
 
-
+    const showAlert = (config) => {
+        setAlertConfig(config);
+        setAlertVisible(true);
+        setTimeout(() => {
+            setAlertVisible(false);
+        }, config.duration || 3000);
+    };
 
     const handleDelete = async (branchId) => {
         setLoading(true);
@@ -58,27 +64,21 @@ export const AdjustBranch = () => {
             setBranchData(updatedBranchData);
             console.log("Branch deleted successfully");
 
-            const alertData = {
+            showAlert({
                 severity: 'success',
                 title: 'Successfully Deleted!',
                 message: 'Branch deleted successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            });
         } catch (error) {
             console.error('Error deleting branch:', error);
 
-            const alertData = {
+            showAlert({
                 severity: 'warning',
                 title: 'Error!',
                 message: 'Failed to delete branch.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            });
         } finally {
             setLoading(false);
         }
@@ -112,7 +112,7 @@ export const AdjustBranch = () => {
                         <TableWithPagi
                             itemsPerPage={5}
                             columns={['Branch ID', 'Branch Name', 'Address', 'Email', 'Contact No', '']}
-                            rows={branchData.branchesList.map(branch => ({
+                            rows={branchData.map(branch => ({
                                 branchId: branch.branchId,
                                 branchName: branch.branchName,
                                 branchAddress: branch.address,
