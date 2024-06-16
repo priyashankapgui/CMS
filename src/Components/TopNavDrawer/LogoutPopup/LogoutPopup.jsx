@@ -16,7 +16,7 @@ const style = {
     borderRadius: '0.625em',
     fontFamily: 'Poppins',
     color: '#fff',
-    boxShadow: '0.1em 0.1em 0.5em rgba(0, 0, 0, 0.3)',
+    boxShadow: '1.25em',
     padding: '0.25em',
     textTransform: 'none',
     '&:hover': {
@@ -25,15 +25,29 @@ const style = {
 };
 
 const LogoutPopup = ({ open, onClose }) => {
-    const handleLogout = () => {
-        // Perform logout actions (e.g., redirect to the login page)
-
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('user');
-        window.location.href = '/';
-
-        // Close the modal
-        onClose();
+    const handleLogout = async() => {
+        try{
+            const token = sessionStorage.getItem("accessToken");
+            const response = await fetch("http://localhost:8080/api/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            }
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch data");
+            }
+            else{
+                sessionStorage.removeItem('accessToken');
+                sessionStorage.removeItem('user');
+                window.location.href = '/';
+            }
+        }
+        catch (error) {
+            console.error("Error:", error);
+            window.alert(error.message);
+        }
     };
 
     return (

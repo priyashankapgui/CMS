@@ -107,7 +107,7 @@ function AddNewUserRolePopup({showSuccess}) {
                     </div>
                     <div>
                         <InputLabel colour="#0377A8">Branch</InputLabel>
-                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleBranchChange(e)} addOptions={["None"]} />
+                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleBranchChange(e)} />
                     </div>
                 </div>
                 <div className='second-row'>

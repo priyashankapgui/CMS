@@ -1,0 +1,16 @@
+.PendingPickupTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+.PendingPickupTable th{
+    background-color: #F5F3F3;
+    font-size: 0.9em;
+    padding: 6px;
+    margin: 4px;
+}
+.PendingPickupTable td,
+.PendingPickupTable th{
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 6px;
+}
