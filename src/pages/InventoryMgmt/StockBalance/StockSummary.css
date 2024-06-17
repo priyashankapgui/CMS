@@ -85,12 +85,16 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+
+.field span {
+    display: block;
+}
 .value3{
     margin-right: 40px;
     color: black;
 }
 .totalqty{
-    margin-left: 400px;
+    margin-left: 350px;
     font-weight: bold;
     color: black;
     

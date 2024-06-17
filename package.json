@@ -34,7 +34,12 @@
     "react-spinners": "^0.13.8",
     "react-tabs": "^6.0.2",
     "styled-components": "^6.1.8",
+    "sweetalert2": "^11.11.1",
     "web-vitals": "^2.1.4"
+  },
+  "overrides": {
+    "postcss":"^8.4.31",
+    "nth-check":"^2.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
