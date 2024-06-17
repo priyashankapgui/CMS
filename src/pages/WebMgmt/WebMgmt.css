@@ -7,3 +7,15 @@
     border-radius: 0.625em;
     padding: 0.9375em 1.25em;
 }
+
+.web-mgmt-headerOne{
+    margin-bottom: 0.625em;
+}
+
+.web-mgmt-data{
+    margin-top: 4vh;
+}
+
+.web-mgmt-lable{
+    margin-top: 2vh;
+}
