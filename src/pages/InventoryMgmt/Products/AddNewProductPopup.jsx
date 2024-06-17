@@ -146,19 +146,17 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 isLoading={isLoading}
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }} className="mb-3">
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                        <div style={{ flex: '1' }}>
+
+                    <div style={{ display: 'block', width: '100%' }}>
+                        <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
                         </div>
-                        
-                        <div style={{ flex: '1' }}>
+                        <div>
+                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
+                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <SearchBar
                                 searchTerm={categoryName}
@@ -166,17 +164,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                                 onSelectSuggestion={(suggestion) => setCategoryName(suggestion.displayText.split(' ').slice(1).join(' '))}
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
-
                         </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
                         </div>
-                        <div style={{ flex: '1' }}>
+                        <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
-                            <InputField type="text" id="description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
+                            <InputField type="text" id="description" name="description" height="4em" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
                         </div>
                     </div>
                 </form>

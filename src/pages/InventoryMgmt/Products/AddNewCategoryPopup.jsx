@@ -12,14 +12,14 @@ function AddNewCategoryPopup() {
     const navigate = useNavigate();
     const [categoryName, setCategoryName] = useState('');
     const [alertVisible, setAlertVisible] = useState(false);
-    const [alertConfig, setAlertConfig] = useState({}); 
+    const [alertConfig, setAlertConfig] = useState({});
 
     useEffect(() => {
         const storedAlertConfig = localStorage.getItem('alertConfig');
         if (storedAlertConfig) {
             setAlertConfig(JSON.parse(storedAlertConfig));
             setAlertVisible(true);
-            localStorage.removeItem('alertConfig'); 
+            localStorage.removeItem('alertConfig');
         }
     }, []);
 
@@ -30,7 +30,7 @@ function AddNewCategoryPopup() {
         try {
             const resp = await axios.post(url, {
                 categoryName: categoryName,
-                
+
             });
             console.log("Category added successfully");
             const alertData = {
@@ -68,14 +68,14 @@ function AddNewCategoryPopup() {
                 />
             )}
             <AddNewPopup topTitle="Add New Category" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
-                <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
+                <div style={{ display: 'block', width: '100%' }}>
+                    <div>
                         <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                         <InputField type="text" id="categoryName" name="categoryName" editable={true} value={categoryName} onChange={(e) => setCategoryName(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    
+
                 </div>
-               
+
             </AddNewPopup>
         </>
     );

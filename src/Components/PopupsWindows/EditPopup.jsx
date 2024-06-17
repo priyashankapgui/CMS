@@ -24,7 +24,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {children}
-            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={onClick}>{buttonText}</Buttons>
+            <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} btnWidth="22em" btnHeight="2.5em" onClick={onClick}>{buttonText}</Buttons>
           </div>
         )}
       />

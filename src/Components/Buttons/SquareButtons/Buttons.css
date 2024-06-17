@@ -1,12 +1,13 @@
 .buttons {
-    width: 5.125em; /* Default value */
-    height: 2em; /* Default value */
+    width: 6.25em;
+    height: 2.5em;
     border-radius: 0.625em;
-    font-weight: 550;
+    font-weight: 540;
     font-size: 1em;
     border: none;
-    box-shadow: 1px 1px 1px 1px rgba(0.1, 0, 0, 0.2);
-    margin-top: 0.625em; /* Default value */
+    /* box-shadow: 0px 1px 3px 1px rgba(0.1, 0, 0, 0.2); */
+    box-shadow: 0px 0px 1px 1px rgb(0 0 0 / 6%), 0px 4px 1px 1px #1f8bba45;
+    margin-top: 0.625em;
     padding: 0.125em;
     text-transform: none;
     text-align: center;
@@ -14,6 +15,10 @@
 }
 
 .buttons:hover {
-    box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.1),
-                0 4px 7px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0px 0px 1px 1px rgba(0.1, 0, 0, 0.2), 0px 4px 1px 1px rgba(26, 159, 200, 0.2);
+    font-weight: bolder;
+}
+
+.buttons:active {
+    transform: translateY(3px);
 }

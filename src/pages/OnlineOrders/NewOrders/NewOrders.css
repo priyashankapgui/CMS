@@ -1,0 +1,16 @@
+.NewOrderTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+.NewOrderTable th{
+    background-color: #F5F3F3;
+    font-size: 0.9em;
+    padding: 6px;
+    margin: 4px;
+}
+.NewOrderTable td,
+.NewOrderTable th{
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 6px;
+}

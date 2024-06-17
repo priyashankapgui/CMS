@@ -24,6 +24,7 @@
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-icons": "^5.0.1",
+    "react-lite-month-picker": "^1.2.18",
     "react-modal": "^3.16.1",
     "react-password-strength-bar": "^0.4.1",
     "react-router-dom": "^6.22.3",
@@ -31,8 +32,14 @@
     "react-search-autocomplete": "^8.5.2",
     "react-select": "^5.8.0",
     "react-spinners": "^0.13.8",
+    "react-tabs": "^6.0.2",
     "styled-components": "^6.1.8",
+    "sweetalert2": "^11.11.1",
     "web-vitals": "^2.1.4"
+  },
+  "overrides": {
+    "postcss":"^8.4.31",
+    "nth-check":"^2.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -10,7 +10,7 @@
   background-color: white;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
   padding: 0.9375em 1.25em;
-  border-radius: 0.625em;
+  border-radius: 0.625em 0.625em 0 0;
   gap: 0.625em;
   width: 100%;
   height: fit-content;

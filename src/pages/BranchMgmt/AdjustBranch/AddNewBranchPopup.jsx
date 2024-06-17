@@ -70,22 +70,20 @@ function AddNewBranchPopup() {
                 />
             )}
             <AddNewPopup topTitle="Add New Branch" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
-                <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
+                <div style={{ display: 'block', width: '100%' }}>
+                    <div >
                         <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
                         <InputField type="text" id="branchName" name="branchName" editable={true} value={branchName} onChange={(e) => setBranchName(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    <div style={{ flex: '1' }}>
+                    <div>
                         <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
                         <InputField type="text" id="address" name="address" editable={true} value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                </div>
-                <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                    <div style={{ flex: '1' }}>
+                    <div>
                         <InputLabel htmlFor="branchEmail" color="#0377A8">Email</InputLabel>
                         <InputField type="text" id="branchEmail" name="branchEmail" editable={true} value={branchEmail} onChange={(e) => setBranchEmail(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    <div style={{ flex: '1' }}>
+                    <div>
                         <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
                         <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
                     </div>

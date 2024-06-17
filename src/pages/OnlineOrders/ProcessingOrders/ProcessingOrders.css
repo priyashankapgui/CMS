@@ -1,0 +1,16 @@
+.ProcessingOrdersTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+.ProcessingOrdersTable th{
+    background-color: #F5F3F3;
+    font-size: 0.9em;
+    padding: 6px;
+    margin: 4px;
+}
+.ProcessingOrdersTable td,
+.ProcessingOrdersTable th{
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 6px;
+}

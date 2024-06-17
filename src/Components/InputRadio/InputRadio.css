@@ -1,10 +1,9 @@
 .radio-container {
-  margin-bottom: 1em;
+  display: block;
+  margin-bottom: 0.5em;
 }
 
-.container {
-  margin-right: 12px;
-}
+
 
 input[type="radio"] {
   margin-left: 10px;

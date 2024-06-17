@@ -5,8 +5,8 @@ import {
   FaRegEye,
   FaRegUserCircle,
   FaEyeSlash,
-  FaArrowRight,
 } from "react-icons/fa";
+import { HiArrowRight } from "react-icons/hi";
 import cmslogo from "../../../Assets/cmslogo.svg";
 import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
@@ -118,9 +118,9 @@ const Login = () => {
                 name="empID"
                 editable={true}
                 placeholder="Emp ID"
-                borderRadius="20px"
-                height="40px"
-                width="416px"
+                borderRadius="10px"
+                height="50px"
+                width="410px"
                 backBG="#F3F3F5"
                 value={empID}
                 onChange={handleEmpIdChange}
@@ -135,9 +135,9 @@ const Login = () => {
                 name="empPassword"
                 editable={true}
                 placeholder="Password"
-                borderRadius="20px"
-                height="40px"
-                width="416px"
+                borderRadius="10px"
+                height="50px"
+                width="410px"
                 backBG="#F3F3F5"
                 boxShadow="0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(22, 168, 214, 0.7);"
                 value={password}
@@ -157,21 +157,25 @@ const Login = () => {
                 )}
               </InputField>
               {error && <p className="login-error">{error}</p>}
-              {subLoading ? 
-                <SubSpinner loading={subLoading} />
+              {subLoading ?
+                <SubSpinner loading={subLoading} spinnerText="Verifying" />
                 :
                 <Buttons
                   type="submit"
                   id="signin-btn"
+                  className="signin-btn" 
                   style={{ backgroundColor: "#23A3DA", color: "white" }}
-                  btnHeight="2.2em"
-                  btnWidth="7em"
+                  btnHeight="50px"
+                  btnWidth="410px"
+                  fontSize="18px"
+                  marginTop="2px"
                 >
-                  Sign In <FaArrowRight />
+                  Sign In <HiArrowRight style={{marginBottom:"-2px"}}/>
                 </Buttons>
+            
               }
 
-              <Link to="/login/fp">Forgot Password?</Link>
+              <Link to="/login/fp" className="forgotPWtxt">Forgot Password?</Link>
             </form>
           </div>
         </div>
