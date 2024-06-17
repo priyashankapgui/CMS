@@ -52,8 +52,8 @@ function UpdateBranchPopup({ branchId }) {
             const resp = await axios.put(`${branchesApiUrl}/${branchId}`, {
                 branchName: post.branchName,
                 address: post.address,
-                email: post.email, 
-                contactNumber: post.contactNumber 
+                email: post.email,
+                contactNumber: post.contactNumber
             });
             console.log('Branch updated successfully:', resp.data);
             const alertData = {
@@ -92,7 +92,7 @@ function UpdateBranchPopup({ branchId }) {
             )}
             <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={handleSave}>
                 <form onSubmit={handleSave}>
-                    <div className="content1" style={{ display: 'flex', gap: '20px', width: '100%' }}>
+                    <div className="content1" style={{ display: 'block', width: '100%' }}>
                         <div className="BranchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
                             <InputField type="text" id="branchName" name="branchName" value={post.branchName} onChange={handleUpdate} editable={true} />
@@ -101,8 +101,6 @@ function UpdateBranchPopup({ branchId }) {
                             <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
                             <InputField type="text" id="address" name="address" value={post.address} onChange={handleUpdate} editable={true} />
                         </div>
-                    </div>
-                    <div className="content2" style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
                         <div className="EmailField">
                             <InputLabel htmlFor="email" color="#0377A8">Email</InputLabel>
                             <InputField type="text" id="email" name="email" value={post.email} onChange={handleUpdate} editable={true} />

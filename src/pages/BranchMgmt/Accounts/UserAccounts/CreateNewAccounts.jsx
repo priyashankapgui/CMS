@@ -357,6 +357,7 @@ export function CreateNewAccounts() {
                 type="submit"
                 id="create-btn"
                 style={{ backgroundColor: "#23A3DA", color: "white" }}
+                btnWidth="22em"
                 onClick={handleCreateAccount}
               >
                 {" "}

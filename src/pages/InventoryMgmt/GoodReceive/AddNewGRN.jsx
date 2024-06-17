@@ -12,6 +12,7 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
 export function AddNewGRN() {
 
@@ -240,13 +241,20 @@ export function AddNewGRN() {
                     <div className="new-grn-filter-container">
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
-                            <InputDropdown
+                            {/* <InputDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
                                 options={branches.map(branch => branch.branchName)}
                                 onChange={handleDropdownChange}
+                            /> */}
+                              <BranchDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                onChange={(e) => handleDropdownChange(e)}
                             />
+                        
                         </div>
                         <div className="InvoiceNoField">
                             <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>

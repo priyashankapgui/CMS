@@ -4,7 +4,7 @@ const InputRadio = ({ options, name }) => {
     return (
         <div>
             {Array.isArray(options) && options.map((option, index) => (
-                <label key={index}>
+                <label key={index} className="radio-container">
                     <input
                         type="radio"
                         name={name}

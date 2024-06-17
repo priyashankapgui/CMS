@@ -51,7 +51,7 @@ function AddNewSupplierPopup() {
         if (e) {
             e.preventDefault();
         }
-         
+
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
@@ -63,7 +63,7 @@ function AddNewSupplierPopup() {
             setAlertVisible(true);
             return;
         }
-    
+
         try {
             const resp = await axios.post(suppliersApiUrl, {
                 supplierName,
@@ -95,7 +95,7 @@ function AddNewSupplierPopup() {
             window.location.reload();
         }
     };
-    
+
 
     return (
         <>
@@ -109,28 +109,24 @@ function AddNewSupplierPopup() {
                 />
             )}
             <AddNewPopup topTitle="Add New Supplier" buttonId="save-btn" buttonText="Save" onClick={handleSave} >
-                <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
+                <div style={{ display: 'block', width: '100%' }}>
+                    <div>
                         <InputLabel htmlFor="supplierName" color="#0377A8">Supplier Name</InputLabel>
                         <InputField type="text" id="supplierName" name="supplierName" editable={true} value={supplierName} onChange={(e) => setSupplierName(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    <div style={{ flex: '1' }}>
+                    <div >
                         <InputLabel htmlFor="regNo" color="#0377A8">Reg No</InputLabel>
                         <InputField type="text" id="regNo" name="regNo" editable={true} value={regNo} onChange={(e) => setRegNo(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                </div>
-                <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                    <div style={{ flex: '1' }}>
+                    <div>
                         <InputLabel htmlFor="email" color="#0377A8">Email</InputLabel>
                         <InputField type="text" id="email" name="email" editable={true} value={email} onChange={(e) => setEmail(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                    <div style={{ flex: '1' }}>
+                    <div >
                         <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
                         <InputField type="text" id="address" name="address" editable={true} value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: '100%' }} />
                     </div>
-                </div>
-                <div style={{ display: 'flex', gap: '20px', width: '100%', marginTop: '10px' }}>
-                    <div style={{ flex: '1' }}>
+                    <div>
                         <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
                         <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
                     </div>

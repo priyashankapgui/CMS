@@ -20,12 +20,12 @@ const TopNav = ({ showSidebar }) => {
     if (element.requestFullscreen) {
       element.requestFullscreen();
     }
-    else if (element.mozRequestFullScreen) { /* Firefox */
+    else if (element.mozRequestFullScreen) { 
       element.mozRequestFullScreen();
     }
-    else if (element.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    else if (element.webkitRequestFullscreen) { 
       element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) { /* IE/Edge */
+    } else if (element.msRequestFullscreen) { 
       element.msRequestFullscreen();
     }
   }
@@ -94,7 +94,8 @@ const TopNav = ({ showSidebar }) => {
             </Link>
           </div>
 
-          <div className="Profile" >
+          <div className="Profile" onMouseEnter={(event) => handleMouseEnter('Profile', event)}
+            onMouseLeave={handleMouseLeave}>
             <MyAccountDetails />
           </div>
 

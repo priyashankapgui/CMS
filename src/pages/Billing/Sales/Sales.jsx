@@ -14,7 +14,6 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'
-import { ClipLoader } from 'react-spinners';
 
 export const Sales = () => {
 
@@ -36,7 +35,7 @@ export const Sales = () => {
         calculateTotals();
     }, [rows]);
 
-    const handleDropdownChange = (value) => {
+    const handleBranchDropdownChange = (value) => {
         setSelectedBranch(value);
     };
 
@@ -179,21 +178,41 @@ export const Sales = () => {
         const updatedRows = [...rows];
         updatedRows[rowIndex].productDetails.billQty = billQty;
 
-        const { sellingPrice = 0, discount = 0 } = updatedRows[rowIndex].productDetails;
-        const amount = billQty * sellingPrice * (1 - discount / 100);
-        updatedRows[rowIndex].productDetails.amount = amount.toFixed(2);
+        const { sellingPrice = 0, discount = 0, totalAvailableQty = 0 } = updatedRows[rowIndex].productDetails;
+
+        // Check if billQty exceeds totalAvailableQty
+        if (billQty > totalAvailableQty) {
+            setAlert({
+                severity: 'error',
+                title: 'Invalid Quantity',
+                message: 'Billing quantity cannot exceed available quantity.',
+                open: true
+            });
+            // Reset billQty to totalAvailableQty
+            updatedRows[rowIndex].productDetails.billQty = totalAvailableQty;
+        } else {
+            const amount = billQty * sellingPrice * (1 - discount / 100);
+            updatedRows[rowIndex].productDetails.amount = amount.toFixed(2);
+        }
 
         setRows(updatedRows);
     };
 
+
     const addRow = () => {
-        const isInvalid = rows.some(row => !row.selectedProduct || !row.productDetails.billQty);
+        const isInvalid = rows.some(row => (
+            !row.selectedProduct ||
+            !row.productDetails.billQty ||
+            !row.productDetails.totalAvailableQty ||
+            !row.productDetails.sellingPrice ||
+            row.productDetails.billQty > row.productDetails.totalAvailableQty
+        ));
 
         if (isInvalid) {
             setAlert({
                 severity: 'warning',
                 title: 'Please fill the required fields',
-                message: 'Barcode or Product Name and Bill Qty',
+                message: 'Barcode or Product Name, Bill Qty, Available Qty, and Selling Price are required.',
                 open: true
             });
         } else {
@@ -281,7 +300,6 @@ export const Sales = () => {
         const contactNoElement = document.getElementById('contactNo');
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
         const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
 
         if (netTotal > 0 && !paymentMethodElement) {
             setAlert({
@@ -291,8 +309,7 @@ export const Sales = () => {
                 open: true
             });
             return;
-        }
-        else if (paymentMethodElement && !receivedAmount) {
+        } else if (paymentMethodElement && !receivedAmount) {
             setAlert({
                 severity: 'warning',
                 title: 'Received Amount Missing',
@@ -319,11 +336,10 @@ export const Sales = () => {
                 amount: parseFloat(row.productDetails.amount) || 0,
             }))
         };
-        console.log("Back Data:", payload)
+
         setLoading(true);
         try {
             const response = await axios.post('http://localhost:8080/bills', payload);
-            console.log("Back Data:", payload)
 
             if (response.status === 200) {
                 setAlert({
@@ -333,7 +349,11 @@ export const Sales = () => {
                     open: true
                 });
 
-                resetForm();
+                resetForm(); // Reset the form to allow new entries
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+
             } else {
                 setAlert({
                     severity: 'error',
@@ -350,22 +370,20 @@ export const Sales = () => {
                 message: 'Error saving data!',
                 open: true
             });
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
-
     const resetForm = () => {
         setSelectedBranch('');
         setRows([createEmptyRow()]);
         setGrossTotal(0);
         setNetTotal(0);
-        setReceivedAmount(0);
+        setReceivedAmount('');
         setBalance(0);
         setNoItems(0);
-
     };
+
     const handleClear = () => {
         setReceivedAmount('');
         setBalance(0);
@@ -412,7 +430,7 @@ export const Sales = () => {
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
-                                onChange={(e) => handleDropdownChange(e)}
+                                onChange={(e) => handleBranchDropdownChange(e)}
                             />
                         </div>
                         <div className="customerName">
@@ -567,8 +585,8 @@ export const Sales = () => {
                                         <InputRadio
                                             name="paymentMethod"
                                             options={[
-                                                { value: 'cash', label: 'Cash' },
-                                                { value: 'card', label: 'Card' }
+                                                { value: 'Cash', label: 'Cash' },
+                                                { value: 'Card', label: 'Card' }
                                             ]}
                                         />
                                     </div>

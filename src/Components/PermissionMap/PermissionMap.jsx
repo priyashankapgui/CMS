@@ -100,7 +100,7 @@ const PermissionSingle = ({ pageId, pageName, checkedPages, handleCheck }) => {
   };
   return (
     <div
-      style={{width: "215px"}}>
+      style={{ width: "200px" }}>
       {disabled ? (
         <FormControlLabel
           sx={{
@@ -173,7 +173,7 @@ const PermissionGroup = ({ parentName, pages, checkedPages }) => {
 
   return (
     <div
-    style={{width: "215px"}}>
+      style={{ width: "200px" }}>
       {pages.length === 0 ? null : (
         <div>
           <FormControlLabel

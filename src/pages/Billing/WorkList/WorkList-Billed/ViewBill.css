@@ -34,6 +34,11 @@ hr {
     margin: 10px 0 10px 0;
 }
 
+.TotAmountBar-viewbill h4 {
+    float: left;
+    margin-top: 10px;
+}
+
 .btnSection-viewBill {
     float: right;
     gap: 30px;
@@ -51,6 +56,8 @@ hr {
 
 .billed-item-table {
     margin: 0 auto;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .billed-item-table thead {
@@ -71,4 +78,3 @@ hr {
     align-items: center;
     gap: 4px;
 }
-

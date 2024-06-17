@@ -85,7 +85,7 @@ function UpdateProductPopup({ productId }) {
         setIsLoading(true);
         try {
             await axios.put(`${productsApiUrl}/${productId}`, post);
-            
+
             const alertData = {
                 severity: 'success',
                 title: 'Successfully Updated!',
@@ -146,13 +146,16 @@ function UpdateProductPopup({ productId }) {
                 isLoading={isLoading}
             >
                 <form onSubmit={handleSave}>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
+                    <div style={{ display: 'block', width: '100%' }}>
+                        <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
-                       
-                        <div style={{ flex: '1' }}>
+                        <div>
+                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
+                            <InputField type="text" id="barcode" name="barcode" value={post.barcode} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <SearchBar
                                 searchTerm={post.categoryName}
@@ -161,13 +164,7 @@ function UpdateProductPopup({ productId }) {
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
                         </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '20px', width: '100%' }}>
-                    <div style={{ flex: '1' }}>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={post.barcode} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
-                        </div>
-                        <div style={{ flex: '1' }}>
+                        <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" value={post.description} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>

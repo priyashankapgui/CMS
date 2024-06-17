@@ -28,7 +28,7 @@ function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick }) {
             bodyContent={(
                 <>
                     {children}
-                    <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={CreateAndClose}>{buttonText}</Buttons>
+                    <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white", }} btnWidth="22em" btnHeight="2.5em" onClick={CreateAndClose}>{buttonText}</Buttons>
                 </>
             )}
         />
