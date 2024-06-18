@@ -18,6 +18,7 @@ import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropd
 import PasswordStrengthBar from "react-password-strength-bar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import accountCircle from "../../../../Assets/account_circle_24dp.svg";
+import secureLocalStorage from "react-secure-storage";
 
 export function UpdateUser() {
   const [employeeData, setEmployeeData] = useState({}); // State for storing employee data
@@ -29,7 +30,7 @@ export function UpdateUser() {
   const [showAlertError, setShowAlertError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const currentUser = JSON.parse(sessionStorage.getItem("user"));
+  const currentUser = JSON.parse(secureLocalStorage.getItem("user"));
 
   // useEffect(() => {
   //   let tempBranches = datafile.dropDownOptions.branchOptions;
@@ -44,7 +45,7 @@ export function UpdateUser() {
   useEffect(() => {
     const getEmployeeData = async () => {
       try {
-        const token = sessionStorage.getItem("accessToken");
+        const token = secureLocalStorage.getItem("accessToken");
         const response = await fetch(
           `http://localhost:8080/employees/${employeeId}`,
           {
@@ -123,7 +124,7 @@ export function UpdateUser() {
       };
     }
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
       const formData = new FormData();
       formData.append("data", JSON.stringify(body));
       if (file) {
