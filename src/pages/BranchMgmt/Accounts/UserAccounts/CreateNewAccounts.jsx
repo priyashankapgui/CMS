@@ -16,6 +16,7 @@ import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown'
 import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropdown';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import secureLocalStorage from 'react-secure-storage';
 
 
 export function CreateNewAccounts() {
@@ -37,7 +38,7 @@ export function CreateNewAccounts() {
     const [loading, setLoading] = useState(false); // State for showing spinner
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
     //console.log("Current User:", currentUser);
 
     
@@ -75,7 +76,7 @@ export function CreateNewAccounts() {
         if (employeeData.password !== confirmPassword) {
           throw new Error("Passwords do not match")
         }
-        const token = sessionStorage.getItem("accessToken");
+        const token = secureLocalStorage.getItem("accessToken");
         const formData = new FormData();
 
         // Append the employee data as a string

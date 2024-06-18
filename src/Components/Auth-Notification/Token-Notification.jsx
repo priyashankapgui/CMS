@@ -2,6 +2,7 @@ import React from "react";
 import { IoWarning } from "react-icons/io5";
 import "./Auth-Notification.css";
 import Buttons from "../Buttons/SquareButtons/Buttons";
+import secureLocalStorage from "react-secure-storage";
 
 const TokenNotification = () => {
 
@@ -17,8 +18,8 @@ const TokenNotification = () => {
                 style={{ backgroundColor: "#EEEEEE", color: "red" }}
                 btnWidth={150}
                 onClick={() => {
-                    sessionStorage.removeItem('accessToken');
-                    sessionStorage.removeItem('user');  
+                    secureLocalStorage.removeItem('accessToken');
+                    secureLocalStorage.removeItem('user');  
                     window.location.href = '/';
                 }}
               >

@@ -9,6 +9,7 @@ import CustomAlert from "../../Alerts/CustomAlert/CustomAlert";
 import "./MyAccountDetails.css";
 import PasswordStrengthBar from "react-password-strength-bar";
 import accountCircle from "../../../Assets/account_circle_24dp.svg";
+import secureLocalStorage from "react-secure-storage";
 
 function MyAccountDetails() {
   const [showSubPopup, setShowSubPopup] = useState(false);
@@ -27,7 +28,7 @@ function MyAccountDetails() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [showAlertError, setShowAlertError] = useState("");
   const [profilePicExists, setProfilePicExists] = useState(true);
-  let user = JSON.parse(sessionStorage.getItem("user"));
+  let user = JSON.parse(secureLocalStorage.getItem("user"));
 
   const toggleEditable = () => {
     setEditable(!editable);
@@ -74,7 +75,7 @@ function MyAccountDetails() {
     }
     try {
       let body = {};
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
       let response;
       if (password === "") {
         body = {
@@ -116,7 +117,7 @@ function MyAccountDetails() {
           role: employeeData.userRoleName,
           email: body.email,
         };
-        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+        secureLocalStorage.setItem("user", JSON.stringify(updatedUser));
         setShowAlertSuccess(true);
       }
     } catch (error) {

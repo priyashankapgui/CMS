@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdjustPopup from '../../../Components/PopupsWindows/AdjustPopup';
 import axios from 'axios';
 import "./AdjustStock.css";
+import secureLocalStorage from 'react-secure-storage';
 
 function AdjustStock({ productId, productName, branchName }) {
     const [rows, setRows] = useState([]);
@@ -28,7 +29,7 @@ function AdjustStock({ productId, productName, branchName }) {
     }, [productId, branchName]);
 
     const handleAdjustStock = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const user = JSON.parse(secureLocalStorage.getItem("user"));
         console.log("name",user);
         const updates = rows.map(row => ({
             productId: productId,

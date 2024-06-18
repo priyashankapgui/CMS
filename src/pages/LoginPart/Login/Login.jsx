@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { Link } from "react-router-dom";
+import secureLocalStorage from "react-secure-storage";
 import {
   FaRegEye,
   FaRegUserCircle,
@@ -70,10 +71,10 @@ const Login = () => {
         console.log("Response data:", data);
 
         // Store the token in local storage
-        sessionStorage.setItem("accessToken", data.token);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
+        secureLocalStorage.setItem("accessToken", data.token);
+        secureLocalStorage.setItem("user", JSON.stringify(data.user));
+        secureLocalStorage.setItem("accessToken", data.token);
 
-        console.log(sessionStorage.getItem("accessToken"));
         setLoggingSuccess(true);
       } else {
         // Login failed, handle error
