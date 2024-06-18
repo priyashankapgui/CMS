@@ -56,7 +56,7 @@ export const StockTransferOUT = () => {
     
         try {
             let response;
-            if (user.role === 'superadmin') {
+            if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/allTransfers');
             } else if (user.branchName) {
                 response = await axios.get(`http://localhost:8080/stock-transfer/request-branch/${user.branchName}`);
@@ -166,76 +166,12 @@ export const StockTransferOUT = () => {
 
     return (
         <>
-            <div className="top-nav-blue-text">
-                <h4>Stock Transfer</h4>
-            </div>
-            <Layout>
-                <div className="stockTransfer-bodycontainer">
-                    <div className="stockTransfer-filter-container">
-                        <div className="stockTransfer-content-top1">
-                            <div className="datePickerFrom">
-                                <InputLabel htmlFor="From" color="#0377A8">From</InputLabel>
-                                <DatePicker id="dateFrom" name="fromDate" onDateChange={(date) => handleDateChange('fromDate', date)} />
-                            </div>
-                            <div className="datePickerTo">
-                                <InputLabel htmlFor="To" color="#0377A8">To</InputLabel>
-                                <DatePicker id="dateTo" name="toDate" onDateChange={(date) => handleDateChange('toDate', date)} />
-                            </div>
-                            <div className="SupplyingbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Request Branch</InputLabel>
-                                <BranchDropdown
-                                    id="branchName"
-                                    name="branchName"
-                                    editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                />
-                            </div>
-                            <div className="RequestbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
-                                <InputDropdown
-                                    id="branchName"
-                                    name="branchName"
-                                    editable={true}
-                                    options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
-                                />
-                            </div>
-                            <div className="STNNoField">
-                                <InputLabel htmlFor="STNNo" color="#0377A8">STN No</InputLabel>
-                                <InputField type="text" id="STNNo" name="STNNo" value={searchParams.STNNo} onChange={handleInputChange} editable={true} width="250px" />
-                            </div>
-                        </div>
-                        <div className="stockTransfer-content-top2">
-                            <div className="productsField">
-                                <InputLabel htmlFor="productId" color="#0377A8">Product ID / Name</InputLabel>
-                                <SearchBar
-                                    searchTerm={searchParams.productId}
-                                    setSearchTerm={value => setSearchParams(prevState => ({ ...prevState, productId: value }))}
-                                    onSelectSuggestion={suggestion => setSearchParams(prevState => ({ ...prevState, productId: `${suggestion.displayText}` }))}
-                                    fetchSuggestions={fetchProductsSuggestions}
-                                />
-                            </div>
-                        </div>
-                        <div className="stockTransfer-BtnSection">
-                            <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
-                            <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}> Clear </ Buttons>
-                            <Buttons type="button" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleNewButtonClick}> New + </Buttons>
-                        </div>
-                    </div>
-                    <div className="stockTransfer-content-middle">
-                        <div className="linkActions-">
-                            <div className={clickedLink === 'StockRequest-IN' ? 'clicked' : ''}>
-                                <Link to="/stock-transfer" onClick={() => handleLinkClick('StockRequest-IN')}>
-                                    Stock Request-IN
-                                </Link>
-                            </div>
-                            <div className={clickedLink === 'StockRequest - OUT' ? 'clicked' : ''}>
-                                <Link to="/stock-transfer/StockTransferOUT" onClick={() => handleLinkClick('StockRequest - OUT')}>
-                                    Stock Request - OUT
-                                </Link>
-                            </div>
-                        </div>
+                <div className="stockTransferOUT-bodycontainer">
+                    
+                    <div className="stockTransferOUT-content-middle">
+                    {loading ? (
+                            <div><SubSpinner/></div>
+                        ) : (
 
                         <TableWithPagi
                             columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch',  'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
@@ -295,10 +231,12 @@ export const StockTransferOUT = () => {
                             customTableStyle={{ top: '20%', width: '100%' }}
                             itemsPerPage={10}
                         />
+                        )}
                     </div>
                 </div>
-            </Layout>
+            
         </>
+   
     );
 };
 

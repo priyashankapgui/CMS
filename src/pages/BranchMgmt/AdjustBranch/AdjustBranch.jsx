@@ -9,6 +9,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import secureLocalStorage from 'react-secure-storage';
 
 const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
 
@@ -23,7 +24,7 @@ export const AdjustBranch = () => {
     useEffect(() => {
         const fetchBranchData = async () => {
             try {
-                const token = sessionStorage.getItem("accessToken");
+                const token = secureLocalStorage.getItem("accessToken");
                 const response = await axios.get(branchesApiUrl, {
                     headers: {
                         'Authorization': `Bearer ${token}`

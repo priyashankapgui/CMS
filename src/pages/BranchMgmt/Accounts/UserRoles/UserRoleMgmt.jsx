@@ -10,6 +10,7 @@ import UpdateUserRolePopup from './UpdateUserRolePopup';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import secureLocalStorage from 'react-secure-storage';
 
 export const UserRoleMgmt = () => {
     const [selectedBranch, setSelectedBranch] = useState('All');
@@ -18,13 +19,13 @@ export const UserRoleMgmt = () => {
     const [success, setSuccess] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
-    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
 
     useEffect(() => {
         const getUserRoles = async () => {
             try {
                 setLoading(true); // Set loading to true before fetching data
-                const token = sessionStorage.getItem("accessToken");
+                const token = secureLocalStorage.getItem("accessToken");
                 const response = await fetch("http://localhost:8080/userRoles", {
                     method: "GET",
                     headers: {
@@ -60,7 +61,7 @@ export const UserRoleMgmt = () => {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`,
+                    Authorization: `Bearer ${secureLocalStorage.getItem('accessToken')}`,
                 },
             });
             if (!response.ok) {

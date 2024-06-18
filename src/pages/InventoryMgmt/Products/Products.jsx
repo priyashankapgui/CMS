@@ -14,6 +14,7 @@ import UpdateProductPopup from './UpdateProductPopup';
 import { Icon } from "@iconify/react";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
 export const Products = () => {
     const navigate = useNavigate();
@@ -28,10 +29,18 @@ export const Products = () => {
     const [selectedAdjustCategory, setSelectedAdjustCategory] = useState('');
     const [filteredCategories, setFilteredCategories] = useState([]);
     const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+   
+
+    const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [batchDetails, setBatchDetails] = useState([]);
+    const [product, setProduct] = useState(null);
+    const [selectedProductData, setSelectedProductData] = useState('');
 
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [loading, setLoading] = useState(true);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const fetchProductsSuggestions = async (query) => {
         try {
@@ -68,7 +77,22 @@ export const Products = () => {
     const handleClearBtnProductSection = () => {
         setSelectedProduct('');
         setSelectedCategory('');
+        window.location.reload();
     };
+
+    const handleClear = () => {
+        setSelectedBranch('');
+        setProduct(null);
+        setSelectedProduct('');
+        setBatchDetails([]);
+        window.location.reload();
+    };
+
+    const handleDropdownChange = (value) => {
+        setSelectedBranch(value);
+        console.log('Selected Drop Down Value:', value);
+    };
+
 
     const handleSearchBtnProductSection = async () => {
         if (selectedProduct) {
@@ -100,6 +124,28 @@ export const Products = () => {
             } finally {
                 setLoadingProducts(false);
             }
+        }
+    };
+
+    const handleSearch = async () => {
+        if (!selectedBranch || !product) {
+            console.error('Please select both branch and product');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const response = await axios.get(`http://localhost:8080/product-batch-details`, {
+                params: {
+                    branchName: selectedBranch,
+                    productId: product.id, // Send product ID
+                }
+            });
+            setBatchDetails(response.data.data); // Assuming the batch details are in response.data.data
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching batch details:', error);
+            setLoading(false);
         }
     };
 
@@ -157,6 +203,19 @@ export const Products = () => {
             localStorage.removeItem('alertConfig');
         }
     }, []);
+
+    useEffect(() => {
+        fetchBranches();
+    }, []);
+
+    const fetchBranches = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/branchesWeb');
+            setBranches(response.data);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+        }
+    };
 
     useEffect(() => {
         if (Array.isArray(categoryData)) {
@@ -217,6 +276,100 @@ export const Products = () => {
         }
     };
 
+    const columns = [
+        "Branch Name",
+        "Batch No",
+        "Exp Date",
+        "Available Qty",
+        "Selling Price",
+        "Discount",
+        
+    ];
+
+    const tableRows = batchDetails.map((detail, index) => ({
+        branchName: detail.branchName,
+        batchNo: detail.batchNo,
+        expDate: detail.expDate,
+        availableQty: detail.availableQty,
+        sellingPrice: detail.sellingPrice,
+        discount: (
+            <input
+                className="data-box-table"
+                type="number"
+                value={detail.discount ?? ""}
+                onChange={(e) => handleDiscountChange(index, e.target.value)}
+            />
+        ),
+    }));
+    
+
+    const handleDiscountChange = (index, newValue) => {
+        const updatedBatchDetails = [...batchDetails];
+        updatedBatchDetails[index].discount = newValue;
+        setBatchDetails(updatedBatchDetails);
+        setHasChanges(true); // Set hasChanges to true when a change is made
+    };
+
+
+const handleSave = async () => {
+    if (!selectedBranch || !product) {
+        console.error('Please select both branch and product');
+        return;
+    }
+
+    try {
+        setLoading(true);
+        // Collect discounts and prepare for backend update
+        const updates = batchDetails.map((detail) => ({
+            branchName: selectedBranch,
+            productId: product.id,
+            batchNo: detail.batchNo,
+            discount: parseFloat(detail.discount ?? 0), // Default to 0 if null
+        }));
+        console.log(updates);
+        // Send updates to backend
+        const updateResponse = await axios.put('http://localhost:8080/product-batch-sum-discount', { updates });
+        console.log(updateResponse.data); // Logging backend response
+
+        // Assuming you want to refresh the data after saving
+        handleSearch(); // Refresh the batch details after saving
+
+        // Show success message
+        setAlertConfig({
+            severity: 'success',
+            title: 'Success',
+            message: 'Discounts updated successfully!',
+            duration: 3000
+        });
+        setAlertVisible(true);
+    } catch (error) {
+        console.error('Error updating discounts:', error);
+
+        // Show error message
+        setAlertConfig({
+            severity: 'error',
+            title: 'Error',
+            message: 'Failed to update discounts.',
+            duration: 3000
+        });
+        setAlertVisible(true);
+    } finally {
+        setLoading(false);
+    }
+};
+
+      
+    
+    
+    
+
+   
+
+    // const formatDate = (datetime) => {
+    //     const date = new Date(datetime);
+    //     return date.toISOString().split('T')[0];
+    // };
+
     return (
         <>
             {alertVisible && (
@@ -232,7 +385,8 @@ export const Products = () => {
                 <h4>Products</h4>
             </div>
             <Layout>
-                <div className="create-product-category-section">
+
+            <div className="create-product-category-section">
                     <div className="category-filter-container">
                         <h3 className="create-product-category-title">Registered Categories</h3>
                         <div className="create-product-category-top">
@@ -282,7 +436,6 @@ export const Products = () => {
                         )}
                     </div>
                 </div>
-
                 <div className="reg-product-bodycontainer">
                     <div className="product-filter-container">
                         <h3 className="reg-product-title">Registered Products</h3>
@@ -336,8 +489,62 @@ export const Products = () => {
                     </div>
                 </div>
 
-
-            </Layout >
+                
+              <div className="product-discount-section">
+                    <div className="discount-filter-container">
+                         <h3 className="product-discount-title">Registered Product's Discount</h3>
+                            <div className="discount-content-top">
+                                <div className="branch-field">
+                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                                    
+                                    <BranchDropdown
+                                        id="branchName"
+                                        name="branchName"
+                                        editable={true}
+                                        onChange={(e) => handleDropdownChange(e)}
+                                        addOptions={["All"]}
+                                        />
+                                </div>
+                                <div className="product-field">
+                                    <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>
+                                    <SearchBar
+                                        searchTerm={selectedProductData} 
+                                        setSearchTerm={setSelectedProductData}
+                                        onSelectSuggestion={(suggestion) => {
+                                            setSelectedProductData(`${suggestion.displayText}`);
+                                            setProduct(suggestion); 
+                                        }}
+                                        fetchSuggestions={fetchProductsSuggestions}
+                                    />
+                                </div>
+                            </div>
+                            <div className="discount-btn-section">
+                                <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
+                               
+                                <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}>Clear</Buttons>
+                            </div>
+                        </div>
+                        <div className="discount-content-middle">
+                            {loading ? (
+                                <div><SubSpinner /></div>
+                            ) : (
+                                <TableWithPagi rows={tableRows} columns={columns} />
+                                    
+                                       
+                                  
+                            )}
+                        <div className="discount-btn-section">
+                            {hasChanges && (
+                                <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}>
+                                    Save
+                                </Buttons>
+                            )}
+                    </div>
+                    </div>
+                    
+                </div> 
+                 
+            </Layout>
         </>
     );
 };

@@ -73,11 +73,17 @@ export const CheckPrice = () => {
         }
     };
 
+    const formatDate = (datetime) => {
+        const date = new Date(datetime);
+        return date.toISOString().split('T')[0];
+    };
+
     const handleClear = () => {
         setSelectedBranch('');
         setProduct(null);
         setSelectedProduct('');
         setBatchDetails([]);
+        window.location.reload();
     };
 
     return (
@@ -127,7 +133,7 @@ export const CheckPrice = () => {
                                 rows={batchDetails.map(detail => ({
                                     'Branch Name': detail.branchName,
                                     'Batch No': detail.batchNo,
-                                    'Exp Date': detail.expDate,
+                                    'Exp Date': formatDate(detail.expDate),
                                     'Available Qty': detail.availableQty,
                                     'Selling Price': detail.sellingPrice,
                                 }))}

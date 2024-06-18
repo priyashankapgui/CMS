@@ -29,7 +29,7 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     border-radius: 0.625em;
     width: 100%;
-    height: 800px;
+    height: 600px;
     padding: 0 20px 0 20px;
 }
 
@@ -45,7 +45,7 @@
 
 .StockIn-content-middle {
     width: 100%;
-    height: 80vh;
+    height: 53vh;
     overflow: auto;
     margin-bottom: 20px;
 }
@@ -87,7 +87,7 @@
     font-size: 0.813em;
     padding: 0.600em;
     margin-bottom: 0.313em;
-    padding-right: 250px;
+    padding-right: 150px;
 }
 
 .data-box-table {

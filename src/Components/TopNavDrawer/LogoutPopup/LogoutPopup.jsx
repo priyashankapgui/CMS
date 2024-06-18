@@ -1,6 +1,7 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
+import secureLocalStorage from 'react-secure-storage';
 
 const style = {
     position: 'absolute',
@@ -27,7 +28,7 @@ const style = {
 const LogoutPopup = ({ open, onClose }) => {
     const handleLogout = async() => {
         try{
-            const token = sessionStorage.getItem("accessToken");
+            const token = secureLocalStorage.getItem("accessToken");
             const response = await fetch("http://localhost:8080/api/logout", {
             method: "POST",
             headers: {
@@ -39,8 +40,8 @@ const LogoutPopup = ({ open, onClose }) => {
                 throw new Error("Failed to fetch data");
             }
             else{
-                sessionStorage.removeItem('accessToken');
-                sessionStorage.removeItem('user');
+                secureLocalStorage.removeItem('accessToken');
+                secureLocalStorage.removeItem('user');
                 window.location.href = '/';
             }
         }
