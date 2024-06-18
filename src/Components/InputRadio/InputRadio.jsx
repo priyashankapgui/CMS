@@ -1,22 +1,20 @@
 import React from 'react';
-import './InputRadio.css';
 
-const InputRadio = ({ name, options, onChange }) => {
-  return (
-    <div className="radio-container">
-      {options.map(option => (
-        <label key={option.id} className="container">
-          {option.label}
-          <input
-            type="radio"
-            name={name} 
-            value={option.label}
-            onChange={onChange}
-          />
-        </label>
-      ))}
-    </div>
-  );
+const InputRadio = ({ options, name }) => {
+    return (
+        <div>
+            {Array.isArray(options) && options.map((option, index) => (
+                <label key={index} className="radio-container">
+                    <input
+                        type="radio"
+                        name={name}
+                        value={option.value}
+                    />
+                    {option.label}
+                </label>
+            ))}
+        </div>
+    );
 };
 
 export default InputRadio;

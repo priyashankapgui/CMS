@@ -2,11 +2,11 @@ import React from "react";
 import PropagateLoader from "react-spinners/PropagateLoader";
 import './SubSpinner.css';
 
-const SubSpinner = ({ loading }) => {
+const SubSpinner = ({ loading, spinnerText = 'Loading' }) => {
     return (
         <div className="sweet-loading-sub">
             <div className="SubSpinnerSystemText">
-                Loading
+                {spinnerText}
             </div>
             <PropagateLoader
                 color="#0377A8"

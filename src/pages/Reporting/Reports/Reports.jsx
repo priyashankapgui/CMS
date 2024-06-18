@@ -5,7 +5,7 @@ import DatePicker from "../../../Components/DatePicker/DatePicker"
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
-import dropdownOptions from '../../../Components/Data.json';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import repoTypes from '../../../Components/Data.json';
 import { Link } from "react-router-dom"
 
@@ -49,11 +49,16 @@ export const Reports = () => {
                         <div className="repo-Content">
                             <div className="branchField">
                                 <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} onChange={handleDropdownChange} />
+                                <BranchDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    onChange={(e) => handleDropdownChange(e)}
+                                />
                             </div>
                             <div className="repoTypeField">
                                 <InputLabel for="repoType" color="#0377A8">Report Type</InputLabel>
-                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} onChange={handleDropdownChange}  />
+                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} onChange={handleDropdownChange} />
                             </div>
                             <div className="dateField">
                                 <InputLabel for="from-date" color="#0377A8">From</InputLabel>
@@ -66,7 +71,6 @@ export const Reports = () => {
                         </div>
                         <div className="btnSection">
                             <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> View </Buttons>
-                            <Buttons type="submit" id="print-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Print </Buttons>
                             <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </Buttons>
                         </div>
                     </div>

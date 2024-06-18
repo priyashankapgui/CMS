@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Layout from "../../Layout/Layout";
 import "./OnlineOrders.css";
+import SearchBar from '../../Components/SearchBar/SearchBar'
 import InputLabel from "../../Components/Label/InputLabel";
 import BranchDropdown from "../../Components/InputDropdown/BranchDropdown";
 import InputField from "../../Components/InputField/InputField";
@@ -41,13 +42,13 @@ export const OnlineOrders = () => {
                             <InputLabel htmlFor="orderNo" color="#0377A8">Order No</InputLabel>
                             <InputField type="text" id="orderNo" name="orderNo" editable={true} width="250px" />
                         </div>
-                        <div className="orderNo">
+                        <div className="customerName">
                             <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
-                            <InputField type="text" id="CustomerName" name="CustomerName" editable={true} width="250px" />
+                            <SearchBar />
                         </div>
-                        <div className="ProductID/Name">
+                        <div className="prodcutName">
                             <InputLabel htmlFor="ProductID/Name" color="#0377A8">Product ID / Name</InputLabel>
-                            <InputField type="text" id="ProductID/Name" name="ProductID/Name" editable={true} width="250px" />
+                            <SearchBar />
                         </div>
                     </div>
                     <div className="OnlineOrdersBtn">
@@ -64,16 +65,16 @@ export const OnlineOrders = () => {
                     </TabList>
 
                     <TabPanel>
-                        <NewOrders/>
+                        <NewOrders />
                     </TabPanel>
                     <TabPanel>
-                        <ProcessingOrders/>
+                        <ProcessingOrders />
                     </TabPanel>
                     <TabPanel>
-                        <PendingPickup/>
+                        <PendingPickup />
                     </TabPanel>
                     <TabPanel>
-                        <CompletedOrder/>
+                        <CompletedOrder />
                     </TabPanel>
                 </Tabs>
             </Layout>

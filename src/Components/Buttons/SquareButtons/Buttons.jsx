@@ -1,7 +1,7 @@
 import React from 'react';
 import './Buttons.css';
 
-function Buttons({ type, id, style, onClick, onChange,btnHeight, btnWidth, marginTop, children }) {
+function Buttons({ type, id, style, onClick, onChange,btnHeight, btnWidth, marginTop, fontSize,children }) {
     return (
         <div>
             <button
@@ -10,7 +10,8 @@ function Buttons({ type, id, style, onClick, onChange,btnHeight, btnWidth, margi
                     ...style,
                     height: btnHeight,
                     width: btnWidth,
-                    marginTop: marginTop
+                    marginTop: marginTop,
+                    fontSize:fontSize
                 }}
                 id={id}
                 className="buttons"

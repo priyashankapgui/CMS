@@ -10,7 +10,7 @@ const SalesReceipt = ({ billData, onClose }) => {
     }
 
     const { billNo, billedAt, billedBy, customerName, paymentMethod, contactNo, billedItems } = billData;
-    
+
     let totalQuantity = 0;
     let grossTotal = 0;
     let discount = 0;
@@ -83,8 +83,8 @@ const SalesReceipt = ({ billData, onClose }) => {
                         <thead>
                             <tr>
                                 <th>Description</th>
-                                <th style={{ textAlign: 'center' }}>Price</th>
-                                <th style={{ textAlign: 'right' }}>Qty</th>
+                                <th style={{ textAlign: 'center' }}>Qty</th>
+                                <th style={{ textAlign: 'right' }}>Dis%</th>
                                 <th style={{ textAlign: 'right' }}>Amount(Rs)</th>
                             </tr>
                         </thead>
@@ -92,11 +92,11 @@ const SalesReceipt = ({ billData, onClose }) => {
                             {billedItems.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <tr>
-                                        <td colSpan={4}>{item.name}</td>
-                                    </tr>
+                                            <td colSpan={4}>{index + 1}. {item.name}</td>
+                                        </tr>
                                     <tr>
-                                        <td style={{ textAlign: '' }}>{item.productId}</td>
                                         <td style={{ textAlign: 'left' }}>{(item.rate).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right' }}>{(item.quantity).toFixed(2)}</td>
                                         <td style={{ textAlign: 'right' }}>{(item.quantity).toFixed(2)}</td>
                                         <td style={{ textAlign: 'right' }}>{(item.rate * item.quantity).toFixed(2)}</td>
                                     </tr>
@@ -117,8 +117,8 @@ const SalesReceipt = ({ billData, onClose }) => {
                     <table className='total-table'>
                         <tbody>
                             <tr>
-                                <td>No Qty </td>
-                                <td style={{ textAlign: 'right' }}>{totalQuantity}</td>
+                                <td>No Items </td>
+                                <td style={{ textAlign: 'right' }}>{billedItems.length}</td>
                             </tr>
                             <tr>
                                 <td>Gross Total </td>

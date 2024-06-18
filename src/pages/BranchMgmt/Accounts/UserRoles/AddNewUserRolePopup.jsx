@@ -6,6 +6,7 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import InputField from '../../../../Components/InputField/InputField';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
+import secureLocalStorage from 'react-secure-storage';
 
 // import InputLabel from '../../../../Components/Label/InputLabel';
 // import InputField from '../../../../Components/InputField/InputField';
@@ -30,7 +31,7 @@ function AddNewUserRolePopup({showSuccess}) {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                        'Authorization': 'Bearer ' + secureLocalStorage.getItem('accessToken') || '',
                     },
                 }
                 );
@@ -59,7 +60,7 @@ function AddNewUserRolePopup({showSuccess}) {
             if (selectedBranch === 'None') {
                 tempBranch = null;
             }
-           const token = sessionStorage.getItem("accessToken");
+           const token = secureLocalStorage.getItem("accessToken");
            console.log(token);
             const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
                 method: 'POST',
@@ -103,7 +104,6 @@ function AddNewUserRolePopup({showSuccess}) {
                             value={roleName}
                             onChange={(e) => setRoleName(e.target.value)}
                             editable={true}
-                            height="29px"
                         />
                     </div>
                     <div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import UnAuthorized  from "../Components/Auth-Notification/Auth-Notificaion";
 import MainSpinner from "../Components/Spinner/MainSpinner/MainSpinner";
 import TokenNotification from "../Components/Auth-Notification/Token-Notification";
+import secureLocalStorage from "react-secure-storage";
 
 const ProtectedRoute = (groupName) => {
     const [giveAccess, setGiveAccess] = useState();
@@ -11,9 +12,10 @@ const ProtectedRoute = (groupName) => {
     useEffect(() => {
     const verfiyToken = async () => {
       setLoading(true);
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
+      const user  = secureLocalStorage.getItem("user");
       // console.log({groupName, token});
-      if (token) {
+      if (token && user) {
         const response = await fetch("http://localhost:8080/verifyPermissions", {
           method: "POST",
           headers: {
@@ -43,12 +45,12 @@ const ProtectedRoute = (groupName) => {
           setTokenError(false);
           setGiveAccess(false);
         } 
+        setLoading(false);
       } 
       else {
         window.location.href = '/';
         setGiveAccess(false);
       }
-      setLoading(false);
     };
     verfiyToken();
     }

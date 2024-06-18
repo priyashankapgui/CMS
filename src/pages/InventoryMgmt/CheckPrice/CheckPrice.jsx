@@ -96,14 +96,14 @@ export const CheckPrice = () => {
                     <div className="check-price-filter-container">
                         <div className="check-price-content-top">
                             <div className="branch-field">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                               
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>                          
                                 <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
                                     addOptions={["All"]}
+                                 
                                     />
                             </div>
                             <div className="product-field">
