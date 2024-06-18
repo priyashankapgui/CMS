@@ -54,7 +54,7 @@ function MyAccountDetails() {
     setShowSubPopup(false);
   };
 
-  useEffect(() => {
+ useEffect(() => {
     setEmployeeData({
       employeeName: user?.userName || "",
       employeeId: user?.userID || user?.employeeId || "",
@@ -62,7 +62,7 @@ function MyAccountDetails() {
       userRoleName: user?.role || "",
       email: user?.email || "",
     });
-  }, []);
+  }, []); 
 
   const handleUpdate = async () => {
     if (!employeeData.employeeName || !employeeData.email) {

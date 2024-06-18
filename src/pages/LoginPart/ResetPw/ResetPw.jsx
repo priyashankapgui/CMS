@@ -22,15 +22,12 @@ const ResetPw = () => {
     setSubLoading(true);
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
-      
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-    
     // If token is not present, redirect to login page
     if (!token) {
       window.location.href = "/";
@@ -46,11 +43,9 @@ const ResetPw = () => {
           confirmPassword: confirmPassword,
         }),
       }).catch((error) => console.error("Error:", error));
-
       if (response.ok) {
         const data = await response.json();
         setShowSubPopup(true);
-
         console.log("Response data:", data);
       } else {
         const data = await response.json();
@@ -166,7 +161,7 @@ const ResetPw = () => {
             <Buttons
               type="submit"
               id="save-btn"
-              style={{ backgroundColor: "#23A3DA", color: "white" }}
+              style={{ backgroundColor: "#ff3232", color: "white" }}
             >
               Save
             </Buttons>

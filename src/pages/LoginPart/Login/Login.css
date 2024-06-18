@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&family=Princess+Sofia&display=swap');
-
 .s-mainContainer {
   display: flex;
   flex-direction: row;
@@ -23,9 +21,9 @@
 
 .s-flexflow-text {
   font-size: 5rem;
-  line-height: 0;
   color: #ffffff;
-  font-family: 'Princess Sofia', cursive;
+  margin-top: -50px;
+  font-family: 'Send Flowers', cursive;
 }
 
 .s-companyName {
@@ -50,10 +48,14 @@
   align-items: center;
 }
 
+.s-greenmartlogo img{
+  width: 50%;
+}
+
 .s-loginCard {
   padding: 2em;
   border-radius: 3em;
-  min-width: 50%;
+  width: 60%;
   height: fit-content;
   background-color: #ffffff;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -67,6 +69,7 @@
   align-items: center;
   width: 100%;
 }
+
 .s-WelcomeText {
   display: flex;
   font-size: 20px;
@@ -98,4 +101,46 @@
   flex-direction: row;
   justify-content: flex-start;
   width: 100%;
+}
+
+@media screen and (max-width: 700px) {
+  .s-mainContainer {
+    flex-direction: column;
+    align-items: center;
+    width: 100dvw;
+  }
+
+  .s-flexflow-text{
+    font-size: 2rem;
+    color: #ffffff;
+    margin-top: 0;
+  }
+
+  .s-companyName{
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .s-leftcontainer {
+    padding: 20px;
+    border-radius: 30px;
+    width: 80%;
+    margin-top: 30px;
+  }
+
+  .s-image {
+    width: 0%;
+  }
+
+  .s-rightcontainer {
+    width: 100%;
+  }
+
+  .s-loginCard {
+    width: 80%;
+  }
+
+  .s-button {
+    width: 100%;
+  }
 }

@@ -106,7 +106,7 @@ const Login = () => {
 
         <div className="s-rightcontainer">
           <div className="s-greenmartlogo">
-            <img className="s-image" src={greenleaf} alt="greenmart logo" />
+            <img src={greenleaf} alt="greenmart logo" />
             <h2 className="s-boldText">Green Leaf Super Mart </h2>
           </div>
 
@@ -121,7 +121,7 @@ const Login = () => {
                 placeholder="Emp ID"
                 borderRadius="20px"
                 height="40px"
-                width="416px"
+                width="100%"
                 backBG="#F3F3F5"
                 value={empID}
                 onChange={handleEmpIdChange}
@@ -138,7 +138,7 @@ const Login = () => {
                 placeholder="Password"
                 borderRadius="20px"
                 height="40px"
-                width="416px"
+                width="100%"
                 backBG="#F3F3F5"
                 boxShadow="0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(22, 168, 214, 0.7);"
                 value={password}
