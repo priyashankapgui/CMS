@@ -25,11 +25,13 @@ export const Suppliers = () => {
 
     const fetchSuppliersSuggestions = async (query) => {
         try {
+            setLoading(true);
             const response = await axios.get(`${suppliersApiUrl}?search=${query}`);
             return response.data.data.map(supplier => ({
                 id: supplier.supplierId,
                 displayText: `${supplier.supplierId} ${supplier.supplierName}`
             }));
+            
         } catch (error) {
             console.error('Error fetching suppliers suggestions:', error);
             return [];
@@ -50,6 +52,7 @@ export const Suppliers = () => {
     const handleClearBtn = () => {
         setSelectedSupplier('');
         setSuppliersData([]);
+        window.location.reload();
     };
 
     const handleSearch = async () => {
@@ -62,6 +65,7 @@ export const Suppliers = () => {
     useEffect(() => {
         const fetchSuppliersData = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(suppliersApiUrl);
                 console.log('Fetched suppliers data:', response.data); // Debugging log
                 setSuppliersData(response.data.data); // Set the fetched supplier data

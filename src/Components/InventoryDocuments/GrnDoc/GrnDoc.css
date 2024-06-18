@@ -62,7 +62,7 @@
 
 .GrnDoc-bodyContent-table {
     width: 100%;
-    height: 55vh;
+    height: 15vh;
     margin: 0 auto;
     border-collapse:collapse ;
 }
@@ -76,6 +76,7 @@
 
 .GrnDoc-bodyContent-table td {
     font-size: 12px;
+    text-align: center;
 }
 
 .GrnDoc-bottomContent{

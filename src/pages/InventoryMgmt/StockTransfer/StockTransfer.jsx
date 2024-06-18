@@ -3,24 +3,18 @@ import Layout from "../../../Layout/Layout";
 import axios from 'axios';
 import "./StockTransfer.css";
 import InputField from "../../../Components/InputField/InputField";
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputLabel from "../../../Components/Label/InputLabel";
-import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
 import DatePicker from '../../../Components/DatePicker/DatePicker';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { useNavigate } from 'react-router-dom';
-import { BsEye } from "react-icons/bs";
-import { RiPrinterFill } from "react-icons/ri";
-import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import StockTransferIssuing from './StockTransferIssuing';
-import Completed from './completed';
-import { TiTickOutline } from "react-icons/ti";
-import { MdOutlineCancel } from "react-icons/md";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import StockTransferIn from './StockTransferIN';
+import StockTransferOUT from './StockTransferOUT';
 
 
 export const StockTransfer = () => {
@@ -32,7 +26,7 @@ export const StockTransfer = () => {
     const [searchParams, setSearchParams] = useState({
         fromDate: '',
         toDate: '',
-        STNNo: '',
+        STN_NO: '',
         productId: '',
     });
     const [products, setProducts] = useState([]);
@@ -62,7 +56,7 @@ export const StockTransfer = () => {
     
         try {
             let response;
-            if (user.role === 'superadmin') {
+            if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/allTransfers');
             } else if (user.branchName) {
                 response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${user.branchName}`);
@@ -118,46 +112,18 @@ export const StockTransfer = () => {
     };
 
     const handleSearch = async () => {
-        try {
-            setLoading(true);
-
-            const params = {
-                fromDate: searchParams.fromDate,
-                toDate: searchParams.toDate,
-                STNNo: searchParams.STNNo,
-                productId: searchParams.productId.split(' ')[0], 
-                supplyingBranch: selectedBranch
-            };
-
-            let response;
-            if (selectedBranch) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${selectedBranch}`, { params });
-            } else if (searchParams.STNNo) {
-                response = await axios.get(`http://localhost:8080/stock-transferAllDetails/${searchParams.STNNo}`, { params });
-            } else if (searchParams.productId) {
-                response = await axios.get(`http://localhost:8080/stock-transfers-by-productId/${searchParams.productId.split(' ')[0]}`, { params });
-            } else if (searchParams.requestBranch) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/request-branch/${searchParams.requestBranch}`, { params });
-            } else {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${selectedBranch}`, { params });
-            }
-
-            setStockData(response.data?.data || []);
-        } catch (error) {
-            console.error('Error searching:', error);
-        } finally {
-            setLoading(false);
-        }
+        
     };
 
     const handleClear = () => {
         setSearchParams({
-            STNNo: '',
+            STN_NO: '',
             fromDate: '',
             toDate: '',
             productId: '',
         });
         setSelectedBranch('');
+        window.location.reload();
     };
 
     const handleNewButtonClick = () => {
@@ -219,8 +185,8 @@ export const StockTransfer = () => {
                                 />
                             </div>
                             <div className="STNNoField">
-                                <InputLabel htmlFor="STNNo" color="#0377A8">STN No</InputLabel>
-                                <InputField type="text" id="STNNo" name="STNNo" value={searchParams.STNNo} onChange={handleInputChange} editable={true} width="250px" />
+                                <InputLabel htmlFor="STN_NO" color="#0377A8">STN No</InputLabel>
+                                <InputField type="text" id="STN_NO" name="STN_NO" value={searchParams.STN_NO} onChange={handleInputChange} editable={true} width="250px" />
                             </div>
                         </div>
                         <div className="stockTransfer-content-top2">
@@ -241,81 +207,21 @@ export const StockTransfer = () => {
                         </div>
                     </div>
                     
-                    <div className="stockTransfer-content-middle">
-                        <div className="linkActions-">
-                            <div className={clickedLink === 'StockRequest-IN' ? 'clicked' : ''}>
-                                <Link to="/stock-transfer" onClick={() => handleLinkClick('StockRequest-IN')}>
-                                    Stock Request-IN
-                                </Link>
-                            </div>
-                            <div className={clickedLink === 'StockRequest - OUT' ? 'clicked' : ''}>
-                                <Link to="/stock-transfer/OUT" onClick={() => handleLinkClick('StockRequest - OUT')}>
-                                    Stock Request - OUT
-                                </Link>
-                            </div>
-                        </div>
-
-                        <TableWithPagi
-                            columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch', 'Status', 'Requested By', 'Submitted By', 'Submitted At', '']}
-                            rows={stockData.map((data, index) => ({
-                                'STN No': data.STN_NO,
-                                'Created At': data.createdAt,
-                                'Request Branch': data.requestBranch,
-                                'Supplying Branch': data.supplyingBranch,
-                                'Status': data.status,
-                                'Requested By': data.requestedBy,
-                                'Submitted By': data.submittedBy,
-                                'Submitted At': data.submittedAt,
-                                'Actions': (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                        {data.status === 'raised' && (
-                                            <Link to={`/stock-transfer/issuing/${data.STN_NO}`}>
-                                                <RoundButtons
-                                                    id={`eyeViewBtn-${index}`}
-                                                    type="submit"
-                                                    name={`eyeViewBtn-${index}`}
-                                                    icon={<BsEye />}
-                                                />
-                                            </Link>
-                                        )}
-                                        {data.status === 'completed' && (
-                                            <>
-                                                <Link to={`/stock-transfer/completed/${data.STN_NO}`}>
-                                                    <RoundButtons
-                                                        id={`tickBtn-${index}`}
-                                                        type="submit"
-                                                        name={`tickBtn-${index}`}
-                                                        icon={<TiTickOutline />}
-                                                    />
-                                                </Link>
-                                                <RoundButtons
-                                                    id={`printBtn-${index}`}
-                                                    type="submit"
-                                                    name={`printBtn-${index}`}
-                                                    icon={<RiPrinterFill />}
-                        />
-                    </>
-                )}
-                {data.status === 'cancelled' && (
-                    <Link to={`/stock-transfer/cancelled/${data.STN_NO}`}>
-                        <RoundButtons
-                            id={`tickBtn-${index}`}
-                            type="submit"
-                            name={`tickBtn-${index}`}
-                            icon={<MdOutlineCancel />}
-                        />
-                    </Link>
-                )}
-            </div>
-        ),
-    }))}
-    customTableStyle={{ top: '20%', width: '100%' }}
-    itemsPerPage={10}
-/>
-
-
-                    </div>
+                    
                 </div>
+                <Tabs className="stockTransferTabs">
+                    <TabList className="transferStatusTab">
+                            <Tab>Stock Request In</Tab>
+                            <Tab>Stock Request OUT</Tab>
+                        </TabList>
+
+                        <TabPanel>
+                            <StockTransferIn/>
+                        </TabPanel>
+                        <TabPanel>
+                            <StockTransferOUT/>
+                        </TabPanel>
+                    </Tabs>
             </Layout>
         </>
     );
