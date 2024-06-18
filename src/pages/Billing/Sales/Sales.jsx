@@ -31,6 +31,7 @@ export const Sales = () => {
         open: false
     });
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         calculateTotals();
     }, [rows]);
@@ -326,6 +327,7 @@ export const Sales = () => {
             paymentMethod: paymentMethodElement.value,
             billedBy: user.userName,
             billTotalAmount: parseFloat(netTotal) || 0,
+            receivedAmount: parseFloat(receivedAmount) || 0,
             products: rows.map(row => ({
                 productId: row.productDetails.productId,
                 barcode: row.productDetails.barcode,

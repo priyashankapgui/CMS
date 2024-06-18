@@ -7,7 +7,6 @@ import { RiPrinterFill } from "react-icons/ri";
 import { MdOutlineAssignmentReturn } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import InputField from '../../../../Components/InputField/InputField';
-import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -62,8 +61,7 @@ export const ViewBill = () => {
         return <div>Bill not found</div>;
     }
 
-    const { billNo: selectedBillNo, branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount
-        , billProducts } = billData;
+    const { billNo: selectedBillNo, branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount, billProducts } = billData;
 
     return (
         <>
@@ -113,7 +111,6 @@ export const ViewBill = () => {
                     <div>
                         <div className='TotAmountBar-viewbill'>
                             <h4>Total Amount: <span>Rs. {billTotalAmount}</span></h4>
-                            {/* <InputLabel htmlFor="cusContact" color="#0377A8" fontWeight={600}>Total Amount: <span>Rs:{billTotalAmount}</span></InputLabel> */}
                         </div>
                         <div className="btnSection-viewBill">
                             <div className="returnBtn">
@@ -137,7 +134,6 @@ export const ViewBill = () => {
                     <table className='billed-item-table'>
                         <thead>
                             <tr>
-                                {/* <th>Barcode</th> */}
                                 <th>Product ID / Name</th>
                                 <th>Qty</th>
                                 <th>Batch No</th>
@@ -149,7 +145,6 @@ export const ViewBill = () => {
                         <tbody>
                             {billProducts.map((item, index) => (
                                 <tr key={index}>
-                                    {/* <td><InputField id={`barcode-${index}`} name={`barcode-${index}`} editable={false} width="100%" value={item.barcode} /></td> */}
                                     <td><InputField id={`productId-${index}`} name={`productId-${index}`} editable={false} width="100%" value={`${item.productId} ${item.productName}`} /></td>
                                     <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty} textAlign='center' /></td>
                                     <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
@@ -163,7 +158,7 @@ export const ViewBill = () => {
                 </div>
             </Layout>
             {showSalesReceipt && (
-                <SalesReceipt billData={billData} onClose={handleCloseSalesReceipt} />
+                <SalesReceipt billNo={billNo} onClose={handleCloseSalesReceipt} />
             )}
         </>
     );

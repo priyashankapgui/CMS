@@ -1,31 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReceiptPopup from '../ReceiptPopup/ReceiptPopup';
 import './SalesReceipt.css';
 import greenleaf from "../../../Assets/greenleaf.svg";
 import SugesstionQR from "../../../Assets/qr-code.svg";
+import axios from 'axios';
 
-const SalesReceipt = ({ billData, onClose }) => {
+const SalesReceipt = ({ billNo, onClose }) => {
+
+    console.log('SalesReceipt component rendered');
+    const [billData, setBillData] = useState(null);
+    const [error, setError] = useState(null);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (!billNo) {
+                    return; // Avoid calling API if billNo is undefined
+                }
+
+                const response = await axios.get(`http://localhost:8080/bills-all?billNo=${billNo}`);
+                console.log('Bill', response);
+                const responseData = response.data.data;
+
+                if (responseData) {
+                    setBillData(responseData);
+                } else {
+                    setError('Bill not found');
+                }
+            } catch (error) {
+                setError(error.message);
+            }
+        };
+
+        fetchData();
+    }, [billNo]);
+
+
     if (!billData) {
         return null;
     }
 
-    const { billNo, billedAt, billedBy, customerName, paymentMethod, contactNo, billedItems } = billData;
+    const { billNo: selectedBillNo, branchName, billedBy, createdAt, customerName, paymentMethod, contactNo, billTotalAmount, receivedAmount, billProducts } = billData;
 
-    let totalQuantity = 0;
     let grossTotal = 0;
     let discount = 0;
     let netTotal = 0;
-    let received = 5000.00;
     let balance = 0;
 
-    billedItems.forEach(item => {
-        totalQuantity += item.quantity;
-        grossTotal += item.rate * item.quantity;
+    billProducts.forEach(item => {
+        grossTotal += (item.sellingPrice || 0) * (item.billQty || 0 - (1-(item.discount)/100));
     });
 
-    discount = 0.00;
     netTotal = grossTotal - discount;
-    balance = received - netTotal;
+    balance = receivedAmount - netTotal;
 
     const handleReprintReceipt = () => {
         window.print();
@@ -52,11 +80,11 @@ const SalesReceipt = ({ billData, onClose }) => {
                     <tbody>
                         <tr>
                             <td className='receipt-details-label'>Bill No:</td>
-                            <td className='receipt-details-value'>{billNo}</td>
+                            <td className='receipt-details-value'>{selectedBillNo}</td>
                         </tr>
                         <tr>
                             <td className='receipt-details-label'>Billed At:</td>
-                            <td className='receipt-details-value'>{billedAt}</td>
+                            <td className='receipt-details-value'>{new Date(createdAt).toLocaleString()}</td>
                         </tr>
                         <tr>
                             <td className='receipt-details-label'>User:</td>
@@ -89,16 +117,16 @@ const SalesReceipt = ({ billData, onClose }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {billedItems.map((item, index) => (
+                            {billProducts.map((item, index) => (
                                 <React.Fragment key={index}>
                                     <tr>
-                                            <td colSpan={4}>{index + 1}. {item.name}</td>
-                                        </tr>
+                                        <td colSpan={4}>{index + 1}. {item.productName}</td>
+                                    </tr>
                                     <tr>
-                                        <td style={{ textAlign: 'left' }}>{(item.rate).toFixed(2)}</td>
-                                        <td style={{ textAlign: 'right' }}>{(item.quantity).toFixed(2)}</td>
-                                        <td style={{ textAlign: 'right' }}>{(item.quantity).toFixed(2)}</td>
-                                        <td style={{ textAlign: 'right' }}>{(item.rate * item.quantity).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'left' }}>{(item.sellingPrice || 0).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center' }}>{(item.billQty || 0).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right' }}>{(item.discount || 0).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right' }}>{((item.sellingPrice || 0) * (item.billQty || 0)- (1-(item.discount)/100)).toFixed(2)}</td>
                                     </tr>
                                 </React.Fragment>
                             ))}
@@ -118,7 +146,7 @@ const SalesReceipt = ({ billData, onClose }) => {
                         <tbody>
                             <tr>
                                 <td>No Items </td>
-                                <td style={{ textAlign: 'right' }}>{billedItems.length}</td>
+                                <td style={{ textAlign: 'right' }}>{billProducts.length}</td>
                             </tr>
                             <tr>
                                 <td>Gross Total </td>
@@ -134,7 +162,7 @@ const SalesReceipt = ({ billData, onClose }) => {
                             </tr>
                             <tr>
                                 <td>Received </td>
-                                <td style={{ textAlign: 'right' }}>{received.toFixed(2)}</td>
+                                <td style={{ textAlign: 'right' }}>{receivedAmount.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <td>Balance </td>
