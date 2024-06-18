@@ -386,10 +386,9 @@ const handleSave = async () => {
             </div>
             <Layout>
 
-                
             <div className="create-product-category-section">
                     <div className="category-filter-container">
-                        <h3 className="create-product-category-title">Registered Categories</h3>
+                        <h3 className="create-product-category-title">Registered Product's Categories</h3>
                         <div className="create-product-category-top">
                             <div className="categoryField">
                                 <InputLabel htmlFor="category" color="#0377A8">Search Category ID / Name</InputLabel>
@@ -403,38 +402,37 @@ const handleSave = async () => {
                                     fetchSuggestions={fetchCategorySuggestions}
                                 />
                             </div>
+                            <div>
+                            <AddNewCategoryPopup/>
+                            </div>
                         </div>
-                        <div className='p-BtnSection'>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
-                            <AddNewCategoryPopup />
+
+                        <div className="create-product-category-middle">
+                            {loadingCategories ? (
+                                <div><SubSpinner /></div>
+                            ) : (
+                                <TableWithPagi
+                                    columns={['Reg Categories', 'Action']}
+                                    rows={selectedCategoryData ? [{
+                                        'Reg Categories': selectedCategoryData.categoryName,
+                                        'Action': (
+                                            <div style={{ display: "flex", gap: "0.5em" }}>
+                                                <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
+                                                <DeletePopup />
+                                            </div>
+                                        )
+                                    }] : filteredCategories.map(category => ({
+                                        'Reg Categories': category.categoryName,
+                                        'Action': (
+                                            <div style={{ display: "flex", gap: "0.5em" }}>
+                                                
+                                                <DeletePopup />
+                                            </div>
+                                        )
+                                    }))}
+                                />
+                            )}
                         </div>
-                    </div>
-
-                    <div className="create-product-category-middle">
-                        {loadingCategories ? (
-                            <div><SubSpinner /></div>
-                        ) : (
-                            <TableWithPagi
-                                columns={['Reg Categories', 'Action']}
-                                rows={selectedCategoryData ? [{
-                                    'Reg Categories': selectedCategoryData.categoryName,
-                                    'Action': (
-                                        <div style={{ display: "flex", gap: "0.5em" }}>
-                                            <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
-                                            <DeletePopup />
-                                        </div>
-                                    )
-                                }] : filteredCategories.map(category => ({
-                                    'Reg Categories': category.categoryName,
-                                    'Action': (
-                                        <div style={{ display: "flex", gap: "0.5em" }}>
-
-                                            <DeletePopup />
-                                        </div>
-                                    )
-                                }))}
-                            />
-                        )}
                     </div>
                 </div>
                 <div className="reg-product-bodycontainer">
@@ -490,6 +488,7 @@ const handleSave = async () => {
                     </div>
                 </div>
 
+                
               <div className="product-discount-section">
                     <div className="discount-filter-container">
                          <h3 className="product-discount-title">Registered Product's Discount</h3>

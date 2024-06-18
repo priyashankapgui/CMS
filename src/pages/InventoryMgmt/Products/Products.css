@@ -53,7 +53,7 @@
   gap: 0.625em;
   width: 100%;
   height: fit-content;
-  margin-bottom: 1.25em;
+  margin-bottom: 20px;
 }
 
 .create-product-category-top {
@@ -68,7 +68,6 @@
   padding: 0.9375em;
   margin-bottom: 1.25em;
 }
-
 
 
 .product-discount-section {
