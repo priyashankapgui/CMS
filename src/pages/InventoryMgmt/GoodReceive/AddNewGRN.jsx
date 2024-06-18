@@ -239,7 +239,7 @@ export function AddNewGRN() {
                 </div>
             </div>
             <Layout>
-                <div className="addNewGRN-bodycontainer">
+                <div className="AddNewGRN-bodycontainer">
                     <div className="new-grn-filter-container">
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
@@ -265,7 +265,7 @@ export function AddNewGRN() {
                             />
                         </div>
                     </div>
-                    <div className="GRN-content-middle">
+                    <div className="grn-content-middle">
                         <table className="grn-container-table">
                             <thead>
                                 <tr>

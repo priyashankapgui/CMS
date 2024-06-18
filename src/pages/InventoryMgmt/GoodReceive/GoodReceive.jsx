@@ -37,17 +37,19 @@ export const GoodReceive = () => {
     const navigate = useNavigate();
 
     const { GRN_NO } = useParams();
+    const [selectedGRN_NO, setSelectedGRN_NO] = useState(null);
     //const selectedGRNData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
 
-
-    const handleReprintClick = () => {
-        console.log("Reprint button clicked");
+    const handleReprintClick = (grnNo) => {
+        console.log("Reprint button clicked for GRN No:", grnNo);
+        setSelectedGRN_NO(grnNo);
         setShowRefundReceipt(true);
     };
 
     const handleCloseRefundReceipt = () => {
         setShowRefundReceipt(false);
+        setSelectedGRN_NO(null);
     };
 
     useEffect(() => {
@@ -71,7 +73,7 @@ export const GoodReceive = () => {
     
         try {
             let response;
-            if (user.role === 'superadmin') {
+            if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/grn');
             } else if (user.branchName) {
                 response = await axios.get(`http://localhost:8080/grn-branch?branchName=${user.branchName}`);
@@ -199,6 +201,7 @@ export const GoodReceive = () => {
             productId: '',
             supplierId: ''
         });
+        window.location.reload();
     };
 
     const handleNewButtonClick = () => {
@@ -327,7 +330,7 @@ export const GoodReceive = () => {
                                                 type="submit"
                                                 name={`printBtn-${index}`}
                                                 icon={<RiPrinterFill />}
-                                                onClick={handleReprintClick}
+                                                onClick={() => handleReprintClick(grn.GRN_NO)}
                                             />
                                         </div>
                                     )
@@ -338,7 +341,12 @@ export const GoodReceive = () => {
                 </div>
             </Layout>
             {showRefundReceipt && (
-                <GrnDoc  onClose={handleCloseRefundReceipt} />
+                <div className="grn-doc-popup">
+                    <GrnDoc
+                        GRN_NO={selectedGRN_NO}
+                        onClose={handleCloseRefundReceipt}
+                    />
+                </div>
             )}
         </>
     );
