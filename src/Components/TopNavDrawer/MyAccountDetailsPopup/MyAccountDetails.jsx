@@ -313,12 +313,12 @@ function MyAccountDetails() {
                 </div>
                 <Buttons
                   type="submit"
-                  id="save-btn"
+                  id="update-btn"
                   btnWidth="22em"
                   style={{ backgroundColor: "#23A3DA", color: "white" }}
                   onClick={handleUpdate}
                 >
-                  Save
+                  Update
                 </Buttons>
               </div>
             )}

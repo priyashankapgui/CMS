@@ -67,7 +67,7 @@ function AddNewCategoryPopup() {
                     onClose={() => setAlertVisible(false)}
                 />
             )}
-            <AddNewPopup topTitle="Add New Category" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
+            <AddNewPopup topTitle="Add New Category" buttonId="create-btn" buttonText="Create" onClick={handleSave}>
                 <div style={{ display: 'block', width: '100%' }}>
                     <div>
                         <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
