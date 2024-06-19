@@ -3,6 +3,7 @@ import Layout from '../../Layout/Layout';
 import Buttons from '../../Components/Buttons/SquareButtons/Buttons';
 import { IoIosArrowDropdown, IoIosArrowDropup, IoMdCreate, IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
 import InputLabel from '../../Components/Label/InputLabel';
+import BranchDropdown from '../../Components/InputDropdown/BranchDropdown';
 import InputDropdown from '../../Components/InputDropdown/InputDropdown';
 import DatePicker from '../../Components/DatePicker/DatePicker';
 import './WebFeedbacks.css';
@@ -14,12 +15,12 @@ export const WebFeedbacks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 6; // Number of rows to display per page
     const feedbackApiUrl = 'http://localhost:8080/feedback';
-    const branchApiUrl = 'http://localhost:8080/branches';
+    const branchApiUrl = 'http://localhost:8080/branchesWeb';
 
     const [rows, setRows] = useState([]);
     const [branchOptions, setBranchOptions] = useState([]);
     const [filters, setFilters] = useState({
-        branch: { branchName: 'All' },
+        branch: 'All',
         toDate: '',
         fromDate: '',
         actionType: 'All',
@@ -31,8 +32,8 @@ export const WebFeedbacks = () => {
             .then(data => {
                 let filteredData = data;
 
-                if (filters.branch.branchName !== 'All') {
-                    filteredData = filteredData.filter(row => row.branch === filters.branch.branchName);
+                if (filters.branch !== 'All') {
+                    filteredData = filteredData.filter(row => row.branch === filters.branch);
                 }
                 if (filters.toDate) {
                     filteredData = filteredData.filter(row => new Date(row.createdAt) <= new Date(filters.toDate));
@@ -134,20 +135,23 @@ export const WebFeedbacks = () => {
         return new Date(dateString).toLocaleString('en-US', options);
     };
 
-    const handleFilterChange = (name, value) => {
-        console.log(value)
-        setFilters({
-            ...filters,
-            [name]: { branchName: value },
-        });
+    const handleFilterChange = (nameOrEvent, value) => {
+        if (typeof nameOrEvent === 'object' && nameOrEvent.target) {
+            // It's an event
+            const { name, value } = nameOrEvent.target;
+            setFilters({
+                ...filters,
+                [name]: value,
+            });
+        } else {
+            // It's a direct value
+            const name = nameOrEvent;
+            setFilters({
+                ...filters,
+                [name]: value,
+            });
+        }
     };
-
-    // const handleDateChange = (name, date) => {
-    //     setFilters({
-    //         ...filters,
-    //         [name]:{toDate: date.toISOString().slice(0, 10) },
-    //     });
-    // };
 
     const handleDateChange = (name, date) => {
         setFilters({
@@ -155,7 +159,6 @@ export const WebFeedbacks = () => {
             [name]: date.toISOString().slice(0, 10),
         });
     };
-    
 
     const handleSearch = () => {
         fetchFeedbacks();
@@ -163,7 +166,7 @@ export const WebFeedbacks = () => {
 
     const handleClear = () => {
         setFilters({
-            branch: { branchName: 'All' },
+            branch: 'All',
             toDate: '',
             fromDate: '',
             actionType: 'All',
@@ -182,14 +185,15 @@ export const WebFeedbacks = () => {
                         <div className="Feed-top-Content">
                             <div className="branchField">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <InputDropdown
+                                <BranchDropdown
                                     id="branchName"
-                                    name="branch"
+                                    name="branchName"
                                     editable={true}
-                                    options={branchOptions.map(branch => branch.branchName)}
-                                    value={(filters.branch && filters.branch.branchName) || ''}
-                                    onChange={(e) => handleFilterChange(e.target.name, e.target.value)}
-                                    />
+                                    options={['All', ...branchOptions.map(branch => branch.branchName)]}
+                                    value={filters.branch || 'All'} // Set 'All' as the default value if filters.branch is falsy
+                                    onChange={handleFilterChange}
+                                />
+
                             </div>
                             <div className="dateField">
                                 <InputLabel htmlFor="to-date" color="#0377A8">To</InputLabel>
@@ -209,15 +213,15 @@ export const WebFeedbacks = () => {
                                     onChange={(date) => handleDateChange('fromDate', date)}
                                 />
                             </div>
-                            <div className="actionTypeField">
-                                <InputLabel htmlFor="actionType" color="#0377A8">Action Type</InputLabel>
+                            <div className="actionField">
+                                <InputLabel htmlFor="actionType" color="#0377A8">Action</InputLabel>
                                 <InputDropdown
                                     id="actionType"
                                     name="actionType"
                                     editable={true}
                                     options={['All', 'Taken', 'Pending']}
                                     value={filters.actionType}
-                                    onChange={(e) => handleFilterChange('actionType', e.target.value)}
+                                    onChange={handleFilterChange}
                                 />
                             </div>
                         </div>
