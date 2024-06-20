@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import secureLocalStorage from "react-secure-storage";
 import Layout from '../../Layout/Layout';
 import Buttons from '../../Components/Buttons/SquareButtons/Buttons';
 import { IoIosArrowDropdown, IoIosArrowDropup, IoMdCreate, IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
@@ -25,6 +26,11 @@ export const WebFeedbacks = () => {
         fromDate: '',
         actionType: 'All',
     });
+    const [userDetails, setUserDetails] = useState({
+        username: "",
+        userID: "",
+    });
+    
 
     const fetchFeedbacks = useCallback(() => {
         fetch(feedbackApiUrl)
@@ -84,11 +90,14 @@ export const WebFeedbacks = () => {
                 return {
                     ...row,
                     action: actionSummary.trim() === '' ? 'Pending' : 'Taken',
-                    actionTakenBy: actionSummary.trim() === '' ? '' : 'User',
+                    actionTakenBy: actionSummary.trim() === '' ? '' : userDetails.username,
                     actionTakenAt: actionSummary.trim() === '' ? '' : currentDate,
                     actionSummary: actionSummary.trim(),
                     lastUpdated: currentDate,
+                    
+                    
                 };
+                console.console.log();
             }
             return row;
         });
@@ -97,12 +106,16 @@ export const WebFeedbacks = () => {
 
         try {
             const response = await fetch(`${feedbackApiUrl}/${feedbackId}`, {
+                
                 method: 'PUT',
+            
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedRow),
+                
             });
+            console.log();
 
             if (!response.ok) {
                 throw new Error('Failed to update feedback');
@@ -174,6 +187,18 @@ export const WebFeedbacks = () => {
         fetchFeedbacks();
     };
 
+    useEffect(() => {
+        // Fetch user details from secure local storage
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+          const user = JSON.parse(userJSON);
+          setUserDetails({
+            username: user?.userName || user?.employeeName || "",
+            userID: user?.userID || user?.employeeId || "",
+          });
+        }
+      }, []); // Empty dependency array ensures this effect runs only once
+
     return (
         <>
             <div className="top-nav-blue-text">
@@ -183,6 +208,7 @@ export const WebFeedbacks = () => {
                 <div className="feedbackBodyBackground">
                     <div className="feedback-filter-container">
                         <div className="Feed-top-Content">
+                            
                             <div className="branchField">
                                 <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
                                 <BranchDropdown
@@ -193,7 +219,6 @@ export const WebFeedbacks = () => {
                                     value={filters.branch || 'All'} // Set 'All' as the default value if filters.branch is falsy
                                     onChange={handleFilterChange}
                                 />
-
                             </div>
                             <div className="dateField">
                                 <InputLabel htmlFor="to-date" color="#0377A8">To</InputLabel>
@@ -255,7 +280,7 @@ export const WebFeedbacks = () => {
                                             <td>{row.branch}</td>
                                             <td>{formatDate(row.createdAt)}</td>
                                             <td>{row.action}</td>
-                                            <td>{row.actionTakenBy}</td>
+                                            <td>{row.  actionTakenBy}</td>
                                             <td>{formatDate(row.updatedAt)}</td>
                                         </tr>
                                         {openRowIndex === row.feedbackId && (
