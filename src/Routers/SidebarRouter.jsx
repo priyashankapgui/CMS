@@ -33,6 +33,7 @@ import Completed from '../pages/InventoryMgmt/StockTransfer/completed';
 import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
 import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
+import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
 
 
 export function SidebarRouter() {
@@ -81,7 +82,6 @@ export function SidebarRouter() {
         <Route path="/stock-transfer/OUT/cancelled/:STN_NO" element={<ReceivingCancelled/>} />
         <Route path="/stock-transfer/receiving/:STN_NO" element={<StockTransferReceiving />} />
         <Route path="/stock-transfer/OUT/raised/:STN_NO" element={<ReceivingRaised />} />
-        <Route path="/stock-transfer/OUT" element={<StockTransferOUT />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="web-feedback" />}>
@@ -89,7 +89,7 @@ export function SidebarRouter() {
       </Route>
 
       <Route element={<ProtectedRoute groupName="stock-balance" />}>
-        <Route path="/stock-balance" element={<StockBalance />} />
+        <Route path="/stock-balance" element={<StockBalanceMain />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="check-price" />}>

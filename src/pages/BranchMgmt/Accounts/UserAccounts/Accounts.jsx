@@ -12,6 +12,7 @@ import { Icon } from "@iconify/react";
 import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
+import secureLocalStorage from "react-secure-storage";
 
 export function Accounts() {
   const [clickedLink, setClickedLink] = useState("Users");
@@ -23,7 +24,7 @@ export function Accounts() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
-  const currentUser = JSON.parse(sessionStorage.getItem('user'));
+  const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
   const branchDropdownRef = useRef(null);
   const roleDropdownRef = useRef(null);
 
@@ -31,7 +32,7 @@ export function Accounts() {
     const getEmployeeData = async () => {
       try {
         setLoading(true); // Set loading to true before fetching data
-        const token = sessionStorage.getItem("accessToken");
+        const token = secureLocalStorage.getItem("accessToken");
         const response = await fetch("http://localhost:8080/employees", {
           method: "GET",
           headers: {
@@ -76,7 +77,7 @@ export function Accounts() {
   const handleCheck = (employeeId, editRole, editBranch) => {
     setShowAlert(false);
     console.log("Employee ID:", employeeId, "Branch:", editBranch);
-    const user = JSON.parse(sessionStorage.getItem("user"));
+    const user = JSON.parse(secureLocalStorage.getItem("user"));
     if (user.role === "superadmin" || user.branchName === editBranch) {
       window.location.href = `/accounts/update-account?employeeId=${employeeId}`;
     } else {
@@ -91,7 +92,7 @@ export function Accounts() {
 
   const handleDelete = async (employeeId) => {
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
       if (!employeeId) {
         console.error("employeeId is undefined");
         return;

@@ -5,6 +5,7 @@ import InputField from '../../../../Components/InputField/InputField';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import secureLocalStorage from 'react-secure-storage';
 
 
 
@@ -29,7 +30,7 @@ function UpdateUserRolePopup({userRoleId}) {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                        'Authorization': 'Bearer ' + secureLocalStorage.getItem('accessToken') || '',
                     },
                 }
                 );
@@ -101,7 +102,7 @@ function UpdateUserRolePopup({userRoleId}) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + sessionStorage.getItem('accessToken') || '',
+                Authorization: 'Bearer ' + secureLocalStorage.getItem('accessToken') || '',
             },
             body: JSON.stringify({
                 userRoleName: roleName,

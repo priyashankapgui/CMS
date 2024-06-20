@@ -7,19 +7,24 @@ import { IoChevronBackCircleOutline } from "react-icons/io5";
 import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; // Import the spinner
 
 export function ViewGRN() {
     const { GRNNo } = useParams();
     const [GRNData, setGRNData] = useState(null);
+    const [loading, setLoading] = useState(true); // Add loading state
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchGRNData = async () => {
             try {
+                setLoading(true); // Start loading
                 const response = await axios.get(`http://localhost:8080/grn-all?GRN_NO=${GRNNo}`);
                 setGRNData(response.data.data);
             } catch (error) {
                 console.error("Error fetching GRN data:", error);
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
 
@@ -69,35 +74,41 @@ export function ViewGRN() {
                 </div>
             </div>
             <Layout>
-                <div className="viewNewGRN-bodycontainer">
-                    <div className="view-grn-filter-container">
-                        <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
-                            <div className="data-box">
-                                <span>{GRNData?.branchName}</span>
-                            </div>
-                        </div>
+                <div className="ViewNewGRN-bodycontainer">
+                    {loading ? (
+                        <div className="loading-container"><SubSpinner /></div> // Show spinner while loading
+                    ) : (
+                        <>
+                            <div className="view-grn-filter-container">
+                                <div className="branchField">
+                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
+                                    <div className="viewGRNdata-box">
+                                        <span>{GRNData?.branchName}</span>
+                                    </div>
+                                </div>
 
-                        <div className="InvoiceNoField">
-                            <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>
-                            <div className="data-box">
-                                <span>{GRNData?.invoiceNo}</span>
+                                <div className="InvoiceNoField">
+                                    <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>
+                                    <div className="viewGRNdata-box">
+                                        <span>{GRNData?.invoiceNo}</span>
+                                    </div>
+                                </div>
+                                <div className="SupplierField">
+                                    <InputLabel htmlFor="supplierName" color="#0377A8">Supplier ID / Name</InputLabel>
+                                    <div className="viewGRNdata-box">
+                                        <span>{GRNData?.supplierName}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="SupplierField">
-                            <InputLabel htmlFor="supplierName" color="#0377A8">Supplier ID / Name</InputLabel>
-                            <div className="data-box">
-                                <span>{GRNData?.supplierName}</span>
+                            <div className="ViewGRN-content-middle">
+                                <TableWithPagi rows={rows} columns={columns} />
                             </div>
-                        </div>
-                    </div>
-                    <div className="GRN-content-middle">
-                        <TableWithPagi rows={rows} columns={columns} />
-                    </div>
-                    <div className="Grn-BtnSection">
-                        <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
-                        <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
-                    </div>
+                            <div className="Grn-BtnSection">
+                                <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
+                                <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
+                            </div>
+                        </>
+                    )}
                 </div>
             </Layout>
         </>

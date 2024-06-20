@@ -33,7 +33,7 @@ export const StockTransferReceiving = () => {
     }, [STN_NO]);
 
     const handleButtonClick = () => {
-        navigate('/stock-transfer/OUT');
+        navigate('/stock-transfer');
     };
 
     const handleSave = async () => {
@@ -88,7 +88,7 @@ export const StockTransferReceiving = () => {
         <>
             <div className="top-nav-blue-text">
             <div className="stockReceiving-top-link">
-                    <Link to="/stock-transfer/OUT">
+                    <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>Stock Transfer - Receiving Completed</h4>
@@ -96,40 +96,40 @@ export const StockTransferReceiving = () => {
                 
             </div>
             <Layout>
-                <div className="viewNewGRN-bodycontainer">
-                    <div className="view-grn-filter-container">
+                <div className="stockReceiving-bodycontainer">
+                    <div className="stockReceiving-filter-container">
                         <div className="StockTransferField">
                             <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
-                            <div className="data-box">
+                            <div className="stockReceivingdata-box">
                                 <span>{stockTransferDetails?.STN_NO}</span>
                             </div>
                         </div>
                         <div className="RequestedBranchField">
                             <InputLabel htmlFor="requestedBranch" color="#0377A8">Requested Branch</InputLabel>
-                            <div className="data-box">
+                            <div className="stockReceivingdata-box">
                                 <span>{stockTransferDetails?.requestBranch}</span>
                             </div>
                         </div>
                         <div className="SupplyingBranchField">
                             <InputLabel htmlFor="supplyingBranch" color="#0377A8">Supplying Branch</InputLabel>
-                            <div className="data-box">
+                            <div className="stockReceivingdata-box">
                                 <span>{stockTransferDetails?.supplyingBranch}</span>
                             </div>
                         </div>
                         <div className="RequestedByField">
                             <InputLabel htmlFor="requestedBy" color="#0377A8">Requested By</InputLabel>
-                            <div className="data-box">
+                            <div className="stockReceivingdata-box">
                                 <span>{stockTransferDetails?.requestedBy}</span>
                             </div>
                         </div>
                         <div className="SubmittedByField">
                             <InputLabel htmlFor="submittedBy" color="#0377A8">Submitted By</InputLabel>
-                            <div className="data-box">
+                            <div className="stockReceivingdata-box">
                                 <span>{stockTransferDetails?.submittedBy}</span>
                             </div>
                         </div>
                     </div>
-                    <div className="GRN-content-middle">
+                    <div className="stockReceiving-content-middle">
                         {stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
@@ -143,7 +143,7 @@ export const StockTransferReceiving = () => {
                             <p>No products available</p>
                         )}
                     </div>
-                    <div className="Grn-BtnSection">
+                    <div className="stockReceiving-BtnSection">
                         <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>

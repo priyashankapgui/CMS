@@ -4,12 +4,13 @@ import { Icon } from '@iconify/react';
 import './TopNav.css';
 import MyAccountDetails from '../MyAccountDetailsPopup/MyAccountDetails';
 import LogoutPopup from '../LogoutPopup/LogoutPopup';
+import secureLocalStorage from 'react-secure-storage';
 
 const TopNav = ({ showSidebar }) => {
   const [logoutPopupOpen, setLogoutPopupOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const currentUser = JSON.parse(sessionStorage.getItem('user'));
+  const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
 
   const openLogoutPopup = () => setLogoutPopupOpen(true);
   const closeLogoutPopup = () => setLogoutPopupOpen(false);

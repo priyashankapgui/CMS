@@ -10,6 +10,7 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { FiPlus } from "react-icons/fi"; // Import all icons
 import { AiOutlineDelete } from "react-icons/ai";
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
 
 export const StockTransferIssuing = () => {
@@ -18,11 +19,13 @@ export const StockTransferIssuing = () => {
 
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
     const [rows, setRows] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [submittedBy, setSubmittedBy] = useState(""); // Assuming you have a way to get the currently logged in user
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
+                
                 const response = await axios.get(`http://localhost:8080/stock-transferDetails/${STN_NO}`);
                 setStockTransferDetails(response.data.data);
                 const products = response.data.data.products.map((product, index) => ({
@@ -35,8 +38,11 @@ export const StockTransferIssuing = () => {
                     amount: 0,
                 }));
                 setRows(products);
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching stock transfer details:", error);
+            }finally {
+                setLoading(false);
             }
         };
 

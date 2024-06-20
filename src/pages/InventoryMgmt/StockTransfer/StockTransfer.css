@@ -44,58 +44,39 @@
 }
 
 .stockTransfer-content-middle {
-    padding: 0.9375em;
+    padding: 0.5375em;
     height: fit-content;
-}
+} 
 
-.linkActions- {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 0.625em;
-}
 
-.linkActions- div a {
-    color: black;
-    text-decoration: none;
-    font-weight: 400;
-}
 
-.linkActions- div a:hover {
-    color: rgba(19, 86, 112, 0.8);
-}
-
-.linkActions- div.clicked a {
-    color: #0377A8;
-    text-decoration: underline;
-    font-weight: bold;
-}
-
-.stcockTransferTabs {
+.stockTransferTabs {
     height: 100%;
+    
 }
 
-.transfer-statusTab {
+.transferStatusTab {
     display: flex;
     gap: 15px;
     padding: 20px 0;
 }
 
-.transfer-statusTab .react-tabs__tab {
+.transferStatusTab .react-tabs__tab {
     padding: 3px 20px;
     cursor: pointer;
     background-color: #fefefe;
     border: none;
-    border-bottom: 2px solid transparent; 
-    border-radius: 0; 
-    color: initial; 
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: initial;
     transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
-.transfer-statusTab .react-tabs__tab--selected {
+.transferStatusTab .react-tabs__tab--selected {
     color: rgb(35, 163, 218);
-    border-bottom: 2px solid rgb(35, 163, 218); 
+    border-bottom: 2px solid rgb(35, 163, 218);
 }
 
-.transfer-statusTab .react-tabs__tab:hover {
+.transferStatusTab .react-tabs__tab:hover {
     color: rgb(35, 163, 218);
 }
