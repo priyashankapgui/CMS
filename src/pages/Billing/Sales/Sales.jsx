@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Sales.css";
 import InputField from "../../../Components/InputField/InputField";
@@ -14,6 +14,13 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'
+import secureLocalStorage from "react-secure-storage";
+import SalesReceipt from '../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
+
+const productByBarcodeUrl = process.env.REACT_APP_PRODUCTS_BY_BARCODE_API;
+const productByBranchUrl = process.env.REACT_APP_PRODUCTS_BY_BRANCH_API;
+const sendBillDataUrl = process.env.REACT_APP_SENDBILL_DATA_API;
+
 
 export const Sales = () => {
 
@@ -24,6 +31,7 @@ export const Sales = () => {
     const [receivedAmount, setReceivedAmount] = useState('');
     const [balance, setBalance] = useState(0);
     const [noItems, setNoItems] = useState(0);
+    const [discountBillRate, setDiscountBillRate] = useState(0);
     const [alert, setAlert] = useState({
         severity: '',
         title: '',
@@ -31,17 +39,67 @@ export const Sales = () => {
         open: false
     });
     const [loading, setLoading] = useState(false);
+    const [billNo, setBillNo] = useState(null);
+    const [showSalesReceipt, setShowSalesReceipt] = useState(false);
+    const [userDetails, setUserDetails] = useState({
+        username: ""
+    });
+
+    const calculateTotals = useCallback(() => {
+        let totalGross = 0;
+        let totalNet = 0;
+        let itemCount = 0;
+
+        rows.forEach((row) => {
+            const { billQty = 0, sellingPrice = 0, discount = 0 } = row.productDetails;
+            const amount = billQty * sellingPrice * (1 - discount / 100);
+            row.productDetails.amount = amount.toFixed(2);
+
+            totalGross += billQty * sellingPrice;
+            totalNet += amount;
+            if (billQty > 0) itemCount++;
+        });
+
+        setGrossTotal(totalGross.toFixed(2));
+        setNetTotal(totalNet.toFixed(2));
+        setNoItems(itemCount);
+
+        if (discountBillRate > 0) {
+            const additionalDiscount = totalNet * (discountBillRate / 100);
+            const newNetTotal = totalNet - additionalDiscount;
+
+            setNetTotal(newNetTotal.toFixed(2));
+        }
+
+        const calculatedBalance = receivedAmount - netTotal;
+        setBalance(calculatedBalance.toFixed(2));
+    }, [rows, discountBillRate, receivedAmount, netTotal]);
+
     useEffect(() => {
         calculateTotals();
-    }, [rows]);
+    }, [rows, discountBillRate, receivedAmount, calculateTotals]);
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+    }, []);
 
     const handleBranchDropdownChange = (value) => {
         setSelectedBranch(value);
     };
 
     const fetchProductsSuggestions = async (searchTerm) => {
+        if (!selectedBranch) {
+            console.error('Branch not selected');
+            return [];
+        }
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-branch?searchTerm=${searchTerm}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBranchUrl}?searchTerm=${searchTerm}&branchName=${selectedBranch}`);
             const productMap = new Map();
 
             response.data.forEach((product) => {
@@ -65,7 +123,7 @@ export const Sales = () => {
 
     const handleProductSelection = async (suggestion, rowIndex) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-branch?searchTerm=${suggestion.productId}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBranchUrl}?searchTerm=${suggestion.productId}&branchName=${selectedBranch}`);
             const productData = response.data;
 
             const updatedRows = [...rows];
@@ -93,7 +151,7 @@ export const Sales = () => {
 
     const fetchProductsByBarcode = async (barcode, rowIndex) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-barcode?barcode=${barcode}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBarcodeUrl}?barcode=${barcode}&branchName=${selectedBranch}`);
             if (response.data.length > 0) {
                 const product = response.data[0];
                 const updatedRows = [...rows];
@@ -175,27 +233,37 @@ export const Sales = () => {
 
     const handleQtyChange = (e, rowIndex) => {
         const billQty = parseFloat(e.target.value) || 0;
-        const updatedRows = [...rows];
-        updatedRows[rowIndex].productDetails.billQty = billQty;
+        const { totalAvailableQty } = rows[rowIndex].productDetails;
 
-        const { sellingPrice = 0, discount = 0, totalAvailableQty = 0 } = updatedRows[rowIndex].productDetails;
+        if (billQty < 0) {
+            console.error('Bill Qty cannot be negative.');
+            return;
+        }
 
-        // Check if billQty exceeds totalAvailableQty
         if (billQty > totalAvailableQty) {
+            console.error('Bill Qty cannot exceed available quantity.');
             setAlert({
                 severity: 'error',
                 title: 'Invalid Quantity',
                 message: 'Billing quantity cannot exceed available quantity.',
                 open: true
             });
-            // Reset billQty to totalAvailableQty
-            updatedRows[rowIndex].productDetails.billQty = totalAvailableQty;
-        } else {
-            const amount = billQty * sellingPrice * (1 - discount / 100);
-            updatedRows[rowIndex].productDetails.amount = amount.toFixed(2);
+            return;
         }
 
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].productDetails.billQty = billQty;
+
+        const { sellingPrice = 0, discount = 0 } = updatedRows[rowIndex].productDetails;
+        const amount = billQty * sellingPrice * (1 - discount / 100);
+        updatedRows[rowIndex].productDetails.amount = amount.toFixed(2);
+
         setRows(updatedRows);
+    };
+
+    const handleDiscountRateChange = (e) => {
+        const rate = parseFloat(e.target.value) || 0;
+        setDiscountBillRate(rate);
     };
 
 
@@ -211,66 +279,34 @@ export const Sales = () => {
         if (isInvalid) {
             setAlert({
                 severity: 'warning',
-                title: 'Please fill the required fields',
-                message: 'Barcode or Product Name, Bill Qty, Available Qty, and Selling Price are required.',
+                title: 'Warning',
+                message: 'Please fill the required fields',
                 open: true
             });
         } else {
             setRows([...rows, createEmptyRow()]);
         }
     };
-
-    const deleteRow = (rowIndex) => {
-        if (rowIndex === 0) {
-            clearRow(rowIndex);
+    const deleteRow = (index) => {
+        if (rows.length > 1) {
+            const updatedRows = [...rows];
+            updatedRows.splice(index, 1);
+            setRows(updatedRows);
         } else {
-            setRows(rows.filter((_, index) => index !== rowIndex));
+            clearRow(0);
         }
     };
 
-    const clearRow = (rowIndex) => {
+    const clearRow = (index) => {
         const updatedRows = [...rows];
-        updatedRows[rowIndex] = createEmptyRow();
+        updatedRows[index] = createEmptyRow();
         setRows(updatedRows);
     };
 
-    const calculateTotals = () => {
-        let total = 0;
-        let itemCount = 0;
-
-        rows.forEach((row) => {
-            if (row.productDetails.amount) {
-                total += parseFloat(row.productDetails.amount);
-                itemCount++;
-            }
-        });
-
-        setGrossTotal(total.toFixed(2));
-        setNoItems(itemCount);
-        calculateNetTotal(total);
-    };
-
-    const calculateNetTotal = (total) => {
-        if (total === 0) {
-            setNetTotal(0);
-        } else {
-            const discountPercentage = parseFloat(document.getElementById('discountBillRate').value) || 0;
-            const net = total - (total * discountPercentage / 100);
-            setNetTotal(net.toFixed(2));
-        }
-    };
-
     const handleReceivedAmountChange = (e) => {
-        const received = parseFloat(e.target.value) || 0;
-        setReceivedAmount(received);
-        calculateBalance(received);
+        const amount = parseFloat(e.target.value) || 0;
+        setReceivedAmount(amount);
     };
-
-    const calculateBalance = (received) => {
-        const balanceAmount = received - parseFloat(netTotal);
-        setBalance(balanceAmount.toFixed(2));
-    };
-
     function createEmptyRow() {
         return {
             selectedProduct: '',
@@ -294,12 +330,11 @@ export const Sales = () => {
             open: false
         });
     };
-
     const handleSave = async () => {
         const customerNameElement = document.getElementById('customerName');
         const contactNoElement = document.getElementById('contactNo');
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const receivedAmountElement = document.getElementById('receivedAmount');
 
         if (netTotal > 0 && !paymentMethodElement) {
             setAlert({
@@ -309,7 +344,7 @@ export const Sales = () => {
                 open: true
             });
             return;
-        } else if (paymentMethodElement && !receivedAmount) {
+        } else if (paymentMethodElement && !receivedAmountElement.value) {
             setAlert({
                 severity: 'warning',
                 title: 'Received Amount Missing',
@@ -317,15 +352,24 @@ export const Sales = () => {
                 open: true
             });
             return;
+        } else if (parseFloat(receivedAmountElement.value) < parseFloat(netTotal)) {
+            setAlert({
+                severity: 'warning',
+                title: 'Received Amount Error',
+                message: 'Received amount cannot be less than Net Total',
+                open: true
+            });
+            return;
         }
 
-        const payload = {
+        const data = {
             branchName: selectedBranch,
             customerName: customerNameElement ? customerNameElement.value : '',
             contactNo: contactNoElement ? contactNoElement.value : '',
             paymentMethod: paymentMethodElement.value,
-            billedBy: user.userName,
+            billedBy: userDetails.username,
             billTotalAmount: parseFloat(netTotal) || 0,
+            receivedAmount: parseFloat(receivedAmountElement.value) || 0,
             products: rows.map(row => ({
                 productId: row.productDetails.productId,
                 barcode: row.productDetails.barcode,
@@ -336,29 +380,32 @@ export const Sales = () => {
                 amount: parseFloat(row.productDetails.amount) || 0,
             }))
         };
-
+        console.log("Backend Data:", data);
         setLoading(true);
-        try {
-            const response = await axios.post('http://localhost:8080/bills', payload);
 
-            if (response.status === 200) {
+        try {
+            const response = await axios.post(sendBillDataUrl, data);
+            console.log('API Response:', response);
+
+            if (response.status === 200 && response.data.success) {
                 setAlert({
                     severity: 'success',
                     title: 'Success',
-                    message: 'Bill generated successfully!',
+                    message: 'Data saved successfully!',
                     open: true
                 });
 
-                resetForm(); // Reset the form to allow new entries
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
+                const billNo = response.data.data.newBill.billNo;
+                setBillNo(billNo);
+                setShowSalesReceipt(true);
+                resetForm();
+                console.log('Bill number set:', billNo);
 
             } else {
                 setAlert({
                     severity: 'error',
                     title: 'Error',
-                    message: 'Error saving bill data!',
+                    message: 'Error saving data!',
                     open: true
                 });
             }
@@ -374,14 +421,32 @@ export const Sales = () => {
             setLoading(false);
         }
     };
+
+
     const resetForm = () => {
-        setSelectedBranch('');
         setRows([createEmptyRow()]);
         setGrossTotal(0);
         setNetTotal(0);
         setReceivedAmount('');
         setBalance(0);
         setNoItems(0);
+        setDiscountBillRate(0);
+
+        // Clear customerName and contactNo fields
+        const customerNameElement = document.getElementById('customerName');
+        if (customerNameElement) customerNameElement.value = '';
+
+        const contactNoElement = document.getElementById('contactNo');
+        if (contactNoElement) contactNoElement.value = '';
+        // Clear payment method radio buttons
+        const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethodElements.forEach(element => {
+            element.checked = false;
+        });
+
+        // Recalculate totals
+        calculateTotals();
+
     };
 
     const handleClear = () => {
@@ -393,14 +458,27 @@ export const Sales = () => {
             message: 'Payment container data cleared',
             open: true
         });
+
+        // Clear discount related fields
+        setDiscountBillRate(0);
+
+        // Clear discount rate input field
         const discountBillRateElement = document.getElementById('discountBillRate');
         if (discountBillRateElement) discountBillRateElement.value = '';
+
+        // Clear payment method radio buttons
         const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
         paymentMethodElements.forEach(element => {
             element.checked = false;
         });
+
+        // Recalculate totals
+        calculateTotals();
     };
 
+    const handleCloseReceipt = () => {
+        setShowSalesReceipt(false);
+    };
 
     return (
         <>
@@ -423,6 +501,7 @@ export const Sales = () => {
                     </div>
                 )}
                 <div className="salesBody">
+                    {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
                     <div className="sales-top-content">
                         <div className="branchName">
                             <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
@@ -581,7 +660,7 @@ export const Sales = () => {
                             <div className="paymentContainerWrapper">
                                 <div className="paymentContainer">
                                     <div className="payment-method-top">
-                                        <h3>Select Payment Method</h3>
+                                        <h3>Select Payment Method<span style={{ color: 'red' }}>*</span></h3>
                                         <InputRadio
                                             name="paymentMethod"
                                             options={[
@@ -613,7 +692,7 @@ export const Sales = () => {
                                                                 editable={true}
                                                                 placeholder="%"
                                                                 width="3em"
-                                                                onChange={() => calculateNetTotal(grossTotal)}
+                                                                onChange={handleDiscountRateChange}
                                                             />
                                                             <InputField
                                                                 type="text"
