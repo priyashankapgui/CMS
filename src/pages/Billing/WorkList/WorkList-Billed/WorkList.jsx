@@ -13,34 +13,40 @@ import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButto
 
 export const WorkList = () => {
     const [clickedLink, setClickedLink] = useState('Billed');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState(new Date()); // Initialize with current date
+    const [endDate, setEndDate] = useState(new Date()); // Initialize with current date
     const [selectedBranch, setSelectedBranch] = useState('');
     const [billNo, setBillNo] = useState('');
     const [customerName, setCustomerName] = useState('');
 
     const [error, setError] = useState(null);
     const [billProduct, setBillProduct] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/bills');
-                console.log("Bill Data", response)
-                if (response.data && response.data.data && Array.isArray(response.data.data)) {
-                    setBillProduct(response.data.data);
-                } else {
-                    setError(new Error("Data format error: response is not an array"));
-                }
-            
-            } catch (error) {
-                setError(error);
-              
-            }
-        };
-
         fetchData();
     }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/bills');
+            if (response.data && response.data.data && Array.isArray(response.data.data)) {
+                setBillProduct(response.data.data);
+
+                // Filter products based on current date after fetching
+                const currentDate = new Date();
+                const filteredData = response.data.data.filter(item => {
+                    const itemDate = new Date(item.createdAt);
+                    return itemDate.setHours(0, 0, 0, 0) === currentDate.setHours(0, 0, 0, 0);
+                });
+                setFilteredProducts(filteredData);
+            } else {
+                setError(new Error("Data format error: response is not an array"));
+            }
+        } catch (error) {
+            setError(error);
+        }
+    };
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -55,11 +61,16 @@ export const WorkList = () => {
     };
 
     const handleClear = () => {
+        const currentDate = new Date();
+        const previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - 1); // Previous date
+
         setSelectedBranch('');
-        setStartDate('');
-        setEndDate('');
+        setStartDate(previousDate); // Set to previous date
+        setEndDate(currentDate); // Set to current date
         setBillNo('');
         setCustomerName('');
+        handleSearch(); // Call handleSearch to update filtered products
     };
 
     const handleBranchDropdownChange = (value) => {
@@ -67,7 +78,55 @@ export const WorkList = () => {
     };
 
     const handleSearch = () => {
-        // Add search functionality here
+        // Normalize the dates to start of the day
+        const normalizeDate = (date) => {
+            const newDate = new Date(date);
+            newDate.setHours(0, 0, 0, 0);
+            return newDate;
+        };
+
+        let filteredProducts = [...billProduct];
+
+        if (selectedBranch) {
+            filteredProducts = filteredProducts.filter(item => item.branchName === selectedBranch);
+        }
+
+        if (startDate && endDate) {
+            const normalizedStartDate = normalizeDate(startDate).getTime();
+            const normalizedEndDate = normalizeDate(endDate).getTime();
+
+            filteredProducts = filteredProducts.filter(item => {
+                const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                return itemDate >= normalizedStartDate && itemDate <= normalizedEndDate;
+            });
+        } else if (startDate) {
+            const normalizedStartDate = normalizeDate(startDate).getTime();
+            filteredProducts = filteredProducts.filter(item => {
+                const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                return itemDate >= normalizedStartDate;
+            });
+        } else if (endDate) {
+            const normalizedEndDate = normalizeDate(endDate).getTime();
+            filteredProducts = filteredProducts.filter(item => {
+                const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                return itemDate <= normalizedEndDate;
+            });
+        }
+
+        if (billNo) {
+            filteredProducts = filteredProducts.filter(item => item.billNo.includes(billNo));
+        }
+
+        if (customerName) {
+            filteredProducts = filteredProducts.filter(item => item.customerName.toLowerCase().includes(customerName.toLowerCase()));
+        }
+
+        // Sort filteredProducts by Billed At date in descending order
+        filteredProducts.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        setFilteredProducts(filteredProducts);
     };
 
     if (error) {
@@ -82,7 +141,7 @@ export const WorkList = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-                <h4>Work List - Billed</h4>
+                <h4>Work List - {clickedLink}</h4>
             </div>
             <Layout>
                 <div className="worklist-filter-container">
@@ -98,11 +157,11 @@ export const WorkList = () => {
                         </div>
                         <div className="dateFieldFrom">
                             <InputLabel htmlFor="from-date" color="#0377A8">From</InputLabel>
-                            <DatePicker onDateChange={handleStartDateChange} />
+                            <DatePicker selectedDate={startDate} onDateChange={handleStartDateChange} />
                         </div>
                         <div className="dateFieldTo">
                             <InputLabel htmlFor="to-date" color="#0377A8">To</InputLabel>
-                            <DatePicker onDateChange={handleEndDateChange} />
+                            <DatePicker selectedDate={endDate} onDateChange={handleEndDateChange} />
                         </div>
                         <div className="billNoField">
                             <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
@@ -131,7 +190,7 @@ export const WorkList = () => {
                     </div>
                     <div className="WorklistBtnSection">
                         <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
-                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}> Clear </Buttons>
+                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={() => { handleClear(); handleSearch(); }}> Clear </Buttons>
                     </div>
                 </div>
                 <div className="worklist-middle">
@@ -161,13 +220,13 @@ export const WorkList = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {Array.isArray(billProduct) && billProduct.length > 0 ? (
-                                billProduct.map((row, index) => (
+                            {Array.isArray(filteredProducts) && filteredProducts.length > 0 ? (
+                                filteredProducts.map((row, index) => (
                                     <tr key={index}>
                                         <td>{row.billNo}</td>
                                         <td>{new Date(row.createdAt).toLocaleString()}</td>
                                         <td>{row.branchName}</td>
-                                        <td>{row.customerName ||'N/A'}</td>
+                                        <td>{row.customerName || 'N/A'}</td>
                                         <td>{row.status}</td>
                                         <td>{row.billedBy}</td>
                                         <td>{row.paymentMethod}</td>

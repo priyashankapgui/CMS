@@ -1,6 +1,5 @@
 import React from 'react';
 import Layout from "../../Layout/Layout";
-import NewSales  from "../../Components/NewSales/NewSales"
 export const WebMgmt = () => {
 
     return (
@@ -9,7 +8,7 @@ export const WebMgmt = () => {
                 <h4>WebMgmt</h4>
             </div>
             <Layout>
-            <NewSales/>
+       
             </Layout>
         </>
     );

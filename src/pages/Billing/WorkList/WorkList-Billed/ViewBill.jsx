@@ -110,7 +110,7 @@ export const ViewBill = () => {
                     <hr />
                     <div>
                         <div className='TotAmountBar-viewbill'>
-                            <h4>Total Amount: <span>Rs. {billTotalAmount}</span></h4>
+                            <h4>Total Amount: <span>Rs. {billTotalAmount.toFixed(2)}</span></h4>
                         </div>
                         <div className="btnSection-viewBill">
                             <div className="returnBtn">

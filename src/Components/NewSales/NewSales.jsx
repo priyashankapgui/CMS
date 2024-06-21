@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SearchBar from '../SearchBar/SearchBar';
 import './NewSales.css';
@@ -13,6 +13,13 @@ import Buttons from '../Buttons/SquareButtons/Buttons';
 import InputRadio from '../InputRadio/InputRadio';
 import CustomAlert from '../Alerts/CustomAlert/CustomAlert';
 import SalesReceipt from '../SalesReceiptTemp/SalesReceipt/SalesReceipt';
+import secureLocalStorage from "react-secure-storage";
+
+
+const productByBarcodeUrl = process.env.REACT_APP_PRODUCTS_BY_BARCODE_API;
+const productByBranchUrl = process.env.REACT_APP_PRODUCTS_BY_BRANCH_API;
+const sendBillDataUrl = process.env.REACT_APP_SENDBILL_DATA_API;
+
 
 function NewSales() {
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -22,6 +29,7 @@ function NewSales() {
     const [receivedAmount, setReceivedAmount] = useState('');
     const [balance, setBalance] = useState(0);
     const [noItems, setNoItems] = useState(0);
+    const [discountBillRate, setDiscountBillRate] = useState(0);
     const [alert, setAlert] = useState({
         severity: '',
         title: '',
@@ -31,20 +39,65 @@ function NewSales() {
     const [loading, setLoading] = useState(false);
     const [billNo, setBillNo] = useState(null);
     const [showSalesReceipt, setShowSalesReceipt] = useState(false);
+    const [userDetails, setUserDetails] = useState({
+        username: ""
+    });
 
+    const calculateTotals = useCallback(() => {
+        let totalGross = 0;
+        let totalNet = 0;
+        let itemCount = 0;
 
+        rows.forEach((row) => {
+            const { billQty = 0, sellingPrice = 0, discount = 0 } = row.productDetails;
+            const amount = billQty * sellingPrice * (1 - discount / 100);
+            row.productDetails.amount = amount.toFixed(2);
+
+            totalGross += billQty * sellingPrice;
+            totalNet += amount;
+            if (billQty > 0) itemCount++;
+        });
+
+        setGrossTotal(totalGross.toFixed(2));
+        setNetTotal(totalNet.toFixed(2));
+        setNoItems(itemCount);
+
+        if (discountBillRate > 0) {
+            const additionalDiscount = totalNet * (discountBillRate / 100);
+            const newNetTotal = totalNet - additionalDiscount;
+
+            setNetTotal(newNetTotal.toFixed(2));
+        }
+
+        const calculatedBalance = receivedAmount - netTotal;
+        setBalance(calculatedBalance.toFixed(2));
+    }, [rows, discountBillRate, receivedAmount, netTotal]);
 
     useEffect(() => {
         calculateTotals();
-    }, [rows]);
+    }, [rows, discountBillRate, receivedAmount, calculateTotals]);
 
-    const handleDropdownChange = (value) => {
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+    }, []);
+
+    const handleBranchDropdownChange = (value) => {
         setSelectedBranch(value);
     };
 
     const fetchProductsSuggestions = async (searchTerm) => {
+        if (!selectedBranch) {
+            console.error('Branch not selected');
+            return [];
+        }
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-branch?searchTerm=${searchTerm}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBranchUrl}?searchTerm=${searchTerm}&branchName=${selectedBranch}`);
             const productMap = new Map();
 
             response.data.forEach((product) => {
@@ -68,7 +121,7 @@ function NewSales() {
 
     const handleProductSelection = async (suggestion, rowIndex) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-branch?searchTerm=${suggestion.productId}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBranchUrl}?searchTerm=${suggestion.productId}&branchName=${selectedBranch}`);
             const productData = response.data;
 
             const updatedRows = [...rows];
@@ -96,7 +149,7 @@ function NewSales() {
 
     const fetchProductsByBarcode = async (barcode, rowIndex) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products-by-barcode?barcode=${barcode}&branchName=${selectedBranch}`);
+            const response = await axios.get(`${productByBarcodeUrl}?barcode=${barcode}&branchName=${selectedBranch}`);
             if (response.data.length > 0) {
                 const product = response.data[0];
                 const updatedRows = [...rows];
@@ -178,6 +231,24 @@ function NewSales() {
 
     const handleQtyChange = (e, rowIndex) => {
         const billQty = parseFloat(e.target.value) || 0;
+        const { totalAvailableQty } = rows[rowIndex].productDetails;
+
+        if (billQty < 0) {
+            console.error('Bill Qty cannot be negative.');
+            return;
+        }
+
+        if (billQty > totalAvailableQty) {
+            console.error('Bill Qty cannot exceed available quantity.');
+            setAlert({
+                severity: 'error',
+                title: 'Invalid Quantity',
+                message: 'Billing quantity cannot exceed available quantity.',
+                open: true
+            });
+            return;
+        }
+
         const updatedRows = [...rows];
         updatedRows[rowIndex].productDetails.billQty = billQty;
 
@@ -188,72 +259,36 @@ function NewSales() {
         setRows(updatedRows);
     };
 
+    const handleDiscountRateChange = (e) => {
+        const rate = parseFloat(e.target.value) || 0;
+        setDiscountBillRate(rate);
+    };
+
     const addRow = () => {
-        const isInvalid = rows.some(row => !row.selectedProduct || !row.productDetails.billQty);
+        const emptyRow = createEmptyRow();
+        setRows([...rows, emptyRow]);
+    };
 
-        if (isInvalid) {
-            setAlert({
-                severity: 'warning',
-                title: 'Please fill the required fields',
-                message: 'Barcode or Product Name and Bill Qty',
-                open: true
-            });
+    const deleteRow = (index) => {
+        if (rows.length > 1) {
+            const updatedRows = [...rows];
+            updatedRows.splice(index, 1);
+            setRows(updatedRows);
         } else {
-            setRows([...rows, createEmptyRow()]);
+            clearRow(0);
         }
     };
 
-    const deleteRow = (rowIndex) => {
-        if (rowIndex === 0) {
-            clearRow(rowIndex);
-        } else {
-            setRows(rows.filter((_, index) => index !== rowIndex));
-        }
-    };
-
-    const clearRow = (rowIndex) => {
+    const clearRow = (index) => {
         const updatedRows = [...rows];
-        updatedRows[rowIndex] = createEmptyRow();
+        updatedRows[index] = createEmptyRow();
         setRows(updatedRows);
     };
 
-    const calculateTotals = () => {
-        let total = 0;
-        let itemCount = 0;
-
-        rows.forEach((row) => {
-            if (row.productDetails.amount) {
-                total += parseFloat(row.productDetails.amount);
-                itemCount++;
-            }
-        });
-
-        setGrossTotal(total.toFixed(2));
-        setNoItems(itemCount);
-        calculateNetTotal(total);
-    };
-
-    const calculateNetTotal = (total) => {
-        if (total === 0) {
-            setNetTotal(0);
-        } else {
-            const discountPercentage = parseFloat(document.getElementById('discountBillRate').value) || 0;
-            const net = total - (total * discountPercentage / 100);
-            setNetTotal(net.toFixed(2));
-        }
-    };
-
     const handleReceivedAmountChange = (e) => {
-        const received = parseFloat(e.target.value) || 0;
-        setReceivedAmount(received);
-        calculateBalance(received);
+        const amount = parseFloat(e.target.value) || 0;
+        setReceivedAmount(amount);
     };
-
-    const calculateBalance = (received) => {
-        const balanceAmount = received - parseFloat(netTotal);
-        setBalance(balanceAmount.toFixed(2));
-    };
-
     function createEmptyRow() {
         return {
             selectedProduct: '',
@@ -277,13 +312,11 @@ function NewSales() {
             open: false
         });
     };
-
     const handleSave = async () => {
         const customerNameElement = document.getElementById('customerName');
         const contactNoElement = document.getElementById('contactNo');
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
+        const receivedAmountElement = document.getElementById('receivedAmount');
 
         if (netTotal > 0 && !paymentMethodElement) {
             setAlert({
@@ -293,12 +326,19 @@ function NewSales() {
                 open: true
             });
             return;
-        }
-        else if (paymentMethodElement && !receivedAmount) {
+        } else if (paymentMethodElement && !receivedAmountElement.value) {
             setAlert({
                 severity: 'warning',
                 title: 'Received Amount Missing',
                 message: 'Please add the received amount',
+                open: true
+            });
+            return;
+        } else if (parseFloat(receivedAmountElement.value) < parseFloat(netTotal)) {
+            setAlert({
+                severity: 'warning',
+                title: 'Received Amount Error',
+                message: 'Received amount cannot be less than Net Total',
                 open: true
             });
             return;
@@ -309,9 +349,9 @@ function NewSales() {
             customerName: customerNameElement ? customerNameElement.value : '',
             contactNo: contactNoElement ? contactNoElement.value : '',
             paymentMethod: paymentMethodElement.value,
-            billedBy: user.userName,
+            billedBy: userDetails.username,
             billTotalAmount: parseFloat(netTotal) || 0,
-            receivedAmount: parseFloat(receivedAmount) || 0,
+            receivedAmount: parseFloat(receivedAmountElement.value) || 0,
             products: rows.map(row => ({
                 productId: row.productDetails.productId,
                 barcode: row.productDetails.barcode,
@@ -322,10 +362,11 @@ function NewSales() {
                 amount: parseFloat(row.productDetails.amount) || 0,
             }))
         };
-        console.log("Back Data:", data)
+        console.log("Backend Data:", data);
         setLoading(true);
+
         try {
-            const response = await axios.post('http://localhost:8080/bills', data);
+            const response = await axios.post(sendBillDataUrl, data);
             console.log('API Response:', response);
 
             if (response.status === 200 && response.data.success) {
@@ -336,11 +377,11 @@ function NewSales() {
                     open: true
                 });
 
-                const billNo = response.data.data.newBill.billNo; // Adjusted path to access billNo
-                setBillNo(billNo); // Set the billNo state
-                setShowSalesReceipt(true); // Show the sales receipt
+                const billNo = response.data.data.newBill.billNo;
+                setBillNo(billNo);
+                setShowSalesReceipt(true);
                 resetForm();
-                console.log('Bill number set:', billNo); // Log the bill number
+                console.log('Bill number set:', billNo);
 
             } else {
                 setAlert({
@@ -358,22 +399,36 @@ function NewSales() {
                 message: 'Error saving data!',
                 open: true
             });
-        }
-        finally {
-            setLoading(false); // Set loading state to false after save is complete
+        } finally {
+            setLoading(false);
         }
     };
 
+
     const resetForm = () => {
-        setSelectedBranch('');
         setRows([createEmptyRow()]);
         setGrossTotal(0);
         setNetTotal(0);
-        setReceivedAmount(0);
+        setReceivedAmount('');
         setBalance(0);
         setNoItems(0);
+        setDiscountBillRate(0);
+
+        // Clear customerName and contactNo fields
+        const customerNameElement = document.getElementById('customerName');
+        if (customerNameElement) customerNameElement.value = '';
+
+        const contactNoElement = document.getElementById('contactNo');
+        if (contactNoElement) contactNoElement.value = '';
+        const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethodElements.forEach(element => {
+            element.checked = false;
+        });
+
+        calculateTotals();
 
     };
+
     const handleClear = () => {
         setReceivedAmount('');
         setBalance(0);
@@ -383,22 +438,32 @@ function NewSales() {
             message: 'Payment container data cleared',
             open: true
         });
+
+        // Clear discount related fields
+        setDiscountBillRate(0); // Reset discount rate to 0
+
+        // Clear discount rate input field
         const discountBillRateElement = document.getElementById('discountBillRate');
         if (discountBillRateElement) discountBillRateElement.value = '';
+
+        // Clear payment method radio buttons
         const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
         paymentMethodElements.forEach(element => {
             element.checked = false;
         });
+
+        // Recalculate totals
+        calculateTotals();
     };
 
     const handleCloseReceipt = () => {
         setShowSalesReceipt(false);
     };
 
-
     return (
         <div className="salesBody">
             {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
+
             <div className="sales-top-content">
                 <div className="branchName">
                     <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
@@ -406,7 +471,7 @@ function NewSales() {
                         id="branchName"
                         name="branchName"
                         editable={true}
-                        onChange={(e) => handleDropdownChange(e)}
+                        onChange={(e) => handleBranchDropdownChange(e)}
                     />
                 </div>
                 <div className="customerName">
@@ -557,8 +622,8 @@ function NewSales() {
                         <InputRadio
                             name="paymentMethod"
                             options={[
-                                { value: 'cash', label: 'Cash' },
-                                { value: 'card', label: 'Card' }
+                                { value: 'Cash', label: 'Cash' },
+                                { value: 'Card', label: 'Card' }
                             ]}
                         />
                     </div>
@@ -582,7 +647,7 @@ function NewSales() {
                                                 editable={true}
                                                 placeholder="%"
                                                 width="3em"
-                                                onChange={() => calculateNetTotal(grossTotal)}
+                                                onChange={handleDiscountRateChange}
                                             />
                                             <InputField
                                                 type="text"
@@ -629,6 +694,7 @@ function NewSales() {
                     </div>
                 </div>
             </div>
+
             {alert.open && (
                 <CustomAlert
                     severity={alert.severity}
@@ -638,7 +704,6 @@ function NewSales() {
                     onClose={handleCloseAlert}
                 />
             )}
-
         </div>
     );
 }
