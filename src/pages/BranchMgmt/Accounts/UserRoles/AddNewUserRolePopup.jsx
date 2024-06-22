@@ -8,8 +8,6 @@ import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown'
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
 import secureLocalStorage from 'react-secure-storage';
 
-// import InputLabel from '../../../../Components/Label/InputLabel';
-// import InputField from '../../../../Components/InputField/InputField';
 
 function AddNewUserRolePopup({showSuccess}) {
     const [permissionArray, setPermissionArray] = useState([]);
@@ -36,7 +34,7 @@ function AddNewUserRolePopup({showSuccess}) {
                 }
                 );
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
@@ -88,12 +86,15 @@ function AddNewUserRolePopup({showSuccess}) {
         } catch (error) {
             setShowAlert(error.message);
             console.error('Error:', error);
-            throw new Error(error.message);
         }
     }
     return (
         <>
-            <AddNewPopup topTitle="Add New User Role " buttonId="save-btn" buttonText="Create" onClick={handleSave}>
+            <AddNewPopup 
+            topTitle="Add New User Role " 
+            buttonId="save-btn" 
+            buttonText="Create" 
+            onClick={handleSave}>
                 <div className='first-row'>
                     <div className='roleNameInput'>
                         <InputLabel colour="#0377A8">Role Name</InputLabel>

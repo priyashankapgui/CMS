@@ -34,12 +34,18 @@ import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
 import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
 import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
+import NotFound from '../pages/NotFound/NotFound';
+import Login from '../pages/LoginPart/Login/Login';
+import ForgetPw from '../pages/LoginPart/ForgetPw/ForgetPw';
+import ChangePw from "../pages/LoginPart/ResetPw/ResetPw";
 
 
 export function SidebarRouter() {
   return (
     <Routes>
-
+      <Route path="/" element={<Login />} />
+      <Route path="/login/fp" element={<ForgetPw />} />
+      <Route path="/login/resetpw" element={<ChangePw />} />
       <Route element={<ProtectedRoute groupName="adjust-branch" />}>
         <Route path="/adjust-branch" element={<AdjustBranch />} />
       </Route>
@@ -121,6 +127,8 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="reporting/analysis" />}>
         <Route path="/reporting/analysis" element={<Analysis />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
 
     </Routes>
   );

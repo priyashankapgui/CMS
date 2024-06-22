@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
 import {
   FaRegEye,
@@ -16,7 +16,9 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 
 const Login = () => {
-  const API_LOGIN_KEY = `${process.env.REACT_APP_API_LOGIN_URL}`;
+  const API_LOGIN_URL = `${process.env.REACT_APP_API_LOGIN_URL}`;
+  const API_SUPERADMIN_LOGIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_LOGIN_URL}`;
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [empID, setEmpId] = useState("");
@@ -43,7 +45,7 @@ const Login = () => {
     setSubLoading(true);
     let response;
     if (empID.startsWith("SA")) {
-      response = await fetch(`http://localhost:8080/superAdmin/login`, {
+      response = await fetch(API_SUPERADMIN_LOGIN_URL , {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +56,7 @@ const Login = () => {
         }),
       }).catch((error) => console.error("Error:", error));
     } else {
-      response = await fetch(API_LOGIN_KEY, {
+      response = await fetch(API_LOGIN_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -183,11 +185,11 @@ const Login = () => {
       </div>
       {loggingSuccess && (
         <CustomAlert
-          onClose={() => window.location.href = "/sales"}
+          onClose={() => navigate("/sales")}
           severity="success"
           title="Logging Successfully"
           message="Welcome to the FlexFlow - GreenLeaf"
-          duration={1500}
+          duration={900}
         />
       )}
     </>
