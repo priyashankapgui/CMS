@@ -33,6 +33,7 @@
     width: 100%;
     height: 70vh;
     margin: 20px 0 20px 0;
+    position: relative;
 }
 
 .billContainerTable {
@@ -40,10 +41,14 @@
     margin: 0 auto;
     width: 100%;
 
+
 }
 
 .billContainerTable th {
     background-color: #E9E9E9;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 
 }
 
@@ -96,4 +101,11 @@
 input:focus,
 input:active {
     background-color: white;
+}
+
+.radio-container{
+    margin-right: 10px;
+}
+.payment-method-top input{
+    margin-right: 5px;
 }
