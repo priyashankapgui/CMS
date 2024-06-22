@@ -10,6 +10,7 @@ import "./MyAccountDetails.css";
 import PasswordStrengthBar from "react-password-strength-bar";
 import accountCircle from "../../../Assets/account_circle_24dp.svg";
 import secureLocalStorage from "react-secure-storage";
+import RoundButtons from "../../Buttons/RoundButtons/RoundButtons"
 
 function MyAccountDetails() {
   const [showSubPopup, setShowSubPopup] = useState(false);
@@ -54,7 +55,7 @@ function MyAccountDetails() {
     setShowSubPopup(false);
   };
 
- useEffect(() => {
+  useEffect(() => {
     setEmployeeData({
       employeeName: user?.userName || "",
       employeeId: user?.userID || user?.employeeId || "",
@@ -62,7 +63,7 @@ function MyAccountDetails() {
       userRoleName: user?.role || "",
       email: user?.email || "",
     });
-  }, []); 
+  }, []);
 
   const handleUpdate = async () => {
     if (!employeeData.employeeName || !employeeData.email) {
@@ -149,18 +150,21 @@ function MyAccountDetails() {
             </div>
           </div>
         }
-        popupPosition="0%"
+        popupPositionLeft="70%"
+        popupPositionTop="0%"
         headBG="none"
         title={
           <>
-            My Profile{" "}
-            <button>
-              <Icon
-                icon="tabler:edit"
-                style={{ fontSize: "1em", cursor: "pointer" }}
-                onClick={toggleEditable}
-              />
-            </button>
+            <div className="popupProfileTxt">
+              My Profile{" "}
+              <div className="editPopIcon" >
+                <Icon
+                  icon="fluent:person-edit-48-regular"
+                  style={{ fontSize: "1em", cursor: "pointer", alignContent: 'center' }}
+                  onClick={toggleEditable}
+                />
+              </div>
+            </div>
           </>
         }
         headTextColor="black"

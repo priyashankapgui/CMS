@@ -10,7 +10,7 @@ const InputRadio = ({ options, name }) => {
                         name={name}
                         value={option.value}
                     />
-                    {option.label}
+                    <span>{option.label}</span>
                 </label>
             ))}
         </div>
