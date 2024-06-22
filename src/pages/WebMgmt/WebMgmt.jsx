@@ -9,7 +9,7 @@ import Buttons from "../../Components/Buttons/SquareButtons/Buttons";
 export const WebMgmt = () => {
     const [imageUrl, setImageUrl] = useState(null);
     const [files, setFile] = useState(null);
-    const [imageType, setImageType] = useState(""); // New state for image type
+    const [imageType, setImageType] = useState(""); 
     const formData = new FormData();
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState(false);
@@ -18,7 +18,7 @@ export const WebMgmt = () => {
     const handleImageChange = (event, type) => {
       const file = event.target.files;
       setFile(file);
-      setImageType(type); // Set the image type
+      setImageType(type); 
     };
   
     const handleCreatewebImage = async () => {
@@ -28,7 +28,7 @@ export const WebMgmt = () => {
           for (var x = 0; x < files.length; x++) {
             formData.append("images", files[x]);
           }
-          formData.append("type", imageType); // Append image type
+          formData.append("type", imageType); 
         }
   
         const response = await fetch("http://localhost:8080/webIamges", {
