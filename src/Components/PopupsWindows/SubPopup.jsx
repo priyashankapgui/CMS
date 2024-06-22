@@ -40,7 +40,7 @@ export default function SubPopup(props) {
                 onClose={closeSubpopup}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                sx={{ marginLeft: `${props.popupPosition}` }}
+                sx={{ marginLeft: `${props.popupPositionLeft}`, marginTop:`${props.popupPositionTop}` }}
                 maxWidth="100%"
             >
                 <DialogTitle

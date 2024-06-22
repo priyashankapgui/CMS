@@ -147,7 +147,7 @@ export const WorkList = () => {
                 <div className="worklist-filter-container">
                     <div className="W-Content1">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
