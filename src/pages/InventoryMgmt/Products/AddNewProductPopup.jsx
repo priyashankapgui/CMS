@@ -24,6 +24,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState(false);
     const [loading, setLoading] = useState(false);
+    
 
     const baseURL = "http://localhost:8080/products";
 
@@ -80,28 +81,19 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
 
         const formData = new FormData();
-       
+        formData.append('image', image);
         formData.append('productName', productName);
         formData.append('description', description);
         formData.append('categoryName', categoryName);
         formData.append('barcode', barcode);
 
-                      
-        if (files) {
-            for (var x = 0; x < files.length; x++) {
-                formData.append("images", files[x]);
-            }
-            
-        }
-        const response = await fetch(baseURL, {
-            method: "POST",
-            
-            body: formData,
-        });
-          
-          
+        setIsLoading(true);
         try {
-            
+            await axios.post(baseURL, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
             const alertData = {
                 severity: 'success',
@@ -126,9 +118,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         } finally {
             setIsLoading(false);
         }
-    
-    
-};
+    };
 
     const fetchCategorySuggestions = async (query) => {
         try {
@@ -144,11 +134,11 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
     };
 
-    const handleImageChange = (event, type) => {
-        const file = event.target.files;
-        setFile(file);
-        // setImageType(type); // Set the image type
-      };
+    // const handleImageChange = (event, type) => {
+    //     const file = event.target.files;
+    //     setFile(file);
+    //     // setImageType(type); // Set the image type
+    //   };
 
      
 
@@ -169,26 +159,15 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 buttonText="Save"
                 onClick={addProductHandler}
                 isLoading={isLoading}
-                onChange={(event) => handleImageChange(event, "productsimages")}
+                
                 
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
 
                     <div style={{ display: 'block', width: '100%' }}>
                     <div style={{ marginBottom: "5px" }}>
-                            {/* <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> */}
-                            <input 
-                                type="file" 
-                                id="uploadProductImages" 
-                                name="images" 
-                                style={{ width: '100%' }} 
-                                className="web-mgmt-lable"
-                                onChange={handleImageChange} 
-                                multiple 
-                                
-                            />
-            
-                            {/* <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} /> */}
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
+                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
                         </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>

@@ -104,7 +104,7 @@ export const Suppliers = () => {
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
+            navigate('/Suppliers');
             window.location.reload();
         } catch (error) {
             console.error('Error deleting supplier:', error);

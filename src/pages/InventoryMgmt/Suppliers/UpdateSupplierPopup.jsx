@@ -68,11 +68,15 @@ function UpdateSupplierPopup({ supplierId }) {
     };
 
     const handleUpdate = (event) => {
-        setPost({ ...post, [event.target.name]: event.target.value });
+        const { name, value } = event.target;
+        setPost({ ...post, [name]: value });
     };
 
     const handleSave = async (event) => {
-        event.preventDefault();
+        if (event) {
+            event.preventDefault();
+        }
+
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
@@ -146,6 +150,7 @@ function UpdateSupplierPopup({ supplierId }) {
                             <InputField type="text" id="contactNo" name="contactNo" value={post.contactNo} onChange={handleUpdate} editable={true} />
                         </div>
                     </div>
+                    <button type="submit" style={{ display: 'none' }}>Submit</button>
                 </form>
             </EditPopup>
         </>

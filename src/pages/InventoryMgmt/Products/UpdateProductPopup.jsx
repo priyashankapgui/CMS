@@ -69,7 +69,10 @@ function UpdateProductPopup({ productId }) {
     };
 
     const handleSave = async (event) => {
-        event.preventDefault();
+        if (event) {
+            event.preventDefault(); // Ensure event is defined and preventDefault is called correctly
+        }
+
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
@@ -94,7 +97,6 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
-            window.location.reload();
         } catch (error) {
             console.error('Error updating product:', error);
             const alertData = {
@@ -105,7 +107,6 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
-            window.location.reload();
         } finally {
             setIsLoading(false);
         }
@@ -142,10 +143,10 @@ function UpdateProductPopup({ productId }) {
                 topTitle="Update Product Details"
                 buttonId="update-btn"
                 buttonText="Update"
-                onClick={handleSave}
+                onClick={handleSave} // Pass handleSave directly to EditPopup for button click
                 isLoading={isLoading}
             >
-                <form onSubmit={handleSave}>
+                <form onSubmit={handleSave}> {/* Ensure handleSave is called on form submit */}
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>

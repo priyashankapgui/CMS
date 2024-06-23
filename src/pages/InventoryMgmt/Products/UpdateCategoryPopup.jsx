@@ -13,24 +13,21 @@ const categoryApiUrl = process.env.REACT_APP_CATEGORY_API;
 function UpdateCategoryPopup({ categoryId }) {
     const navigate = useNavigate();
     const [post, setPost] = useState({
-        categoryName: '',
-       
+        categoryName: ''
     });
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const schema = Joi.object({
-        categoryName: Joi.string().required().label('Category Name'),
-        
+        categoryName: Joi.string().required().label('Category Name')
     });
 
     useEffect(() => {
         if (categoryId) {
             axios.get(`${categoryApiUrl}/${categoryId}`)
                 .then(res => setPost({
-                    categoryName: res.data.data.categoryName,
-                   
+                    categoryName: res.data.data.categoryName
                 }))
                 .catch(err => console.log(err));
         }
@@ -62,7 +59,10 @@ function UpdateCategoryPopup({ categoryId }) {
     };
 
     const handleSave = async (event) => {
-        event.preventDefault();
+        if (event) {
+            event.preventDefault();
+        }
+
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
@@ -104,8 +104,6 @@ function UpdateCategoryPopup({ categoryId }) {
         }
     };
 
-  
-
     return (
         <>
             {alertVisible && (
@@ -130,8 +128,6 @@ function UpdateCategoryPopup({ categoryId }) {
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <InputField type="text" id="categoryName" name="categoryName" value={post.categoryName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
-                       
-                       
                     </div>
                     <button type="submit" style={{ display: 'none' }}>Submit</button>
                 </form>
