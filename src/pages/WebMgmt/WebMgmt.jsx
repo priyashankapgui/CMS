@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import Layout from "../../Layout/Layout";
-import { useDropzone } from "react-dropzone";
 import "./WebMgmt.css";
 import InputLabel from "../../Components/Label/InputLabel";
-import InputField from "../../Components/InputField/InputField";
 import Buttons from "../../Components/Buttons/SquareButtons/Buttons";
+import InputFile from "../../Components/InputFile/InputFile";
 
 export const WebMgmt = () => {
     const [imageUrl, setImageUrl] = useState(null);
@@ -66,15 +65,18 @@ export const WebMgmt = () => {
               <InputLabel htmlFor="uploadCarosalImages" color="#0377A8">
                 Upload Carousel Images
               </InputLabel>
-              <input
-                type="file"
-                id="uploadCarosalImages"
-                name="carosel"
-                style={{ width: "100%" }}
-                className="web-mgmt-lable"
-                onChange={(event) => handleImageChange(event, "carosel")}
-                multiple
-              />
+            
+              <InputFile
+                    id="uploadCarosalImages"
+                    name="carosel"
+                    className="web-mgmt-lable"
+                    style={{ width: '100%' }}
+                    onChange={(event) => handleImageChange(event, "carosel")}
+                    multiple
+                  />
+               {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+
+              
               <Buttons
                 type="submit"
                 id="submit-btn"
@@ -89,16 +91,18 @@ export const WebMgmt = () => {
               <InputLabel htmlFor="uploadEndImages" color="#0377A8">
                 Upload End Images
               </InputLabel>
-              <input
-                type="file"
-                id="uploadEndImages"
-                name="images"
-                className="web-mgmt-lable"
-                style={{ width: "100%" }}
-                onChange={(event) => handleImageChange(event, "endimage")}
-                multiple
-                src={imageUrl}
-              />
+              
+
+              <InputFile
+                    id="uploadEndImages"
+                    name="images"
+                    className="web-mgmt-lable"
+                    style={{ width: '100%' }}
+                    onChange={(event) => handleImageChange(event, "endimage")}
+                    multiple
+                  />
+               {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+
               <Buttons
                 type="submit"
                 id="submit-btn"
@@ -116,15 +120,18 @@ export const WebMgmt = () => {
               <InputLabel htmlFor="uploadAboutUsImages" color="#0377A8">
                 Upload AboutUs Image
               </InputLabel>
-              <input
-                type="file"
-                id="uploadAboutUsImages"
-                name="images"
-                style={{ width: "100%" }}
-                className="web-mgmt-lable"
-                onChange={(event) => handleImageChange(event, "aboutimages")}
-                multiple
-              />
+             
+            <InputFile
+                    id="uploadAboutUsImages"
+                    name="images"
+                    className="web-mgmt-lable"
+                    style={{ width: '100%' }}
+                    onChange={(event) => handleImageChange(event, "aboutimages")}
+                    multiple
+                  />
+               {imageUrl && <img src={imageUrl} alt="Uploaded" />}
+
+
               <Buttons
                 type="submit"
                 id="submit-btn"
@@ -145,4 +152,3 @@ export const WebMgmt = () => {
       </Layout>
     );
   };
-  
