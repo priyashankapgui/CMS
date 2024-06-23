@@ -33,6 +33,7 @@ import Completed from '../pages/InventoryMgmt/StockTransfer/completed';
 import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
 import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
+import { NewOrderView } from '../pages/OnlineOrders/NewOrders/NewOrderView';
 
 
 export function SidebarRouter() {
@@ -113,6 +114,7 @@ export function SidebarRouter() {
 
       <Route element={<ProtectedRoute groupName="online-orders" />}>
         <Route path="/online-orders" element={<OnlineOrders />} />
+        <Route path="/online-orders/viewOrder/:onlineBillNo" element={<NewOrderView />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="reporting/reports" />}>

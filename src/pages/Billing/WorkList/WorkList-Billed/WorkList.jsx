@@ -22,25 +22,25 @@ export const WorkList = () => {
     const [error, setError] = useState(null);
     const [billProduct, setBillProduct] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/bills');
-                console.log("Bill Data", response)
-                if (response.data && response.data.data && Array.isArray(response.data.data)) {
-                    setBillProduct(response.data.data);
-                } else {
-                    setError(new Error("Data format error: response is not an array"));
-                }
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:8080/bills');
+    //             console.log("Bill Data", response)
+    //             if (response.data && response.data.data && Array.isArray(response.data.data)) {
+    //                 setBillProduct(response.data.data);
+    //             } else {
+    //                 setError(new Error("Data format error: response is not an array"));
+    //             }
             
-            } catch (error) {
-                setError(error);
+    //         } catch (error) {
+    //             setError(error);
               
-            }
-        };
+    //         }
+    //     };
 
-        fetchData();
-    }, []);
+    //     fetchData();
+    // }, []);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
