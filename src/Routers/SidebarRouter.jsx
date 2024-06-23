@@ -33,13 +33,20 @@ import Completed from '../pages/InventoryMgmt/StockTransfer/completed';
 import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
 import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
+import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
+import NotFound from '../pages/NotFound/NotFound';
+import Login from '../pages/LoginPart/Login/Login';
+import ForgetPw from '../pages/LoginPart/ForgetPw/ForgetPw';
+import ChangePw from "../pages/LoginPart/ResetPw/ResetPw";
 import { NewOrderView } from '../pages/OnlineOrders/NewOrders/NewOrderView';
 
 
 export function SidebarRouter() {
   return (
     <Routes>
-
+      <Route path="/" element={<Login />} />
+      <Route path="/login/fp" element={<ForgetPw />} />
+      <Route path="/login/resetpw" element={<ChangePw />} />
       <Route element={<ProtectedRoute groupName="adjust-branch" />}>
         <Route path="/adjust-branch" element={<AdjustBranch />} />
       </Route>
@@ -82,7 +89,6 @@ export function SidebarRouter() {
         <Route path="/stock-transfer/OUT/cancelled/:STN_NO" element={<ReceivingCancelled/>} />
         <Route path="/stock-transfer/receiving/:STN_NO" element={<StockTransferReceiving />} />
         <Route path="/stock-transfer/OUT/raised/:STN_NO" element={<ReceivingRaised />} />
-        <Route path="/stock-transfer/OUT" element={<StockTransferOUT />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="web-feedback" />}>
@@ -90,7 +96,7 @@ export function SidebarRouter() {
       </Route>
 
       <Route element={<ProtectedRoute groupName="stock-balance" />}>
-        <Route path="/stock-balance" element={<StockBalance />} />
+        <Route path="/stock-balance" element={<StockBalanceMain />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="check-price" />}>
@@ -123,6 +129,8 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="reporting/analysis" />}>
         <Route path="/reporting/analysis" element={<Analysis />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
 
     </Routes>
   );

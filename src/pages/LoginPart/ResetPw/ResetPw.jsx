@@ -9,6 +9,7 @@ import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 import PasswordStrengthBar from 'react-password-strength-bar';
 
 const ResetPw = () => {
+  const API_RESET_PW_URL = `${process.env.REACT_APP_API_RESET_PASSWORD_URL}`;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,20 +23,17 @@ const ResetPw = () => {
     setSubLoading(true);
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
-
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
-
     // If token is not present, redirect to login page
     if (!token) {
       window.location.href = "/";
     } else {
-      const response = await fetch("http://localhost:8080/api/login/resetpw", {
+      const response = await fetch(API_RESET_PW_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,11 +44,9 @@ const ResetPw = () => {
           confirmPassword: confirmPassword,
         }),
       }).catch((error) => console.error("Error:", error));
-
       if (response.ok) {
         const data = await response.json();
         setShowSubPopup(true);
-
         console.log("Response data:", data);
       } else {
         const data = await response.json();
@@ -166,7 +162,7 @@ const ResetPw = () => {
             <Buttons
               type="submit"
               id="save-btn"
-              style={{ backgroundColor: "#23A3DA", color: "white" }}
+              style={{ backgroundColor: "#ff3232", color: "white" }}
               btnHeight="50px"
               btnWidth="410px"
               fontSize="18px"

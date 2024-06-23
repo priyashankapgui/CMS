@@ -1,5 +1,6 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import InputDropdown from "./InputDropdown";
+import secureLocalStorage from "react-secure-storage";
 
 const BranchDropdown = forwardRef(
   (
@@ -19,15 +20,15 @@ const BranchDropdown = forwardRef(
     ref
   ) => {
     const [branches, setBranches] = useState([]);
-    const [branchData, setBranchData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [branchData, setBranchData] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
     useEffect(() => {
       const getBranches = async () => {
         setLoading(true);
         try {
-          const token = sessionStorage.getItem("accessToken");
+          const token = secureLocalStorage.getItem("accessToken");
           const response = await fetch("http://localhost:8080/branches", {
             method: "GET",
             headers: {
@@ -57,7 +58,6 @@ const BranchDropdown = forwardRef(
           onChange(tempBranches[0]);
           console.log(tempBranches, displayValue);
           setBranchData(tempBranches);
-          setLoading(false);
         } catch (error) {
           console.error("Error:", error);
         }
@@ -67,6 +67,7 @@ const BranchDropdown = forwardRef(
 
     useEffect(() => {
       if (branchData) {
+        setLoading(true);
         let branches = branchData;
         if (addOptions && isSuperAdmin) {
           branches = [...addOptions, ...branches];
@@ -79,7 +80,7 @@ const BranchDropdown = forwardRef(
         }
         setBranches(branches);
         onChange(branches[0]);
-        console.log("Branches:", branches);
+        setLoading(false);
       }
     }, [branchData]);
 
@@ -99,19 +100,6 @@ const BranchDropdown = forwardRef(
 
     return (
       <div>
-        {loading ? (
-          <InputDropdown
-            id={id}
-            name={name}
-            height={height}
-            width={width}
-            onChange={onChange}
-            editable={false}
-            borderRadius={borderRadius}
-            marginTop={marginTop}
-            options={["Loading..."]}
-          />
-        ) : (
           <InputDropdown
             id={id}
             name={name}
@@ -122,8 +110,8 @@ const BranchDropdown = forwardRef(
             borderRadius={borderRadius}
             marginTop={marginTop}
             options={branches}
+            loading={loading}
           />
-        )}
       </div>
     );
   }

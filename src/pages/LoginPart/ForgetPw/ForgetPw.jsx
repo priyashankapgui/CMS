@@ -8,6 +8,8 @@ import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 
 const ForgetPw = () => {
+  const API_FORGOT_PW_URL = `${process.env.REACT_APP_API_FORGOT_PASSWORD_URL}`;
+  const API_FORGOT_PW_SUPERADMIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_FORGOT_PASSWORD_URL}`;
   const [empId, setEmpid] = useState("");
   const [error, setError] = useState("");
   const [showSubPopup, setShowSubPopup] = useState(false); // State to control the visibility of SubPopup
@@ -28,7 +30,7 @@ const ForgetPw = () => {
       if (!empId) {
         setError("Please enter your employee ID.");
       }
-      const response = await fetch("http://localhost:8080/api/login/fp", {
+      const response = await fetch(API_FORGOT_PW_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +53,7 @@ const ForgetPw = () => {
       if (!empId) {
         setError("Please enter your employee ID.");
       }
-      const response = await fetch("http://localhost:8080/superAdmin/forgotPassword", {
+      const response = await fetch(API_FORGOT_PW_SUPERADMIN_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

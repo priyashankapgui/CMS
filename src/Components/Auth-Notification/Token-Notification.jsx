@@ -2,6 +2,7 @@ import React from "react";
 import { IoWarning } from "react-icons/io5";
 import "./Auth-Notification.css";
 import Buttons from "../Buttons/SquareButtons/Buttons";
+import secureLocalStorage from "react-secure-storage";
 
 const TokenNotification = () => {
 
@@ -16,14 +17,15 @@ const TokenNotification = () => {
             <Buttons
                 style={{ backgroundColor: "#EEEEEE", color: "red" }}
                 btnWidth={150}
+                marginTop="1.625em"
                 onClick={() => {
-                    sessionStorage.removeItem('accessToken');
-                    sessionStorage.removeItem('user');  
+                    secureLocalStorage.removeItem('accessToken');
+                    secureLocalStorage.removeItem('user');
                     window.location.href = '/';
                 }}
-              >
+            >
                 Back To Login
-              </Buttons>
+            </Buttons>
         </div>
     );
 }

@@ -9,6 +9,8 @@ import CustomAlert from "../../Alerts/CustomAlert/CustomAlert";
 import "./MyAccountDetails.css";
 import PasswordStrengthBar from "react-password-strength-bar";
 import accountCircle from "../../../Assets/account_circle_24dp.svg";
+import secureLocalStorage from "react-secure-storage";
+import RoundButtons from "../../Buttons/RoundButtons/RoundButtons"
 
 function MyAccountDetails() {
   const [showSubPopup, setShowSubPopup] = useState(false);
@@ -27,7 +29,7 @@ function MyAccountDetails() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [showAlertError, setShowAlertError] = useState("");
   const [profilePicExists, setProfilePicExists] = useState(true);
-  let user = JSON.parse(sessionStorage.getItem("user"));
+  let user = JSON.parse(secureLocalStorage.getItem("user"));
 
   const toggleEditable = () => {
     setEditable(!editable);
@@ -74,7 +76,7 @@ function MyAccountDetails() {
     }
     try {
       let body = {};
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
       let response;
       if (password === "") {
         body = {
@@ -116,7 +118,7 @@ function MyAccountDetails() {
           role: employeeData.userRoleName,
           email: body.email,
         };
-        sessionStorage.setItem("user", JSON.stringify(updatedUser));
+        secureLocalStorage.setItem("user", JSON.stringify(updatedUser));
         setShowAlertSuccess(true);
       }
     } catch (error) {
@@ -148,18 +150,21 @@ function MyAccountDetails() {
             </div>
           </div>
         }
-        popupPosition="0%"
+        popupPositionLeft="70%"
+        popupPositionTop="0%"
         headBG="none"
         title={
           <>
-            My Profile{" "}
-            <button>
-              <Icon
-                icon="tabler:edit"
-                style={{ fontSize: "1em", cursor: "pointer" }}
-                onClick={toggleEditable}
-              />
-            </button>
+            <div className="popupProfileTxt">
+              My Profile{" "}
+              <div className="editPopIcon" >
+                <Icon
+                  icon="fluent:person-edit-48-regular"
+                  style={{ fontSize: "1em", cursor: "pointer", alignContent: 'center' }}
+                  onClick={toggleEditable}
+                />
+              </div>
+            </div>
           </>
         }
         headTextColor="black"
@@ -312,12 +317,12 @@ function MyAccountDetails() {
                 </div>
                 <Buttons
                   type="submit"
-                  id="save-btn"
+                  id="update-btn"
                   btnWidth="22em"
                   style={{ backgroundColor: "#23A3DA", color: "white" }}
                   onClick={handleUpdate}
                 >
-                  Save
+                  Update
                 </Buttons>
               </div>
             )}

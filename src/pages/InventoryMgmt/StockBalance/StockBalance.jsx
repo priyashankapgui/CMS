@@ -7,6 +7,7 @@ import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import StockSummary from './StockSummary';
 import AdjustStock from './AdjustStock';
 
@@ -19,6 +20,7 @@ export const StockBalance = () => {
     const [stockDetails, setStockDetails] = useState([]);
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         fetchBranches();
@@ -27,7 +29,7 @@ export const StockBalance = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branches');
+            const response = await axios.get('http://localhost:8080/branchesWeb');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -38,8 +40,10 @@ export const StockBalance = () => {
         try {
             const response = await axios.get('http://localhost:8080/products');
             setProducts(response.data);
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching all products:', error);
+            setLoading(false);
         }
     };
 
@@ -82,8 +86,10 @@ export const StockBalance = () => {
     };
 
     const handleSearch = async () => {
+        setLoading(true);
         if (!selectedBranch || !product) {
             console.error('Please select both branch and product');
+            
             return;
         }
     
@@ -94,14 +100,16 @@ export const StockBalance = () => {
             const response = await axios.get('http://localhost:8080/active-stock', {
                 params: {
                     branchName: selectedBranch,
-                    productId: product.id, // Send productId instead of productName
+                    productId: product.id, 
                 }
             });
     
-            const data = response.data.data; // Access the data property
-            setStockDetails(Array.isArray(data) ? data : [data]); // Ensure stockDetails is an array
+            const data = response.data.data; 
+            setStockDetails(Array.isArray(data) ? data : [data]); 
         } catch (error) {
             console.error('Error fetching stock details:', error);
+        }finally {
+            setLoading(false); 
         }
     };
 
@@ -111,14 +119,12 @@ export const StockBalance = () => {
         setBatchNo('');
         setCategory(null);
         setStockDetails([]);
+        window.location.reload();
     };
 
     return (
         <>
-            <div className="top-nav-blue-text">
-                <h4>Stock Balance</h4>
-            </div>
-            <Layout>
+           
                 <div className="stock-balance-bodycontainer">
                     <div className="stock-balance-filter-container">
                         <div className="stock-balance-content-top">
@@ -144,17 +150,7 @@ export const StockBalance = () => {
                                     fetchSuggestions={fetchProductsSuggestions}
                                 />
                             </div>
-                            {/* <div className="categoryField">
-                                <InputLabel htmlFor="categoryField" color="#0377A8">Category ID / Name</InputLabel>
-                                <SearchBar
-                                    fetchSuggestions={fetchSuggestionsCategories}
-                                    // onSelect={handleCategorySelect}
-                                />
-                            </div> */}
-                            {/* <div className="batchNoField">
-                                <InputLabel htmlFor="batchNo" color="#0377A8">Batch No</InputLabel>
-                                <InputField type="text" id="batchNo" name="batchNo" editable={true} width="250px" value={batchNo} onChange={(e) => setBatchNo(e.target.value)} />
-                            </div> */}
+                            
                         </div>
                         <div className="stock-balance-BtnSection">
                             <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
@@ -191,7 +187,7 @@ export const StockBalance = () => {
                         />
                     </div>
                 </div>
-            </Layout>
+           
         </>
     );
 };

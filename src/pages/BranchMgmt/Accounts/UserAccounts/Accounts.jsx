@@ -12,8 +12,10 @@ import { Icon } from "@iconify/react";
 import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
+import secureLocalStorage from "react-secure-storage";
 
 export function Accounts() {
+  const API_GET_ALL_EMPLOYEES =`${process.env.REACT_APP_API_GET_EMPLOYEES_URL}`
   const [clickedLink, setClickedLink] = useState("Users");
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("All");
@@ -23,7 +25,7 @@ export function Accounts() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(false); // Loading state
-  const currentUser = JSON.parse(sessionStorage.getItem('user'));
+  const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
   const branchDropdownRef = useRef(null);
   const roleDropdownRef = useRef(null);
 
@@ -31,8 +33,8 @@ export function Accounts() {
     const getEmployeeData = async () => {
       try {
         setLoading(true); // Set loading to true before fetching data
-        const token = sessionStorage.getItem("accessToken");
-        const response = await fetch("http://localhost:8080/employees", {
+        const token = secureLocalStorage.getItem("accessToken");
+        const response = await fetch(API_GET_ALL_EMPLOYEES, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -75,9 +77,10 @@ export function Accounts() {
 
   const handleCheck = (employeeId, editRole, editBranch) => {
     setShowAlert(false);
-    console.log("Employee ID:", employeeId, "Branch:", editBranch);
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (user.role === "superadmin" || user.branchName === editBranch) {
+    //console.log("Employee ID:", employeeId, "Branch:", editBranch);
+    const user = JSON.parse(secureLocalStorage.getItem("user"));
+    console.log("User:", user);
+    if (user.userID.startsWith("SA")|| user.branchName === editBranch){
       window.location.href = `/accounts/update-account?employeeId=${employeeId}`;
     } else {
       console.log("User is not authorized to edit");
@@ -91,13 +94,14 @@ export function Accounts() {
 
   const handleDelete = async (employeeId) => {
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = secureLocalStorage.getItem("accessToken");
       if (!employeeId) {
         console.error("employeeId is undefined");
         return;
       }
       const response = await fetch(
         `http://localhost:8080/employees/${employeeId}`,
+        // `${process.env.REACT_APP_GET_EMPLOYEES_BY_ID}/${employeeId}`,
         {
           method: "DELETE",
           headers: {
