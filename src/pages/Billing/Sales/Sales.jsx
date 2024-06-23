@@ -391,7 +391,7 @@ export const Sales = () => {
                 setAlert({
                     severity: 'success',
                     title: 'Success',
-                    message: 'Data saved successfully!',
+                    message: 'Bill generated successfully!',
                     open: true
                 });
 
@@ -504,7 +504,7 @@ export const Sales = () => {
                     {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
                     <div className="sales-top-content">
                         <div className="branchName">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
@@ -661,13 +661,15 @@ export const Sales = () => {
                                 <div className="paymentContainer">
                                     <div className="payment-method-top">
                                         <h3>Select Payment Method<span style={{ color: 'red' }}>*</span></h3>
-                                        <InputRadio
-                                            name="paymentMethod"
-                                            options={[
-                                                { value: 'Cash', label: 'Cash' },
-                                                { value: 'Card', label: 'Card' }
-                                            ]}
-                                        />
+                                        <div className='paymentRadio'>
+                                            <InputRadio
+                                                name="paymentMethod"
+                                                options={[
+                                                    { value: 'Cash', label: 'Cash' },
+                                                    { value: 'Card', label: 'Card' }
+                                                ]}
+                                            />
+                                        </div>
                                     </div>
                                     <div className="payment-method-middle">
                                         <table>

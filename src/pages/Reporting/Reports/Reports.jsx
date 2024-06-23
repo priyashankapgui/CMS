@@ -48,7 +48,7 @@ export const Reports = () => {
                         <h3 className="repoTop-title">Generate Reports</h3>
                         <div className="repo-Content">
                             <div className="branchField">
-                                <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
+                                <InputLabel for="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="branchName"
                                     name="branchName"
@@ -57,17 +57,17 @@ export const Reports = () => {
                                 />
                             </div>
                             <div className="repoTypeField">
-                                <InputLabel for="repoType" color="#0377A8">Report Type</InputLabel>
+                                <InputLabel for="repoType" color="#0377A8">Report Type<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} onChange={handleDropdownChange} />
                             </div>
-                            <div className="dateField">
+                            {/* <div className="dateField">
                                 <InputLabel for="from-date" color="#0377A8">From</InputLabel>
                                 <DatePicker />
                             </div>
                             <div className="dateField">
                                 <InputLabel for="to-date" color="#0377A8">To</InputLabel>
                                 <DatePicker />
-                            </div>
+                            </div> */}
                         </div>
                         <div className="btnSection">
                             <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> View </Buttons>

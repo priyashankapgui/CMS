@@ -59,18 +59,18 @@ export const GoodReceive = () => {
         fetchSuppliers();
     }, []);
 
-  
+
     const fetchGrnData = async () => {
         const user = JSON.parse(sessionStorage.getItem("user"));
         console.log("name", user);
-    
+
         if (!user) {
             console.error('User is not available');
             setLoading(false);
             return;
         }
         console.log("useranee", user.role);
-    
+
         try {
             let response;
             if (user.role === 'Super Admin') {
@@ -140,10 +140,10 @@ export const GoodReceive = () => {
         try {
             setLoading(true);
             let response;
-    
+
             const productId = searchParams.productId.split(' ')[0]; // Assuming the productId is the first part
             const supplierId = searchParams.supplierId.split(' ')[0];
-    
+
             if (searchParams.grnNo) {
                 console.log(`Searching by GRN No: ${searchParams.grnNo}`);
                 response = await axios.get(`http://localhost:8080/grn/${searchParams.grnNo}`);
@@ -166,23 +166,23 @@ export const GoodReceive = () => {
                         supplierId: supplierId
                     }
                 });
-           
-            } else if (searchParams.productId || selectedBranch ) {
+
+            } else if (searchParams.productId || selectedBranch) {
                 console.log(`Searching by Product ID: ${productId} and Branch: ${selectedBranch}`);
                 response = await axios.get(`http://localhost:8080/grn-product-all`, {
                     params: {
                         branchName: selectedBranch,
                         productId: productId
                     }
-                }); 
-         
-            
-           
-           
+                });
+
+
+
+
             } else {
                 response = await axios.get(`http://localhost:8080/grn`);
             }
-    
+
             setGrnData(response.data?.data ? (Array.isArray(response.data.data) ? response.data.data : [response.data.data]) : []);
             setLoading(false);
         } catch (error) {
@@ -191,7 +191,7 @@ export const GoodReceive = () => {
             setLoading(false);
         }
     };
-    
+
     const handleClear = () => {
         setSearchParams({
             grnNo: '',
@@ -250,14 +250,14 @@ export const GoodReceive = () => {
                     <div className="goodReceive-filter-container">
                         <div className="goodReceive-content-top1">
                             <div className="branchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                  <BranchDropdown
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
                                     addOptions={["All"]}
-                                    />
+                                />
                             </div>
                             <div className="datePickerFrom">
                                 <InputLabel htmlFor="From" color="#0377A8">From</InputLabel>
@@ -314,16 +314,16 @@ export const GoodReceive = () => {
                                     'Branch': grn.branchName,
                                     'Supplier': grn.supplierName,
                                     'Invoice No': grn.invoiceNo,
-                                    
+
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                           <Link to={`/good-receive/ViewGRN/${grn.GRN_NO}`}>
-                                            <RoundButtons
-                                                id={`eyeViewBtn-${index}`}
-                                                type="submit"
-                                                name={`eyeViewBtn-${index}`}
-                                                icon={<BsEye />}
-                                            />
+                                            <Link to={`/good-receive/ViewGRN/${grn.GRN_NO}`}>
+                                                <RoundButtons
+                                                    id={`eyeViewBtn-${index}`}
+                                                    type="submit"
+                                                    name={`eyeViewBtn-${index}`}
+                                                    icon={<BsEye />}
+                                                />
                                             </Link>
                                             <RoundButtons
                                                 id={`printBtn-${index}`}

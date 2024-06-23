@@ -18,7 +18,7 @@ export const MinimunStock = () => {
     const [stockDetails, setStockDetails] = useState([]);
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchBranches();
@@ -118,16 +118,16 @@ export const MinimunStock = () => {
             const response = await axios.get('http://localhost:8080/product-quantities', {
                 params: {
                     branchName: selectedBranch,
-                    productId: productId, 
+                    productId: productId,
                 }
             });
 
-            const data = response.data.data; 
-            setStockDetails(Array.isArray(data) ? data : [data]); 
+            const data = response.data.data;
+            setStockDetails(Array.isArray(data) ? data : [data]);
         } catch (error) {
             console.error('Error fetching stock details:', error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -146,7 +146,7 @@ export const MinimunStock = () => {
                 <div className="min-stock-filter-container">
                     <div className="min-stock-content-top">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
@@ -156,7 +156,7 @@ export const MinimunStock = () => {
                             />
                         </div>
                         <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
+                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
                             <SearchBar
                                 searchTerm={selectedProduct}
                                 setSearchTerm={setSelectedProduct}
@@ -175,12 +175,12 @@ export const MinimunStock = () => {
                 </div>
                 <div className="min-stock-content-middle">
                     <TableWithPagi
-                        columns={['Branch Name','Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
+                        columns={['Branch Name', 'Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
                         rows={stockDetails.map(detail => ({
                             'Branch Name': detail.branchName,
                             'Product ID': detail.productId,
-                            'Product Name': detail.productName, 
-                            'Available Qty': detail.totalAvailableQty, 
+                            'Product Name': detail.productName,
+                            'Available Qty': detail.totalAvailableQty,
                             ' Min Qty': detail.minQty,
                         }))}
                     />

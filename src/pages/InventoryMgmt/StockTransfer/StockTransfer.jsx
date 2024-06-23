@@ -46,14 +46,14 @@ export const StockTransfer = () => {
     const fetchStockData = async () => {
         const user = JSON.parse(sessionStorage.getItem("user"));
         console.log("name", user);
-    
+
         if (!user) {
             console.error('User is not available');
             setLoading(false);
             return;
         }
         console.log("useranee", user.role);
-    
+
         try {
             let response;
             if (user.role === 'Super Admin') {
@@ -71,7 +71,7 @@ export const StockTransfer = () => {
         } finally {
             setLoading(false);
         }
-       
+
     };
 
     const fetchBranches = async () => {
@@ -112,7 +112,7 @@ export const StockTransfer = () => {
     };
 
     const handleSearch = async () => {
-        
+
     };
 
     const handleClear = () => {
@@ -164,7 +164,7 @@ export const StockTransfer = () => {
                                 <DatePicker id="dateTo" name="toDate" onDateChange={(date) => handleDateChange('toDate', date)} />
                             </div>
                             <div className="SupplyingbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Request Branch</InputLabel>
+                                <InputLabel htmlFor="branchName" color="#0377A8">Request Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="branchName"
                                     name="branchName"
@@ -174,10 +174,10 @@ export const StockTransfer = () => {
                                 />
                             </div>
                             <div className="RequestbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
+                                <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <InputDropdown
                                     id="branchName"
-                                    name="branchName" 
+                                    name="branchName"
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
                                     value={selectedBranch}
@@ -206,22 +206,22 @@ export const StockTransfer = () => {
                             <Buttons type="button" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleNewButtonClick}> New + </Buttons>
                         </div>
                     </div>
-                    
-                    
+
+
                 </div>
                 <Tabs className="stockTransferTabs">
                     <TabList className="transferStatusTab">
-                            <Tab>Stock Request In</Tab>
-                            <Tab>Stock Request OUT</Tab>
-                        </TabList>
+                        <Tab>Stock Request In</Tab>
+                        <Tab>Stock Request OUT</Tab>
+                    </TabList>
 
-                        <TabPanel>
-                            <StockTransferIn/>
-                        </TabPanel>
-                        <TabPanel>
-                            <StockTransferOUT/>
-                        </TabPanel>
-                    </Tabs>
+                    <TabPanel>
+                        <StockTransferIn />
+                    </TabPanel>
+                    <TabPanel>
+                        <StockTransferOUT />
+                    </TabPanel>
+                </Tabs>
             </Layout>
         </>
     );
