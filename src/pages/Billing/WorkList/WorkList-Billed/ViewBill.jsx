@@ -115,7 +115,7 @@ export const ViewBill = () => {
                         <div className="btnSection-viewBill">
                             <div className="returnBtn">
                                 <InputLabel> Return Items</InputLabel>
-                                <Link to={`/work-list/viewbill/start-return-items/${selectedBillNo}`}>
+                                <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
                                     <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
                                 </Link>
                             </div>

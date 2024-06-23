@@ -20,7 +20,7 @@ export const StockBalance = () => {
     const [stockDetails, setStockDetails] = useState([]);
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchBranches();
@@ -89,27 +89,27 @@ export const StockBalance = () => {
         setLoading(true);
         if (!selectedBranch || !product) {
             console.error('Please select both branch and product');
-            
+
             return;
         }
-    
+
         console.log('Branch:', selectedBranch);
         console.log('Product:', product);
-    
+
         try {
             const response = await axios.get('http://localhost:8080/active-stock', {
                 params: {
                     branchName: selectedBranch,
-                    productId: product.id, 
+                    productId: product.id,
                 }
             });
-    
-            const data = response.data.data; 
-            setStockDetails(Array.isArray(data) ? data : [data]); 
+
+            const data = response.data.data;
+            setStockDetails(Array.isArray(data) ? data : [data]);
         } catch (error) {
             console.error('Error fetching stock details:', error);
-        }finally {
-            setLoading(false); 
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -124,70 +124,69 @@ export const StockBalance = () => {
 
     return (
         <>
-           
-                <div className="stock-balance-bodycontainer">
-                    <div className="stock-balance-filter-container">
-                        <div className="stock-balance-content-top">
-                            <div className="branchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
-                                <BranchDropdown
-                                    id="branchName"
-                                    name="branchName"
-                                    editable={true}
-                                    onChange={(e) => handleDropdownChange(e)}
-                                    addOptions={["All"]}
-                                    />
-                            </div>
-                            <div className="productField">
-                                <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
-                                <SearchBar
-                                    searchTerm={selectedProduct}
-                                    setSearchTerm={setSelectedProduct}
-                                    onSelectSuggestion={(suggestion) => {
-                                        setSelectedProduct(`${suggestion.displayText}`);
-                                        setProduct(suggestion); // Set the selected product object
-                                    }}
-                                    fetchSuggestions={fetchProductsSuggestions}
-                                />
-                            </div>
-                            
+            <div className="stock-balance-bodycontainer">
+                <div className="stock-balance-filter-container">
+                    <div className="stock-balance-content-top">
+                        <div className="branchField">
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <BranchDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                onChange={(e) => handleDropdownChange(e)}
+                                addOptions={["All"]}
+                            />
                         </div>
-                        <div className="stock-balance-BtnSection">
-                            <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
-                            <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}>Clear</Buttons>
+                        <div className="productField">
+                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <SearchBar
+                                searchTerm={selectedProduct}
+                                setSearchTerm={setSelectedProduct}
+                                onSelectSuggestion={(suggestion) => {
+                                    setSelectedProduct(`${suggestion.displayText}`);
+                                    setProduct(suggestion);
+                                }}
+                                fetchSuggestions={fetchProductsSuggestions}
+                            />
                         </div>
-                    </div>
-                    <div className="stock-balance-content-middle">
-                        <p className="stock-active-balance-title">Active Stock</p>
 
-                        <TableWithPagi
-                            columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Qty', '']}
-                            rows={stockDetails.map(detail => ({
-                                'Product ID': detail.productId,
-                                'Product Name': detail.productName,
-                                'Branch Name': detail.branchName, // Adjusted key to match API response
-                                'Category Name': detail.categoryName, // Adjusted key to match API response
-                                'Qty': detail.qty,
-                                '': (
-                                    <div style={{ display: "flex", gap: "0.5em" }}>
-                                       <StockSummary
-                                            productId={detail.productId}
-                                            productName={detail.productName}
-                                            branchName={detail.branchName}
-                                            qty={detail.qty}
-                                        />
-                                        <AdjustStock
-                                            productId={detail.productId}
-                                            productName={detail.productName}
-                                            branchName={detail.branchName}
-                                         />
-                                    </div>
-                                )
-                            }))}
-                        />
+                    </div>
+                    <div className="stock-balance-BtnSection">
+                        <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
+                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}>Clear</Buttons>
                     </div>
                 </div>
-           
+                <div className="stock-balance-content-middle">
+                    <p className="stock-active-balance-title">Active Stock</p>
+
+                    <TableWithPagi
+                        columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Qty', '']}
+                        rows={stockDetails.map(detail => ({
+                            'Product ID': detail.productId,
+                            'Product Name': detail.productName,
+                            'Branch Name': detail.branchName,
+                            'Category Name': detail.categoryName,
+                            'Qty': detail.qty,
+                            '': (
+                                <div style={{ display: "flex", gap: "0.5em" }}>
+                                    <StockSummary
+                                        productId={detail.productId}
+                                        productName={detail.productName}
+                                        branchName={detail.branchName}
+                                        qty={detail.qty}
+                                    />
+                                    <AdjustStock
+                                        productId={detail.productId}
+                                        productName={detail.productName}
+                                        branchName={detail.branchName}
+                                    />
+                                </div>
+                            )
+                        }))}
+                    />
+                </div>
+            </div>
+
         </>
     );
 };

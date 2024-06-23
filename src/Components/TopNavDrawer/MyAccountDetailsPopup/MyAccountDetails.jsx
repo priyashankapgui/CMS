@@ -248,6 +248,7 @@ function MyAccountDetails() {
                 id="empName"
                 name="empName"
                 value={employeeData.employeeName}
+                className={editable ? "blue-border" : ""}
                 editable={editable}
                 onChange={(e) =>
                   setEmployeeData({
@@ -267,6 +268,7 @@ function MyAccountDetails() {
                 name="empEmail"
                 value={employeeData.email}
                 editable={editable}
+                className={editable ? "blue-border" : ""}
                 onChange={(e) =>
                   setEmployeeData({ ...employeeData, email: e.target.value })
                 }
@@ -285,6 +287,7 @@ function MyAccountDetails() {
                     placeholder="New Password"
                     value={password}
                     editable={editable}
+                    className={editable ? "blue-border" : ""}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   {password && (
@@ -312,6 +315,7 @@ function MyAccountDetails() {
                     placeholder="Confirm New Password"
                     value={confirmPassword}
                     editable={editable}
+                    className={editable ? "blue-border" : ""}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
