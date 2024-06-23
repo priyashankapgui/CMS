@@ -52,7 +52,8 @@ export const Suppliers = () => {
     const handleClearBtn = () => {
         setSelectedSupplier('');
         setSuppliersData([]);
-        window.location.reload();
+        // window.location.reload();
+        
     };
 
     const handleSearch = async () => {

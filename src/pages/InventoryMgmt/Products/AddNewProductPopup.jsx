@@ -19,6 +19,12 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
+    const [imageUrl, setImageUrl] = useState(null);
+    const [files, setFile] = useState(null);
+    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
+    const [showAlertError, setShowAlertError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const baseURL = "http://localhost:8080/products";
 
     const productSchema = Joi.object({
@@ -74,19 +80,28 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
 
         const formData = new FormData();
-        formData.append('image', image);
+       
         formData.append('productName', productName);
         formData.append('description', description);
         formData.append('categoryName', categoryName);
         formData.append('barcode', barcode);
 
-        setIsLoading(true);
+                      
+        if (files) {
+            for (var x = 0; x < files.length; x++) {
+                formData.append("images", files[x]);
+            }
+            
+        }
+        const response = await fetch(baseURL, {
+            method: "POST",
+            
+            body: formData,
+        });
+          
+          
         try {
-            await axios.post(baseURL, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            
 
             const alertData = {
                 severity: 'success',
@@ -111,7 +126,9 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         } finally {
             setIsLoading(false);
         }
-    };
+    
+    
+};
 
     const fetchCategorySuggestions = async (query) => {
         try {
@@ -126,6 +143,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
             return [];
         }
     };
+
+    const handleImageChange = (event, type) => {
+        const file = event.target.files;
+        setFile(file);
+        // setImageType(type); // Set the image type
+      };
+
+     
 
     return (
         <>
@@ -144,10 +169,27 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 buttonText="Save"
                 onClick={addProductHandler}
                 isLoading={isLoading}
+                onChange={(event) => handleImageChange(event, "productsimages")}
+                
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
 
                     <div style={{ display: 'block', width: '100%' }}>
+                    <div style={{ marginBottom: "5px" }}>
+                            {/* <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> */}
+                            <input 
+                                type="file" 
+                                id="uploadProductImages" 
+                                name="images" 
+                                style={{ width: '100%' }} 
+                                className="web-mgmt-lable"
+                                onChange={handleImageChange} 
+                                multiple 
+                                
+                            />
+            
+                            {/* <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} /> */}
+                        </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
@@ -165,10 +207,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
                         </div>
-                        <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
-                        </div>
+                        
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" height="4em" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />

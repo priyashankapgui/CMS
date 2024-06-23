@@ -11,6 +11,7 @@ import SearchBar from '../../../Components/SearchBar/SearchBar';
 import AddNewProductPopup from './AddNewProductPopup';
 import AddNewCategoryPopup from './AddNewCategoryPopup';
 import UpdateProductPopup from './UpdateProductPopup';
+import UpdateCategoryPopup from './UpdateCategoryPopup';
 import { Icon } from "@iconify/react";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
@@ -276,6 +277,12 @@ export const Products = () => {
         }
     };
 
+    const formatDate = (datetime) => {
+        const date = new Date(datetime);
+        return date.toISOString().split('T')[0];
+    };
+
+
     const columns = [
         "Branch Name",
         "Batch No",
@@ -289,7 +296,7 @@ export const Products = () => {
     const tableRows = batchDetails.map((detail, index) => ({
         branchName: detail.branchName,
         batchNo: detail.batchNo,
-        expDate: detail.expDate,
+        expDate: formatDate(detail.expDate),
         availableQty: detail.availableQty,
         sellingPrice: detail.sellingPrice,
         discount: (
@@ -360,16 +367,6 @@ const handleSave = async () => {
 
       
     
-    
-    
-
-   
-
-    // const formatDate = (datetime) => {
-    //     const date = new Date(datetime);
-    //     return date.toISOString().split('T')[0];
-    // };
-
     return (
         <>
             {alertVisible && (
@@ -420,6 +417,7 @@ const handleSave = async () => {
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
                                             <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
+                                            
                                             <DeletePopup />
                                         </div>
                                     )
@@ -427,7 +425,7 @@ const handleSave = async () => {
                                     'Reg Categories': category.categoryName,
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-
+                                            <UpdateCategoryPopup categoryId={category.categoryId}  />
                                             <DeletePopup />
                                         </div>
                                     )
