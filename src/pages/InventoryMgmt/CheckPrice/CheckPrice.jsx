@@ -9,6 +9,7 @@ import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
+
 export const CheckPrice = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -23,7 +24,7 @@ export const CheckPrice = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branches');
+            const response = await axios.get('http://localhost:8080/branchesWeb');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);

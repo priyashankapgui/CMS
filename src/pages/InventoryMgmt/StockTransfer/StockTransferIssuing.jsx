@@ -12,6 +12,8 @@ import { FiPlus } from "react-icons/fi"; // Import all icons
 import { AiOutlineDelete } from "react-icons/ai";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
+import secureLocalStorage from "react-secure-storage";
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 
 export const StockTransferIssuing = () => {
     const { STN_NO } = useParams();
@@ -21,10 +23,21 @@ export const StockTransferIssuing = () => {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submittedBy, setSubmittedBy] = useState(""); // Assuming you have a way to get the currently logged in user
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({});
+
+    const showAlert = (severity, title, message, duration) => {
+        setAlertConfig({ severity, title, message, duration });
+        setAlertVisible(true);
+        setTimeout(() => {
+            setAlertVisible(false);
+        }, duration);
+    };
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
+                
                 
                 const response = await axios.get(`http://localhost:8080/stock-transferDetails/${STN_NO}`);
                 setStockTransferDetails(response.data.data);
@@ -78,7 +91,11 @@ export const StockTransferIssuing = () => {
 
     const handleSave = async () => {
         try {
-            const user = JSON.parse(sessionStorage.getItem("user"));
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+                
+            
 
             const data = {
                 STN_NO: stockTransferDetails?.STN_NO,
@@ -97,12 +114,17 @@ export const StockTransferIssuing = () => {
 
             const response = await axios.post(`http://localhost:8080/stockTransferIN`, data);
             console.log("Save response:", response.data);
-
+            showAlert('success', 'Success', 'Stock transfer successful!', 5000);
             // Navigate to the desired page after successful save
             navigate('/stock-transfer');
-        } catch (error) {
-            console.error("Error saving stock transfer:", error);
+        } else {
+            console.error('User details not found in secure storage');
         }
+     } catch (error) {
+            console.error("Error saving stock transfer:", error);
+            showAlert('error', 'Error', 'Failed to save stock transfer.', 5000);
+        }
+    
     };
 
     const calculateTotalAmount = () => {
@@ -197,6 +219,15 @@ export const StockTransferIssuing = () => {
 
     return (
         <>
+          {alertVisible && (
+                <CustomAlert
+                    severity={alertConfig.severity}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    duration={alertConfig.duration}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
             <div className="top-nav-blue-text">
             <div className="stockIssuing-link">
                     <Link to="/stock-transfer">

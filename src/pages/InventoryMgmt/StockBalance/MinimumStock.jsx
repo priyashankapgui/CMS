@@ -8,6 +8,7 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
+import secureLocalStorage from "react-secure-storage";
 
 export const MinimunStock = () => {
     const [branches, setBranches] = useState([]);
@@ -63,18 +64,13 @@ export const MinimunStock = () => {
     };
 
     const fetchProductQuantities = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
-
-        if (!user) {
-            console.error('User is not available');
-            setLoading(false);
-            return;
-        }
-        console.log("user role", user.role);
+       
 
         try {
-            let response;
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+                let response;
             if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/product-quantities');
             } else if (user.branchName) {
@@ -85,6 +81,9 @@ export const MinimunStock = () => {
                 return;
             }
             setStockDetails(response.data?.data || []);
+        } else {
+            console.error('User details not found in secure storage');
+        }
         } catch (error) {
             console.error('Error fetching product quantities:', error);
         } finally {

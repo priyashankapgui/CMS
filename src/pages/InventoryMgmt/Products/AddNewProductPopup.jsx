@@ -19,6 +19,13 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
+    const [imageUrl, setImageUrl] = useState(null);
+    const [files, setFile] = useState(null);
+    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
+    const [showAlertError, setShowAlertError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    
+
     const baseURL = "http://localhost:8080/products";
 
     const productSchema = Joi.object({
@@ -127,6 +134,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         }
     };
 
+    // const handleImageChange = (event, type) => {
+    //     const file = event.target.files;
+    //     setFile(file);
+    //     // setImageType(type); // Set the image type
+    //   };
+
+     
+
     return (
         <>
             {alertVisible && (
@@ -144,10 +159,16 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 buttonText="Save"
                 onClick={addProductHandler}
                 isLoading={isLoading}
+                
+                
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
 
                     <div style={{ display: 'block', width: '100%' }}>
+                    <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
+                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
+                        </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
@@ -165,10 +186,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
                         </div>
-                        <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
-                        </div>
+                        
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" height="4em" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
