@@ -17,14 +17,15 @@ const TokenNotification = () => {
             <Buttons
                 style={{ backgroundColor: "#EEEEEE", color: "red" }}
                 btnWidth={150}
+                marginTop="1.625em"
                 onClick={() => {
                     secureLocalStorage.removeItem('accessToken');
-                    secureLocalStorage.removeItem('user');  
+                    secureLocalStorage.removeItem('user');
                     window.location.href = '/';
                 }}
-              >
+            >
                 Back To Login
-              </Buttons>
+            </Buttons>
         </div>
     );
 }

@@ -37,13 +37,11 @@ const LogoutPopup = ({ open, onClose }) => {
             }
             });
             if (!response.ok) {
-                throw new Error("Failed to fetch data");
+                console.log("Error:", response.statusText);
             }
-            else{
-                secureLocalStorage.removeItem('accessToken');
-                secureLocalStorage.removeItem('user');
-                window.location.href = '/';
-            }
+            secureLocalStorage.removeItem('accessToken');
+            secureLocalStorage.removeItem('user');
+            window.location.href = '/';
         }
         catch (error) {
             console.error("Error:", error);
