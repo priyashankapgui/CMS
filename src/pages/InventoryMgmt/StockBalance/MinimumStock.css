@@ -19,7 +19,6 @@
   .min-stock-content-top {
     display: flex;
     height: 80px;
-    /* justify-content: space-between; */
     gap: 50px;
     margin-top: 10px;
     border-bottom: 3px solid #D9D9D9;
