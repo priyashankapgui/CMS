@@ -9,25 +9,22 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import DatePicker from '../../../Components/DatePicker/DatePicker';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { useNavigate } from 'react-router-dom';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import StockTransferIn from './StockTransferIN';
 import StockTransferOUT from './StockTransferOUT';
 
-
 export const StockTransfer = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
-    const [stockData, setStockData] = useState([]);
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
-    const [loading, setLoading] = useState(true);
     const [searchParams, setSearchParams] = useState({
         fromDate: '',
         toDate: '',
         STN_NO: '',
         productId: '',
+        requestBranch: '',  // Added requestBranch to searchParams
     });
     const [products, setProducts] = useState([]);
 
@@ -38,41 +35,9 @@ export const StockTransfer = () => {
     };
 
     useEffect(() => {
-        fetchStockData();
         fetchBranches();
         fetchProducts();
     }, []);
-
-    const fetchStockData = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
-    
-        if (!user) {
-            console.error('User is not available');
-            setLoading(false);
-            return;
-        }
-        console.log("useranee", user.role);
-    
-        try {
-            let response;
-            if (user.role === 'Super Admin') {
-                response = await axios.get('http://localhost:8080/allTransfers');
-            } else if (user.branchName) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${user.branchName}`);
-            } else {
-                console.error('Branch name is not available for the user');
-                setLoading(false);
-                return;
-            }
-            setStockData(response.data?.data || []);
-        } catch (error) {
-            console.error('Error fetching Stock transfer data:', error);
-        } finally {
-            setLoading(false);
-        }
-       
-    };
 
     const fetchBranches = async () => {
         try {
@@ -93,7 +58,10 @@ export const StockTransfer = () => {
     };
 
     const handleDropdownChange = (value) => {
-        setSelectedBranch(value);
+        setSearchParams(prevState => ({
+            ...prevState,
+            requestBranch: value
+        }));
     };
 
     const handleInputChange = (e) => {
@@ -111,19 +79,15 @@ export const StockTransfer = () => {
         }));
     };
 
-    const handleSearch = async () => {
-        
-    };
-
     const handleClear = () => {
         setSearchParams({
             STN_NO: '',
             fromDate: '',
             toDate: '',
             productId: '',
+            requestBranch: '',
         });
         setSelectedBranch('');
-        window.location.reload();
     };
 
     const handleNewButtonClick = () => {
@@ -144,6 +108,10 @@ export const StockTransfer = () => {
             console.error('Error fetching product suggestions:', error);
             return [];
         }
+    };
+
+    const handleSearch = () => {
+        setClickedLink('StockRequest-IN');
     };
 
     return (
@@ -177,7 +145,7 @@ export const StockTransfer = () => {
                                 <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
                                 <InputDropdown
                                     id="branchName"
-                                    name="branchName" 
+                                    name="branchName"
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
                                     value={selectedBranch}
@@ -206,22 +174,19 @@ export const StockTransfer = () => {
                             <Buttons type="button" id="new-btn" style={{ backgroundColor: "white", color: "#23A3DA" }} onClick={handleNewButtonClick}> New + </Buttons>
                         </div>
                     </div>
-                    
-                    
                 </div>
-                <Tabs className="stockTransferTabs">
+                <Tabs className="stockTransferTabs" selectedIndex={clickedLink === 'StockRequest-IN' ? 0 : 1} onSelect={(index) => setClickedLink(index === 0 ? 'StockRequest-IN' : 'StockRequest-OUT')}>
                     <TabList className="transferStatusTab">
-                            <Tab>Stock Request In</Tab>
-                            <Tab>Stock Request OUT</Tab>
-                        </TabList>
-
-                        <TabPanel>
-                            <StockTransferIn/>
-                        </TabPanel>
-                        <TabPanel>
-                            <StockTransferOUT/>
-                        </TabPanel>
-                    </Tabs>
+                        <Tab>Stock Request In</Tab>
+                        <Tab>Stock Request OUT</Tab>
+                    </TabList>
+                    <TabPanel>
+                        {clickedLink === 'StockRequest-IN' && <StockTransferIn searchParams={searchParams} />}
+                    </TabPanel>
+                    <TabPanel>
+                        {clickedLink === 'StockRequest-OUT' && <StockTransferOUT searchParams={searchParams} />}
+                    </TabPanel>
+                </Tabs>
             </Layout>
         </>
     );

@@ -1,31 +1,75 @@
-import { React, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Layout from '../../../../Layout/Layout';
 import './StartReturnItems.css';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import { Link, useParams } from 'react-router-dom';
 import InputField from '../../../../Components/InputField/InputField';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
-import jsonData from '../../../../Components/Data.json';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 
-
 export const StartReturnItems = () => {
-
     const { billNo } = useParams();
-    const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
-
-    const { branch, billedAt, billedBy, customerName, status, paymentMethod, contactNo } = selectedBillData;
-
+    const navigate = useNavigate();
+    const [billData, setBillData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [returnItems, setReturnItems] = useState([]);
     const [retQtyEditable, setRetQtyEditable] = useState([]);
     const [reason, setReason] = useState("");
     const [alertSuccessOpen, setAlertSuccessOpen] = useState(false);
     const [alertWarningOpen, setAlertWarningtOpen] = useState(false);
 
-    const toggleRetQtyEditable = (index) => {
-        const updatedState = [...retQtyEditable];
-        updatedState[index] = !updatedState[index];
-        setRetQtyEditable(updatedState);
+    useEffect(() => {
+        const fetchBillData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/bills-all?billNo=${billNo}`);
+                const responseData = response.data.data;
+                if (responseData) {
+                    setBillData(responseData);
+                    setReturnItems(responseData.billProducts.map(product => ({
+                        ...product,
+                        returnQty: 0
+                    })));
+                } else {
+                    setError('Bill not found');
+                }
+                setLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchBillData();
+    }, [billNo]);
+
+    const handleReturnQtyChange = (index, value) => {
+        const updatedItems = [...returnItems];
+        updatedItems[index].returnQty = value;
+        setReturnItems(updatedItems);
+    };
+
+    const handleSubmitReturn = async () => {
+        try {
+            const response = await axios.post('http://localhost:8080/returns', {
+                billNo,
+                returnItems: returnItems.filter(item => item.returnQty > 0),
+                reason // Make sure to include the reason in the request payload
+            });
+            if (response.status === 200) {
+                console.log("Form submitted!");
+                setAlertSuccessOpen(true);
+                navigate(`/work-list/viewbill/${billNo}`);
+            } else {
+                alert('Error processing return');
+            }
+        } catch (error) {
+            console.error('Error processing return:', error);
+            setAlertWarningtOpen(true);
+        }
+
     };
 
     const handleReasonChange = (event) => {
@@ -33,20 +77,28 @@ export const StartReturnItems = () => {
         setReason(value);
     };
 
-    const handleSubmit = () => {
-        // Perform form submission if reason is valid
-        if (reason.trim() !== "") {
-            // Add your logic to submit the form here
-            console.log("Form submitted!");
-            setAlertSuccessOpen(true);
-        } else {
-            setAlertWarningtOpen(true); // Show alert if reason is empty
-        }
+    const toggleRetQtyEditable = (index) => {
+        const updatedState = [...retQtyEditable];
+        updatedState[index] = !updatedState[index];
+        setRetQtyEditable(updatedState);
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    if (!billData) {
+        return <div>Bill not found</div>;
+    }
+
+    const { branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount, billProducts } = billData;
 
     return (
         <>
-
             <div className="top-nav-blue-text">
                 <div className="return-itmes-top-link">
                     <Link to={`/work-list/viewbill/${billNo}`}>
@@ -57,12 +109,11 @@ export const StartReturnItems = () => {
             </div>
 
             <Layout>
-
                 <div className="return-items-top">
                     <div className='return-items-top-cont'>
                         <div className="cont1">
                             <div className='inputFlex'>
-                                <InputLabel for="branchName" color="#0377A8">Branch: <span>{branch}</span></InputLabel>
+                                <InputLabel for="branchName" color="#0377A8">Branch: <span>{branchName}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo} </span></InputLabel>
@@ -73,7 +124,7 @@ export const StartReturnItems = () => {
                         </div>
                         <div className="cont2">
                             <div className='inputFlex'>
-                                <InputLabel for="billedAt" color="#0377A8">Billed At: <span>{billedAt} </span></InputLabel>
+                                <InputLabel for="billedAt" color="#0377A8">Billed At: <span>{createdAt} </span></InputLabel>
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="billedBy" color="#0377A8">Billed By: <span> {billedBy}</span></InputLabel>
@@ -98,7 +149,7 @@ export const StartReturnItems = () => {
                             <InputField id="" name="return-items-reason" value={reason} onChange={handleReasonChange} editable={true} width="400px" height="60px" placeholder="Type the reason here..." />
                         </div>
                         <div className="btnSection-return-items">
-                            <Buttons type="button" onClick={handleSubmit} id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
+                            <Buttons type="button" onClick={handleSubmitReturn} id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
                             <Link to={`/work-list/viewbill/${billNo}`}>
                                 <Buttons type="close" id="close-btn" style={{ backgroundColor: "#fafafa", color: "black" }}> Close </Buttons>
                             </Link>
@@ -118,7 +169,7 @@ export const StartReturnItems = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {selectedBillData.billedItems.map((item, index) => (
+                            {returnItems.map((item, index) => (
                                 <tr key={index}>
                                     <td>
                                         <label className="checkbox-container">
@@ -131,9 +182,20 @@ export const StartReturnItems = () => {
                                             <span className="checkmark"></span>
                                         </label>
                                     </td>
-                                    <td><InputField id={`productName_${index}`} name="productName" editable={false} width="300px" value={item.name} /></td>
-                                    <td><InputField id={`returnQty_${index}`} name="returnQty" editable={retQtyEditable[index]} width="100%" textAlign='center' placeholder='Type here' /></td>
-                                    <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.quantity} textAlign='center' /></td>
+                                    <td><InputField id={`productName_${index}`} name="productName" editable={false} width="300px" value={`${item.productId} ${item.productName}`} /></td>
+                                    <td>
+                                        <InputField
+                                            id={`returnQty_${index}`}
+                                            name="returnQty"
+                                            editable={retQtyEditable[index]}
+                                            width="100%"
+                                            textAlign='center'
+                                            placeholder='Type here'
+                                            className={retQtyEditable[index] ? 'blue-border' : ''}
+                                            onChange={(e) => handleReturnQtyChange(index, e.target.value)}
+                                        />
+                                    </td>
+                                    <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.billQty} textAlign='center' /></td>
                                     <td><InputField id={`batchNo_${index}`} name="batchNo" editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
                                 </tr>
                             ))}

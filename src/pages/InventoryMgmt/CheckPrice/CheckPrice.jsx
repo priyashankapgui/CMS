@@ -9,6 +9,7 @@ import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 
+
 export const CheckPrice = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -23,7 +24,7 @@ export const CheckPrice = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branches');
+            const response = await axios.get('http://localhost:8080/branchesWeb');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -96,15 +97,15 @@ export const CheckPrice = () => {
                     <div className="check-price-filter-container">
                         <div className="check-price-content-top">
                             <div className="branch-field">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>                          
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
                                     addOptions={["All"]}
-                                 
-                                    />
+
+                                />
                             </div>
                             <div className="product-field">
                                 <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>

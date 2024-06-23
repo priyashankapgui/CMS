@@ -9,6 +9,7 @@ import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 import PasswordStrengthBar from 'react-password-strength-bar';
 
 const ResetPw = () => {
+  const API_RESET_PW_URL = `${process.env.REACT_APP_API_RESET_PASSWORD_URL}`;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -32,7 +33,7 @@ const ResetPw = () => {
     if (!token) {
       window.location.href = "/";
     } else {
-      const response = await fetch("http://localhost:8080/api/login/resetpw", {
+      const response = await fetch(API_RESET_PW_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

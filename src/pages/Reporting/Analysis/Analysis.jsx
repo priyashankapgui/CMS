@@ -65,7 +65,7 @@ export const Analysis = () => {
                         </div>
                     </div>
                     <div className="reportRightContent">
-                        <h3>Total Sales Amount:</h3>
+                        <h3>Total Sales Amount: <span style={{color:"black"}}>Rs 125980.28</span></h3>
                     </div>
                 </div>
                 <div className="reportingMiddle">

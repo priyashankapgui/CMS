@@ -18,6 +18,7 @@ import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import ViewGRN from './ViewGRN';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import GrnDoc from '../../../Components/InventoryDocuments/GrnDoc/GrnDoc';
+import secureLocalStorage from "react-secure-storage";
 
 export const GoodReceive = () => {
     const [grnData, setGrnData] = useState([]);
@@ -40,6 +41,9 @@ export const GoodReceive = () => {
     const [selectedGRN_NO, setSelectedGRN_NO] = useState(null);
     //const selectedGRNData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+    const [userDetails, setUserDetails] = useState({});
+
+    
 
     const handleReprintClick = (grnNo) => {
         console.log("Reprint button clicked for GRN No:", grnNo);
@@ -61,22 +65,17 @@ export const GoodReceive = () => {
 
   
     const fetchGrnData = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
-    
-        if (!user) {
-            console.error('User is not available');
-            setLoading(false);
-            return;
-        }
-        console.log("useranee", user.role);
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+          const user = JSON.parse(userJSON);
+          console.log("user data",user);
     
         try {
             let response;
             if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/grn');
             } else if (user.branchName) {
-                response = await axios.get(`http://localhost:8080/grn-branch?branchName=${user.branchName}`);
+                response = await axios.get(`http://localhost:8080/grn-product-all?branchName=${user.branchName}`);
             } else {
                 console.error('Branch name is not available for the user');
                 setLoading(false);
@@ -88,6 +87,7 @@ export const GoodReceive = () => {
         } finally {
             setLoading(false);
         }
+    }
     };
 
     const fetchBranches = async () => {
@@ -240,6 +240,11 @@ export const GoodReceive = () => {
         }
     };
 
+    const formatDate = (datetime) => {
+        const date = new Date(datetime);
+        return date.toISOString().split('T')[0];
+    };
+
     return (
         <>
             <div className="top-nav-blue-text">
@@ -310,7 +315,7 @@ export const GoodReceive = () => {
                                 columns={['GRN No', 'Created At', 'Branch', 'Supplier', 'Invoice No', '']}
                                 rows={grnData.map((grn, index) => ({
                                     'GRN No': grn.GRN_NO,
-                                    'Created At': grn.createdAt,
+                                    'Created At': formatDate(grn.createdAt),
                                     'Branch': grn.branchName,
                                     'Supplier': grn.supplierName,
                                     'Invoice No': grn.invoiceNo,
