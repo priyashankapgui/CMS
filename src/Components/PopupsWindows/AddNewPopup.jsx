@@ -27,7 +27,7 @@ function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick }) {
                 <>
                     {children}
                     {loading ? <SubSpinner /> :
-                    <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white", }} btnWidth="30%" btnHeight="2.5em" onClick={onClickWithLoading}>{buttonText}</Buttons>
+                    <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white", }} btnWidth="100%" btnHeight="2.5em" onClick={onClickWithLoading}>{buttonText}</Buttons>
                     }
                 </>
             )}

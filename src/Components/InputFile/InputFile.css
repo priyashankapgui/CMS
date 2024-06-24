@@ -1,34 +1,46 @@
-.container {
+.inputFileContainer {
   position: relative;
   display: inline-block;
   width: 100%;
+  margin-top: 0.313em;
 }
 
-.button {
+.inputFileBtn {
   padding: 10px 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  font-size: 12px;
+  width: 100%;
+  border: 1px solid #8D9093;
+  border-radius: 10px;
   cursor: pointer;
   overflow: hidden;
   text-align: left;
   transition: background-color 0.2s ease-in-out;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Poppins', sans-serif;
   display: flex;
   align-items: center;
 }
 
-.file-name {
-  font-size: 14px;
+.input-file-names {
+  margin-top: 10px;
+}
+
+.input-file-name {
+  font-size: 12px;
   color: #555;
+  display: flex;
+  align-items: center;
   margin-top: 5px;
 }
 
-.button:hover {
-  background-color: #388e3c;
+.inputFileBtn:hover {
+  background-color: #e8eeea;
+  border: 1px solid #11b4ca;
+  color: rgb(3, 3, 3);
+  font-weight: 500;
 }
 
-.icon {
+.inputFileIcon {
   margin-right: 5px;
   font-family: 'FontAwesome';
 }
@@ -38,7 +50,13 @@
   left: 0;
   top: 0;
   opacity: 0;
-  width: 100%;
+  width: fit-content;
   height: 100%;
   cursor: pointer;
+}
+
+.delete-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  color: red;
 }

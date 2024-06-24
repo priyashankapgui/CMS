@@ -7,6 +7,7 @@ import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import InputFile from '../../../Components/InputFile/InputFile';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [showAlertSuccess, setShowAlertSuccess] = useState(false);
     const [showAlertError, setShowAlertError] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+
 
     const baseURL = "http://localhost:8080/products";
 
@@ -140,7 +141,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     //     // setImageType(type); // Set the image type
     //   };
 
-     
+
 
     return (
         <>
@@ -159,16 +160,13 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 buttonText="Save"
                 onClick={addProductHandler}
                 isLoading={isLoading}
-                
-                
+
+
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
 
                     <div style={{ display: 'block', width: '100%' }}>
-                    <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
-                        </div>
+
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
@@ -176,6 +174,15 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                         <div>
                             <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
                             <InputField type="text" id="barcode" name="barcode" value={barcode} onChange={(e) => setBarcode(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                            <InputFile
+                                id="productImages"
+                                name="productImages"
+                                onChange={(e) => setImage(e.target.files[0])}
+                                multiple
+                            />
                         </div>
                         <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
@@ -186,7 +193,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
                         </div>
-                        
+
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" height="4em" value={description} onChange={(e) => setDescription(e.target.value)} editable={true} style={{ width: '100%' }} />
