@@ -113,3 +113,7 @@
   line-height: normal;
   min-width: 7.375em;
 }
+.blue-border {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 2px rgb(7, 87, 107);
+}

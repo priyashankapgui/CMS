@@ -10,9 +10,12 @@ import "./MyAccountDetails.css";
 import PasswordStrengthBar from "react-password-strength-bar";
 import accountCircle from "../../../Assets/account_circle_24dp.svg";
 import secureLocalStorage from "react-secure-storage";
+import { useNavigate } from "react-router-dom";
+import SubSpinner from "../../Spinner/SubSpinner/SubSpinner";
 import RoundButtons from "../../Buttons/RoundButtons/RoundButtons"
 
 function MyAccountDetails() {
+  const navigate = useNavigate();
   const [showSubPopup, setShowSubPopup] = useState(false);
   const [employeeData, setEmployeeData] = useState({
     employeeName: "",
@@ -29,6 +32,7 @@ function MyAccountDetails() {
   const [showAlertSuccess, setShowAlertSuccess] = useState(false);
   const [showAlertError, setShowAlertError] = useState("");
   const [profilePicExists, setProfilePicExists] = useState(true);
+  const [loading, setLoading] = useState(false);
   let user = JSON.parse(secureLocalStorage.getItem("user"));
 
   const toggleEditable = () => {
@@ -74,6 +78,7 @@ function MyAccountDetails() {
       setShowAlertError("Passwords do not match");
       return;
     }
+    setLoading(true);
     try {
       let body = {};
       const token = secureLocalStorage.getItem("accessToken");
@@ -121,7 +126,9 @@ function MyAccountDetails() {
         secureLocalStorage.setItem("user", JSON.stringify(updatedUser));
         setShowAlertSuccess(true);
       }
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       setShowAlertError(true);
       console.error("Error:", error);
     }
@@ -248,6 +255,7 @@ function MyAccountDetails() {
                 id="empName"
                 name="empName"
                 value={employeeData.employeeName}
+                className={editable ? "blue-border" : ""}
                 editable={editable}
                 onChange={(e) =>
                   setEmployeeData({
@@ -267,6 +275,7 @@ function MyAccountDetails() {
                 name="empEmail"
                 value={employeeData.email}
                 editable={editable}
+                className={editable ? "blue-border" : ""}
                 onChange={(e) =>
                   setEmployeeData({ ...employeeData, email: e.target.value })
                 }
@@ -285,6 +294,7 @@ function MyAccountDetails() {
                     placeholder="New Password"
                     value={password}
                     editable={editable}
+                    className={editable ? "blue-border" : ""}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   {password && (
@@ -312,9 +322,13 @@ function MyAccountDetails() {
                     placeholder="Confirm New Password"
                     value={confirmPassword}
                     editable={editable}
+                    className={editable ? "blue-border" : ""}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
+                {loading ? 
+                  <SubSpinner loading={loading} spinnerText="Updating" />
+                  :
                 <Buttons
                   type="submit"
                   id="update-btn"
@@ -324,6 +338,7 @@ function MyAccountDetails() {
                 >
                   Update
                 </Buttons>
+                }
               </div>
             )}
 
@@ -333,7 +348,7 @@ function MyAccountDetails() {
                 title="Success"
                 message="Employee updated successfully"
                 duration={3000}
-                onClose={() => window.location.reload()}
+                onClose={() => navigate(0)}
               />
             )}
 

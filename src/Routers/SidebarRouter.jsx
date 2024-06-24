@@ -47,6 +47,7 @@ export function SidebarRouter() {
       <Route path="/" element={<Login />} />
       <Route path="/login/fp" element={<ForgetPw />} />
       <Route path="/login/resetpw" element={<ChangePw />} />
+      
       <Route element={<ProtectedRoute groupName="adjust-branch" />}>
         <Route path="/adjust-branch" element={<AdjustBranch />} />
       </Route>

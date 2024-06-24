@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Joi from 'joi';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
@@ -11,6 +12,7 @@ const url = "http://localhost:8080/categories";
 function AddNewCategoryPopup() {
     const navigate = useNavigate();
     const [categoryName, setCategoryName] = useState('');
+    const [image, setImage] = useState(null);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
 
@@ -69,6 +71,10 @@ function AddNewCategoryPopup() {
             )}
             <AddNewPopup topTitle="Add New Category" buttonId="create-btn" buttonText="Create" onClick={handleSave}>
                 <div style={{ display: 'block', width: '100%' }}>
+                <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
+                        </div>
                     <div>
                         <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                         <InputField type="text" id="categoryName" name="categoryName" editable={true} value={categoryName} onChange={(e) => setCategoryName(e.target.value)} style={{ width: '100%' }} />

@@ -1,18 +1,17 @@
 .stockBalanceTabs {
     height: 100%;
-    
+
 }
 
 .balanceStatusTab {
     display: flex;
     gap: 15px;
-    padding: 20px 0;
+    padding: 10px 0;
 }
 
 .balanceStatusTab .react-tabs__tab {
     padding: 3px 20px;
     cursor: pointer;
-    background-color: #fefefe;
     border: none;
     border-bottom: 2px solid transparent;
     border-radius: 0;
@@ -23,6 +22,12 @@
 .balanceStatusTab .react-tabs__tab--selected {
     color: rgb(35, 163, 218);
     border-bottom: 2px solid rgb(35, 163, 218);
+    font-weight: 500;
+}
+
+.balanceStatusTab .react-tabs__tab--selected {
+    background-color: transparent;
+    font-weight: 520;
 }
 
 .balanceStatusTab .react-tabs__tab:hover {

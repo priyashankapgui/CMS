@@ -19,7 +19,7 @@
     display: flex;
     justify-content: space-between;
     height: 80px;
-    min-width:  100%;
+    min-width: 100%;
     margin-top: 10px;
     border-bottom: 3px solid #D9D9D9;
 
@@ -44,11 +44,11 @@
     padding: 3px 20px;
     cursor: pointer;
     border: none;
- 
+
 }
 
 .OrderStatusTab .react-tabs__tab--selected {
-    color:  #0377A8;
+    color: #0377A8;
     font-weight: 600;
     border-bottom: 2px solid rgb(1, 76, 108);
     background-color: transparent;

@@ -391,7 +391,7 @@ export const Sales = () => {
                 setAlert({
                     severity: 'success',
                     title: 'Success',
-                    message: 'Data saved successfully!',
+                    message: 'Bill generated successfully!',
                     open: true
                 });
 

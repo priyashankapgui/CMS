@@ -8,6 +8,7 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
+import secureLocalStorage from "react-secure-storage";
 
 export const MinimunStock = () => {
     const [branches, setBranches] = useState([]);
@@ -18,7 +19,7 @@ export const MinimunStock = () => {
     const [stockDetails, setStockDetails] = useState([]);
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchBranches();
@@ -63,18 +64,13 @@ export const MinimunStock = () => {
     };
 
     const fetchProductQuantities = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
-
-        if (!user) {
-            console.error('User is not available');
-            setLoading(false);
-            return;
-        }
-        console.log("user role", user.role);
+       
 
         try {
-            let response;
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+                let response;
             if (user.role === 'Super Admin') {
                 response = await axios.get('http://localhost:8080/product-quantities');
             } else if (user.branchName) {
@@ -85,6 +81,9 @@ export const MinimunStock = () => {
                 return;
             }
             setStockDetails(response.data?.data || []);
+        } else {
+            console.error('User details not found in secure storage');
+        }
         } catch (error) {
             console.error('Error fetching product quantities:', error);
         } finally {
@@ -118,16 +117,16 @@ export const MinimunStock = () => {
             const response = await axios.get('http://localhost:8080/product-quantities', {
                 params: {
                     branchName: selectedBranch,
-                    productId: productId, 
+                    productId: productId,
                 }
             });
 
-            const data = response.data.data; 
-            setStockDetails(Array.isArray(data) ? data : [data]); 
+            const data = response.data.data;
+            setStockDetails(Array.isArray(data) ? data : [data]);
         } catch (error) {
             console.error('Error fetching stock details:', error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -146,7 +145,7 @@ export const MinimunStock = () => {
                 <div className="min-stock-filter-container">
                     <div className="min-stock-content-top">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
@@ -156,7 +155,7 @@ export const MinimunStock = () => {
                             />
                         </div>
                         <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
+                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
                             <SearchBar
                                 searchTerm={selectedProduct}
                                 setSearchTerm={setSelectedProduct}
@@ -175,12 +174,12 @@ export const MinimunStock = () => {
                 </div>
                 <div className="min-stock-content-middle">
                     <TableWithPagi
-                        columns={['Branch Name','Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
+                        columns={['Branch Name', 'Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
                         rows={stockDetails.map(detail => ({
                             'Branch Name': detail.branchName,
                             'Product ID': detail.productId,
-                            'Product Name': detail.productName, 
-                            'Available Qty': detail.totalAvailableQty, 
+                            'Product Name': detail.productName,
+                            'Available Qty': detail.totalAvailableQty,
                             ' Min Qty': detail.minQty,
                         }))}
                     />
