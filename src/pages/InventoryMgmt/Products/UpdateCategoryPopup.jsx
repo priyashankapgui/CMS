@@ -5,43 +5,33 @@ import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
-import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
 
-const productsApiUrl = process.env.REACT_APP_PRODUCTS_API;
+const categoryApiUrl = process.env.REACT_APP_CATEGORY_API;
 
-function UpdateProductPopup({ productId }) {
+function UpdateCategoryPopup({ categoryId }) {
     const navigate = useNavigate();
     const [post, setPost] = useState({
-        productName: '',
-        description: '',
-        categoryName: '',
-        barcode: ''
+        categoryName: ''
     });
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const schema = Joi.object({
-        productName: Joi.string().required().label('Product Name'),
-        description: Joi.string().optional().label('Description'),
-        categoryName: Joi.string().required().label('Category Name'),
-        barcode: Joi.string().required().label('Barcode')
+        categoryName: Joi.string().required().label('Category Name')
     });
 
     useEffect(() => {
-        if (productId) {
-            axios.get(`${productsApiUrl}/${productId}`)
+        if (categoryId) {
+            axios.get(`${categoryApiUrl}/${categoryId}`)
                 .then(res => setPost({
-                    productName: res.data.data.productName,
-                    description: res.data.data.description,
-                    categoryName: res.data.data.categoryName,
-                    barcode: res.data.data.barcode
+                    categoryName: res.data.data.categoryName
                 }))
                 .catch(err => console.log(err));
         }
-    }, [productId]);
+    }, [categoryId]);
 
     useEffect(() => {
         const storedAlertConfig = localStorage.getItem('alertConfig');
@@ -70,7 +60,7 @@ function UpdateProductPopup({ productId }) {
 
     const handleSave = async (event) => {
         if (event) {
-            event.preventDefault(); // Ensure event is defined and preventDefault is called correctly
+            event.preventDefault();
         }
 
         const validationErrors = validate();
@@ -87,44 +77,30 @@ function UpdateProductPopup({ productId }) {
 
         setIsLoading(true);
         try {
-            await axios.put(`${productsApiUrl}/${productId}`, post);
+            await axios.put(`${categoryApiUrl}/${categoryId}`, post);
 
             const alertData = {
                 severity: 'success',
                 title: 'Successfully Updated!',
-                message: 'Product updated successfully!',
+                message: 'Category updated successfully!',
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } catch (error) {
-            console.error('Error updating product:', error);
+            console.error('Error updating category:', error);
             const alertData = {
                 severity: 'error',
                 title: 'Error',
-                message: 'Failed to update product.',
+                message: 'Failed to update category.',
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } finally {
             setIsLoading(false);
-        }
-    };
-
-    const fetchCategorySuggestions = async (query) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(category => ({
-                    id: category.categoryId,
-                    displayText: `${category.categoryId} ${category.categoryName}`
-                }));
-            }
-            return [];
-        } catch (error) {
-            console.error('Error fetching category:', error);
-            return [];
         }
     };
 
@@ -140,34 +116,17 @@ function UpdateProductPopup({ productId }) {
                 />
             )}
             <EditPopup
-                topTitle="Update Product Details"
+                topTitle="Update Category Details"
                 buttonId="update-btn"
                 buttonText="Update"
-                onClick={handleSave} // Pass handleSave directly to EditPopup for button click
+                onClick={handleSave}
                 isLoading={isLoading}
             >
-                <form onSubmit={handleSave}> {/* Ensure handleSave is called on form submit */}
+                <form onSubmit={handleSave}>
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
-                            <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
-                            <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
-                        </div>
-                        <div>
-                            <InputLabel htmlFor="barcode" color="#0377A8">Barcode</InputLabel>
-                            <InputField type="text" id="barcode" name="barcode" value={post.barcode} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
-                        </div>
-                        <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
-                            <SearchBar
-                                searchTerm={post.categoryName}
-                                setSearchTerm={(value) => setPost({ ...post, categoryName: value })}
-                                onSelectSuggestion={(suggestion) => setPost({ ...post, categoryName: suggestion.displayText.split(' ')[1] })}
-                                fetchSuggestions={fetchCategorySuggestions}
-                            />
-                        </div>
-                        <div>
-                            <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
-                            <InputField type="text" id="description" name="description" value={post.description} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
+                            <InputField type="text" id="categoryName" name="categoryName" value={post.categoryName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
                     </div>
                     <button type="submit" style={{ display: 'none' }}>Submit</button>
@@ -177,8 +136,8 @@ function UpdateProductPopup({ productId }) {
     );
 }
 
-UpdateProductPopup.propTypes = {
-    productId: PropTypes.string.isRequired
+UpdateCategoryPopup.propTypes = {
+    categoryId: PropTypes.string.isRequired
 };
 
-export default UpdateProductPopup;
+export default UpdateCategoryPopup;

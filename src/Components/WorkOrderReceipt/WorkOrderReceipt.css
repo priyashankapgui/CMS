@@ -1,0 +1,18 @@
+.work-order-receipt{
+    display: flex;
+    width: 376px;
+
+}
+.work-order-receipt-header{
+    height: 40px;
+    background-color: #23A3DA;
+    color: #FFFFFF;
+    width: 376px;
+}
+.workordertitle{
+    font-family: 'Poppins';
+    margin:  8px 25px 0px 8px;
+}
+.workOrderheading{
+    
+}

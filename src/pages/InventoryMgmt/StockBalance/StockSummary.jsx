@@ -28,13 +28,13 @@ function StockSummary({ productId, productName, branchName, qty }) {
         fetchStockDetails();
     }, [productId, branchName]);
 
+    
+
     const columns = ["Batch No", "Exp Date", "Selling Price(Rs)", "Qty", "Reason", "Updated By", "Updated At"];
 
     return (
         <SummaryPopup topTitle="Stock Summary">
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
+            
                 <div className="stock-summary-container">
                     <div className="product-info">
                         <div className="field">
@@ -58,7 +58,7 @@ function StockSummary({ productId, productName, branchName, qty }) {
                         <span className="value">{qty}</span>
                     </div>
                 </div>
-            )}
+            
         </SummaryPopup>
     );
 }

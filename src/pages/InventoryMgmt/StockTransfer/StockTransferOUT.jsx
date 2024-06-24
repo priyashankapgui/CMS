@@ -16,6 +16,7 @@ import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import secureLocalStorage from "react-secure-storage";
 
 export const StockTransferOUT = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
@@ -30,6 +31,8 @@ export const StockTransferOUT = () => {
         productId: '',
     });
     const [products, setProducts] = useState([]);
+    const [userDetails, setUserDetails] = useState({});
+    
 
     const navigate = useNavigate();
 
@@ -44,15 +47,10 @@ export const StockTransferOUT = () => {
     }, []);
 
     const fetchStockData = async () => {
-        const user = JSON.parse(sessionStorage.getItem("user"));
-        console.log("name", user);
-    
-        if (!user) {
-            console.error('User is not available');
-            setLoading(false);
-            return;
-        }
-        console.log("useranee", user.role);
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+          const user = JSON.parse(userJSON);
+          console.log("data",user.role);
     
         try {
             let response;
@@ -71,13 +69,14 @@ export const StockTransferOUT = () => {
         } finally {
             setLoading(false);
         }
+    }
        
     
     };
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branches');
+            const response = await axios.get('http://localhost:8080/branchesWeb');
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -164,6 +163,11 @@ export const StockTransferOUT = () => {
         }
     };
 
+    const formatDate = (datetime) => {
+        const date = new Date(datetime);
+        return date.toISOString().split('T')[0];
+    };
+
     return (
         <>
                 <div className="stockTransferOUT-bodycontainer">
@@ -177,13 +181,13 @@ export const StockTransferOUT = () => {
                             columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch',  'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
                             rows={stockData.map((data, index) => ({
                                 'STN No': data.STN_NO,
-                                'Created At': data.createdAt,
+                                'Created At': formatDate(data.createdAt),
                                 'Request Branch': data.requestBranch,
                                 'Supplying Branch': data.supplyingBranch,
                                 'Status': data.status,
                                 'Requested By': data.requestedBy,
                                 'Submitted By': data.submittedBy,
-                                'Submitted At': data.submittedAt,
+                                'Submitted At': formatDate(data.submittedAt),
                                 'Actions': (
                                     <div style={{ display: "flex", gap: "0.5em" }}>
                                         {data.status === 'raised' && (
@@ -241,3 +245,17 @@ export const StockTransferOUT = () => {
 };
 
 export default StockTransferOUT;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
