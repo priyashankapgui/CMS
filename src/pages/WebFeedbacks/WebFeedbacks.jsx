@@ -21,6 +21,7 @@ export const WebFeedbacks = () => {
     const [loading, setLoading] = useState(false);
     const rowsPerPage = 6; 
 
+
     const [rows, setRows] = useState([]);
     const [branchOptions, setBranchOptions] = useState([]);
     const [filters, setFilters] = useState({
@@ -40,6 +41,26 @@ export const WebFeedbacks = () => {
                 const data = await getWebFeedbacks();
     
                 const sortedData = data.sort((a, b) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     if (a.action === 'Pending' && b.action !== 'Pending') return -1;
                     if (a.action !== 'Pending' && b.action === 'Pending') return 1;
                     return new Date(a.createdAt) - new Date(b.createdAt);
@@ -47,6 +68,7 @@ export const WebFeedbacks = () => {
     
                 setRows(sortedData);
             } catch (error) {
+
                 console.error('Failed to fetch data:', error);
             }
         };
@@ -60,9 +82,12 @@ export const WebFeedbacks = () => {
                 const data = await getBranchOptions();
                 setBranchOptions([{ branchName: 'All' }, ...data]);
             } catch (error) {
+
                 console.error('Failed to fetch branch data:', error);
             }
         };
+
+
 
         fetchBranchOptions();
     }, []);
@@ -83,7 +108,10 @@ export const WebFeedbacks = () => {
                     actionTakenAt: actionSummary.trim() === '' ? '' : currentDate,
                     actionSummary: actionSummary.trim(),
                     lastUpdated: currentDate,
+
+
                 };
+
             }
             return row;
         });
@@ -93,6 +121,19 @@ export const WebFeedbacks = () => {
         try {
             const response = await putWebFeedback(feedbackId, updatedRow); // Use putWebFeedback function
             console.log('Feedback updated successfully:', response);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             const sortedRows = updatedRows.sort((a, b) => {
                 if (a.action === 'Pending' && b.action !== 'Pending') return -1;
@@ -110,9 +151,11 @@ export const WebFeedbacks = () => {
         }
     };
 
+
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentRows = rows.slice(indexOfFirstRow, indexOfLastRow);
+
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -123,12 +166,14 @@ export const WebFeedbacks = () => {
 
     const handleFilterChange = (nameOrEvent, value) => {
         if (typeof nameOrEvent === 'object' && nameOrEvent.target) {
+
             const { name, value } = nameOrEvent.target;
             setFilters({
                 ...filters,
                 [name]: value,
             });
         } else {
+
             const name = nameOrEvent;
             setFilters({
                 ...filters,
@@ -156,6 +201,7 @@ export const WebFeedbacks = () => {
             fromDate: '',
             actionType: 'All',
         });
+
     };
 
     useEffect(() => {
@@ -169,6 +215,7 @@ export const WebFeedbacks = () => {
             });
         }
     }, []); 
+
     return (
         <>
             <div className="top-nav-blue-text">

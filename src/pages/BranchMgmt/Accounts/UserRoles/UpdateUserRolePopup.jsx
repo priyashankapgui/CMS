@@ -73,7 +73,7 @@ function UpdateUserRolePopup({userRoleId}) {
                     },
                 });
                 const data = await response.json();
-                console.log(data);
+                // console.log(data);
                 setRoleName(data.userRoleName);
                 setSelectedBranch(data.branchName);
             } catch (error) {
@@ -90,7 +90,7 @@ function UpdateUserRolePopup({userRoleId}) {
         const selectedPages = Array.from(checkedPages.entries())
             .filter(([pageId, isChecked]) => isChecked)
             .map(([pageId, isChecked]) => pageId);
-        console.log(selectedPages, selectedBranch, roleName);
+        // console.log(selectedPages, selectedBranch, roleName);
         if (!roleName || !selectedBranch || selectedPages.length === 0) {
             throw new Error('Please fill all the fields');
         }
@@ -118,7 +118,7 @@ function UpdateUserRolePopup({userRoleId}) {
             throw new Error(data.error);
         }
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setShowSuccess(`User Role '${roleName}' Updated successfully`);
         return null;
       } catch (error) {
