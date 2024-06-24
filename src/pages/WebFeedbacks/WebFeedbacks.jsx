@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import './WebFeedbacks.css';
-import secureLocalStorage from 'react-secure-storage';
+import React, { useEffect, useState, useCallback } from 'react';
+import secureLocalStorage from "react-secure-storage";
 import Layout from '../../Layout/Layout';
 import Buttons from '../../Components/Buttons/SquareButtons/Buttons';
 import { IoIosArrowDropdown, IoIosArrowDropup, IoMdCreate, IoIosArrowForward, IoIosArrowBack } from 'react-icons/io';
@@ -8,18 +7,16 @@ import InputLabel from '../../Components/Label/InputLabel';
 import BranchDropdown from '../../Components/InputDropdown/BranchDropdown';
 import InputDropdown from '../../Components/InputDropdown/InputDropdown';
 import DatePicker from '../../Components/DatePicker/DatePicker';
-import SubSpinner from '../../Components/Spinner/SubSpinner/SubSpinner.jsx'
-
-import { getWebFeedbacks, putWebFeedback } from '../../Api/WebFeedback/WebFeedbacksAPI.jsx'; 
-import { getBranchOptions } from '../../Api/BranchMgmt/BranchAPI.jsx'; 
+import './WebFeedbacks.css';
 
 export const WebFeedbacks = () => {
     const [openRowIndex, setOpenRowIndex] = useState(null);
     const [actionSummary, setActionSummary] = useState('');
     const [editModeId, setEditModeId] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const rowsPerPage = 6; 
+    const rowsPerPage = 6; // Number of rows to display per page
+    const feedbackApiUrl = 'http://localhost:8080/feedback';
+    const branchApiUrl = 'http://localhost:8080/branchesWeb';
 
     const [rows, setRows] = useState([]);
     const [branchOptions, setBranchOptions] = useState([]);
@@ -33,46 +30,60 @@ export const WebFeedbacks = () => {
         username: "",
         userID: "",
     });
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getWebFeedbacks();
     
-                const sortedData = data.sort((a, b) => {
+
+    const fetchFeedbacks = useCallback(() => {
+        fetch(feedbackApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                let filteredData = data;
+
+                if (filters.branch !== 'All') {
+                    filteredData = filteredData.filter(row => row.branch === filters.branch);
+                }
+                if (filters.toDate) {
+                    filteredData = filteredData.filter(row => new Date(row.createdAt) <= new Date(filters.toDate));
+                }
+                if (filters.fromDate) {
+                    filteredData = filteredData.filter(row => new Date(row.createdAt) >= new Date(filters.fromDate));
+                }
+                if (filters.actionType !== 'All') {
+                    filteredData = filteredData.filter(row => row.action === filters.actionType);
+                }
+
+                const sortedData = filteredData.sort((a, b) => {
                     if (a.action === 'Pending' && b.action !== 'Pending') return -1;
                     if (a.action !== 'Pending' && b.action === 'Pending') return 1;
                     return new Date(a.createdAt) - new Date(b.createdAt);
                 });
-    
                 setRows(sortedData);
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error('Failed to fetch data:', error);
-            }
-        };
-    
-        fetchData();
-    }, []);
-    
-    useEffect(() => {
-        const fetchBranchOptions = async () => {
-            try {
-                const data = await getBranchOptions();
-                setBranchOptions([{ branchName: 'All' }, ...data]);
-            } catch (error) {
-                console.error('Failed to fetch branch data:', error);
-            }
-        };
+            });
+    }, [feedbackApiUrl, filters]);
 
+    const fetchBranchOptions = useCallback(() => {
+        fetch(branchApiUrl)
+            .then(response => response.json())
+            .then(data => {
+                setBranchOptions([{ branchName: 'All' }, ...data]);
+            })
+            .catch(error => {
+                console.error('Failed to fetch branch data:', error);
+            });
+    }, [branchApiUrl]);
+
+    useEffect(() => {
+        fetchFeedbacks();
         fetchBranchOptions();
-    }, []);
+    }, [fetchFeedbacks, fetchBranchOptions]);
 
     const handleRowClick = (feedbackId) => {
         setOpenRowIndex(openRowIndex === feedbackId ? null : feedbackId);
     };
 
     const handleSaveActionSummary = async (feedbackId) => {
-        setLoading(true);
         const updatedRows = rows.map(row => {
             if (row.feedbackId === feedbackId) {
                 const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -83,7 +94,10 @@ export const WebFeedbacks = () => {
                     actionTakenAt: actionSummary.trim() === '' ? '' : currentDate,
                     actionSummary: actionSummary.trim(),
                     lastUpdated: currentDate,
+                    
+                    
                 };
+                console.console.log();
             }
             return row;
         });
@@ -91,8 +105,21 @@ export const WebFeedbacks = () => {
         const updatedRow = updatedRows.find(row => row.feedbackId === feedbackId);
 
         try {
-            const response = await putWebFeedback(feedbackId, updatedRow); // Use putWebFeedback function
-            console.log('Feedback updated successfully:', response);
+            const response = await fetch(`${feedbackApiUrl}/${feedbackId}`, {
+                
+                method: 'PUT',
+            
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedRow),
+                
+            });
+            console.log();
+
+            if (!response.ok) {
+                throw new Error('Failed to update feedback');
+            }
 
             const sortedRows = updatedRows.sort((a, b) => {
                 if (a.action === 'Pending' && b.action !== 'Pending') return -1;
@@ -105,15 +132,15 @@ export const WebFeedbacks = () => {
             setEditModeId(null);
         } catch (error) {
             console.error('Error updating feedback:', error);
-        } finally {
-            setLoading(false);
         }
     };
 
+    // Calculate start and end indices for current page
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentRows = rows.slice(indexOfFirstRow, indexOfLastRow);
 
+    // Change page
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const formatDate = (dateString) => {
@@ -123,12 +150,14 @@ export const WebFeedbacks = () => {
 
     const handleFilterChange = (nameOrEvent, value) => {
         if (typeof nameOrEvent === 'object' && nameOrEvent.target) {
+            // It's an event
             const { name, value } = nameOrEvent.target;
             setFilters({
                 ...filters,
                 [name]: value,
             });
         } else {
+            // It's a direct value
             const name = nameOrEvent;
             setFilters({
                 ...filters,
@@ -145,8 +174,7 @@ export const WebFeedbacks = () => {
     };
 
     const handleSearch = () => {
-        
-        console.log('Search button clicked');
+        fetchFeedbacks();
     };
 
     const handleClear = () => {
@@ -156,30 +184,27 @@ export const WebFeedbacks = () => {
             fromDate: '',
             actionType: 'All',
         });
+        fetchFeedbacks();
     };
 
     useEffect(() => {
         // Fetch user details from secure local storage
-        const userJSON = secureLocalStorage.getItem('user');
+        const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
-            const user = JSON.parse(userJSON);
-            setUserDetails({
-                username: user?.userName || user?.employeeName || '',
-                userID: user?.userID || user?.employeeId || '',
-            });
+          const user = JSON.parse(userJSON);
+          setUserDetails({
+            username: user?.userName || user?.employeeName || "",
+            userID: user?.userID || user?.employeeId || "",
+          });
         }
-    }, []); 
+      }, []); // Empty dependency array ensures this effect runs only once
+
     return (
         <>
             <div className="top-nav-blue-text">
                 <h4>Web Feedbacks</h4>
             </div>
             <Layout>
-             {loading && (
-                    <div className="loading-overlay">
-                        <SubSpinner spinnerText='Saving' />
-                    </div>
-                )}
                 <div className="feedbackBodyBackground">
                     <div className="feedback-filter-container">
                         <div className="Feed-top-Content">
@@ -191,8 +216,7 @@ export const WebFeedbacks = () => {
                                     name="branchName"
                                     editable={true}
                                     options={['All', ...branchOptions.map(branch => branch.branchName)]}
-                                    value={filters.branch || 'All'} 
-                                    addOptions={["All"]}
+                                    value={filters.branch || 'All'} // Set 'All' as the default value if filters.branch is falsy
                                     onChange={handleFilterChange}
                                 />
                             </div>
@@ -256,7 +280,7 @@ export const WebFeedbacks = () => {
                                             <td>{row.branch}</td>
                                             <td>{formatDate(row.createdAt)}</td>
                                             <td>{row.action}</td>
-                                            <td>{row.actionTakenBy}</td>
+                                            <td>{row.  actionTakenBy}</td>
                                             <td>{formatDate(row.updatedAt)}</td>
                                         </tr>
                                         {openRowIndex === row.feedbackId && (

@@ -59,3 +59,39 @@
     color: rgb(35, 163, 218);
     font-weight: 500;
 }
+.NewtabBadge {
+    margin-left: 15px;
+    .MuiBadge-badge {
+        background-color: #36AA00;
+        color: white; 
+        font-size: 12px;
+        height: 18px; 
+        min-width: 18px;
+        padding: 0 6px;
+        border-radius: 10px;
+    }
+}
+.ProcessingtabBadge{
+    margin-left: 15px;
+    .MuiBadge-badge {
+        background-color: #16A8D6;
+        color: white; 
+        font-size: 12px;
+        height: 18px; 
+        min-width: 18px;
+        padding: 0 6px;
+        border-radius: 10px;
+    }
+}
+.PendingtabBadge{
+    margin-left: 15px;
+    .MuiBadge-badge {
+        background-color: #EBBC00;
+        color: white; 
+        font-size: 12px;
+        height: 18px; 
+        min-width: 18px;
+        padding: 0 6px;
+        border-radius: 10px;
+    }
+}
