@@ -714,7 +714,7 @@ export const Sales = () => {
                                                 </tr>
                                                 <tr>
                                                     <td><InputLabel htmlFor="receivedAmount" color="#0377A8">Received</InputLabel></td>
-                                                    <td><InputField type="text" id="receivedAmount" name="receivedAmount" editable={true} placeholder="0.00" value={receivedAmount} onChange={(e) => handleReceivedAmountChange(e)} /></td>
+                                                    <td><InputField type="number" id="receivedAmount" name="receivedAmount" editable={true} placeholder="0.00" value={receivedAmount} onChange={(e) => handleReceivedAmountChange(e)} /></td>
                                                 </tr>
                                                 {receivedAmount > 0 && (
                                                     <tr>

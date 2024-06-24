@@ -6,6 +6,7 @@ import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import InputFile from '../../../Components/InputFile/InputFile';
 
 const url = "http://localhost:8080/categories";
 
@@ -71,15 +72,19 @@ function AddNewCategoryPopup() {
             )}
             <AddNewPopup topTitle="Add New Category" buttonId="create-btn" buttonText="Create" onClick={handleSave}>
                 <div style={{ display: 'block', width: '100%' }}>
-                <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={(e) => setImage(e.target.files[0])} />
-                        </div>
                     <div>
                         <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                         <InputField type="text" id="categoryName" name="categoryName" editable={true} value={categoryName} onChange={(e) => setCategoryName(e.target.value)} style={{ width: '100%' }} />
                     </div>
-
+                    <div style={{ marginBottom: "5px" }}>
+                        <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                        <InputFile
+                            id="categoryImages"
+                            name="categoryImages"
+                            onChange={(e) => setImage(e.target.files[0])}
+                            multiple
+                        />
+                    </div>
                 </div>
 
             </AddNewPopup>
