@@ -149,6 +149,6 @@ export const WebMgmt = () => {
             <p className="webMgmt_uploa">Error uploading image</p>
           )}
         </div>
-      </Layout>
+     </Layout>
     );
   };
