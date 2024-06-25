@@ -11,7 +11,8 @@ import 'react-tabs/style/react-tabs.css';
 import NewOrders from '../OnlineOrders/NewOrders/NewOrders';
 import ProcessingOrders from './ProcessingOrders/ProcessingOrders';
 import PendingPickup from './PendingPickupOrders/PendingPickupOrders';
-import CompletedOrder from './CompletedOrders';
+import CompletedOrder from './CompletedOrders/CompletedOrders';
+import Badge from '@mui/material/Badge';
 
 export const OnlineOrders = () => {
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -58,9 +59,18 @@ export const OnlineOrders = () => {
                 </div>
                 <Tabs className="OnlineOrdersTabs">
                     <TabList className="OrderStatusTab">
-                        <Tab>New Orders</Tab>
-                        <Tab>Processing</Tab>
-                        <Tab>Pending Pickup</Tab>
+                        <Tab>
+                            New Orders 
+                            <Badge className="NewtabBadge" badgeContent={4}/>
+                        </Tab>
+                        <Tab>
+                            Processing
+                            <Badge className="ProcessingtabBadge" badgeContent={4}/>
+                        </Tab>
+                        <Tab>
+                            Pending Pickup
+                            <Badge className="PendingtabBadge" badgeContent={4}/>
+                        </Tab>
                         <Tab>Completed</Tab>
                     </TabList>
 

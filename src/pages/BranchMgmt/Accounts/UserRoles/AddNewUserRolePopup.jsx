@@ -34,7 +34,7 @@ function AddNewUserRolePopup({showSuccess}) {
                 }
                 );
                 const data = await response.json();
-                //console.log(data);
+                console.log(data);
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
