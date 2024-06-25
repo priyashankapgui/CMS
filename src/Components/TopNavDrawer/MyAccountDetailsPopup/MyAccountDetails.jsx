@@ -8,11 +8,10 @@ import { useDropzone } from "react-dropzone";
 import CustomAlert from "../../Alerts/CustomAlert/CustomAlert";
 import "./MyAccountDetails.css";
 import PasswordStrengthBar from "react-password-strength-bar";
-import accountCircle from "../../../Assets/account_circle_24dp.svg";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import SubSpinner from "../../Spinner/SubSpinner/SubSpinner";
-import RoundButtons from "../../Buttons/RoundButtons/RoundButtons"
+
 
 function MyAccountDetails() {
   const navigate = useNavigate();
@@ -147,7 +146,7 @@ function MyAccountDetails() {
                 alt="Profile"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = accountCircle;
+                  e.target.src = `${process.env.PUBLIC_URL}/Images/account_circle.svg`;
                   setProfilePicExists(false);
                 }}
               />
@@ -223,7 +222,8 @@ function MyAccountDetails() {
                 ) : (
                   <img
                     className="preview-image"
-                    src={accountCircle}
+                    // src={accountCircle}
+                    src={`${process.env.PUBLIC_URL}/Images/account_circle.svg`}
                     alt="Profile"
                   />
                 )}
@@ -326,18 +326,18 @@ function MyAccountDetails() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
-                {loading ? 
+                {loading ?
                   <SubSpinner loading={loading} spinnerText="Updating" />
                   :
-                <Buttons
-                  type="submit"
-                  id="update-btn"
-                  btnWidth="22em"
-                  style={{ backgroundColor: "#23A3DA", color: "white" }}
-                  onClick={handleUpdate}
-                >
-                  Update
-                </Buttons>
+                  <Buttons
+                    type="submit"
+                    id="update-btn"
+                    btnWidth="22em"
+                    style={{ backgroundColor: "#23A3DA", color: "white" }}
+                    onClick={handleUpdate}
+                  >
+                    Update
+                  </Buttons>
                 }
               </div>
             )}

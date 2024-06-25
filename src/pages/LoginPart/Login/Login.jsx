@@ -8,8 +8,6 @@ import {
   FaEyeSlash,
 } from "react-icons/fa";
 import { HiArrowRight } from "react-icons/hi";
-import cmslogo from "../../../Assets/cmslogo.svg";
-import greenleaf from "../../../Assets/greenleaf.svg";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
@@ -98,7 +96,7 @@ const Login = () => {
       <div className="s-mainContainer">
         {/* Login page content */}
         <div className="s-leftcontainer">
-          <img className="s-image" src={cmslogo} alt="cms logo" />
+          <img className="s-image" src={`${process.env.PUBLIC_URL}/Images/cmslogo.svg`} alt="cms logo" />
           <h2 className="s-flexflow-text">Flex Flow</h2>
 
           <div className="s-companyName">
@@ -108,7 +106,7 @@ const Login = () => {
 
         <div className="s-rightcontainer">
           <div className="s-greenmartlogo">
-            <img src={greenleaf} alt="greenmart logo" />
+            <img src={`${process.env.PUBLIC_URL}/Images/greenleaf.svg`} alt="greenmart logo" className="greenmartLogoImg" />
             <h2 className="s-boldText">Green Leaf Super Mart </h2>
           </div>
 
@@ -169,7 +167,7 @@ const Login = () => {
                   className="signin-btn" 
                   style={{ backgroundColor: "#23A3DA", color: "white" }}
                   btnHeight="50px"
-                  btnWidth="410px"
+                  btnWidth="416px"
                   fontSize="18px"
                   marginTop="2px"
                 >

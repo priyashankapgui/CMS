@@ -17,7 +17,6 @@ import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown"
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import accountCircle from "../../../../Assets/account_circle_24dp.svg";
 import secureLocalStorage from "react-secure-storage";
 
 export function UpdateUser() {
@@ -251,7 +250,7 @@ export function UpdateUser() {
                   alt="Profile"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = accountCircle;
+                    e.target.src = `${process.env.PUBLIC_URL}/Images/greenleaf.svg`;
                   }}
                 />
               )}

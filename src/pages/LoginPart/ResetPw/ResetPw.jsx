@@ -162,7 +162,7 @@ const ResetPw = () => {
             <Buttons
               type="submit"
               id="save-btn"
-              style={{ backgroundColor: "#ff3232", color: "white" }}
+              style={{ backgroundColor: "#23A3DA", color: "white" }}
               btnHeight="50px"
               btnWidth="410px"
               fontSize="18px"

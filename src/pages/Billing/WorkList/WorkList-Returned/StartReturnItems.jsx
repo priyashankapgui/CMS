@@ -8,6 +8,7 @@ import InputField from '../../../../Components/InputField/InputField';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const StartReturnItems = () => {
     const { billNo } = useParams();
@@ -84,7 +85,7 @@ export const StartReturnItems = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div><SubSpinner /></div>;
     }
 
     if (error) {
