@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
 import axios from 'axios';
@@ -39,7 +38,6 @@ export const GoodReceive = () => {
 
     const { GRN_NO } = useParams();
     const [selectedGRN_NO, setSelectedGRN_NO] = useState(null);
-    //const selectedGRNData = jsonData.ReturnBillListTableData.find(RTB => RTB.RTBNo === RTBNo);
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
     const [userDetails, setUserDetails] = useState({});
 

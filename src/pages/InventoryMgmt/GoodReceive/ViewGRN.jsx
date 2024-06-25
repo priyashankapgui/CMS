@@ -7,24 +7,24 @@ import { IoChevronBackCircleOutline } from "react-icons/io5";
 import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; // Import the spinner
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; 
 
 export function ViewGRN() {
     const { GRNNo } = useParams();
     const [GRNData, setGRNData] = useState(null);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true); 
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchGRNData = async () => {
             try {
-                setLoading(true); // Start loading
+                setLoading(true); 
                 const response = await axios.get(`http://localhost:8080/grn-all?GRN_NO=${GRNNo}`);
                 setGRNData(response.data.data);
             } catch (error) {
                 console.error("Error fetching GRN data:", error);
             } finally {
-                setLoading(false); // Stop loading
+                setLoading(false); 
             }
         };
 
@@ -76,7 +76,7 @@ export function ViewGRN() {
             <Layout>
                 <div className="ViewNewGRN-bodycontainer">
                     {loading ? (
-                        <div className="loading-container"><SubSpinner /></div> // Show spinner while loading
+                        <div className="loading-container"><SubSpinner /></div> 
                     ) : (
                         <>
                             <div className="view-grn-filter-container">

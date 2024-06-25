@@ -314,7 +314,7 @@ export const Products = () => {
         const updatedBatchDetails = [...batchDetails];
         updatedBatchDetails[index].discount = newValue;
         setBatchDetails(updatedBatchDetails);
-        setHasChanges(true); // Set hasChanges to true when a change is made
+        setHasChanges(true); 
     };
 
 
@@ -331,17 +331,16 @@ const handleSave = async () => {
             branchName: selectedBranch,
             productId: product.id,
             batchNo: detail.batchNo,
-            discount: parseFloat(detail.discount ?? 0), // Default to 0 if null
+            discount: parseFloat(detail.discount ?? 0), 
         }));
         console.log(updates);
-        // Send updates to backend
+        
         const updateResponse = await axios.put('http://localhost:8080/product-batch-sum-discount', { updates });
-        console.log(updateResponse.data); // Logging backend response
+        console.log(updateResponse.data); 
+        
+        handleSearch(); 
 
-        // Assuming you want to refresh the data after saving
-        handleSearch(); // Refresh the batch details after saving
-
-        // Show success message
+        
         setAlertConfig({
             severity: 'success',
             title: 'Success',
@@ -352,7 +351,6 @@ const handleSave = async () => {
     } catch (error) {
         console.error('Error updating discounts:', error);
 
-        // Show error message
         setAlertConfig({
             severity: 'error',
             title: 'Error',
@@ -416,8 +414,8 @@ const handleSave = async () => {
                                     'Reg Categories': selectedCategoryData.categoryName,
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                            <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
-                                            
+                                            {/* <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} /> */}
+                                            <UpdateCategoryPopup categoryId={selectedCategoryData.categoryId}  />
                                             <DeletePopup />
                                         </div>
                                     )

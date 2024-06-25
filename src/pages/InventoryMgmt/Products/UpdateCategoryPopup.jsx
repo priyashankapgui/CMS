@@ -11,25 +11,29 @@ import PropTypes from 'prop-types';
 const categoryApiUrl = process.env.REACT_APP_CATEGORY_API;
 
 function UpdateCategoryPopup({ categoryId }) {
+    console.log("categoryId:",categoryId);
     const navigate = useNavigate();
     const [post, setPost] = useState({
-        categoryName: ''
+        categoryName: '',
+        image: null // Add image field for category image
     });
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
     const schema = Joi.object({
-        categoryName: Joi.string().required().label('Category Name')
+        categoryName: Joi.string().required().label('Category Name'),
+        image: Joi.any().optional().label('Image')
     });
 
     useEffect(() => {
         if (categoryId) {
             axios.get(`${categoryApiUrl}/${categoryId}`)
                 .then(res => setPost({
-                    categoryName: res.data.data.categoryName
+                    categoryName: res.data.data.categoryName,
+                    image: res.data.data.image // Assuming image data is received from the API
                 }))
-                .catch(err => console.log(err));
+                .catch(err => console.error('Error fetching category:', err));
         }
     }, [categoryId]);
 
@@ -58,6 +62,30 @@ function UpdateCategoryPopup({ categoryId }) {
         setPost({ ...post, [name]: value });
     };
 
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            transformImage(file);
+        }
+    };
+
+    const transformImage = (file) => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setPost({ ...post, image: reader.result });
+        };
+
+        reader.onerror = (error) => {
+            console.error("Error reading file:", error);
+            setPost({ ...post, image: null });
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSave = async (event) => {
         if (event) {
             event.preventDefault();
@@ -77,7 +105,17 @@ function UpdateCategoryPopup({ categoryId }) {
 
         setIsLoading(true);
         try {
-            await axios.put(`${categoryApiUrl}/${categoryId}`, post);
+            const formData = new FormData();
+            formData.append('categoryName', post.categoryName);
+            if (post.image) {
+                formData.append('image', post.image);
+            }
+
+            await axios.put(`${categoryApiUrl}/${categoryId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
             const alertData = {
                 severity: 'success',
@@ -122,8 +160,12 @@ function UpdateCategoryPopup({ categoryId }) {
                 onClick={handleSave}
                 isLoading={isLoading}
             >
-                <form onSubmit={handleSave}>
+                <form onSubmit={handleSave} encType='multipart/form-data'>
                     <div style={{ display: 'block', width: '100%' }}>
+                        <div>
+                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
+                            <input type="file" id="image" name="image" onChange={handleFileChange} />
+                        </div>
                         <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <InputField type="text" id="categoryName" name="categoryName" value={post.categoryName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />

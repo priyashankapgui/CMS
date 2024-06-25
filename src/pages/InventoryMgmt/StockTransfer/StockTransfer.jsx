@@ -24,7 +24,7 @@ export const StockTransfer = () => {
         toDate: '',
         STN_NO: '',
         productId: '',
-        requestBranch: '',  // Added requestBranch to searchParams
+        requestBranch: '',  
     });
     const [products, setProducts] = useState([]);
 

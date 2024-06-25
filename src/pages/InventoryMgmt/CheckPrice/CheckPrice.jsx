@@ -63,10 +63,10 @@ export const CheckPrice = () => {
             const response = await axios.get(`http://localhost:8080/product-batch-details`, {
                 params: {
                     branchName: selectedBranch,
-                    productId: product.id, // Send product ID
+                    productId: product.id, 
                 }
             });
-            setBatchDetails(response.data.data); // Assuming the batch details are in response.data.data
+            setBatchDetails(response.data.data); 
             setLoading(false);
         } catch (error) {
             console.error('Error fetching batch details:', error);

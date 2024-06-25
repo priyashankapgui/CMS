@@ -8,10 +8,13 @@ import { RiPrinterFill } from "react-icons/ri";
 import { TiTickOutline } from "react-icons/ti";
 import { MdOutlineCancel } from "react-icons/md";
 import secureLocalStorage from "react-secure-storage";
+import StockTranIn from '../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
 
 const StockTransferIn = ({ searchParams }) => {
     const [stockData, setStockData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedSTN_NO, setSelectedSTN_NO] = useState(null);
+    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
     const [activeTab, setActiveTab] = useState('all'); // Assuming you have an activeTab state for filtering
 
     useEffect(() => {
@@ -73,6 +76,17 @@ const StockTransferIn = ({ searchParams }) => {
         return date.toISOString().split('T')[0];
     };
 
+    const handleReprintClick = (STN_NO) => {
+        console.log("Reprint button clicked for STN NO:", STN_NO);
+        setSelectedSTN_NO(STN_NO);
+        setShowRefundReceipt(true);
+    };
+
+    const handleCloseRefundReceipt = () => {
+        setShowRefundReceipt(false);
+        setSelectedSTN_NO(null);
+    };
+
     return (
         <>
             <div className="stockTransferIN-bodycontainer">
@@ -115,6 +129,7 @@ const StockTransferIn = ({ searchParams }) => {
                                                 type="submit"
                                                 name={`printBtn-${index}`}
                                                 icon={<RiPrinterFill />}
+                                                onClick={() => handleReprintClick(data.STN_NO)}
                                             />
                                         </>
                                     )}
@@ -136,6 +151,14 @@ const StockTransferIn = ({ searchParams }) => {
                     />
                 </div>
             </div>
+            {showRefundReceipt && (
+                <div className="transfer-doc-popup">
+                    <StockTranIn
+                        STN_NO={selectedSTN_NO}
+                        onClose={handleCloseRefundReceipt}
+                    />
+                </div>
+            )}
         </>
     );
 };
