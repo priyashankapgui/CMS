@@ -149,8 +149,6 @@ export const WebMgmt = () => {
             </Buttons>
           )}
         </div>
-
-        {loading && <p>Uploading...</p>}
         {alert.show && (
           <CustomAlert
             severity={alert.severity}
