@@ -28,7 +28,7 @@ export const Sales = () => {
     const [rows, setRows] = useState([createEmptyRow()]);
     const [grossTotal, setGrossTotal] = useState(0);
     const [netTotal, setNetTotal] = useState(0);
-    const [receivedAmount, setReceivedAmount] = useState('');
+    const [receivedAmount, setReceivedAmount] = useState();
     const [balance, setBalance] = useState(0);
     const [noItems, setNoItems] = useState(0);
     const [discountBillRate, setDiscountBillRate] = useState(0);

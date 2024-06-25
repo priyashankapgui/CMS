@@ -23,18 +23,19 @@ const style = {
     '&:hover': {
         backgroundColor: 'rgba(235, 19, 19, 1)',
     },
+ 
 };
 
 const LogoutPopup = ({ open, onClose }) => {
-    const handleLogout = async() => {
-        try{
+    const handleLogout = async () => {
+        try {
             const token = secureLocalStorage.getItem("accessToken");
             const response = await fetch("http://localhost:8080/api/logout", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            }
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
             });
             if (!response.ok) {
                 console.log("Error:", response.statusText);
