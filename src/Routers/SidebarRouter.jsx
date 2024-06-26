@@ -92,7 +92,7 @@ export function SidebarRouter() {
         <Route path="/stock-transfer/OUT/raised/:STN_NO" element={<ReceivingRaised />} />
       </Route>
 
-      <Route element={<ProtectedRoute groupName="web-feedback" />}>
+      <Route element={<ProtectedRoute groupName="web-feedbacks" />}>
         <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       </Route>
 

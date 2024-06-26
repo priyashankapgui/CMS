@@ -14,7 +14,6 @@ export default function SubPopup(props) {
         if (props.show !== undefined) {
             setOpen(props.show);
         }
-        console.log("SubPopup: ", props.show);
     }, [props.show]);
 
     const closeSubpopup = () => {

@@ -26,7 +26,6 @@ const BranchDropdown = forwardRef(
 
     useEffect(() => {
       const getBranches = async () => {
-        setLoading(true);
         try {
           const token = secureLocalStorage.getItem("accessToken");
           const response = await fetch("http://localhost:8080/branches", {
@@ -58,6 +57,7 @@ const BranchDropdown = forwardRef(
           onChange(tempBranches[0]);
           console.log(tempBranches, displayValue);
           setBranchData(tempBranches);
+          console.log(0)
         } catch (error) {
           console.error("Error:", error);
         }
@@ -81,6 +81,7 @@ const BranchDropdown = forwardRef(
         setBranches(branches);
         onChange(branches[0]);
         setLoading(false);
+        console.log(1)
       }
     }, [branchData]);
 

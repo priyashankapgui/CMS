@@ -77,8 +77,8 @@ export default function PermissionMap({ checkedPages, permissionArray }) {
         handleCheck={handleCheck}
       />
       <PermissionSingle
-        pageId="web-feedback"
-        pageName="Web Feedback"
+        pageId="web-feedbacks"
+        pageName="Web Feedbacks"
         checkedPages={checkedPages}
         handleCheck={handleCheck}
       />

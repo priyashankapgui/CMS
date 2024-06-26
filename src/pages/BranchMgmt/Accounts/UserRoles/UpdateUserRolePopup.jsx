@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, forwardRef, useImperativeHandle} from 'react';
 import EditPopup from '../../../../Components/PopupsWindows/EditPopup';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import InputField from '../../../../Components/InputField/InputField';
@@ -6,16 +6,18 @@ import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown'
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import secureLocalStorage from 'react-secure-storage';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 
 
 
-function UpdateUserRolePopup({userRoleId}) {
+const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId}, ref) {
     const [permissionArray, setPermissionArray] = useState([]);
-    const [checkedPages, setCheckedPages] = useState();
+    const [checkedPages, setCheckedPages] = useState(new Map());
     const [roleName, setRoleName] = useState();
     const [selectedBranch, setSelectedBranch] = useState();
     const [showAlert, setShowAlert] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const handleBranchChange = (branch) => {
         setSelectedBranch(branch);
@@ -23,6 +25,7 @@ function UpdateUserRolePopup({userRoleId}) {
         }
 
     useEffect(() => {
+      // setLoading(true);
         const getPermissions = async () => {
             try {
               const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
@@ -36,17 +39,18 @@ function UpdateUserRolePopup({userRoleId}) {
                 );
                 const data = await response.json();
                 setPermissionArray(data);
-                setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
                 console.error('Error fetching permissions:', error);
             }
         }
+        console.log("getting permissions",userRoleId);
         getPermissions();
     }
     ,[]);
 
     useEffect(() => {
-        const getUserPermission = async () => {
+      const getUserPermission = async () => {
+        setLoading(true);
             try {
                 const response = await fetch(`http://localhost:8080/getUserRolePermissions/${userRoleId}`,
                 {
@@ -56,12 +60,16 @@ function UpdateUserRolePopup({userRoleId}) {
                     },
                 });
                 const data = await response.json();
+                const tempCheckedPages = new Map(permissionArray.map((page) => [page.pageId, false]));
                 data.permissions.forEach(page => {
-                  checkedPages.set(page.pageAccessId, true);
+                  tempCheckedPages.set(page.pageAccessId, true);
                 });
+                setCheckedPages(tempCheckedPages);
             } catch (error) {
                 console.error('Error fetching permissions:', error);
             }
+            console.log(userRoleId)
+            setLoading(false);
         }
         const getUserRole = async () => {
             try {
@@ -83,7 +91,7 @@ function UpdateUserRolePopup({userRoleId}) {
         getUserRole();
         getUserPermission();
     }
-    ,[checkedPages, userRoleId]);
+    ,[permissionArray, userRoleId]);
 
     const handleUpdate = async() => {
       try {
@@ -127,14 +135,12 @@ function UpdateUserRolePopup({userRoleId}) {
       }
     }
 
+    useImperativeHandle(ref, () => ({
+      handleUpdate: handleUpdate,
+    }));
+
     return (
       <>
-        <EditPopup
-          topTitle="Update User Role Details"
-          buttonId="update-btn"
-          buttonText="Update"
-          onClick={handleUpdate}
-        >
           <div className="first-row">
             <div className="roleNameInput">
               <InputLabel colour="#0377A8">Role Name</InputLabel>
@@ -145,6 +151,7 @@ function UpdateUserRolePopup({userRoleId}) {
                 value={roleName}
                 onChange={(e) => setRoleName(e.target.value)}
                 editable={true}
+                loading={loading}
               />
             </div>
             <div>
@@ -162,10 +169,18 @@ function UpdateUserRolePopup({userRoleId}) {
           <div className="second-row">
           <div className='permission-title'>Permission Mapping</div>
             <div className="permissions">
+              {loading ? (
+                <div className="loading-container">
+                  <p>
+                    <SubSpinner />
+                  </p>
+                </div>
+              ) : (
               <PermissionMap
                 checkedPages={checkedPages}
                 permissionArray={permissionArray}
               />
+              )}
             </div>
             {showAlert && (
               <CustomAlert
@@ -186,9 +201,8 @@ function UpdateUserRolePopup({userRoleId}) {
               />
             )}
           </div>
-        </EditPopup>
       </>
     );
-}
+})
 
 export default UpdateUserRolePopup

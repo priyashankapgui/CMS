@@ -1,24 +1,43 @@
 import React, { useState } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Reports.css";
-import DatePicker from "../../../Components/DatePicker/DatePicker"
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import repoTypes from '../../../Components/Data.json';
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import StockSummeryDoc from '../../../Components/InventoryDocuments/StockSummeryDoc/StockSummeryDoc';
 
 export const Reports = () => {
     const [clickedLink, setClickedLink] = useState('Generate Reports');
+    const [selectedReportType, setSelectedReportType] = useState('');
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [showReport, setShowReport] = useState(false);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
-    const handleDropdownChange = (value) => {
+
+    const handleDropdownChange = (value, type) => {
+        if (type === 'branch') {
+            setSelectedBranch(value);
+        } else if (type === 'reportType') {
+            setSelectedReportType(value);
+        }
         console.log('Selected Drop Down Value:', value);
     };
 
+    const handleViewButtonClick = () => {
+        if (selectedReportType === 'Stock Summary') {
+            setShowReport(true);
+        } else {
+            setShowReport(false);
+        }
+    };
+    const handleCloseSummeryDoc = () => {
+        setShowReport(false);
+    };
     return (
         <>
             <div className="top-nav-blue-text">
@@ -48,35 +67,32 @@ export const Reports = () => {
                         <h3 className="repoTop-title">Generate Reports</h3>
                         <div className="repo-Content">
                             <div className="branchField">
-                                <InputLabel for="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
-                                    onChange={(e) => handleDropdownChange(e)}
+                                    onChange={(value) => handleDropdownChange(value, 'branch')}
                                 />
                             </div>
                             <div className="repoTypeField">
-                                <InputLabel for="repoType" color="#0377A8">Report Type<span style={{ color: 'red' }}>*</span></InputLabel>
-                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} onChange={handleDropdownChange} />
+                                <InputLabel htmlFor="repoType" color="#0377A8">Report Type<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <InputDropdown
+                                    id="repoType"
+                                    name="repoType"
+                                    editable={true}
+                                    options={repoTypes.repoTypes}
+                                    onChange={(value) => handleDropdownChange(value, 'reportType')}
+                                />
                             </div>
-                            {/* <div className="dateField">
-                                <InputLabel for="from-date" color="#0377A8">From</InputLabel>
-                                <DatePicker />
-                            </div>
-                            <div className="dateField">
-                                <InputLabel for="to-date" color="#0377A8">To</InputLabel>
-                                <DatePicker />
-                            </div> */}
                         </div>
                         <div className="btnSection">
-                            <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> View </Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </Buttons>
+                            <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewButtonClick}> View </Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={() => { setSelectedBranch(''); setSelectedReportType(''); setShowReport(false); }}> Clear </Buttons>
                         </div>
                     </div>
-
+                    {showReport && <StockSummeryDoc selectedBranch={selectedBranch} onClose={handleCloseSummeryDoc}/>}
                 </div>
-
             </Layout>
         </>
     );
