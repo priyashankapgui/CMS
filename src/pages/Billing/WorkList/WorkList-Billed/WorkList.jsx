@@ -13,12 +13,11 @@ import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButto
 
 export const WorkList = () => {
     const [clickedLink, setClickedLink] = useState('Billed');
-    const [startDate, setStartDate] = useState(new Date()); // Initialize with current date
-    const [endDate, setEndDate] = useState(new Date()); // Initialize with current date
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
     const [selectedBranch, setSelectedBranch] = useState('');
     const [billNo, setBillNo] = useState('');
     const [customerName, setCustomerName] = useState('');
-
     const [error, setError] = useState(null);
     const [billProduct, setBillProduct] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);

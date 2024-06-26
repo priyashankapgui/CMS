@@ -11,6 +11,7 @@ import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown'
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from 'react-secure-storage';
+import UpdateUserRolePopupConnector from './UpdateUserRolePopupConnector';
 
 export const UserRoleMgmt = () => {
     const [selectedBranch, setSelectedBranch] = useState('All');
@@ -114,7 +115,7 @@ export const UserRoleMgmt = () => {
                     </div>
                     <div className="BranchField">
                         <InputLabel color="#0377A8">Branch</InputLabel>
-                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleDropdownChange(e)} addOptions={["All"]} />
+                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={handleDropdownChange} addOptions={["All"]} />
                     </div>
 
                     <div className='user-roles-middle-tablecontainer'>
@@ -135,7 +136,7 @@ export const UserRoleMgmt = () => {
                                     <div>
                                         {currentUser.role === role.userRoleName ? <p>No Access</p> : ( 
                                         <div style={{ display: "flex", gap: "0.7em", cursor: "pointer" }}>
-                                            <UpdateUserRolePopup userRoleId={role.userRoleId} />
+                                            <UpdateUserRolePopupConnector userRoleId={role.userRoleId} />
                                             <DeletePopup handleDelete={async() => handleDelete(role.userRoleId)} />
                                         </div>
                                         )

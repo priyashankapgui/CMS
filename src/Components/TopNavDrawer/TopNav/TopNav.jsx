@@ -95,8 +95,7 @@ const TopNav = ({ showSidebar }) => {
             </Link>
           </div>
 
-          <div className="Profile" onMouseEnter={(event) => handleMouseEnter('Profile', event)}
-            onMouseLeave={handleMouseLeave}>
+          <div className="Profile">
             <MyAccountDetails />
           </div>
 

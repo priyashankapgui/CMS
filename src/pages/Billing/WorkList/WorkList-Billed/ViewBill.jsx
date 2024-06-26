@@ -11,6 +11,7 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
@@ -50,7 +51,7 @@ export const ViewBill = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div><SubSpinner/></div>;
     }
 
     if (error) {

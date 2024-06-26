@@ -1,7 +1,7 @@
 import React from 'react';
 import './InputField.css';
 
-function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, border, className, children }) {    // Default onChange handler that does nothing
+function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, border, className, children, loading}) {    // Default onChange handler that does nothing
     const noop = () => { };
 
     return (
@@ -10,10 +10,11 @@ function InputField({ type, id, name, placeholder, onChange, editable, borderRad
                 type={type}
                 id={id}
                 name={name}
-                placeholder={placeholder}
+                placeholder={loading ? 'Loading...' : placeholder}
                 onChange={onChange || noop}
-                value={value}
-                className={`input ${editable ? '' : 'disabled'} ${className}`}
+                value={loading ? '' : value}
+                className={`input ${editable && !loading ? '' : 'disabled'} ${className}`}
+                disabled={loading}
 
                 style={{
                     borderRadius: borderRadius || '0.625em',
@@ -24,7 +25,7 @@ function InputField({ type, id, name, placeholder, onChange, editable, borderRad
                     border: border || '1px solid #8D9093'
                 }}
             />
-            {children && (
+            {children && !loading && (
                 <span className="icon-container">
                     {children}
                 </span>

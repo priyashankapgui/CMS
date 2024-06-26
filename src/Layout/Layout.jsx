@@ -7,25 +7,24 @@ import MainSpinner from "../Components/Spinner/MainSpinner/MainSpinner";
 
 const Layout = ({ children }) => {
     const [sidebarExpanded, setSidebarExpanded] = useState(true);
-    const [loading, setLoading] = useState(true);
 
     const toggleSidebar = () => {
         setSidebarExpanded(!sidebarExpanded);
     };
 
-    // Simulate loading delay (e.g., 2 seconds)
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 200);
+    // // Simulate loading delay (e.g., 2 seconds)
+    // useEffect(() => {
+    //     const timer = setTimeout(() => {
+    //         setLoading(false);
+    //     }, 200);
 
-        return () => clearTimeout(timer);
-    }, []);
+    //     return () => clearTimeout(timer);
+    // }, []);
 
     // Render loading spinner while loading is true
-    if (loading) {
-        return <MainSpinner />;
-    }
+    // if (loading) {
+    //     return <MainSpinner />;
+    // }
 
     return (
         <div className='layout'>
