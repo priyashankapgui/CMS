@@ -59,7 +59,7 @@ export const WebFeedbacks = () => {
     useEffect(() => {
         const fetchBranchOptions = async () => {
             try {
-                const data = await getBranchOptions();
+                const data = await getBranchOptions(secureLocalStorage.getItem('accessToken'));
                 setBranchOptions([{ branchName: 'All' }, ...data]);
             } catch (error) {
 
