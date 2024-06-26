@@ -21,57 +21,57 @@ const createAuthInstance = () => {
     });
 };
 
-export const getBranchOptions = async () => {
+export const createOnlineBill = async (onlineBillData) => {
     try {
         const authApi = createAuthInstance();
-        const response = await authApi.get('/branchesWeb');
+        const response = await authApi.post('/onlineBills', onlineBillData);
         return response.data;
     } catch (error) {
-        console.error('Error fetching branches:', error);
+        console.error('Error creating online bill:', error);
         throw error;
     }
 };
 
-export const getBranchById = async (branchId) => {
+export const getAllOnlineBills = async () => {
     try {
         const authApi = createAuthInstance();
-        const response = await authApi.get(`/branches/${branchId}`);
+        const response = await authApi.get('/onlineBills');
         return response.data;
     } catch (error) {
-        console.error(`Error fetching branch with ID ${branchId}:`, error);
+        console.error('Error fetching online bills:', error);
         throw error;
     }
 };
 
-export const createBranch = async (branchData) => {
+export const getOnlineBillByNumber = async (onlineBillNo) => {
     try {
         const authApi = createAuthInstance();
-        const response = await authApi.post('/branches', branchData);
+        const response = await authApi.get(`/onlineBills/${onlineBillNo}`);
         return response.data;
     } catch (error) {
-        console.error('Error adding branch:', error);
+        console.error(`Error fetching online bill with number ${onlineBillNo}:`, error);
         throw error;
     }
 };
 
-export const updateBranch = async (branchId, branchData) => {
+export const updateOnlineBill = async (onlineBillNo, onlineBillData) => {
     try {
         const authApi = createAuthInstance();
-        const response = await authApi.put(`/branches/${branchId}`, branchData);
+        const response = await authApi.put(`/onlineBills/${onlineBillNo}`, onlineBillData);
         return response.data;
     } catch (error) {
-        console.error(`Error updating branch with ID ${branchId}:`, error);
+        console.error(`Error updating online bill with number ${onlineBillNo}:`, error);
         throw error;
     }
 };
 
-export const deleteBranch = async (branchId) => {
+export const deleteOnlineBill = async (onlineBillNo) => {
     try {
         const authApi = createAuthInstance();
-        const response = await authApi.delete(`/branches/${branchId}`);
+        const response = await authApi.delete(`/onlineBills/${onlineBillNo}`);
         return response.data;
     } catch (error) {
-        console.error(`Error deleting branch with ID ${branchId}:`, error);
+        console.error(`Error deleting online bill with number ${onlineBillNo}:`, error);
         throw error;
     }
 };
