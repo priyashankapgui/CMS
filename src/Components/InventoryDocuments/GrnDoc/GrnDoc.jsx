@@ -2,25 +2,24 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReceiptPopup from '../../SalesReceiptTemp/ReceiptPopup/ReceiptPopup';
 import './GrnDoc.css';
-import greenleaf from "../../../Assets/greenleaf.svg";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; // Import the spinner
 
 const GrnDoc = ({ GRN_NO, onClose }) => {
-    console.log("data ohh",GRN_NO);
+    console.log("data ohh", GRN_NO);
     const [GRNData, setGRNData] = useState(null);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchGRNData = async () => {
             try {
-                setLoading(true); // Start loading
+                setLoading(true);
                 const response = await axios.get(`http://localhost:8080/grn-all?GRN_NO=${GRN_NO}`);
                 setGRNData(response.data.data);
-                
+
             } catch (error) {
                 console.error("Error fetching GRN data:", error);
             } finally {
-                setLoading(false); // Stop loading
+                setLoading(false);
             }
         };
 
@@ -38,21 +37,21 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
     const GrnDocContent = (
         <div className="GrnDoc-paper-frame">
             {loading ? (
-                <div className="loading-container"><SubSpinner /></div> // Show spinner while loading
+                <div className="loading-container"><SubSpinner /></div>
             ) : (
                 <>
                     <div className="GrnDoc-paper-header">
                         <div className="logo">
-                            <img className="GrnDoc-paper-sys-logo" src={greenleaf} alt="greenmart logo" />
+                            <img className="GrnDoc-paper-sys-logo" src={`${process.env.PUBLIC_URL}/Images/greenleaf.svg`} alt="greenmart logo" />
                             <h4 className='shopName'>Green Leaf Super Mart</h4>
                         </div>
                     </div>
                     <h5 className='GrnDoc-paper-title'>Good Receive Note</h5>
                     <div className="GrnDoc-top-details">
                         <div className="GrnDoc-top-details-left">
-                            <p>GRN No: {GRNData?.GRN_NO}</p>
                             <p>Branch: {GRNData?.branchName}</p>
-                            <p>Created At: {new Date(GRNData?.createdAt).toLocaleDateString()}</p>
+                            <p>GRN No: {GRNData?.GRN_NO}</p>
+                            <p>Created At: {new Date(GRNData?.createdAt).toLocaleDateString('en-GB')}</p>
                         </div>
                         <div className="GrnDoc-top-details-right">
                             <p>Invoice No: {GRNData?.invoiceNo}</p>
@@ -66,29 +65,31 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
                         <table className="GrnDoc-bodyContent-table">
                             <thead>
                                 <tr>
-                                    <th>Product ID / Name</th>
-                                    <th>Batch No</th>
-                                    <th>Qty</th>
-                                    <th>Purchase Price</th>
-                                    <th>Selling Price</th>
+                                    <th />
+                                    <th style={{ textAlign: 'left' }}>Product ID / Name</th>
+                                    <th style={{ textAlign: 'left' }}>Batch No</th>
+                                    <th style={{ textAlign: 'center' }}>Purchase Qty</th>
+                                    <th style={{ textAlign: 'right' }}>Purchase Price</th>
+                                    <th style={{ textAlign: 'right' }}>Selling Price</th>
                                     <th>Free Qty</th>
-                                    <th>Exp Date</th>
-                                    <th>Amount</th>
+                                    <th style={{ textAlign: 'right' }}>Exp Date</th>
+                                    <th style={{ textAlign: 'right' }}>Amount</th>
                                     <th>Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {GRNData?.productGRNs.map((productGRN, index) => (
                                     <tr key={index}>
-                                        <td>{productGRN.productId} / {productGRN.productName}</td>
-                                        <td>{productGRN.batchNo}</td>
-                                        <td>{productGRN.totalQty}</td>
-                                        <td>{productGRN.purchasePrice}</td>
-                                        <td>{productGRN.sellingPrice}</td>
-                                        <td>{productGRN.freeQty}</td>
-                                        <td>{new Date(productGRN.expDate).toLocaleDateString()}</td>
-                                        <td>{productGRN.amount}</td>
-                                        <td>{productGRN.comment}</td>
+                                        <td>{index + 1}.</td>
+                                        <td style={{ textAlign: 'left' }}>{productGRN.productId} {productGRN.productName}</td>
+                                        <td style={{ textAlign: 'left' }}>{productGRN.batchNo}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.totalQty}</td>
+                                        <td style={{ textAlign: 'right' }}>{productGRN.purchasePrice}</td>
+                                        <td style={{ textAlign: 'right' }}>{productGRN.sellingPrice}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.freeQty}</td>
+                                        <td style={{ textAlign: 'right' }}>{new Date(productGRN.expDate).toLocaleDateString('en-GB')}</td>
+                                        <td style={{ textAlign: 'right' }}>{productGRN.amount}</td>
+                                        <td style={{ textAlign: 'left' }}>{productGRN.comment}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -99,8 +100,8 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
                     </div>
                     <div className="GrnDoc-paper-footer">
                         <hr className='invoice-line-top' />
-                        <p>© Green Leaf Super Mart - Galle</p>
-                        <small>- Page <span className="pageNumber"></span> -</small>
+                        <p>© Green Leaf Super Mart - {GRNData?.branchName}</p>
+                        <small><span className="pageNumber"></span></small>
                     </div>
                 </>
             )}

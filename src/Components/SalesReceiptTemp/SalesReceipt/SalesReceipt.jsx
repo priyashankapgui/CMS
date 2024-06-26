@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReceiptPopup from '../ReceiptPopup/ReceiptPopup';
 import './SalesReceipt.css';
-import greenleaf from "../../../Assets/greenleaf.svg";
-import SugesstionQR from "../../../Assets/qr-code.svg";
 import axios from 'axios';
 
 
@@ -53,8 +51,6 @@ const SalesReceipt = ({ billNo, onClose }) => {
     balance = receivedAmount - billTotalAmount;
 
     const handleReprintReceipt = () => {
-
-
         window.print();
     };
 
@@ -62,7 +58,7 @@ const SalesReceipt = ({ billNo, onClose }) => {
         <div className="sales-receipt">
             <div className="sales-receipt-header">
                 <div className="logo">
-                    <img className="sales-receipt-sys-logo" src={greenleaf} alt="greenmart logo" />
+                    <img className="sales-receipt-sys-logo" src={`${process.env.PUBLIC_URL}/Images/greenleaf.svg`} alt="greenmart logo" />
                 </div>
                 <div className="sales-receipt-store-details">
                     <h5 className='shopName'>Green Leaf Super Mart</h5>
@@ -138,7 +134,7 @@ const SalesReceipt = ({ billNo, onClose }) => {
                 <div className="inquaryQR">
                     For any inquiry
                     <small>Scan me</small>
-                    <img className="qrImg" src={SugesstionQR} alt="Sugession QR" />
+                    <img className="qrImg" src={`${process.env.PUBLIC_URL}/Images/qr-code.svg`}  alt="Sugession QR" />
                 </div>
                 <div className="total">
                     <table className='total-table'>
