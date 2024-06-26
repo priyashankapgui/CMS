@@ -1,4 +1,4 @@
-@media print {
+/* @media print {
     body * {
         visibility: hidden;
     }
@@ -85,4 +85,4 @@
 .StockTranIn-paper-footer {
     font-size: 10px;
     text-align: center;
-}
+} */
