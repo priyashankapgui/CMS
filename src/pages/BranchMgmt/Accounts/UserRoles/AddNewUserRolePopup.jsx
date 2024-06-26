@@ -11,7 +11,7 @@ import secureLocalStorage from 'react-secure-storage';
 
 function AddNewUserRolePopup({showSuccess}) {
     const [permissionArray, setPermissionArray] = useState([]);
-    const [checkedPages, setCheckedPages] = useState();
+    const [checkedPages, setCheckedPages] = useState(new Map());
     const [roleName, setRoleName] = useState();
     const [selectedBranch, setSelectedBranch] = useState("None");
     const [showAlert, setShowAlert] = useState(false);
