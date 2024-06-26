@@ -1,7 +1,6 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import InputDropdown from "./InputDropdown";
-import secureLocalStorage from "react-secure-storage";
-import { getBranchOptions, getBranchesForDropdown } from "../../Api/BranchMgmt/BranchAPI";
+import { getBranchesForDropdown } from "../../Api/BranchMgmt/BranchAPI";
 
 const BranchDropdown = forwardRef(
   (
