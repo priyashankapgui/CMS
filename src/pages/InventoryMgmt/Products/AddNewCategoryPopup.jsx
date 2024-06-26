@@ -6,6 +6,7 @@ import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import { createCategory } from '../../../Api/Inventory/Category/CategoryAPI';
 
 const AddNewCategoryPopup = ({ onClose, onSave }) => {
     const navigate = useNavigate();
@@ -20,14 +21,7 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         image: Joi.any().optional().label('Image'),
     });
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
+
 
     const validate = () => {
         const result = categorySchema.validate({ categoryName, image }, { abortEarly: false });
@@ -95,7 +89,7 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
 
         setIsLoading(true);
         try {
-            await axios.post("http://localhost:8080/categories", formData);
+           await createCategory(formData);
 
             const alertData = {
                 severity: 'success',

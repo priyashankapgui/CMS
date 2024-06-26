@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Joi from 'joi';
 import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
@@ -7,16 +6,18 @@ import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
+import { getCategoryById, updateCategory } from '../../../Api/Inventory/Category/CategoryAPI';
 
-const categoryApiUrl = process.env.REACT_APP_CATEGORY_API;
+
 
 function UpdateCategoryPopup({ categoryId }) {
-    console.log("categoryId:",categoryId);
     const navigate = useNavigate();
+
     const [post, setPost] = useState({
         categoryName: '',
-        image: null // Add image field for category image
+        image: null 
     });
+
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -27,24 +28,23 @@ function UpdateCategoryPopup({ categoryId }) {
     });
 
     useEffect(() => {
+        const fetchCategory = async () => {
+            try {
+                const categoryData = await getCategoryById(categoryId);
+                setPost({
+                    categoryName: categoryData.data.categoryName,
+                    image: null 
+                });
+            } catch (error) {
+                console.error('Error fetching category:', error);
+            }
+        };
+
         if (categoryId) {
-            axios.get(`${categoryApiUrl}/${categoryId}`)
-                .then(res => setPost({
-                    categoryName: res.data.data.categoryName,
-                    image: res.data.data.image // Assuming image data is received from the API
-                }))
-                .catch(err => console.error('Error fetching category:', err));
+            fetchCategory();
         }
     }, [categoryId]);
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
 
     const validate = () => {
         const result = schema.validate(post, { abortEarly: false });
@@ -65,14 +65,14 @@ function UpdateCategoryPopup({ categoryId }) {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            transformImage(file);
+            TransformFile(file);
         }
     };
 
-    const transformImage = (file) => {
+    const TransformFile = (file) => {
         const reader = new FileReader();
 
-        reader.onloadend = () => {
+        reader.onloadend = () => { 
             setPost({ ...post, image: reader.result });
         };
 
@@ -107,15 +107,11 @@ function UpdateCategoryPopup({ categoryId }) {
         try {
             const formData = new FormData();
             formData.append('categoryName', post.categoryName);
-            if (post.image) {
+            if (post.image ) {
                 formData.append('image', post.image);
             }
 
-            await axios.put(`${categoryApiUrl}/${categoryId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await updateCategory(categoryId, formData);
 
             const alertData = {
                 severity: 'success',

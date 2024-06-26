@@ -7,10 +7,12 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Joi from 'joi';
+import { getSupplierById , updateSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
-const suppliersApiUrl = process.env.REACT_APP_SUPPLIERS_API;
+
 
 function UpdateSupplierPopup({ supplierId }) {
+    console.log("supplirId received",supplierId);
     const navigate = useNavigate();
     const [post, setPost] = useState({
         supplierName: '',
@@ -30,31 +32,29 @@ function UpdateSupplierPopup({ supplierId }) {
         contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No'),
     });
 
+   
     useEffect(() => {
+        const fetchSupplierDetails = async () => {
+            try {
+                const res = await getSupplierById(supplierId);
+                const { supplierName, regNo, address, email, contactNo } = res.data;  
+                setPost({
+                    supplierName,
+                    regNo,
+                    address,
+                    email,
+                    contactNo
+                });
+            } catch (error) {
+                console.error('Error fetching supplier:', error);
+            }
+        };
+
         if (supplierId) {
-            axios.get(`${suppliersApiUrl}/${supplierId}`)
-                .then(res => {
-                    const { supplierName, regNo, address, email, contactNo } = res.data.data;
-                    setPost({
-                        supplierName,
-                        regNo,
-                        address,
-                        email,
-                        contactNo
-                    });
-                })
-                .catch(err => console.log(err));
+            fetchSupplierDetails();
         }
     }, [supplierId]);
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
 
     const validate = () => {
         const result = schema.validate(post, { abortEarly: false });
@@ -90,7 +90,7 @@ function UpdateSupplierPopup({ supplierId }) {
         }
 
         try {
-            const resp = await axios.put(`${suppliersApiUrl}/${supplierId}`, post);
+            const resp = await updateSupplier(supplierId, post);
             console.log('Supplier updated successfully:', resp.data);
             const alertData = {
                 severity: 'info',

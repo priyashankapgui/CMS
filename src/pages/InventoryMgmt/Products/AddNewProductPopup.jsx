@@ -7,6 +7,7 @@ import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import { createProduct } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
     const navigate = useNavigate();
@@ -27,8 +28,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [loading, setLoading] = useState(false);
     
 
-    const baseURL = "http://localhost:8080/products";
-
     const productSchema = Joi.object({
         productName: Joi.string().required().label('Product Name'),
         description: Joi.string().optional().label('Description'),
@@ -38,14 +37,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         minQty: Joi.number().optional().label('Min Qty')
     });
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
 
     const validate = () => {
         const result = productSchema.validate({ productName, description, image, categoryName, barcode , minQty }, { abortEarly: false });
@@ -124,11 +115,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
 
         setIsLoading(true);
         try {
-            await axios.post(baseURL, formData, {
-                // headers: {
-                //     'Content-Type': 'multipart/form-data'
-                // }
-            });
+            await createProduct(formData);
 
             const alertData = {
                 severity: 'success',

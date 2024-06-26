@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Joi from 'joi';
 import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
@@ -8,8 +7,9 @@ import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
+import { getProductById, updateProduct } from '../../../Api/Inventory/Product/ProductAPI';
+import { getCategories } from '../../../Api/Inventory/Category/CategoryAPI';
 
-const productsApiUrl = process.env.REACT_APP_PRODUCTS_API;
 
 function UpdateProductPopup({ productId }) {
     const navigate = useNavigate();
@@ -36,9 +36,9 @@ function UpdateProductPopup({ productId }) {
 
     useEffect(() => {
         if (productId) {
-            axios.get(`${productsApiUrl}/${productId}`)
+            getProductById(productId)
                 .then(res => {
-                    const { productName, description, categoryName, barcode, minQty, image } = res.data.data;
+                    const { productName, description, categoryName, barcode, minQty, image } = res.data;
                     setPost({
                         productName,
                         description,
@@ -47,6 +47,7 @@ function UpdateProductPopup({ productId }) {
                         minQty,
                         image
                     });
+                    
                 })
                 .catch(err => console.error('Error fetching product:', err));
         }
@@ -130,11 +131,7 @@ function UpdateProductPopup({ productId }) {
                 formData.append('image', post.image);
             }
 
-            await axios.put(`${productsApiUrl}/${productId}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            await updateProduct(productId, formData);
 
             const alertData = {
                 severity: 'success',
@@ -144,6 +141,7 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } catch (error) {
             console.error('Error updating product:', error);
             const alertData = {
@@ -154,6 +152,7 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } finally {
             setIsLoading(false);
         }
@@ -161,9 +160,9 @@ function UpdateProductPopup({ productId }) {
 
     const fetchCategorySuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(category => ({
+            const response = await getCategories();
+            if (response.data && response.data) {
+                return response.data.map(category => ({
                     id: category.categoryId,
                     displayText: `${category.categoryId} ${category.categoryName}`
                 }));

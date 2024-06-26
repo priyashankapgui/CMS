@@ -18,6 +18,9 @@ import ViewGRN from './ViewGRN';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import GrnDoc from '../../../Components/InventoryDocuments/GrnDoc/GrnDoc';
 import secureLocalStorage from "react-secure-storage";
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 
 export const GoodReceive = () => {
     const [grnData, setGrnData] = useState([]);
@@ -90,7 +93,7 @@ export const GoodReceive = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -99,8 +102,8 @@ export const GoodReceive = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/products');
-            setProducts(response.data.data);
+            const response = await getProducts();
+            setProducts(response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -108,8 +111,8 @@ export const GoodReceive = () => {
 
     const fetchSuppliers = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/suppliers');
-            setSuppliers(response.data.data);
+            const response = await getSuppliers();
+            setSuppliers(response.data);
         } catch (error) {
             console.error('Error fetching suppliers:', error);
         }
@@ -208,9 +211,9 @@ export const GoodReceive = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -224,9 +227,9 @@ export const GoodReceive = () => {
 
     const fetchSuppliersSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/suppliers?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(supplier => ({
+            const response = await getSuppliers();
+            if (response.data && response.data) {
+                return response.data.map(supplier => ({
                     id: supplier.supplierId,
                     displayText: `${supplier.supplierId} ${supplier.supplierName}`
                 }));

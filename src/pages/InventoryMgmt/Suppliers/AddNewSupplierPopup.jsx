@@ -6,8 +6,8 @@ import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import { createSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
-const suppliersApiUrl = process.env.REACT_APP_SUPPLIERS_API;
 
 function AddNewSupplierPopup() {
     const navigate = useNavigate();
@@ -27,15 +27,7 @@ function AddNewSupplierPopup() {
         contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No'),
     });
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
-
+    
     const validate = () => {
         const result = schema.validate({ supplierName, regNo, address, email, contactNo }, { abortEarly: false });
         if (!result.error) return null;
@@ -65,14 +57,16 @@ function AddNewSupplierPopup() {
         }
 
         try {
-            const resp = await axios.post(suppliersApiUrl, {
+            const supplierData = {
                 supplierName,
                 regNo,
                 address,
                 email,
                 contactNo
-            });
-            console.log("Response:", resp.data);
+            };
+            const createdSupplier = await createSupplier(supplierData);
+            console.log('Supplier created successfully:', createdSupplier);
+
             const alertData = {
                 severity: 'success',
                 title: 'Added',
@@ -83,7 +77,8 @@ function AddNewSupplierPopup() {
             navigate('/Suppliers');
             window.location.reload();
         } catch (error) {
-            console.error("Error:", error);
+            console.error('Error creating supplier:', error);
+
             const alertData = {
                 severity: 'error',
                 title: 'Error',
@@ -95,7 +90,6 @@ function AddNewSupplierPopup() {
             window.location.reload();
         }
     };
-
 
     return (
         <>

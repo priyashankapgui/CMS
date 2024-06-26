@@ -4,10 +4,10 @@ import Layout from "../../../Layout/Layout";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; 
+import { getGRNByGRN_NO } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 export function ViewGRN() {
     const { GRNNo } = useParams();
@@ -19,8 +19,8 @@ export function ViewGRN() {
         const fetchGRNData = async () => {
             try {
                 setLoading(true); 
-                const response = await axios.get(`http://localhost:8080/grn-all?GRN_NO=${GRNNo}`);
-                setGRNData(response.data.data);
+                const response = await getGRNByGRN_NO(GRNNo);
+                setGRNData(response.data);
             } catch (error) {
                 console.error("Error fetching GRN data:", error);
             } finally {

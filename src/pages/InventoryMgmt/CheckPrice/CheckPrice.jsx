@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./CheckPrice.css";
 import InputLabel from "../../../Components/Label/InputLabel";
@@ -8,6 +7,9 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getProductBatchDetails } from '../../../Api/Inventory/Product/ProductAPI';
 
 
 export const CheckPrice = () => {
@@ -24,7 +26,7 @@ export const CheckPrice = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -38,9 +40,9 @@ export const CheckPrice = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -60,13 +62,8 @@ export const CheckPrice = () => {
 
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:8080/product-batch-details`, {
-                params: {
-                    branchName: selectedBranch,
-                    productId: product.id, 
-                }
-            });
-            setBatchDetails(response.data.data); 
+            const response = await getProductBatchDetails(selectedBranch, product.id);
+            setBatchDetails(response.data); 
             setLoading(false);
         } catch (error) {
             console.error('Error fetching batch details:', error);
@@ -114,7 +111,7 @@ export const CheckPrice = () => {
                                     setSearchTerm={setSelectedProduct}
                                     onSelectSuggestion={(suggestion) => {
                                         setSelectedProduct(`${suggestion.displayText}`);
-                                        setProduct(suggestion); // Set the selected product object
+                                        setProduct(suggestion); 
                                     }}
                                     fetchSuggestions={fetchProductsSuggestions}
                                 />

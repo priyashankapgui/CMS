@@ -15,7 +15,7 @@ const StockTransferIn = ({ searchParams }) => {
     const [loading, setLoading] = useState(true);
     const [selectedSTN_NO, setSelectedSTN_NO] = useState(null);
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
-    const [activeTab, setActiveTab] = useState('all'); // Assuming you have an activeTab state for filtering
+    const [activeTab, setActiveTab] = useState('all'); 
 
     useEffect(() => {
         if (searchParams && searchParams.STN_NO) {

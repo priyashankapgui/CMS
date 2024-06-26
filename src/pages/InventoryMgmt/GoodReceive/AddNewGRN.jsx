@@ -4,20 +4,23 @@ import Layout from "../../../Layout/Layout";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputField from "../../../Components/InputField/InputField";
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import DatePicker from '../../../Components/DatePicker/DatePicker';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getSupplierById } from '../../../Api/Inventory/Supplier/SupplierAPI';
+import { createGRN } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 export function AddNewGRN() {
 
-    const url = 'http://localhost:8080/grn';
+    
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [productsData, setProductsData] = useState([]);
@@ -48,7 +51,7 @@ export function AddNewGRN() {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -61,7 +64,7 @@ export function AddNewGRN() {
 
     const fetchSupplierIdByName = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/suppliers?query=${encodeURIComponent(supplierId)}`);
+            const response = await getSupplierById(supplierId);
             const data = await response.json();
             if (data.length > 0) {
                 setSupplierId(data[0].id);
@@ -74,12 +77,10 @@ export function AddNewGRN() {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        // Fetch supplier ID if not already set
         if (!supplierId) {
             await fetchSupplierIdByName();
         }
 
-        // Prepare data to be sent to the backend
         const grnData = {
             invoiceNo,
             branchName: selectedBranch,
@@ -99,7 +100,7 @@ export function AddNewGRN() {
         console.log("data",grnData);
 
         try {
-            await axios.post(url, grnData);
+            await createGRN(grnData);
             setAlert({
                 show: true,
                 severity: 'success',
@@ -148,9 +149,9 @@ export function AddNewGRN() {
 
     const fetchSuppliersSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/suppliers?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(supplier => ({
+            const response = await getSuppliers();
+            if (response.data && response.data) {
+                return response.data.map(supplier => ({
                     id: supplier.supplierId,
                     displayText: `${supplier.supplierId} ${supplier.supplierName}`
                 }));
@@ -181,7 +182,7 @@ export function AddNewGRN() {
     useEffect(() => {
         const fetchProductsData = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/products');
+                const response = await getProducts();
                 setProductsData(response.data);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -193,9 +194,9 @@ export function AddNewGRN() {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
