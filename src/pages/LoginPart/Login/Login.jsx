@@ -12,10 +12,9 @@ import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
+import {loginEmployee, loginSuperAdmin} from "../../../Api/Login/loginAPI"
 
 const Login = () => {
-  const API_LOGIN_URL = `${process.env.REACT_APP_API_LOGIN_URL}`;
-  const API_SUPERADMIN_LOGIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_LOGIN_URL}`;
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -43,31 +42,13 @@ const Login = () => {
     setSubLoading(true);
     let response;
     if (empID.startsWith("SA")) {
-      response = await fetch(API_SUPERADMIN_LOGIN_URL , {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID: empID,
-          password: password,
-        }),
-      }).catch((error) => console.error("Error:", error));
+      response = await loginSuperAdmin(empID, password);
     } else {
-      response = await fetch(API_LOGIN_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId: empID,
-          password: password,
-        }),
-      }).catch((error) => console.error("Error:", error));
+      response = await loginEmployee(empID, password);
     }
     try {
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
         console.log("Response data:", data);
 
         // Store the token in local storage
@@ -78,7 +59,7 @@ const Login = () => {
         setLoggingSuccess(true);
       } else {
         // Login failed, handle error
-        const data = await response.json();
+        const data = response.data;
         console.log("Error:", data.error);
         setError(data.error);
         setSubLoading(false);

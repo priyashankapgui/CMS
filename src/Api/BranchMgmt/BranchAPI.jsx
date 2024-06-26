@@ -7,10 +7,14 @@ const api = axios.create({
     }
 });
 
-export const getBranchOptions = async () => {
+export const getBranchOptions = async (token) => {
     try {
-        const response = await api.get('/branches');
-        return response.data;
+        const response = await api.get('/branches',{
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+        return response;
     } catch (error) {
         console.error('Error fetching braches:', error);
         throw error;

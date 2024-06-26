@@ -17,6 +17,7 @@ import UserRoleDropdown from '../../../../Components/InputDropdown/UserRoleDropd
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import secureLocalStorage from 'react-secure-storage';
+import { createEmployee } from '../../../../Api/BranchMgmt/UserAccountsAPI';
 
 
 export function CreateNewAccounts() {
@@ -71,30 +72,22 @@ export function CreateNewAccounts() {
       console.log("Employee data:", employeeData);
       try {
       if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName) {
-          throw new Error("Please fill in all fields")
+          throw new Error("Please fill in required fields");
         }
         if (employeeData.password !== confirmPassword) {
-          throw new Error("Passwords do not match")
-        }
+          throw new Error("Passwords do not match");
+        };
         const token = secureLocalStorage.getItem("accessToken");
         const formData = new FormData();
-
         // Append the employee data as a string
         formData.append('employee', JSON.stringify(employeeData));
-
         // Append the image file
         if(file){
           formData.append('image', file);
         }
-        const response = await fetch("http://localhost:8080/employees", {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        });
-        if (!response.ok) {
-          const data = await response.json();
+        const response = await createEmployee(formData, token);
+        if (response.status !== 201) {
+          const data = await response.data;
           console.log("Error:", data.error);
           setShowAlertError(data.error);
         } else{

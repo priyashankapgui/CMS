@@ -4,6 +4,7 @@ import UnAuthorized  from "../Components/Auth-Notification/Auth-Notificaion";
 import MainSpinner from "../Components/Spinner/MainSpinner/MainSpinner";
 import ErrorNotification from "../Components/Auth-Notification/Token-Notification";
 import secureLocalStorage from "react-secure-storage";
+import { verifyUserRolePermissions } from "../Api/BranchMgmt/UserRoleAPI";
 
 const ProtectedRoute = (groupName) => {
     const [giveAccess, setGiveAccess] = useState();
@@ -16,18 +17,8 @@ const ProtectedRoute = (groupName) => {
       const user  = secureLocalStorage.getItem("user");
       // console.log({groupName, token});
       if (token && user) {
-        const response = await fetch("http://localhost:8080/verifyPermissions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            token: token,
-            groupName: groupName.groupName
-          })
-        }).catch((error) => console.error("Error:", error));
-        const data = await response?.json();
+        const response = await verifyUserRolePermissions(token,groupName);
+        const data = await response?.data;
         console.log(data);
         if (!response) {
           setError('serverError');
@@ -37,7 +28,7 @@ const ProtectedRoute = (groupName) => {
           setError('expiredToken');
           setGiveAccess(false);
         }
-        else if (response.ok){
+        else if (response.status === 200){
           setError(false);
           setGiveAccess(true)
         }

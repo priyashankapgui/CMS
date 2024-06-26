@@ -12,6 +12,7 @@ import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from 'react-secure-storage';
 import UpdateUserRolePopupConnector from './UpdateUserRolePopupConnector';
+import { deleteUserRole, getAllUserRoles } from '../../../../Api/BranchMgmt/UserRoleAPI';
 
 export const UserRoleMgmt = () => {
     const [selectedBranch, setSelectedBranch] = useState('All');
@@ -21,23 +22,16 @@ export const UserRoleMgmt = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(false); // Loading state
     const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
-
+    const token = secureLocalStorage.getItem("accessToken");
     useEffect(() => {
         const getUserRoles = async () => {
             try {
                 setLoading(true); // Set loading to true before fetching data
-                const token = secureLocalStorage.getItem("accessToken");
-                const response = await fetch("http://localhost:8080/userRoles", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                if (!response.ok) {
+                const response = await getAllUserRoles(token);
+                if (response.status !== 200) {
                     throw new Error("Failed to fetch data");
                 }
-                const data = await response.json();
+                const data = await response.data;
                 console.log(data);
                 setUserRoles(data);
             } catch (error) {
@@ -58,15 +52,9 @@ export const UserRoleMgmt = () => {
 
     const handleDelete = async (userRoleId) => {
         try {
-            const response = await fetch(`http://localhost:8080/userRoleWithPermissions/${userRoleId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${secureLocalStorage.getItem('accessToken')}`,
-                },
-            });
-            if (!response.ok) {
-                const data = await response.json();
+            const response = await deleteUserRole(userRoleId, token);
+            if (response.status !== 200) {
+                const data = await response.data;
                 throw new Error(data.error);
             }
             setSuccess('User role deleted successfully');
@@ -111,7 +99,7 @@ export const UserRoleMgmt = () => {
                 <div className="user-roles-middle-container">
                     <div className="user-roles-middle-top-content">
                         <h3 className='user-roles-available-title'>Available Roles</h3>
-                        <AddNewUserRolePopup showSuccess={showSuccess} />
+                        <AddNewUserRolePopup />
                     </div>
                     <div className="BranchField">
                         <InputLabel color="#0377A8">Branch</InputLabel>
