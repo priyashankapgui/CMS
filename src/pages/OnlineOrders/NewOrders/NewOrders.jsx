@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import './NewOrders.css';
 import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons";
 import { BsEye } from 'react-icons/bs';
 import { MdPrint } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx"; 
 
 const NewOrders = () => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
-        // Fetch orders from the backend
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/onlineBills'); // Adjust the URL based on your backend endpoint
-                setOrders(response.data);
+                const response = await getAllOnlineBills(); 
+                setOrders(response);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }

@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
-import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import { createBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
-const url = process.env.REACT_APP_BRANCHES_API;
-
-function AddNewBranchPopup() {
+function AddNewBranchPopup({fetchData}) {
     const navigate = useNavigate();
     const [branchName, setBranchName] = useState('');
     const [address, setAddress] = useState('');
@@ -16,6 +14,7 @@ function AddNewBranchPopup() {
     const [contactNo, setContactNo] = useState('');
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
+    const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
     useEffect(() => {
         const storedAlertConfig = localStorage.getItem('alertConfig');
@@ -26,9 +25,14 @@ function AddNewBranchPopup() {
         }
     }, []);
 
+    useEffect(() => {
+        setIsSaveDisabled(!(branchName && address && branchEmail && contactNo));
+    }, [branchName, address, branchEmail, contactNo]);
+
     const handleSave = async (e) => {
+        //if
         try {
-            await axios.post(url, {
+            await createBranch({
                 branchName: branchName,
                 address: address,
                 email: branchEmail,
@@ -42,7 +46,8 @@ function AddNewBranchPopup() {
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
+            fetchData()
+            // navigate('/adjust-branch');
             window.location.reload();
         } catch (error) {
             console.error("Error:", error);
@@ -58,6 +63,13 @@ function AddNewBranchPopup() {
         }
     };
 
+    const handleClose = () => {
+        setBranchName('');
+        setAddress('');
+        setBranchEmail('');
+        setContactNo('');
+    };
+
     return (
         <>
             {alertVisible && (
@@ -69,23 +81,62 @@ function AddNewBranchPopup() {
                     onClose={() => setAlertVisible(false)}
                 />
             )}
-            <AddNewPopup topTitle="Add New Branch" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
+            <AddNewPopup
+                topTitle="Add New Branch"
+                buttonId="save-btn"
+                buttonText="Save"
+                onClick={handleSave}
+                closeSubpopup={handleClose}
+                disabled={isSaveDisabled}  
+            >
                 <div style={{ display: 'block', width: '100%' }}>
-                    <div >
+                    <div>
                         <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
-                        <InputField type="text" id="branchName" name="branchName" editable={true} value={branchName} onChange={(e) => setBranchName(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="branchName"
+                            name="branchName"
+                            editable={true}
+                            value={branchName}
+                            onChange={(e) => setBranchName(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
-                        <InputField type="text" id="address" name="address" editable={true} value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="address"
+                            name="address"
+                            editable={true}
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="branchEmail" color="#0377A8">Email</InputLabel>
-                        <InputField type="text" id="branchEmail" name="branchEmail" editable={true} value={branchEmail} onChange={(e) => setBranchEmail(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="branchEmail"
+                            name="branchEmail"
+                            editable={true}
+                            value={branchEmail}
+                            onChange={(e) => setBranchEmail(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
-                        <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="contactNo"
+                            name="contactNo"
+                            editable={true}
+                            value={contactNo}
+                            onChange={(e) => setContactNo(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                 </div>
             </AddNewPopup>
