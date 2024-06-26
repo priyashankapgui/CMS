@@ -8,7 +8,7 @@ import AddNewBranchPopup from "./AddNewBranchPopup";
 import { useNavigate } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import { getBranchOptions, deleteBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx'; // Adjust the import path as necessary
+import { getBranchOptions, deleteBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
@@ -16,25 +16,25 @@ export const AdjustBranch = () => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const navigate = useNavigate();
-
+    const fetchBranchData = async () => {
+        setLoading(true); 
+        try {
+            const branches = await getBranchOptions();
+            setBranchData(Array.isArray(branches) ? branches : []);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+            showAlert({
+                severity: 'error',
+                title: 'Error!',
+                message: 'Failed to fetch branches.',
+                duration: 3000
+            });
+        } finally {
+            setLoading(false); 
+        }
+    };
     useEffect(() => {
-        const fetchBranchData = async () => {
-            setLoading(true); // Start loading
-            try {
-                const branches = await getBranchOptions();
-                setBranchData(Array.isArray(branches) ? branches : []);
-            } catch (error) {
-                console.error('Error fetching branches:', error);
-                showAlert({
-                    severity: 'error',
-                    title: 'Error!',
-                    message: 'Failed to fetch branches.',
-                    duration: 3000
-                });
-            } finally {
-                setLoading(false); // Stop loading
-            }
-        };
+        
 
         fetchBranchData();
 
@@ -55,7 +55,7 @@ export const AdjustBranch = () => {
     };
 
     const handleDelete = async (branchId) => {
-        setLoading(true); // Start loading
+        setLoading(true); 
         try {
             await deleteBranch(branchId);
             const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
@@ -78,7 +78,7 @@ export const AdjustBranch = () => {
                 duration: 3000
             });
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false); 
         }
     };
 
@@ -101,7 +101,7 @@ export const AdjustBranch = () => {
                 <div className="registerdBranch">
                     <div className="adjustBranchTop">
                         <h3 className="registeredBranch-title">Registered Branches</h3>
-                        <AddNewBranchPopup />
+                        <AddNewBranchPopup fetchData={fetchBranchData}/>
                     </div>
 
                     {loading ? (
