@@ -58,6 +58,13 @@ function AddNewBranchPopup() {
         }
     };
 
+    const handleClose = () => {
+        setBranchName('');
+        setAddress('');
+        setBranchEmail('');
+        setContactNo('');
+    };
+
     return (
         <>
             {alertVisible && (
@@ -69,23 +76,61 @@ function AddNewBranchPopup() {
                     onClose={() => setAlertVisible(false)}
                 />
             )}
-            <AddNewPopup topTitle="Add New Branch" buttonId="save-btn" buttonText="Save" onClick={handleSave}>
+            <AddNewPopup
+                topTitle="Add New Branch"
+                buttonId="save-btn"
+                buttonText="Save"
+                onClick={handleSave}
+                closeSubpopup={handleClose}
+            >
                 <div style={{ display: 'block', width: '100%' }}>
-                    <div >
+                    <div>
                         <InputLabel htmlFor="branchName" color="#0377A8">Branch Name</InputLabel>
-                        <InputField type="text" id="branchName" name="branchName" editable={true} value={branchName} onChange={(e) => setBranchName(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="branchName"
+                            name="branchName"
+                            editable={true}
+                            value={branchName}
+                            onChange={(e) => setBranchName(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="address" color="#0377A8">Address</InputLabel>
-                        <InputField type="text" id="address" name="address" editable={true} value={address} onChange={(e) => setAddress(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="address"
+                            name="address"
+                            editable={true}
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="branchEmail" color="#0377A8">Email</InputLabel>
-                        <InputField type="text" id="branchEmail" name="branchEmail" editable={true} value={branchEmail} onChange={(e) => setBranchEmail(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="branchEmail"
+                            name="branchEmail"
+                            editable={true}
+                            value={branchEmail}
+                            onChange={(e) => setBranchEmail(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                     <div>
                         <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
-                        <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={(e) => setContactNo(e.target.value)} style={{ width: '100%' }} />
+                        <InputField
+                            type="text"
+                            id="contactNo"
+                            name="contactNo"
+                            editable={true}
+                            value={contactNo}
+                            onChange={(e) => setContactNo(e.target.value)}
+                            style={{ width: '100%' }}
+                        />
                     </div>
                 </div>
             </AddNewPopup>
