@@ -1,7 +1,7 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import InputDropdown from "./InputDropdown";
 import secureLocalStorage from "react-secure-storage";
-import { getBranchOptions } from "../../Api/BranchMgmt/BranchAPI";
+import { getBranchOptions, getBranchesForDropdown } from "../../Api/BranchMgmt/BranchAPI";
 
 const BranchDropdown = forwardRef(
   (
@@ -28,8 +28,8 @@ const BranchDropdown = forwardRef(
     useEffect(() => {
       const getBranches = async () => {
         try {
-          const token = secureLocalStorage.getItem("accessToken");
-          const response = await getBranchOptions(token);
+          // const token = secureLocalStorage.getItem("accessToken");
+          const response = await getBranchesForDropdown();
           if (response.status !== 200) {
             throw new Error("Failed to fetch data");
           }

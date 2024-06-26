@@ -13,8 +13,17 @@ const createAuthInstance = () => {
         }
     });
 };
-
-export const getBranchOptions = async (token) => {
+export const getBranchesForDropdown = async () => {
+    try {
+        const authApi = createAuthInstance();
+        const response = await authApi.get('/branches');
+        return response;
+    } catch (error) {
+        console.error('Error fetching branches:', error);
+        throw error;
+    }
+}
+export const getBranchOptions = async () => {
     try {
         const authApi = createAuthInstance();
         const response = await authApi.get('/branchesWeb');
