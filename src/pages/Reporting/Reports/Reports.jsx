@@ -8,12 +8,14 @@ import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import repoTypes from '../../../Components/Data.json';
 import { Link } from "react-router-dom";
 import StockSummeryDoc from '../../../Components/InventoryDocuments/StockSummeryDoc/StockSummeryDoc';
+import UpcomingExpDoc from '../../../Components/InventoryDocuments/UpcomingExpDoc/UpcomingExpDoc';
 
 export const Reports = () => {
     const [clickedLink, setClickedLink] = useState('Generate Reports');
     const [selectedReportType, setSelectedReportType] = useState('');
     const [selectedBranch, setSelectedBranch] = useState('');
-    const [showReport, setShowReport] = useState(false);
+    const [showStockSummeryReport, setShowStockSummeryReport] = useState(false);
+    const [showUpcomingExpiryReport, setShowUpcomingExpiryReport] = useState(false);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -30,14 +32,24 @@ export const Reports = () => {
 
     const handleViewButtonClick = () => {
         if (selectedReportType === 'Stock Summary') {
-            setShowReport(true);
-        } else {
-            setShowReport(false);
+            setShowStockSummeryReport(true);
+        } else if (selectedReportType === 'Upcoming Expiry Stock') {
+            setShowUpcomingExpiryReport(true);
         }
     };
-    const handleCloseSummeryDoc = () => {
-        setShowReport(false);
+
+    const handleCloseDoc = () => {
+        setShowStockSummeryReport(false);
+        setShowUpcomingExpiryReport(false);
     };
+
+    const handleClearButtonClick = () => {
+        setSelectedBranch(''); 
+        setSelectedReportType(''); 
+        setShowStockSummeryReport(false);
+        setShowStockSummeryReport(false);
+
+    }
     return (
         <>
             <div className="top-nav-blue-text">
@@ -88,10 +100,11 @@ export const Reports = () => {
                         </div>
                         <div className="btnSection">
                             <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewButtonClick}> View </Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={() => { setSelectedBranch(''); setSelectedReportType(''); setShowReport(false); }}> Clear </Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClearButtonClick}> Clear </Buttons>
                         </div>
                     </div>
-                    {showReport && <StockSummeryDoc selectedBranch={selectedBranch} onClose={handleCloseSummeryDoc}/>}
+                    {showStockSummeryReport && <StockSummeryDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
+                    {showUpcomingExpiryReport && <UpcomingExpDoc selectedBranch={selectedBranch} onClose={handleCloseDoc}/>}
                 </div>
             </Layout>
         </>

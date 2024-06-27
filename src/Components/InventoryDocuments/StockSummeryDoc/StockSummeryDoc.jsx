@@ -79,8 +79,8 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                             <td>{index + 1}.</td>
                             <td>{item.productId} {item.productName}</td>
                             <td>{item.batchNo}</td>
-                            <td style={{ textAlign: 'center' }}>{item.totalAvailableQty}</td>
-                            <td style={{ textAlign: 'center' }}>{item.sellingPrice}</td>
+                            <td style={{ textAlign: 'center' }}>{item.totalAvailableQty.toFixed(3)}</td>
+                            <td style={{ textAlign: 'center' }}>{item.sellingPrice.toFixed(2)}</td>
                             <td style={{ textAlign: 'center' }}>
                                 {new Date(item.expDate).toLocaleDateString('en-GB')}
                             </td>
@@ -124,6 +124,7 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                 <p>© Green Leaf Super Mart - {selectedBranch}</p>
                 <small><span className="pageNumber"></span></small>
             </div>
+
         </div>
     );
 
