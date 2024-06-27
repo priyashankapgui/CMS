@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Layout from "../../../Layout/Layout";
 import axios from 'axios';
 import "./StockTransferOUT.css";
-import InputField from "../../../Components/InputField/InputField";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
-import InputLabel from "../../../Components/Label/InputLabel";
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import DatePicker from '../../../Components/DatePicker/DatePicker';
-import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { useNavigate } from 'react-router-dom';
 import { BsEye, BsCheckCircle, BsXCircle } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import secureLocalStorage from "react-secure-storage";
 
 export const StockTransferOUT = () => {
@@ -115,15 +107,13 @@ export const StockTransferOUT = () => {
         try {
             setLoading(true);
 
-            // Prepare the search parameters
             const params = {
                 fromDate: searchParams.fromDate,
                 toDate: searchParams.toDate,
                 STNNo: searchParams.STNNo,
-                productId: searchParams.productId.split(' ')[0], // Take only the product ID
+                productId: searchParams.productId.split(' ')[0], 
             };
 
-            // Perform the search
             const response = await axios.get(`http://localhost:8080/stock-transfer`, { params });
 
             setStockData(response.data?.data || []);

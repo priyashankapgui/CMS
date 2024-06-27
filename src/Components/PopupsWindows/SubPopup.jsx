@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
-
 export default function SubPopup(props) {
     const [open, setOpen] = React.useState(false);
 
@@ -15,7 +14,6 @@ export default function SubPopup(props) {
         if (props.show !== undefined) {
             setOpen(props.show);
         }
-        console.log("SubPopup: ", props.show);
     }, [props.show]);
 
     const closeSubpopup = () => {
@@ -29,18 +27,16 @@ export default function SubPopup(props) {
         <>
             {props.triggerComponent && (
                 <div onClick={() => setOpen(true)}>
-
                     {props.triggerComponent}
                     {props.onClick}
-
                 </div>
             )}
             <Dialog
                 open={open}
-                onClose={closeSubpopup}
+                onClose={props.closeSubpopup || closeSubpopup}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                sx={{ marginLeft: `${props.popupPositionLeft}`, marginTop:`${props.popupPositionTop}` }}
+                sx={{ marginLeft: `${props.popupPositionLeft}`, marginTop: `${props.popupPositionTop}` }}
                 maxWidth="100%"
             >
                 <DialogTitle
@@ -57,7 +53,7 @@ export default function SubPopup(props) {
                     </Typography>
                     <IconButton
                         aria-label="close"
-                        onClick={closeSubpopup}
+                        onClick={props.closeSubpopup || closeSubpopup}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -72,7 +68,6 @@ export default function SubPopup(props) {
                     <DialogContentText id="alert-dialog-description" sx={{ fontSize: '16px', fontFamily: 'Poppins', marginTop: '8px' }}>
                         {props.bodyContent}
                     </DialogContentText>
-
                 </DialogContent>
             </Dialog>
         </>

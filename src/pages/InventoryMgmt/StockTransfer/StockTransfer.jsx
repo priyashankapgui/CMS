@@ -14,6 +14,9 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import StockTransferIn from './StockTransferIN';
 import StockTransferOUT from './StockTransferOUT';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
 export const StockTransfer = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
@@ -24,7 +27,7 @@ export const StockTransfer = () => {
         toDate: '',
         STN_NO: '',
         productId: '',
-        requestBranch: '',  // Added requestBranch to searchParams
+        requestBranch: '',  
     });
     const [products, setProducts] = useState([]);
 
@@ -41,7 +44,7 @@ export const StockTransfer = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions()
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -50,8 +53,8 @@ export const StockTransfer = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/products');
-            setProducts(response.data.data);
+            const response = await getProducts()
+            setProducts(response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -96,9 +99,9 @@ export const StockTransfer = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));

@@ -13,16 +13,14 @@ const WorkOrderReceipt = ({ onlineOrdNo, onClose }) => {
     };
 
 
-//implement workorder body content here
-
     const workOrderContent = (
 
-        <div className="work-order-receipt">
+        <div className="work-order-receipt-frame">
             <div className="work-order-receipt-header">
-                <h3 className='workordertitle'>Work Order</h3>
+                <h5 className='workordertitle'>Work Order</h5>
             </div>
-            <div className='workOrderheading'>
-                <h3>Green Leaf Super Mart</h3>
+            <div className='workOrderHeadingShopName'>
+                <h5>Green Leaf Supe Mart </h5>
             </div>
 	</div>
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./Products.css";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
@@ -12,10 +11,12 @@ import AddNewProductPopup from './AddNewProductPopup';
 import AddNewCategoryPopup from './AddNewCategoryPopup';
 import UpdateProductPopup from './UpdateProductPopup';
 import UpdateCategoryPopup from './UpdateCategoryPopup';
-import { Icon } from "@iconify/react";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import { getCategories, getCategoryById, deleteCategoryById } from '../../../Api/Inventory/Category/CategoryAPI';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getProductById , getProducts , deleteProductById, getProductBatchDetails, getProductByCategoryId, updateProductDiscount } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const Products = () => {
     const navigate = useNavigate();
@@ -45,9 +46,9 @@ export const Products = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -59,21 +60,24 @@ export const Products = () => {
         }
     };
 
+ 
     const fetchCategorySuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(category => ({
-                    id: category.categoryId,
-                    displayText: `${category.categoryId} ${category.categoryName}`
-                }));
-            }
-            return [];
+            setLoading(true);
+            const response = await getCategories();
+            return response.data.map(category => ({
+                id: category.categoryId,
+                displayText: `${category.categoryId} ${category.categoryName}`
+            }));
         } catch (error) {
-            console.error('Error fetching category:', error);
+            console.error('Error fetching category suggestions:', error);
             return [];
+        } finally {
+            setLoading(false);
         }
     };
+
+
 
     const handleClearBtnProductSection = () => {
         setSelectedProduct('');
@@ -99,9 +103,9 @@ export const Products = () => {
         if (selectedProduct) {
             try {
                 setLoadingProducts(true);
-                const response = await axios.get(`http://localhost:8080/products/${selectedProduct.split(' ')[0]}`);
-                if (response.data && response.data.data) {
-                    setProductsData([response.data.data]);
+                const response = await getProductById(selectedProduct.split(' ')[0]);
+                if (response.data && response.data) {
+                    setProductsData([response.data]);
                 } else {
                     console.error('Invalid response format:', response);
                 }
@@ -114,9 +118,9 @@ export const Products = () => {
             try {
                 setLoadingProducts(true);
                 const categoryId = selectedCategory.split(' ')[0];
-                const response = await axios.get(`http://localhost:8080/products-category?categoryId=${categoryId}`);
-                if (response.data && response.data.data) {
-                    setProductsData(response.data.data);
+                const response = await getProductByCategoryId(categoryId);
+                if (response.data && response.data) {
+                    setProductsData(response.data);
                 } else {
                     console.error('Invalid response format:', response);
                 }
@@ -136,13 +140,8 @@ export const Products = () => {
 
         try {
             setLoading(true);
-            const response = await axios.get(`http://localhost:8080/product-batch-details`, {
-                params: {
-                    branchName: selectedBranch,
-                    productId: product.id, // Send product ID
-                }
-            });
-            setBatchDetails(response.data.data); // Assuming the batch details are in response.data.data
+            const response = await getProductBatchDetails(selectedBranch, product.id);
+            setBatchDetails(response.data); 
             setLoading(false);
         } catch (error) {
             console.error('Error fetching batch details:', error);
@@ -154,9 +153,9 @@ export const Products = () => {
         const fetchProductsData = async () => {
             try {
                 setLoadingProducts(true);
-                const response = await axios.get(`http://localhost:8080/products`);
-                if (response.data && response.data.data) {
-                    setProductsData(response.data.data);
+                const response = await getProducts();
+                if (response.data && response.data) {
+                    setProductsData(response.data);
                 } else {
                     console.error('Invalid response format:', response);
                 }
@@ -169,22 +168,17 @@ export const Products = () => {
 
         fetchProductsData();
 
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
+       
     }, []);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
                 setLoadingCategories(true);
-                const response = await axios.get(`http://localhost:8080/categories`);
-                if (response.data && response.data.data) {
-                    setCategoryData(response.data.data);
-                    setFilteredCategories(response.data.data);
+                const response = await getCategories();
+                if (response.data && response.data) {
+                    setCategoryData(response.data);
+                    setFilteredCategories(response.data);
                 } else {
                     console.error('Invalid response format:', response);
                 }
@@ -194,15 +188,9 @@ export const Products = () => {
                 setLoadingCategories(false);
             }
         };
-
+        
         fetchCategoryData();
-
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
+       
     }, []);
 
     useEffect(() => {
@@ -211,7 +199,7 @@ export const Products = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -230,9 +218,9 @@ export const Products = () => {
     const handleCategorySelect = async (categoryId) => {
         try {
             setLoadingCategories(true);
-            const response = await axios.get(`http://localhost:8080/categories/${categoryId}`);
-            if (response.data && response.data.data) {
-                setSelectedCategoryData(response.data.data);
+            const response = await getCategoryById(categoryId);
+            if (response.data && response.data) {
+                setSelectedCategoryData(response.data);
             } else {
                 console.error('Invalid response format:', response);
             }
@@ -243,10 +231,45 @@ export const Products = () => {
         }
     };
 
+
+    const handleDeleteCategory = async (categoryId) => {
+        console.log("category",categoryId);
+        setLoading(true);
+        try {
+            await deleteCategoryById(categoryId);
+            const updatedCategories = categoryData.filter(category => category.categoryId !== categoryId);
+            setCategoryData(updatedCategories);
+    
+            const alertData = {
+                severity: 'warning',
+                title: 'Delete',
+                message: 'Category deleted successfully!',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            window.location.reload();
+        } catch (error) {
+            console.error('Error deleting Category:', error);
+    
+            const alertData = {
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to delete Category.',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            window.location.reload();
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    
+
     const handleDelete = async (productId) => {
         setLoading(true);
         try {
-            await axios.delete(`http://localhost:8080/products/${productId}`);
+            await deleteProductById(productId);
             const updatedProductsData = productsData.filter(product => product.productId !== productId);
             setProductsData(updatedProductsData);
             console.log("Product deleted successfully");
@@ -314,7 +337,7 @@ export const Products = () => {
         const updatedBatchDetails = [...batchDetails];
         updatedBatchDetails[index].discount = newValue;
         setBatchDetails(updatedBatchDetails);
-        setHasChanges(true); // Set hasChanges to true when a change is made
+        setHasChanges(true); 
     };
 
 
@@ -326,22 +349,20 @@ const handleSave = async () => {
 
     try {
         setLoading(true);
-        // Collect discounts and prepare for backend update
         const updates = batchDetails.map((detail) => ({
             branchName: selectedBranch,
             productId: product.id,
             batchNo: detail.batchNo,
-            discount: parseFloat(detail.discount ?? 0), // Default to 0 if null
+            discount: parseFloat(detail.discount ?? 0), 
         }));
         console.log(updates);
-        // Send updates to backend
-        const updateResponse = await axios.put('http://localhost:8080/product-batch-sum-discount', { updates });
-        console.log(updateResponse.data); // Logging backend response
+        
+        const updateResponse = await updateProductDiscount(updates);
+        console.log(updateResponse.data); 
+        
+        handleSearch(); 
 
-        // Assuming you want to refresh the data after saving
-        handleSearch(); // Refresh the batch details after saving
-
-        // Show success message
+        
         setAlertConfig({
             severity: 'success',
             title: 'Success',
@@ -352,7 +373,6 @@ const handleSave = async () => {
     } catch (error) {
         console.error('Error updating discounts:', error);
 
-        // Show error message
         setAlertConfig({
             severity: 'error',
             title: 'Error',
@@ -416,9 +436,8 @@ const handleSave = async () => {
                                     'Reg Categories': selectedCategoryData.categoryName,
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                            <Icon icon="bitcoin-icons:edit-outline" style={{ fontSize: '24px' }} />
-                                            
-                                            <DeletePopup />
+                                            <UpdateCategoryPopup categoryId={selectedCategoryData.categoryId}  />
+                                            <DeletePopup handleDelete={() => handleDeleteCategory(selectedCategoryData.categoryId)} />
                                         </div>
                                     )
                                 }] : filteredCategories.map(category => ({
@@ -426,7 +445,7 @@ const handleSave = async () => {
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
                                             <UpdateCategoryPopup categoryId={category.categoryId}  />
-                                            <DeletePopup />
+                                            <DeletePopup handleDelete={() => handleDeleteCategory(category.categoryId)} />
                                         </div>
                                     )
                                 }))}

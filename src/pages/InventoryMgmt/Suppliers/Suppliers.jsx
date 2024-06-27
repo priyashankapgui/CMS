@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import "./Suppliers.css";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
@@ -12,13 +11,12 @@ import AddNewSupplierPopup from './AddNewSupplierPopup';
 import UpdateSupplierPopup from "./UpdateSupplierPopup";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-
-const suppliersApiUrl = process.env.REACT_APP_SUPPLIERS_API;
+import { getSuppliers, getSupplierById, deleteSupplierById } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
 export const Suppliers = () => {
     const navigate = useNavigate();
     const [suppliersData, setSuppliersData] = useState([]);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(true); 
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
@@ -26,25 +24,27 @@ export const Suppliers = () => {
     const fetchSuppliersSuggestions = async (query) => {
         try {
             setLoading(true);
-            const response = await axios.get(`${suppliersApiUrl}?search=${query}`);
-            return response.data.data.map(supplier => ({
+            const response = await getSuppliers();
+            return response.data.map(supplier => ({
                 id: supplier.supplierId,
                 displayText: `${supplier.supplierId} ${supplier.supplierName}`
             }));
-            
         } catch (error) {
             console.error('Error fetching suppliers suggestions:', error);
             return [];
+        } finally {
+            setLoading(false);
         }
     };
 
     const fetchSupplierById = async (supplierId) => {
         try {
-            const response = await axios.get(`${suppliersApiUrl}/${supplierId}`);
-            setSuppliersData([response.data.data]); // Set the fetched supplier data
-            setLoading(false);
+            setLoading(true);
+            const response = await getSupplierById(supplierId);
+            setSuppliersData([response.data]);
         } catch (error) {
             console.error('Error fetching supplier by ID:', error);
+        } finally {
             setLoading(false);
         }
     };
@@ -52,8 +52,6 @@ export const Suppliers = () => {
     const handleClearBtn = () => {
         setSelectedSupplier('');
         setSuppliersData([]);
-        // window.location.reload();
-        
     };
 
     const handleSearch = async () => {
@@ -67,35 +65,25 @@ export const Suppliers = () => {
         const fetchSuppliersData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(suppliersApiUrl);
-                console.log('Fetched suppliers data:', response.data); // Debugging log
-                setSuppliersData(response.data.data); // Set the fetched supplier data
-                setLoading(false);
+                const response = await getSuppliers();
+                setSuppliersData(response.data);
             } catch (error) {
                 console.error('Error fetching suppliers:', error);
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchSuppliersData();
         
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
     }, []);
 
     const handleDelete = async (supplierId) => {
-        setLoading(true); // Set loading to true while deleting
+        setLoading(true);
         try {
-            // Send DELETE request to the backend to delete the supplier
-            await axios.delete(`${suppliersApiUrl}/${supplierId}`);
-            // Update the state to reflect the deletion
+            await deleteSupplierById(supplierId);
             const updatedSupplierData = suppliersData.filter(supplier => supplier.supplierId !== supplierId);
             setSuppliersData(updatedSupplierData);
-            console.log("Supplier deleted successfully");
 
             const alertData = {
                 severity: 'warning',
@@ -103,9 +91,8 @@ export const Suppliers = () => {
                 message: 'Supplier deleted successfully!',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Suppliers');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error deleting supplier:', error);
 
@@ -115,11 +102,10 @@ export const Suppliers = () => {
                 message: 'Failed to delete supplier.',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } finally {
-            setLoading(false); // After deletion, set loading to false
+            setLoading(false);
         }
     };
 
@@ -129,7 +115,7 @@ export const Suppliers = () => {
 
     return (
         <>
-         {alertVisible && (
+            {alertVisible && (
                 <CustomAlert
                     severity={alertConfig.severity}
                     title={alertConfig.title}
@@ -155,17 +141,16 @@ export const Suppliers = () => {
                                     fetchSuggestions={fetchSuppliersSuggestions}
                                 />
                             </div>
-                            </div>
-                            <div className="s-BtnSection">
-                                <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}> Search </Buttons>
-                                <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtn}> Clear </Buttons>
-                                <AddNewSupplierPopup />
-                            </div>
-                        
-                    </div> 
+                        </div>
+                        <div className="s-BtnSection">
+                            <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtn}>Clear</Buttons>
+                            <AddNewSupplierPopup />
+                        </div>
+                    </div>
                     <div className="supplier-content-middle">
                         {loading ? (
-                            <div><SubSpinner/></div>
+                            <div><SubSpinner /></div>
                         ) : (
                             <TableWithPagi
                                 columns={['Supplier ID', 'Supplier Name', 'Reg No', 'Email', 'Address', 'Contact No', 'Action']}
@@ -178,7 +163,7 @@ export const Suppliers = () => {
                                     'Contact No': supplier.contactNo,
                                     'Action': (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
-                                             <UpdateSupplierPopup supplierId={supplier.supplierId} />
+                                            <UpdateSupplierPopup supplierId={supplier.supplierId} />
                                             <DeletePopup handleDelete={() => handleDelete(supplier.supplierId)} />
                                         </div>
                                     )

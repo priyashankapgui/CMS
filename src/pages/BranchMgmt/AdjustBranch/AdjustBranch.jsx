@@ -5,39 +5,36 @@ import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import secureLocalStorage from 'react-secure-storage';
-
-const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
+import { getBranchOptions, deleteBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
 export const AdjustBranch = () => {
     const [branchData, setBranchData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
-
     const navigate = useNavigate();
-
+    const fetchBranchData = async () => {
+        setLoading(true); 
+        try {
+            const branches = await getBranchOptions();
+            setBranchData(Array.isArray(branches) ? branches : []);
+        } catch (error) {
+            console.error('Error fetching branches:', error);
+            showAlert({
+                severity: 'error',
+                title: 'Error!',
+                message: 'Failed to fetch branches.',
+                duration: 3000
+            });
+        } finally {
+            setLoading(false); 
+        }
+    };
     useEffect(() => {
-        const fetchBranchData = async () => {
-            try {
-                const token = secureLocalStorage.getItem("accessToken");
-                const response = await axios.get(branchesApiUrl, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                // Ensure the response data is an array
-                setBranchData(Array.isArray(response.data) ? response.data : response.data.branchesList || []);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching branches:', error);
-                setLoading(false);
-            }
-        };
+        
 
         fetchBranchData();
 
@@ -58,9 +55,9 @@ export const AdjustBranch = () => {
     };
 
     const handleDelete = async (branchId) => {
-        setLoading(true);
+        setLoading(true); 
         try {
-            await axios.delete(`${branchesApiUrl}/${branchId}`);
+            await deleteBranch(branchId);
             const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
             setBranchData(updatedBranchData);
             console.log("Branch deleted successfully");
@@ -81,7 +78,7 @@ export const AdjustBranch = () => {
                 duration: 3000
             });
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     };
 
@@ -104,7 +101,7 @@ export const AdjustBranch = () => {
                 <div className="registerdBranch">
                     <div className="adjustBranchTop">
                         <h3 className="registeredBranch-title">Registered Branches</h3>
-                        <AddNewBranchPopup />
+                        <AddNewBranchPopup fetchData={fetchBranchData}/>
                     </div>
 
                     {loading ? (

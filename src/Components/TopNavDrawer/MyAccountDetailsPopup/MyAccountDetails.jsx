@@ -11,6 +11,7 @@ import PasswordStrengthBar from "react-password-strength-bar";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import SubSpinner from "../../Spinner/SubSpinner/SubSpinner";
+import { updatePersonalAccount } from "../../../Api/BranchMgmt/UserAccountsAPI";
 
 
 function MyAccountDetails() {
@@ -103,15 +104,9 @@ function MyAccountDetails() {
       if (file) {
         formData.append("image", file);
       }
-      response = await fetch(`http://localhost:8080/employees/selfUpdate`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      if (!response.ok) {
-        const data = await response.json();
+      response = await updatePersonalAccount(formData, token);
+      if (response.status !== 200) {
+        const data = await response.data;
         console.log("Error:", data.error);
         setShowAlertError(data.error);
       } else {

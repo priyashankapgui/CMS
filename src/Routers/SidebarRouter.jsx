@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AdjustBranch } from '../pages/BranchMgmt/AdjustBranch/AdjustBranch';
+import  AdjustBranch  from '../pages/BranchMgmt/AdjustBranch/AdjustBranch';
 import { Accounts } from '../pages/BranchMgmt/Accounts/UserAccounts/Accounts';
 import { CreateNewAccounts } from '../pages/BranchMgmt/Accounts/UserAccounts/CreateNewAccounts';
 import { UpdateUser } from '../pages/BranchMgmt/Accounts/UserAccounts/UpdateUser';
@@ -92,7 +92,7 @@ export function SidebarRouter() {
         <Route path="/stock-transfer/OUT/raised/:STN_NO" element={<ReceivingRaised />} />
       </Route>
 
-      <Route element={<ProtectedRoute groupName="web-feedback" />}>
+      <Route element={<ProtectedRoute groupName="web-feedbacks" />}>
         <Route path="/web-feedbacks" element={<WebFeedbacks />} />
       </Route>
 

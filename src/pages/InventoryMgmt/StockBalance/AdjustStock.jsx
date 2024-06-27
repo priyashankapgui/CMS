@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import AdjustPopup from '../../../Components/PopupsWindows/AdjustPopup';
-import axios from 'axios';
 import "./AdjustStock.css";
+import { useNavigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import { getAdjustStockDetails, updateAdjustStock } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
 function AdjustStock({ productId, productName, branchName }) {
+    const navigate = useNavigate();
     const [rows, setRows] = useState([]);
     const [initialRows, setInitialRows] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertConfig, setAlertConfig] = useState({});
 
     useEffect(() => {
         const fetchStockQuantity = async () => {
             try {
-                const response = await axios.get('/adjust-stock', {
-                    params: {
-                        branchName: branchName,
-                        productId: productId
-                    }
-                });
+                const response = await getAdjustStockDetails(branchName, productId);
 
-                // Use JSON methods to create a deep copy
-                const fetchedData = response.data.data;
+                const fetchedData = response.data;
                 setRows(fetchedData);
                 setInitialRows(JSON.parse(JSON.stringify(fetchedData)));
                 setLoading(false);
@@ -77,11 +76,29 @@ function AdjustStock({ productId, productName, branchName }) {
         }
 
         try {
-            const response = await axios.put('http://localhost:8080/adjust-stock-quantity', { updates });
+            const response = await updateAdjustStock(updates);
             console.log("Adjust stock response:", response.data);
+            const alertData = {
+                severity: 'success',
+                title: 'Successfully Updated!',
+                message: 'Stock adjusted successfully!',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            navigate('/stock-balance');
+            window.location.reload();
             
         } catch (error) {
             console.error("Error adjusting stock:", error);
+            const alertData = {
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to adjust stock.',
+                duration: 3000
+            };
+            localStorage.setItem('alertConfig', JSON.stringify(alertData));
+            navigate('/stock-balance');
+            window.location.reload();
            
         }
     };
@@ -111,6 +128,15 @@ function AdjustStock({ productId, productName, branchName }) {
 
     return (
         <>
+        {alertVisible && (
+                <CustomAlert
+                    severity={alertConfig.severity}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    duration={alertConfig.duration}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
             <AdjustPopup
                 topTitle="Adjust Stock"
                 buttonId="save-btn"
@@ -153,8 +179,8 @@ function AdjustStock({ productId, productName, branchName }) {
                                             type="number"
                                             value={row.sellingPrice}
                                             onChange={(e) => handleSellingPriceChange(index, parseFloat(e.target.value))}
-                                            step="0.01"  // Adjust as needed
-                                            min="0"  // Adjust as needed
+                                            step="0.01"  
+                                            min="0"  
                                         />
                                     </td>
                                     <td>
@@ -162,7 +188,7 @@ function AdjustStock({ productId, productName, branchName }) {
                                             type="number"
                                             value={row.totalAvailableQty}
                                             onChange={(e) => handleQtyChange(index, parseInt(e.target.value))}
-                                            min="0"  // Adjust as needed
+                                            min="0"  
                                         />
                                     </td>
                                     <td>

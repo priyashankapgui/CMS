@@ -13,9 +13,10 @@ import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown"
 import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropdown";
 import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
 import secureLocalStorage from "react-secure-storage";
+import { deleteEmployee, getAllEmployees } from "../../../../Api/BranchMgmt/UserAccountsAPI";
 
 export function Accounts() {
-  const API_GET_ALL_EMPLOYEES =`${process.env.REACT_APP_API_GET_EMPLOYEES_URL}`
+  //const API_GET_ALL_EMPLOYEES =`${process.env.REACT_APP_API_GET_EMPLOYEES_URL}`
   const [clickedLink, setClickedLink] = useState("Users");
   const [employeeData, setEmployeeData] = useState([]);
   const [selectedBranch, setSelectedBranch] = useState("All");
@@ -28,25 +29,18 @@ export function Accounts() {
   const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
   const branchDropdownRef = useRef(null);
   const roleDropdownRef = useRef(null);
+  const token = secureLocalStorage.getItem("accessToken");
 
   useEffect(() => {
     const getEmployeeData = async () => {
       try {
         setLoading(true); // Set loading to true before fetching data
-        const token = secureLocalStorage.getItem("accessToken");
-        const response = await fetch(API_GET_ALL_EMPLOYEES, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
+        const response = await getAllEmployees(token);
+        console.log("Response:", response);
+        if (response.status !== 200) {
           throw new Error("Failed to fetch data");
         }
-
-        const data = await response.json();
+        const data = await response.data;
         setEmployeeData(data);
         setFilteredEmployees(data);
       } catch (error) {
@@ -55,17 +49,8 @@ export function Accounts() {
         setLoading(false); // Set loading to false after fetching data
       }
     };
-
     getEmployeeData();
-  }, []);
-
-  // useEffect(() => {
-  //   const filterEmployees = () => {
-      
-  //     setFilteredEmployees(data);
-  //   };
-  //   filterEmployees();
-  // }, [selectedBranch, selectedRole, employeeData]);
+  }, [token]);
 
   const handleDropdownBranchChange = (value) => {
     setSelectedBranch(value);
@@ -94,22 +79,11 @@ export function Accounts() {
 
   const handleDelete = async (employeeId) => {
     try {
-      const token = secureLocalStorage.getItem("accessToken");
       if (!employeeId) {
         console.error("employeeId is undefined");
         return;
       }
-      const response = await fetch(
-        `http://localhost:8080/employees/${employeeId}`,
-        // `${process.env.REACT_APP_GET_EMPLOYEES_BY_ID}/${employeeId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await deleteEmployee(employeeId, token);
       if (response.status === 200) {
         const updatedEmployees = filteredEmployees.filter(
           (employee) => employee.employeeId !== employeeId
@@ -118,7 +92,7 @@ export function Accounts() {
         setShowAlertSuccess("Employee deleted successfully");
         console.log("Employee deleted:", employeeId);
       } else {
-        const data = await response.json();
+        const data = await response.data;
         console.error("Error deleting employee:", data.error);
         setShowAlert(data.error);
         return;
