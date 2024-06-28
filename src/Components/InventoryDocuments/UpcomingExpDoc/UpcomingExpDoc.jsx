@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './UpcomingExpDoc.css';
-import axios from 'axios';
 import ReceiptPopup from '../../SalesReceiptTemp/ReceiptPopup/ReceiptPopup';
 import SubSpinner from '../../Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
+import { getExpStockDocDataByBranch } from '../../../Api//Reporting/ReportingApi';
 
 const UpcomingExpDoc = ({ selectedBranch, onClose }) => {
     const [upcomingExpiryData, setUpcomingExpiryData] = useState([]);
@@ -19,9 +19,10 @@ const UpcomingExpDoc = ({ selectedBranch, onClose }) => {
                 setIsLoading(true);
                 setError(null);
                 try {
-                    const response = await axios.get(`http://localhost:8080/product-batch-sum-upexp-stock-branch?branchName=${selectedBranch}`);
+                    const response = await getExpStockDocDataByBranch(selectedBranch);
                     console.log('Expiry Stock data:', response.data);
-                    const sortedData = response.data.data.sort((a, b) => new Date(a.expDate) - new Date(b.expDate));
+                    // Check if response.data is defined and an array
+                    const sortedData = response.data && Array.isArray(response.data) ? response.data.sort((a, b) => new Date(a.expDate) - new Date(b.expDate)) : [];
                     setUpcomingExpiryData(sortedData);
                 } catch (error) {
                     console.error('Error fetching stock data:', error);
@@ -64,7 +65,7 @@ const UpcomingExpDoc = ({ selectedBranch, onClose }) => {
         if (upcomingExpiryData.length === 0) {
             return (
                 <div>
-                    <p>Good news!. There are no upcoming expiary items...</p>
+                    <p>Good news!. There are no upcoming expiry items...</p>
                 </div>
             );
         }

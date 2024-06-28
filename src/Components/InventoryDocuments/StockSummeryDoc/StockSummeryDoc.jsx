@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import './StockSummeryDoc.css';
-import axios from 'axios';
 import ReceiptPopup from '../../SalesReceiptTemp/ReceiptPopup/ReceiptPopup';
 import SubSpinner from '../../Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
+import { getStockSummeryDocDataByBranch } from '../../../Api//Reporting/ReportingApi';
 
 const StockSummeryDoc = ({ selectedBranch, onClose }) => {
     const [stockSummeryData, setStockSummeryData] = useState([]);
@@ -19,9 +19,9 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                 setIsLoading(true);
                 setError(null);
                 try {
-                    const response = await axios.get(`http://localhost:8080/product-batch-sum-stockdata-branch?branchName=${selectedBranch}`);
+                    const response = await getStockSummeryDocDataByBranch(selectedBranch);
                     console.log('Stock data:', response.data);
-                    setStockSummeryData(response.data.data);
+                    setStockSummeryData(response.data || []); // Assuming response.data is an array
                 } catch (error) {
                     console.error('Error fetching stock data:', error);
                     setError(error.response ? error.response.data : { message: error.message });
@@ -60,6 +60,9 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                 </div>
             );
         }
+        if (stockSummeryData.length === 0) {
+            return <p>No stock data available.</p>;
+        }
         return (
             <table className="stockSummeryDoc-bodyContent-table">
                 <thead>
@@ -70,6 +73,7 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                         <th>Available Qty</th>
                         <th style={{ textAlign: 'center' }}>Unit Price</th>
                         <th>Exp Date</th>
+                        <th>Dis% </th>
                         <th style={{ textAlign: 'right' }}>Amount</th>
                     </tr>
                 </thead>
@@ -84,8 +88,9 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
                             <td style={{ textAlign: 'center' }}>
                                 {new Date(item.expDate).toLocaleDateString('en-GB')}
                             </td>
+                            <td style={{ textAlign: 'center' }}>{item.discount}</td>
                             <td style={{ textAlign: 'right' }}>
-                                {(item.totalAvailableQty * item.sellingPrice).toFixed(2)}
+                                {(item.totalAvailableQty * item.sellingPrice * (1 - item.discount / 100)).toFixed(2)}
                             </td>
                         </tr>
                     ))}
@@ -94,7 +99,7 @@ const StockSummeryDoc = ({ selectedBranch, onClose }) => {
         );
     };
 
-    const totalAmount = stockSummeryData.reduce((total, item) => total + (item.totalAvailableQty * item.sellingPrice), 0).toFixed(2);
+    const totalAmount = stockSummeryData.reduce((total, item) => total + (item.totalAvailableQty * item.sellingPrice) * (1 - item.discount / 100), 0).toFixed(2);
 
     const StockSummeryDocContent = (
         <div className="stockSummeryDoc-paper-frame">

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Layout from '../../../../Layout/Layout';
 import './StartReturnItems.css';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -8,7 +7,10 @@ import InputField from '../../../../Components/InputField/InputField';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
-import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner';
+import secureLocalStorage from "react-secure-storage";
+import { getBilledData, postRefundBillData } from '../../../../Api/Billing/SalesApi';
+
 
 export const StartReturnItems = () => {
     const { billNo } = useParams();
@@ -21,24 +23,27 @@ export const StartReturnItems = () => {
     const [reason, setReason] = useState("");
     const [alertSuccessOpen, setAlertSuccessOpen] = useState(false);
     const [alertWarningOpen, setAlertWarningtOpen] = useState(false);
+    const [userDetails, setUserDetails] = useState({
+        username: ""
+    });
 
     useEffect(() => {
+
         const fetchBillData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/bills-all?billNo=${billNo}`);
-                const responseData = response.data.data;
-                if (responseData) {
-                    setBillData(responseData);
-                    setReturnItems(responseData.billProducts.map(product => ({
+                const response = await getBilledData(billNo);
+                if (response.data) {
+                    setBillData(response.data);
+                    setReturnItems(response.data.billProducts.map(product => ({
                         ...product,
                         returnQty: 0
                     })));
                 } else {
                     setError('Bill not found');
                 }
-                setLoading(false);
             } catch (error) {
                 setError(error.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -46,36 +51,68 @@ export const StartReturnItems = () => {
         fetchBillData();
     }, [billNo]);
 
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+    }, []);
+
     const handleReturnQtyChange = (index, value) => {
         const updatedItems = [...returnItems];
-        updatedItems[index].returnQty = value;
+        updatedItems[index].returnQty = Number(value) || 0;
         setReturnItems(updatedItems);
     };
 
+
     const handleSubmitReturn = async () => {
+        const selectedItems = returnItems.filter((item, index) => retQtyEditable[index] && item.returnQty > 0);
+        if (selectedItems.length === 0 || !reason.trim()) {
+            setAlertWarningtOpen(true);
+            return;
+        }
+
+        const payload = {
+            billNo,
+            branchName,
+            returnedBy: userDetails.username,
+            reason,
+            refundTotalAmount: calculateTotalRefund(),
+            products: selectedItems.map(item => ({
+                productId: item.productId,
+                returnQty: item.returnQty,
+                batchNo: item.batchNo,
+                billQty: item.billQty,
+                sellingPrice: item.sellingPrice,
+                discount: item.discount
+            }))
+        };
+
         try {
-            const response = await axios.post('http://localhost:8080/returns', {
-                billNo,
-                returnItems: returnItems.filter(item => item.returnQty > 0),
-                reason // Make sure to include the reason in the request payload
-            });
-            if (response.status === 200) {
+            const response = await postRefundBillData(payload);
+            console.log("Response:", response); // Log response for debugging
+            if (response.success) {
                 console.log("Form submitted!");
                 setAlertSuccessOpen(true);
                 navigate(`/work-list/viewbill/${billNo}`);
             } else {
-                alert('Error processing return');
+                console.error('Error processing return: Unexpected status', response.status);
+                setAlertWarningtOpen(true);// Show warning alert for unexpected status
             }
         } catch (error) {
             console.error('Error processing return:', error);
-            setAlertWarningtOpen(true);
+            setAlertWarningtOpen(true); // Show warning alert for general error
         }
-
     };
 
     const handleReasonChange = (event) => {
         const value = event.target.value;
         setReason(value);
+        console.log("Reason set to:", value);
     };
 
     const toggleRetQtyEditable = (index) => {
@@ -84,8 +121,19 @@ export const StartReturnItems = () => {
         setRetQtyEditable(updatedState);
     };
 
+    const calculateTotalRefund = () => {
+        return returnItems.reduce((total, item) => {
+            if (item.returnQty > 0) {
+                const discountMultiplier = 1 - (item.discount / 100);
+                const itemTotal = item.returnQty * item.sellingPrice * discountMultiplier;
+                return total + itemTotal;
+            }
+            return total;
+        }, 0).toFixed(2);
+    };
+
     if (loading) {
-        return <div><SubSpinner /></div>;
+        return <div><MainSpinner /></div>;
     }
 
     if (error) {
@@ -96,7 +144,7 @@ export const StartReturnItems = () => {
         return <div>Bill not found</div>;
     }
 
-    const { branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount, billProducts } = billData;
+    const { branchName, customerName, contactNo } = billData;
 
     return (
         <>
@@ -119,22 +167,8 @@ export const StartReturnItems = () => {
                             <div className='inputFlex'>
                                 <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo} </span></InputLabel>
                             </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="status" color="#0377A8">Status: <span>{status}</span></InputLabel>
-                            </div>
                         </div>
                         <div className="cont2">
-                            <div className='inputFlex'>
-                                <InputLabel for="billedAt" color="#0377A8">Billed At: <span>{createdAt} </span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="billedBy" color="#0377A8">Billed By: <span> {billedBy}</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>{paymentMethod} </span></InputLabel>
-                            </div>
-                        </div>
-                        <div className="cont3">
                             <div className='inputFlex'>
                                 <InputLabel for="cusName" color="#0377A8">Customer Name: <span>{customerName}</span></InputLabel>
                             </div>
@@ -145,17 +179,20 @@ export const StartReturnItems = () => {
                     </div>
                     <hr />
                     <div className="return-items-reason-cont-btm">
-                        <div className="return-items-reason-cont">
+                        <div className="return-items-reason-cont2">
+                            <h4>Total Refund Amount: Rs {calculateTotalRefund()}</h4>
+                        </div>
+                        <div className="return-items-reason-cont1">
                             <InputLabel for="return-items-reason-text" color="red">Reason:</InputLabel>
-                            <InputField id="" name="return-items-reason" value={reason} onChange={handleReasonChange} editable={true} width="400px" height="60px" placeholder="Type the reason here..." />
+                            <InputField id="return-items-reason" name="return-items-reason" value={reason} onChange={handleReasonChange} editable={true} width="400px" height="60px" placeholder="Type the reason here..." />
+                            <div className="btnSection-return-items">
+                                <Buttons type="button" onClick={handleSubmitReturn} id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
+
+                            </div>
                         </div>
-                        <div className="btnSection-return-items">
-                            <Buttons type="button" onClick={handleSubmitReturn} id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-                            <Link to={`/work-list/viewbill/${billNo}`}>
-                                <Buttons type="close" id="close-btn" style={{ backgroundColor: "#fafafa", color: "black" }}> Close </Buttons>
-                            </Link>
-                        </div>
+
                     </div>
+
                 </div>
 
                 <div className="return-items-container">
@@ -167,6 +204,8 @@ export const StartReturnItems = () => {
                                 <th>Return Qty</th>
                                 <th>Billed Qty</th>
                                 <th>Batch No</th>
+                                <th>Unit Price</th>
+                                <th>Dis</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -195,9 +234,12 @@ export const StartReturnItems = () => {
                                             className={retQtyEditable[index] ? 'blue-border' : ''}
                                             onChange={(e) => handleReturnQtyChange(index, e.target.value)}
                                         />
+
                                     </td>
                                     <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.billQty} textAlign='center' /></td>
                                     <td><InputField id={`batchNo_${index}`} name="batchNo" editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
+                                    <td><InputField id={`unitPrice_${index}`} name="unitPrice" editable={false} width="100%" value={item.sellingPrice} textAlign='center' /></td>
+                                    <td><InputField id={`discount_${index}`} name="discount" editable={false} width="100%" value={item.discount} textAlign='center' /></td>
                                 </tr>
                             ))}
                         </tbody>
