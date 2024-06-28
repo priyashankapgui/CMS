@@ -6,6 +6,7 @@ import SubMenu from "./SubMenu";
 import TopNav from "../../Components/TopNavDrawer/TopNav/TopNav";
 import "./Sidebar.css";
 import secureLocalStorage from "react-secure-storage";
+import { getUserRolePermissionsByToken } from "../../Api/BranchMgmt/UserRoleAPI";
 
 const Sidebar = ({ expanded, toggleSidebar }) => {
   const [activeMenuItem, setActiveMenuItem] = useState("");
@@ -15,14 +16,8 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
     const getPermissions = async () => {
       try {
         // console.log("Fetching permissions");
-        const response = await fetch("http://localhost:8080/getUserRolePermissionsByToken", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + secureLocalStorage.getItem("accessToken") || "",
-          },
-        });
-        const data = await response.json();
+        const response = await getUserRolePermissionsByToken(secureLocalStorage.getItem("accessToken"));
+        const data = await response.data;
         const tempData = data.map((page) => {
           return `/${page.pageAccessId}`;
         });

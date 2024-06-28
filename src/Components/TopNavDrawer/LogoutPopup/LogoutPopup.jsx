@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import secureLocalStorage from 'react-secure-storage';
+import { logout } from '../../../Api/Login/loginAPI';
 
 const style = {
     position: 'absolute',
@@ -30,13 +31,7 @@ const LogoutPopup = ({ open, onClose }) => {
     const handleLogout = async () => {
         try {
             const token = secureLocalStorage.getItem("accessToken");
-            const response = await fetch("http://localhost:8080/api/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                }
-            });
+            const response = await logout(token);
             if (!response.ok) {
                 console.log("Error:", response.statusText);
             }

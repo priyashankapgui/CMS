@@ -7,9 +7,10 @@ import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 import PasswordStrengthBar from 'react-password-strength-bar';
+import { resetPassword } from "../../../Api/Login/loginAPI";
 
 const ResetPw = () => {
-  const API_RESET_PW_URL = `${process.env.REACT_APP_API_RESET_PASSWORD_URL}`;
+  //const API_RESET_PW_URL = `${process.env.REACT_APP_API_RESET_PASSWORD_URL}`;
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,9 +24,13 @@ const ResetPw = () => {
     setSubLoading(true);
     if (!password || !confirmPassword) {
       setError("Please fill in both password fields.");
+      setSubLoading(false);
+      return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
+      setSubLoading(false);
+      return;
     }
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get("token");
@@ -33,23 +38,11 @@ const ResetPw = () => {
     if (!token) {
       window.location.href = "/";
     } else {
-      const response = await fetch(API_RESET_PW_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          resetToken: token,
-          newPassword: password,
-          confirmPassword: confirmPassword,
-        }),
-      }).catch((error) => console.error("Error:", error));
-      if (response.ok) {
-        const data = await response.json();
+      const response = await resetPassword(token, password, confirmPassword);
+      if (response.status === 200) {
         setShowSubPopup(true);
-        console.log("Response data:", data);
       } else {
-        const data = await response.json();
+        const data = response.data;
         setError(data.message);
       }
       setSubLoading(false);
@@ -156,6 +149,7 @@ const ResetPw = () => {
               {showConfirmPassword ? <FaEye /> : < FaEyeSlash />}
             </button>
           </InputField>
+          {error && <p className="rp-error">{error}</p>}
           {subLoading ?
             <SubSpinner loading={subLoading} spinnerText="Saving" />
             :
@@ -171,7 +165,6 @@ const ResetPw = () => {
             </Buttons>
           }
         </div>
-        {error && <p className="rp-error">{error}</p>}
       </form>
 
       {showSubPopup && (

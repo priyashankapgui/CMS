@@ -6,10 +6,11 @@ import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
+import { forgotPwEmployee,forgotPwSuperAdmin } from "../../../Api/Login/loginAPI";
 
 const ForgetPw = () => {
-  const API_FORGOT_PW_URL = `${process.env.REACT_APP_API_FORGOT_PASSWORD_URL}`;
-  const API_FORGOT_PW_SUPERADMIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_FORGOT_PASSWORD_URL}`;
+  //const API_FORGOT_PW_URL = `${process.env.REACT_APP_API_FORGOT_PASSWORD_URL}`;
+  //const API_FORGOT_PW_SUPERADMIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_FORGOT_PASSWORD_URL}`;
   const [empId, setEmpid] = useState("");
   const [error, setError] = useState("");
   const [showSubPopup, setShowSubPopup] = useState(false); // State to control the visibility of SubPopup
@@ -25,50 +26,26 @@ const ForgetPw = () => {
   const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
     setSubLoading(true);
-    if (!empId.startsWith("SA")) {
-
-      if (!empId) {
-        setError("Please enter your employee ID.");
-      }
-      const response = await fetch(API_FORGOT_PW_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          employeeId: empId,
-        }),
-      }).catch((error) => console.error("Error:", error));
-
-
-      if (response.ok) {
-        setShowSubPopup(true);
-      } else {
-        const data = await response.json();
-        setError(data.message);
-      }
+    if (!empId) {
+      setError("Please enter your employee ID.");
       setSubLoading(false);
-    } else {
-
-      if (!empId) {
-        setError("Please enter your employee ID.");
+      return; // Early return if empId is falsy
+    }
+    try {
+      let response;
+      if (!empId.startsWith("SA")) {
+        response = await forgotPwEmployee(empId);
+      } else {
+        response = await forgotPwSuperAdmin(empId);
       }
-      const response = await fetch(API_FORGOT_PW_SUPERADMIN_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userID: empId,
-        }),
-      }).catch((error) => console.error("Error:", error));
-
-      if (response.ok) {
+      if (response.status === 200) {
         setShowSubPopup(true);
       } else {
-        const data = await response.json();
-        setError(data.message);
+        setError(response.data.error);
       }
+    } catch (error) {
+      setError("Internal Server Error");
+    } finally {
       setSubLoading(false);
     }
   };

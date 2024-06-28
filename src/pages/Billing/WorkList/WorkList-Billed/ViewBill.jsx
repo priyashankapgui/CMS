@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
 import Layout from "../../../../Layout/Layout";
 import "./ViewBill.css";
 import { RiPrinterFill } from "react-icons/ri";
@@ -11,7 +10,8 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
-import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner';
+import { getBilledData } from '../../../../Api/Billing/SalesApi';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
@@ -23,24 +23,28 @@ export const ViewBill = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/bills-all?billNo=${billNo}`);
-                console.log('Bill', response);
-                const responseData = response.data.data;
-                if (responseData) {
-                    setBillData(responseData);
+                const response = await getBilledData(billNo);
+                console.log('Bill Data:', response);
+
+                if (response.data && Object.keys(response.data).length > 0) {
+                    setBillData(response.data);
                 } else {
                     setError('Bill not found');
                 }
-                setLoading(false);
             } catch (error) {
                 setError(error.message);
+            } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        if (billNo) {
+            fetchData();
+        } else {
+            setLoading(false);
+            setError('No bill number provided');
+        }
     }, [billNo]);
-
     const handleReprintClick = () => {
         console.log("Reprint button clicked");
         setShowSalesReceipt(true);
@@ -51,7 +55,7 @@ export const ViewBill = () => {
     };
 
     if (loading) {
-        return <div><SubSpinner/></div>;
+        return <div><MainSpinner /></div>;
     }
 
     if (error) {
@@ -90,7 +94,7 @@ export const ViewBill = () => {
                         </div>
                         <div className="cont2">
                             <div className='inputFlex'>
-                                <InputLabel htmlFor="billedAt" color="#0377A8">Billed At: <span>{new Date(createdAt).toLocaleString()}</span></InputLabel>
+                                <InputLabel htmlFor="billedAt" color="#0377A8">Billed At: <span>{new Date(createdAt).toLocaleString('en-GB')}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel htmlFor="billedBy" color="#0377A8">Billed By: <span>{billedBy}</span></InputLabel>
@@ -147,10 +151,10 @@ export const ViewBill = () => {
                             {billProducts.map((item, index) => (
                                 <tr key={index}>
                                     <td><InputField id={`productId-${index}`} name={`productId-${index}`} editable={false} width="100%" value={`${item.productId} ${item.productName}`} /></td>
-                                    <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty} textAlign='center' /></td>
+                                    <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty.toFixed(3)} textAlign='center' /></td>
                                     <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
-                                    <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice} textAlign='right' /></td>
-                                    <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount} textAlign='right' /></td>
+                                    <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='right' /></td>
+                                    <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`amount-${index}`} name={`amount-${index}`} editable={false} width="100%" value={item.amount.toFixed(2)} textAlign='right' /></td>
                                 </tr>
                             ))}

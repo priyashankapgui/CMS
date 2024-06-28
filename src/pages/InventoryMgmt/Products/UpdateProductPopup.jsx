@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Joi from 'joi';
 import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
@@ -8,8 +7,9 @@ import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
+import { getProductById, updateProduct } from '../../../Api/Inventory/Product/ProductAPI';
+import { getCategories } from '../../../Api/Inventory/Category/CategoryAPI';
 
-const productsApiUrl = process.env.REACT_APP_PRODUCTS_API;
 
 function UpdateProductPopup({ productId }) {
     const navigate = useNavigate();
@@ -17,7 +17,9 @@ function UpdateProductPopup({ productId }) {
         productName: '',
         description: '',
         categoryName: '',
-        barcode: ''
+        barcode: '',
+        minQty: '',
+        image: null
     });
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
@@ -27,19 +29,27 @@ function UpdateProductPopup({ productId }) {
         productName: Joi.string().required().label('Product Name'),
         description: Joi.string().optional().label('Description'),
         categoryName: Joi.string().required().label('Category Name'),
-        barcode: Joi.string().required().label('Barcode')
+        barcode: Joi.string().required().label('Barcode'),
+        minQty: Joi.number().optional().label('Min Qty'),
+        image: Joi.any().optional().label('Image')
     });
 
     useEffect(() => {
         if (productId) {
-            axios.get(`${productsApiUrl}/${productId}`)
-                .then(res => setPost({
-                    productName: res.data.data.productName,
-                    description: res.data.data.description,
-                    categoryName: res.data.data.categoryName,
-                    barcode: res.data.data.barcode
-                }))
-                .catch(err => console.log(err));
+            getProductById(productId)
+                .then(res => {
+                    const { productName, description, categoryName, barcode, minQty, image } = res.data;
+                    setPost({
+                        productName,
+                        description,
+                        categoryName,
+                        barcode,
+                        minQty,
+                        image
+                    });
+                    
+                })
+                .catch(err => console.error('Error fetching product:', err));
         }
     }, [productId]);
 
@@ -68,9 +78,33 @@ function UpdateProductPopup({ productId }) {
         setPost({ ...post, [name]: value });
     };
 
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            TransformFile(file);
+        }
+    };
+
+    const TransformFile = (file) => {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setPost({ ...post, image: reader.result });
+        };
+
+        reader.onerror = (error) => {
+            console.error("Error reading file:", error);
+            setPost({ ...post, image: null });
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSave = async (event) => {
         if (event) {
-            event.preventDefault(); // Ensure event is defined and preventDefault is called correctly
+            event.preventDefault();
         }
 
         const validationErrors = validate();
@@ -87,7 +121,17 @@ function UpdateProductPopup({ productId }) {
 
         setIsLoading(true);
         try {
-            await axios.put(`${productsApiUrl}/${productId}`, post);
+            const formData = new FormData();
+            formData.append('productName', post.productName);
+            formData.append('description', post.description);
+            formData.append('categoryName', post.categoryName);
+            formData.append('barcode', post.barcode);
+            formData.append('minQty', post.minQty);
+            if (post.image) {
+                formData.append('image', post.image);
+            }
+
+            await updateProduct(productId, formData);
 
             const alertData = {
                 severity: 'success',
@@ -97,6 +141,7 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } catch (error) {
             console.error('Error updating product:', error);
             const alertData = {
@@ -107,6 +152,7 @@ function UpdateProductPopup({ productId }) {
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
             navigate('/Products');
+            window.location.reload();
         } finally {
             setIsLoading(false);
         }
@@ -114,9 +160,9 @@ function UpdateProductPopup({ productId }) {
 
     const fetchCategorySuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(category => ({
+            const response = await getCategories();
+            if (response.data && response.data) {
+                return response.data.map(category => ({
                     id: category.categoryId,
                     displayText: `${category.categoryId} ${category.categoryName}`
                 }));
@@ -143,11 +189,15 @@ function UpdateProductPopup({ productId }) {
                 topTitle="Update Product Details"
                 buttonId="update-btn"
                 buttonText="Update"
-                onClick={handleSave} // Pass handleSave directly to EditPopup for button click
+                onClick={handleSave}
                 isLoading={isLoading}
             >
-                <form onSubmit={handleSave}> {/* Ensure handleSave is called on form submit */}
+                <form onSubmit={handleSave} encType='multipart/form-data'>
                     <div style={{ display: 'block', width: '100%' }}>
+                        <div>
+                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
+                            <input type="file" id="image" name="image" onChange={handleFileChange} />
+                        </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
@@ -168,6 +218,10 @@ function UpdateProductPopup({ productId }) {
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
                             <InputField type="text" id="description" name="description" value={post.description} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div>
+                            <InputLabel htmlFor="minQty" color="#0377A8">Min Qty</InputLabel>
+                            <InputField type="text" id="minQty" name="minQty" value={post.minQty} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
                     </div>
                     <button type="submit" style={{ display: 'none' }}>Submit</button>

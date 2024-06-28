@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Layout from "../../../Layout/Layout";
 import "./MinimumStock.css";
 import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
@@ -9,6 +7,9 @@ import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getProductMinQty } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
 export const MinimunStock = () => {
     const [branches, setBranches] = useState([]);
@@ -24,12 +25,12 @@ export const MinimunStock = () => {
     useEffect(() => {
         fetchBranches();
         fetchAllProducts();
-        fetchProductQuantities(); // Fetch product quantities based on user role
+        fetchProductQuantities(); 
     }, []);
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -38,7 +39,7 @@ export const MinimunStock = () => {
 
     const fetchAllProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/products');
+            const response = await getProducts();
             setProducts(response.data);
             setLoading(false);
         } catch (error) {
@@ -49,9 +50,9 @@ export const MinimunStock = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -63,33 +64,32 @@ export const MinimunStock = () => {
         }
     };
 
+     
     const fetchProductQuantities = async () => {
-       
-
         try {
             const userJSON = secureLocalStorage.getItem("user");
             if (userJSON) {
                 const user = JSON.parse(userJSON);
-                let response;
-            if (user.role === 'Super Admin') {
-                response = await axios.get('http://localhost:8080/product-quantities');
-            } else if (user.branchName) {
-                response = await axios.get(`http://localhost:8080/product-quantities-by-branch?branchName=${user.branchName}`);
+                console.log("user role",user.role);
+                console.log("user branch",user.branchName);
+                const response = await getProductMinQty();
+                let data = response.data || [];
+                
+                if (user.role !== 'Super Admin') {
+                    data = data.filter(item => item.branchName === user.branchName);
+                }
+                setStockDetails(data);
             } else {
-                console.error('Branch name is not available for the user');
-                setLoading(false);
-                return;
+                console.error('User details not found in secure storage');
             }
-            setStockDetails(response.data?.data || []);
-        } else {
-            console.error('User details not found in secure storage');
-        }
         } catch (error) {
             console.error('Error fetching product quantities:', error);
         } finally {
             setLoading(false);
         }
     };
+
+
 
     const handleDropdownChange = (value) => {
         setSelectedBranch(value);
@@ -102,11 +102,6 @@ export const MinimunStock = () => {
 
     const handleSearch = async () => {
         setLoading(true);
-        // if (!selectedBranch || !product) {
-        //     console.error('Please select both branch and product');
-        //     setLoading(false);
-        //     return;
-        // }
 
         console.log('Branch:', selectedBranch);
         console.log('Product:', selectedProduct);
@@ -114,14 +109,9 @@ export const MinimunStock = () => {
         const productId = selectedProduct ? selectedProduct.split(' ')[0] : null;
 
         try {
-            const response = await axios.get('http://localhost:8080/product-quantities', {
-                params: {
-                    branchName: selectedBranch,
-                    productId: productId,
-                }
-            });
+            const response = await getProductMinQty(selectedBranch, productId);
 
-            const data = response.data.data;
+            const data = response.data;
             setStockDetails(Array.isArray(data) ? data : [data]);
         } catch (error) {
             console.error('Error fetching stock details:', error);
@@ -161,7 +151,7 @@ export const MinimunStock = () => {
                                 setSearchTerm={setSelectedProduct}
                                 onSelectSuggestion={(suggestion) => {
                                     setSelectedProduct(`${suggestion.displayText}`);
-                                    setProduct(suggestion); // Set the selected product object
+                                    setProduct(suggestion); 
                                 }}
                                 fetchSuggestions={fetchProductsSuggestions}
                             />

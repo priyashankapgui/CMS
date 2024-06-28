@@ -9,8 +9,6 @@ import RoundButtons from "../../../../Components/Buttons/RoundButtons/RoundButto
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import InputField from "../../../../Components/InputField/InputField";
-// import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
-// import datafile from "../../../../Components/Data.json";
 import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
 import { Link } from "react-router-dom";
 import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
@@ -18,6 +16,7 @@ import UserRoleDropdown from "../../../../Components/InputDropdown/UserRoleDropd
 import PasswordStrengthBar from "react-password-strength-bar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import secureLocalStorage from "react-secure-storage";
+import { getEmployeeById, updateEmployee } from "../../../../Api/BranchMgmt/UserAccountsAPI";
 
 export function UpdateUser() {
   const [employeeData, setEmployeeData] = useState({}); // State for storing employee data
@@ -31,13 +30,6 @@ export function UpdateUser() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const currentUser = JSON.parse(secureLocalStorage.getItem("user"));
 
-  // useEffect(() => {
-  //   let tempBranches = datafile.dropDownOptions.branchOptions;
-  //   tempBranches = tempBranches.filter((branch) => branch !== 'All' && branch !== employeeData.branchName);
-  //   tempBranches = employeeData.branchName ? [employeeData.branchName].concat(tempBranches) : tempBranches;
-  //   setBranches(tempBranches);
-  // }, [employeeData.branchName]);
-
   const urlParams = new URLSearchParams(window.location.search);
   const employeeId = urlParams.get("employeeId");
 
@@ -45,22 +37,11 @@ export function UpdateUser() {
     const getEmployeeData = async () => {
       try {
         const token = secureLocalStorage.getItem("accessToken");
-        const response = await fetch(
-          `http://localhost:8080/employees/${employeeId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
+        const response = await getEmployeeById(employeeId, token);
+        if (response.status !== 200) {
           throw new Error("Failed to fetch data");
         }
-
-        const data = await response.json();
+        const data = await response.data;
         console.log("Employee data:", data);
         setEmployeeData(data);
       } catch (error) {
@@ -94,7 +75,7 @@ export function UpdateUser() {
 
   const handleUpdate = async () => {
     if (!employeeData.employeeName || !employeeData.email) {
-      setShowAlertError("Please fill in all fields");
+      setShowAlertError("Please fill the rquired fields");
       return;
     }
     if (password !== confirmPassword) {
@@ -129,18 +110,9 @@ export function UpdateUser() {
       if (file) {
         formData.append("image", file);
       }
-      const response = await fetch(
-        `http://localhost:8080/employees/${employeeId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
-      if (!response.ok) {
-        const data = await response.json();
+      const response = await updateEmployee(employeeId, formData, token);
+      if (response.status !== 200) {
+        const data = await response.data;
         console.log("Error:", data.error);
         setShowAlertError(data.error);
       } else {
@@ -250,7 +222,7 @@ export function UpdateUser() {
                   alt="Profile"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = `${process.env.PUBLIC_URL}/Images/greenleaf.svg`;
+                    e.target.src = `${process.env.PUBLIC_URL}/Images/account_circle.svg`;
                   }}
                 />
               )}
