@@ -2,20 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from "../../../Layout/Layout";
 import "./NewOrderView.css";
-import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import InputField from '../../../Components/InputField/InputField';
 import InputLabel from '../../../Components/Label/InputLabel';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { MdDone } from "react-icons/md";
+import { MdDone } from 'react-icons/md';
 import WorkOrderReceipt from '../../../Components/WorkOrderReceipt/WorkOrderReceipt';
-import {getOnlineBillByNumber} from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx'
-import {getOnlineBillProductsByBillNo} from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx'
+import { getOnlineBillByNumber, updateOnlineBill } from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx';
+import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
+import secureLocalStorage from 'react-secure-storage';
 
 export function NewOrderView() {
     const { onlineBillNo } = useParams();
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
+    const [userDetails, setUserDetails] = useState({ username: '' });
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+   },[]);
+
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -33,9 +46,30 @@ export function NewOrderView() {
         fetchOrderData();
     }, [onlineBillNo]);
 
-    const handleAcceptClick = () => {
-        setShowPopup(true);
+    const handleAcceptClick = async () => {
+        if (userDetails.username) {
+            const currentTime = new Date();
+            const updates = {
+                acceptedBy: userDetails.username,
+                status: "Processing"
+                // acceptedAt: currentTime // Excluding this line as the backend might handle it
+            };
+    
+            try {
+                await updateOnlineBill(onlineBillNo, updates);
+                setOrderData((prevData) => ({
+                    ...prevData,
+                    acceptedBy: updates.acceptedBy,
+                    status: updates.status,
+                    acceptedAt: currentTime // Locally update acceptedAt
+                }));
+                setShowPopup(true);
+            } catch (error) {
+                console.error('Error updating online bill:', error);
+            }
+        }
     };
+    
 
     const handleClosePopup = () => {
         setShowPopup(false);
