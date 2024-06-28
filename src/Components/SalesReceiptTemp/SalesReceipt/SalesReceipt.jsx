@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import ReceiptPopup from '../ReceiptPopup/ReceiptPopup';
 import './SalesReceipt.css';
-import axios from 'axios';
-
-
-// const mybill = process.env.REACT_APP_BILLRECEIPT_DATA_API;
+import { getBilledData } from '../../../Api/Billing/SalesApi';
 
 
 const SalesReceipt = ({ billNo, onClose }) => {
     console.log('SalesReceipt component rendered');
+    
     const [billData, setBillData] = useState(null);
 
     useEffect(() => {
@@ -17,13 +15,11 @@ const SalesReceipt = ({ billNo, onClose }) => {
                 if (!billNo) {
                     return;
                 }
-
-                const response = await axios.get(`http://localhost:8080/bills-all?billNo=${billNo}`);
+                const response = await getBilledData(billNo);
                 console.log('Bill', response);
-                const responseData = response.data.data;
 
-                if (responseData) {
-                    setBillData(responseData);
+                if (response.data) {
+                    setBillData(response.data);
                 } else {
                     console.error('Bill not found');
                 }
@@ -101,8 +97,8 @@ const SalesReceipt = ({ billNo, onClose }) => {
                 </table>
 
                 <hr className='invoice-line' />
-                <div className="items">
-                    <table className='item-table'>
+                <div className="sale-receipt-items">
+                    <table className='sale-receipt-item-table'>
                         <thead>
                             <tr>
                                 <th>Description</th>
@@ -130,14 +126,14 @@ const SalesReceipt = ({ billNo, onClose }) => {
                 </div>
             </div>
             <hr className='invoice-line' />
-            <div className="billMiddle">
+            <div className="sale-receipt-billMiddle">
                 <div className="inquaryQR">
                     For any inquiry
                     <small>Scan me</small>
-                    <img className="qrImg" src={`${process.env.PUBLIC_URL}/Images/qr-code.svg`}  alt="Sugession QR" />
+                    <img className="qrImg" src={`${process.env.PUBLIC_URL}/Images/qr-code.svg`} alt="Sugession QR" />
                 </div>
-                <div className="total">
-                    <table className='total-table'>
+                <div className="sale-receipt-total">
+                    <table className='sale-receipt-total-table'>
                         <tbody>
                             <tr>
                                 <td>No Items </td>
@@ -168,7 +164,7 @@ const SalesReceipt = ({ billNo, onClose }) => {
                 </div>
             </div>
             <hr className='invoice-line-top' />
-            <div className="footer">
+            <div className="sale-receipt-footer">
                 <h5> Thank you, Come again!</h5>
                 <p> © <span style={{ fontFamily: "Princess Sofia, cursive" }}> Flex Flow -</span>Powered By HexaCode Solutions Pvt Ltd.</p>
                 <hr className='invoice-line' />

@@ -60,16 +60,16 @@ export const OnlineOrders = () => {
                 <Tabs className="OnlineOrdersTabs">
                     <TabList className="OrderStatusTab">
                         <Tab>
-                            New Orders 
-                            <Badge className="NewtabBadge" badgeContent={4}/>
+                            New Orders
+                            <Badge className="NewtabBadge" badgeContent={4} />
                         </Tab>
                         <Tab>
                             Processing
-                            <Badge className="ProcessingtabBadge" badgeContent={4}/>
+                            <Badge className="ProcessingtabBadge" badgeContent={4} />
                         </Tab>
                         <Tab>
                             Pending Pickup
-                            <Badge className="PendingtabBadge" badgeContent={4}/>
+                            <Badge className="PendingtabBadge" badgeContent={4} />
                         </Tab>
                         <Tab>Completed</Tab>
                     </TabList>

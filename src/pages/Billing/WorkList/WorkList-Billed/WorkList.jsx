@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Layout from '../../../../Layout/Layout';
 import './WorkList.css';
 import InputLabel from '../../../../Components/Label/InputLabel';
@@ -10,6 +9,7 @@ import InputField from '../../../../Components/InputField/InputField';
 import { Link } from 'react-router-dom';
 import { BsEye } from 'react-icons/bs';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
+import { getAllBills } from '../../../../Api/Billing/SalesApi';
 
 export const WorkList = () => {
     const [clickedLink, setClickedLink] = useState('Billed');
@@ -28,24 +28,28 @@ export const WorkList = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/bills');
-            if (response.data && response.data.data && Array.isArray(response.data.data)) {
-                setBillProduct(response.data.data);
+            const response = await getAllBills();
+
+            // Check if response has data property and it's an array
+            if (response.data && Array.isArray(response.data)) {
+                setBillProduct(response.data);
 
                 // Filter products based on current date after fetching
                 const currentDate = new Date();
-                const filteredData = response.data.data.filter(item => {
+                const filteredData = response.data.filter(item => {
                     const itemDate = new Date(item.createdAt);
                     return itemDate.setHours(0, 0, 0, 0) === currentDate.setHours(0, 0, 0, 0);
                 });
                 setFilteredProducts(filteredData);
             } else {
-                setError(new Error("Data format error: response is not an array"));
+                setError(new Error("Data format error: response data is not an array"));
             }
         } catch (error) {
+            console.error('Error fetching all bills:', error);
             setError(error);
         }
     };
+
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -223,7 +227,7 @@ export const WorkList = () => {
                                 filteredProducts.map((row, index) => (
                                     <tr key={index}>
                                         <td>{row.billNo}</td>
-                                        <td>{new Date(row.createdAt).toLocaleString()}</td>
+                                        <td>{new Date(row.createdAt).toLocaleString('en-GB')}</td>
                                         <td>{row.branchName}</td>
                                         <td>{row.customerName || 'N/A'}</td>
                                         <td>{row.status}</td>
