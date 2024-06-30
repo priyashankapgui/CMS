@@ -7,14 +7,16 @@ import InputField from '../../../../Components/InputField/InputField';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
 import secureLocalStorage from 'react-secure-storage';
+import { createUserRole, getUserRolePermissionsByToken } from '../../../../Api/BranchMgmt/UserRoleAPI';
+const token = secureLocalStorage.getItem('accessToken');
 
-
-function AddNewUserRolePopup({showSuccess}) {
+function AddNewUserRolePopup() {
     const [permissionArray, setPermissionArray] = useState([]);
-    const [checkedPages, setCheckedPages] = useState();
+    const [checkedPages, setCheckedPages] = useState(new Map());
     const [roleName, setRoleName] = useState();
     const [selectedBranch, setSelectedBranch] = useState("None");
     const [showAlert, setShowAlert] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const handleBranchChange = (branch) => {
         setSelectedBranch(branch);
@@ -24,16 +26,8 @@ function AddNewUserRolePopup({showSuccess}) {
     useEffect(() => {
         const getPermissions = async () => {
             try {
-                const response = await fetch('http://localhost:8080/getUserRolePermissionsByToken',
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + secureLocalStorage.getItem('accessToken') || '',
-                    },
-                }
-                );
-                const data = await response.json();
+                const response = await getUserRolePermissionsByToken(token);
+                const data = await response.data;
                 console.log(data);
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
@@ -60,28 +54,17 @@ function AddNewUserRolePopup({showSuccess}) {
             }
            const token = secureLocalStorage.getItem("accessToken");
            console.log(token);
-            const response = await fetch('http://localhost:8080/userRoleWithPermissions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    userRoleName: roleName,
-                    branch: tempBranch,
-                    checkedPages: selectedPages,
-                }),
-            });
+            const response = await createUserRole(roleName, tempBranch, selectedPages, token);
             if (!response){
                 throw new Error('Server Error');
             }
-            if (!response.ok) {
-                const data = await response.json();   
+            if (response.status !== 201) {
+                const data = await response.data;   
                 throw new Error(data.error);
             }
-            const data = await response.json();
+            const data = await response.data;
             console.log(data);
-            showSuccess(`User Role '${roleName}' created successfully`);
+            setSuccess(`User Role '${roleName}' created successfully`);
             return null;
         } catch (error) {
             setShowAlert(error.message);
@@ -124,6 +107,17 @@ function AddNewUserRolePopup({showSuccess}) {
                     message={showAlert}
                     duration={3000}
                     onClose={() => setShowAlert(false)}
+                    />
+                    }
+                    {success &&
+                    <CustomAlert
+                        severity="success"
+                        title="Success"
+                        message={success}
+                        duration={1500}
+                        onClose={() => {
+                            window.location.reload();
+                        }}
                     />
                     }
                 </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ReturnBillList.css';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
@@ -6,18 +6,61 @@ import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputField from "../../../../Components/InputField/InputField";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import DatePicker from "../../../../Components/DatePicker/DatePicker";
-import InputDropdown from "../../../../Components/InputDropdown/InputDropdown";
-import dropdownOptions from '../../../../Components/Data.json';
 import { BsEye } from "react-icons/bs";
-import jsonData from "../../../../Components/Data.json";
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
+import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
+import { getAllRefundBills } from '../../../../Api/Billing/SalesApi';
+
 
 export const ReturnBillList = () => {
-
     const [clickedLink, setClickedLink] = useState('Returned');
+    const [returnBillData, setReturnBillData] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [billNo, setBillNo] = useState('');
+    const [customerName, setCustomerName] = useState('');
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
+    };
+
+    const handleBranchDropdownChange = (value) => {
+        setSelectedBranch(value);
+    };
+
+    const fetchData = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await getAllRefundBills();
+            console.log('Refund Bill:', response);
+            setReturnBillData(Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            console.error('Error fetching refund bills:', error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleSearch = () => {
+        // Add search filter logic here
+    };
+
+    const handleClear = () => {
+        setSelectedBranch('');
+        setBillNo('');
+        setCustomerName('');
+        setFromDate(null);
+        setToDate(null);
+        fetchData();
     };
 
     return (
@@ -30,24 +73,40 @@ export const ReturnBillList = () => {
                     <div className="Content1">
                         <div className="branchField">
                             <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                            <BranchDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                value={selectedBranch}
+                                onChange={handleBranchDropdownChange}
+                            />
                         </div>
                         <div className="dateFieldFrom">
                             <InputLabel for="to-date" color="#0377A8">To</InputLabel>
-                            <DatePicker />
+                            <DatePicker
+                                selected={toDate}
+                                onChange={date => setToDate(date)}
+                            />
                         </div>
                         <div className="dateFieldTo">
                             <InputLabel for="from-date" color="#0377A8">From</InputLabel>
-                            <DatePicker />
+                            <DatePicker
+                                selected={fromDate}
+                                onChange={date => setFromDate(date)}
+                            />
                         </div>
                         <div className="billNoField">
                             <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
-                            <InputField type="text" id="billNo" name="billNo" editable={true} width="200px" />
+                            <InputField
+                                type="text"
+                                id="billNo"
+                                name="billNo"
+                                editable={true}
+                                width="200px"
+                                value={billNo}
+                                onChange={e => setBillNo(e.target.value)}
+                            />
                         </div>
-                        {/* <div className="rtb-billNoField">
-                            <InputLabel htmlFor="rtb-billNo" color="#0377A8">RTB No</InputLabel>
-                            <InputField type="text" id="rtb-billNo" name="rtb-billNo" editable={true} width="200px" />
-                        </div> */}
                         <div className="customerField">
                             <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
                             <InputField
@@ -56,74 +115,86 @@ export const ReturnBillList = () => {
                                 name="customerName"
                                 editable={true}
                                 width="210px"
+                                value={customerName}
+                                onChange={e => setCustomerName(e.target.value)}
                             />
                         </div>
                     </div>
                     <div className="BtnSection">
-                        <Buttons type="submit" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Search </Buttons>
-                        <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }}> Clear </Buttons>
+                        <Buttons
+                            type="submit"
+                            id="search-btn"
+                            style={{ backgroundColor: "#23A3DA", color: "white" }}
+                            onClick={handleSearch}
+                        >
+                            Search
+                        </Buttons>
+                        <Buttons
+                            type="submit"
+                            id="clear-btn"
+                            style={{ backgroundColor: "white", color: "#EB1313" }}
+                            onClick={handleClear}
+                        >
+                            Clear
+                        </Buttons>
                     </div>
                 </div>
                 <div className="worklist-middle">
                     <div className="linkActions-billed">
                         <div className={clickedLink === 'Billed' ? 'clicked' : ''}>
-                            <Link
-                                to="/work-list"
-                                onClick={() => handleLinkClick('Billed')}
-                            >
-                                Billed
-                            </Link>
+                            <Link to="/work-list" onClick={() => handleLinkClick('Billed')}> Billed </Link>
                         </div>
                         <div className={clickedLink === 'Returned' ? 'clicked' : ''}>
-                            <Link
-                                to=""
-                                onClick={() => handleLinkClick('Returned')}
-                            >
-                                Returned
-                            </Link>
+                            <Link to="" onClick={() => handleLinkClick('Returned')}> Returned </Link>
                         </div>
                     </div>
-                    <table className="return-bill-history-table">
-                        <thead>
-                            <tr>
-                                <th>Return Bill No</th>
-                                <th>Returned At</th>
-                                <th>Bill No</th>
-                                <th>Branch </th>
-                                <th>Customer Name</th>
-                                <th>Status</th>
-                                <th>Returned By</th>
-                                <th>Reason</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {jsonData.ReturnBillListTableData.map((row, index) => (
-                                <tr key={index}>
-                                    <td>{row.RTBNo}</td>
-                                    <td>{row.returnedAt}</td>
-                                    <td>{row.billNo}</td>
-                                    <td>{row.branch}</td>
-                                    <td>{row.customerName}</td>
-                                    <td>{row.status}</td>
-                                    <td>{row.returnedBy}</td>
-                                    <td>{row.reason}</td>
-                                    <td>
-                                        <Link to={`/work-list/returnbill-list/viewreturnbill/${row.RTBNo}`}>
-                                            <RoundButtons
-                                                id={`eyeViewBtn-${index}`}
-                                                type="submit"
-                                                name={`eyeViewBtn-${index}`}
-                                                icon={<BsEye />}
-                                            />
-                                        </Link>
-                                    </td>
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : error ? (
+                        <div>Error: {error.message}</div>
+                    ) : (
+                        <table className="return-bill-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Return Bill No</th>
+                                    <th>Returned At</th>
+                                    <th>Bill No</th>
+                                    <th>Branch</th>
+                                    <th>Customer Name</th>
+                                    <th>Status</th>
+                                    <th>Returned By</th>
+                                    <th>Reason</th>
+                                    <th></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {Array.isArray(returnBillData) && returnBillData.map((row, index) => (
+                                    <tr key={index}>
+                                        <td>{row.RTBNo}</td>
+                                        <td>{new Date(row.createdAt).toLocaleString('en-GB')}</td>
+                                        <td>{row.billNo}</td>
+                                        <td>{row.branchName}</td>
+                                        <td>{row.customerName}</td>
+                                        <td>{row.status}</td>
+                                        <td>{row.returnedBy}</td>
+                                        <td>{row.reason}</td>
+                                        <td>
+                                            <Link to={`/work-list/returnbill-list/viewreturnbill/${row.RTBNo}`}>
+                                                <RoundButtons
+                                                    id={`eyeViewBtn-${index}`}
+                                                    type="submit"
+                                                    name={`eyeViewBtn-${index}`}
+                                                    icon={<BsEye />}
+                                                />
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </Layout>
         </>
-    )
-}
+    );
+};

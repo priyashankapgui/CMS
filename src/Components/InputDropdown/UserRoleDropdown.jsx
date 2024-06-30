@@ -1,6 +1,7 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import InputDropdown from "./InputDropdown";
 import secureLocalStorage from "react-secure-storage";
+import { getAllUserRoles } from "../../Api/BranchMgmt/UserRoleAPI";
 
 const UserRoleDropdown = forwardRef(
   (
@@ -28,17 +29,11 @@ const UserRoleDropdown = forwardRef(
       const getUserRoles = async () => {
         try {
           const token = secureLocalStorage.getItem("accessToken");
-          const response = await fetch("http://localhost:8080/userRoles", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (!response.ok) {
+          const response = await getAllUserRoles(token);
+          if (response.status !== 200) {
             throw new Error("Failed to fetch data");
           }
-          let data = await response.json();
+          let data = await response.data;
           let sortedData = data;
           if (displayValue) {
             const index = sortedData.findIndex((role) => role.userRoleName === displayValue);

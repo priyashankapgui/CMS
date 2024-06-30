@@ -13,6 +13,7 @@ import InputField from '../../../Components/InputField/InputField';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import secureLocalStorage from "react-secure-storage";
 
 export function NewStockTransfer() {
 
@@ -103,7 +104,10 @@ export function NewStockTransfer() {
         e.preventDefault();
 
         // Get the currently logged-in user's username from session storage
-        const user = JSON.parse(sessionStorage.getItem("user"));
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            console.log("user data",user);
         console.log("name", user);
 
         // Prepare data to be sent to the backend
@@ -139,6 +143,7 @@ export function NewStockTransfer() {
                 message: 'Failed to save Stock Transfer.'
             });
         }
+    }
     };
 
     const handleInputChange = (id, name, value) => {

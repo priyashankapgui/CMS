@@ -41,26 +41,6 @@ export const WebFeedbacks = () => {
                 const data = await getWebFeedbacks();
     
                 const sortedData = data.sort((a, b) => {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     if (a.action === 'Pending' && b.action !== 'Pending') return -1;
                     if (a.action !== 'Pending' && b.action === 'Pending') return 1;
                     return new Date(a.createdAt) - new Date(b.createdAt);
@@ -79,7 +59,7 @@ export const WebFeedbacks = () => {
     useEffect(() => {
         const fetchBranchOptions = async () => {
             try {
-                const data = await getBranchOptions();
+                const data = await getBranchOptions(secureLocalStorage.getItem('accessToken'));
                 setBranchOptions([{ branchName: 'All' }, ...data]);
             } catch (error) {
 

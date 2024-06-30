@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SummaryPopup from '../../../Components/PopupsWindows/SummaryPopup';
-import axios from 'axios';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import "./StockSummary.css";
+import { getAdjustStockDetails } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
 function StockSummary({ productId, productName, branchName, qty }) {
     const [rows, setRows] = useState([]);
@@ -11,13 +11,8 @@ function StockSummary({ productId, productName, branchName, qty }) {
     useEffect(() => {
         const fetchStockDetails = async () => {
             try {
-                const response = await axios.get(`/adjust-stock`, {
-                    params: {
-                        branchName: branchName,
-                        productId: productId
-                    }
-                });
-                setRows(response.data.data);
+                const response = await getAdjustStockDetails(branchName, productId);
+                setRows(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching stock details:", error);
@@ -42,7 +37,7 @@ function StockSummary({ productId, productName, branchName, qty }) {
                             <span className="value1">{productId}</span>
                         </div>
                         <div className="field">
-                            <span className="productname">Product Name : </span>
+                            <span className="productname">Product Name : </span> 
                             <span className="value2">{productName}</span>
                         </div>
                         <div className="field">

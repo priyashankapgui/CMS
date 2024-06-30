@@ -78,21 +78,21 @@
     text-align: right;
 }
 
-.items table {
+.sale-receipt-items table {
     width: 100%;
     border-collapse: collapse;
     margin: 10px 0;
 }
 
-.items th,
-.items td {
+.sale-receipt-items th,
+.sale-receipt-items td {
     padding: 2px;
     text-align: left;
     font-size: 12px;
 
 }
 
-.items thead th {
+.sale-receipt-items thead th {
     background-color: #ececec;
 
 }
@@ -105,7 +105,7 @@ hr.invoice-line {
     border-top: 1px dashed;
 }
 
-.billMiddle {
+.sale-receipt-billMiddle {
     display: flex;
     justify-content: space-around;
 }
@@ -126,27 +126,27 @@ hr.invoice-line {
 
 }
 
-.total-table td {
+.sale-receipt-total-table td {
     padding: 2px;
 }
 
-.total-table {
+.sale-receipt-total-table {
     width: 100%;
     font-size: 12px;
     margin-right: 47px;
 
 }
 
-.footer {
+.sale-receipt-footer {
     margin-top: 10px;
     text-align: center;
 }
 
-.footer p {
+.sale-receipt-footer p {
     font-size: 10px;
     margin-bottom: 10px;
 }
 
-.footer .special-note {
+.sale-receipt-footer .special-note {
     margin-top: 8px;
 }

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Layout from "../../../Layout/Layout";
 import "./StockBalance.css";
 import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
@@ -10,6 +8,9 @@ import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import StockSummary from './StockSummary';
 import AdjustStock from './AdjustStock';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getActiveStock } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
 export const StockBalance = () => {
     const [branches, setBranches] = useState([]);
@@ -29,7 +30,7 @@ export const StockBalance = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
+            const response = await getBranchOptions();
             setBranches(response.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
@@ -38,7 +39,7 @@ export const StockBalance = () => {
 
     const fetchAllProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/products');
+            const response = await getProducts();
             setProducts(response.data);
             setLoading(false);
         } catch (error) {
@@ -49,9 +50,9 @@ export const StockBalance = () => {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -59,19 +60,6 @@ export const StockBalance = () => {
             return [];
         } catch (error) {
             console.error('Error fetching product:', error);
-            return [];
-        }
-    };
-
-    const fetchSuggestionsCategories = async (searchTerm) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/categories?query=${encodeURIComponent(searchTerm)}`);
-            return response.data.map(item => ({
-                id: item.categoryId,
-                name: `${item.categoryId} ${item.categoryName}`
-            }));
-        } catch (error) {
-            console.error('Error fetching category suggestions:', error);
             return [];
         }
     };
@@ -97,14 +85,9 @@ export const StockBalance = () => {
         console.log('Product:', product);
 
         try {
-            const response = await axios.get('http://localhost:8080/active-stock', {
-                params: {
-                    branchName: selectedBranch,
-                    productId: product.id,
-                }
-            });
+            const response = await getActiveStock(selectedBranch, product.id);
 
-            const data = response.data.data;
+            const data = response.data;
             setStockDetails(Array.isArray(data) ? data : [data]);
         } catch (error) {
             console.error('Error fetching stock details:', error);

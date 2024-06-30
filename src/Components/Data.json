@@ -1,7 +1,7 @@
 {
   "repoTypes": [
     "Stock Summary",
-    "Expired Stock"
+    "Upcoming Expiry Stock"
   ],
   "salesChartData": {
     "2023": [
@@ -157,7 +157,6 @@
       }
     ]
   },
- 
   "ReturnBillListTableData": [
     {
       "RTBNo": "Gal-R24021023",

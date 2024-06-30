@@ -11,15 +11,11 @@ import { Icon } from "@iconify/react";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputRadio from '../../../Components/InputRadio/InputRadio';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
-import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'
 import secureLocalStorage from "react-secure-storage";
 import SalesReceipt from '../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
-
-const productByBarcodeUrl = process.env.REACT_APP_PRODUCTS_BY_BARCODE_API;
-const productByBranchUrl = process.env.REACT_APP_PRODUCTS_BY_BRANCH_API;
-const sendBillDataUrl = process.env.REACT_APP_SENDBILL_DATA_API;
+import { getProductByBranch, getProductByBarcode, postBillData } from '../../../Api/Billing/SalesApi';
 
 
 export const Sales = () => {
@@ -99,10 +95,10 @@ export const Sales = () => {
             return [];
         }
         try {
-            const response = await axios.get(`${productByBranchUrl}?searchTerm=${searchTerm}&branchName=${selectedBranch}`);
+            const products = await getProductByBranch(searchTerm, selectedBranch);
             const productMap = new Map();
 
-            response.data.forEach((product) => {
+            products.forEach((product) => {
                 if (!productMap.has(product.productId)) {
                     productMap.set(product.productId, {
                         barcode: product.barcode,
@@ -123,8 +119,7 @@ export const Sales = () => {
 
     const handleProductSelection = async (suggestion, rowIndex) => {
         try {
-            const response = await axios.get(`${productByBranchUrl}?searchTerm=${suggestion.productId}&branchName=${selectedBranch}`);
-            const productData = response.data;
+            const productData = await getProductByBranch(suggestion.productId, selectedBranch);
 
             const updatedRows = [...rows];
             const batchNumbers = productData.map((product) => product.batchNo);
@@ -151,13 +146,14 @@ export const Sales = () => {
 
     const fetchProductsByBarcode = async (barcode, rowIndex) => {
         try {
-            const response = await axios.get(`${productByBarcodeUrl}?barcode=${barcode}&branchName=${selectedBranch}`);
-            if (response.data.length > 0) {
-                const product = response.data[0];
+            const productData = await getProductByBarcode(barcode, selectedBranch);
+
+            if (productData.length > 0) {
+                const product = productData[0];
                 const updatedRows = [...rows];
                 updatedRows[rowIndex].productDetails = product;
                 updatedRows[rowIndex].selectedProduct = `${product.productId} ${product.productName}`;
-                updatedRows[rowIndex].suggestions = response.data.map((product) => ({
+                updatedRows[rowIndex].suggestions = productData.map((product) => ({
                     productId: product.productId,
                     productName: product.productName,
                     batchNo: product.batchNo,
@@ -171,17 +167,16 @@ export const Sales = () => {
                     displayText: `${product.productId} ${product.productName}`,
                 }));
 
-                const batchOptions = response.data.map((product) => product.batchNo);
+                const batchOptions = productData.map((product) => product.batchNo);
                 updatedRows[rowIndex].batchOptions = batchOptions;
 
                 if (batchOptions.length === 1) {
-                    const singleProduct = response.data[0];
                     updatedRows[rowIndex].productDetails = {
-                        ...singleProduct,
-                        batchNo: singleProduct.batchNo,
-                        totalAvailableQty: singleProduct.totalAvailableQty,
-                        sellingPrice: singleProduct.sellingPrice,
-                        discount: singleProduct.discount,
+                        ...product,
+                        batchNo: product.batchNo,
+                        totalAvailableQty: product.totalAvailableQty,
+                        sellingPrice: product.sellingPrice,
+                        discount: product.discount,
                     };
                 } else {
                     updatedRows[rowIndex].productDetails = {
@@ -330,6 +325,8 @@ export const Sales = () => {
             open: false
         });
     };
+
+
     const handleSave = async () => {
         const customerNameElement = document.getElementById('customerName');
         const contactNoElement = document.getElementById('contactNo');
@@ -380,14 +377,15 @@ export const Sales = () => {
                 amount: parseFloat(row.productDetails.amount) || 0,
             }))
         };
+
         console.log("Backend Data:", data);
         setLoading(true);
 
         try {
-            const response = await axios.post(sendBillDataUrl, data);
+            const response = await postBillData(data);
             console.log('API Response:', response);
 
-            if (response.status === 200 && response.data.success) {
+            if (response.success) {
                 setAlert({
                     severity: 'success',
                     title: 'Success',
@@ -395,12 +393,11 @@ export const Sales = () => {
                     open: true
                 });
 
-                const billNo = response.data.data.newBill.billNo;
+                const billNo = response.data.newBill.billNo;
                 setBillNo(billNo);
                 setShowSalesReceipt(true);
                 resetForm();
                 console.log('Bill number set:', billNo);
-
             } else {
                 setAlert({
                     severity: 'error',
@@ -421,6 +418,7 @@ export const Sales = () => {
             setLoading(false);
         }
     };
+
 
 
     const resetForm = () => {

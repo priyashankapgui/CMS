@@ -33,7 +33,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {children}
-            {loading ? <SubSpinner /> :
+            {loading ? <SubSpinner spinnerText='Updating'/> :
               <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} btnWidth="22em" btnHeight="2.5em" onClick={onClickWithLoading}>{buttonText}</Buttons>
             }
           </div>
