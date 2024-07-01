@@ -4,16 +4,15 @@ import SubPopup from './SubPopup';
 import Buttons from '../Buttons/SquareButtons/Buttons';
 import SubSpinner from '../Spinner/SubSpinner/SubSpinner';
 
-
 function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onClickWithLoading = async () => {
+  const onClickWithLoading = async (event) => {
     setLoading(true);
-    await onClick();
+    await onClick(event);
     setLoading(false);
-};
+  };
 
   return (
     <div style={{ width: '' }}>
@@ -33,7 +32,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {children}
-            {loading ? <SubSpinner spinnerText='Updating'/> :
+            {loading ? <SubSpinner spinnerText='Updating' /> :
               <Buttons type="submit" id={buttonId} style={{ backgroundColor: "#23A3DA", color: "white" }} btnWidth="22em" btnHeight="2.5em" onClick={onClickWithLoading}>{buttonText}</Buttons>
             }
           </div>
