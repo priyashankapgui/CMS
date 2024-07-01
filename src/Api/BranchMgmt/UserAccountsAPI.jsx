@@ -82,6 +82,27 @@ export const updatePersonalAccount = async (formData, token) => {
     }
 };
 
+export const updatePassword = async (currentPassword,password,token) => {
+  console.log("currentPassword",currentPassword,"password",password);
+  try{
+    const response = await api.post(`/employees/updatePw`,
+      {
+        currentPassword: currentPassword,
+        newPassword: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response;
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return error.response ? error.response : error;
+  }
+};
+
 export const deleteEmployee = async (employeeId, token) => {
   try {
     const response = await api.delete(`/employees/${employeeId}`, {
