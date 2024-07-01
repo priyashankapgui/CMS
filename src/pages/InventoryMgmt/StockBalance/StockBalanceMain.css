@@ -1,0 +1,35 @@
+.stockBalanceTabs {
+    height: 100%;
+
+}
+
+.balanceStatusTab {
+    display: flex;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.balanceStatusTab .react-tabs__tab {
+    padding: 3px 20px;
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    color: initial;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.balanceStatusTab .react-tabs__tab--selected {
+    color: rgb(35, 163, 218);
+    border-bottom: 2px solid rgb(35, 163, 218);
+    font-weight: 500;
+}
+
+.balanceStatusTab .react-tabs__tab--selected {
+    background-color: transparent;
+    font-weight: 520;
+}
+
+.balanceStatusTab .react-tabs__tab:hover {
+    color: rgb(35, 163, 218);
+}

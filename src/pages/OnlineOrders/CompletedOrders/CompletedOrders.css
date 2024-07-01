@@ -1,0 +1,16 @@
+.CompletedOrderTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+.CompletedOrderTable th{
+    background-color: #F5F3F3;
+    font-size: 0.9em;
+    padding: 6px;
+    margin: 4px;
+}
+.CompletedOrderTable td,
+.CompletedOrderTable th{
+    border-bottom: 1px solid #dddddd;
+    text-align: left;
+    padding: 6px;
+}

@@ -1,0 +1,31 @@
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
+  flex-direction: column;
+  background-color: transparent;
+}
+
+.unauthorized-frame {
+  padding: 20px;
+  border: 2px solid #ed5252;
+  border-radius: 10px;
+  background-color: #f0f4ff;
+  max-width: fit-content;
+  text-align: center;
+  box-shadow: 0 10px 15px -3px rgba(255, 72, 72, 0.2), 0 4px 6px -2px rgba(255, 14, 14, 0.826);
+}
+
+.unauthorized-title {
+  color: red;
+  font-size: 20px;
+  font-weight: 500;
+
+}
+
+.warning-icon {
+  color: #ff0000;
+  font-size: 62px;
+  margin-bottom: 15px;
+}

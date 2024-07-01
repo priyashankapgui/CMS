@@ -1,0 +1,43 @@
+.input-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.input {
+  /* border: 1px solid #8D9093; */
+  font-size: 0.813em;
+  padding: 0.625em;
+  margin-bottom: 0.313em;
+  cursor: pointer;
+
+}
+
+input:focus {
+  outline: none;
+  border: 2px solid #0377A8;
+  box-shadow: 0 0 5px rgba(3, 119, 168, 0.5);
+}
+
+input:focus,
+input:active {
+  background-color: white;
+}
+
+.input.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+  background-color: #fdfcfc;
+  cursor: not-allowed;
+}
+
+.icon-container {
+  position: absolute;
+  top: 50%;
+  right: 0.625em;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}

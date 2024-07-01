@@ -51,11 +51,7 @@ export const SidebarData = [
                 path: "/stock-transfer",
                 cName: "sub-nav",
             },
-            {
-                title: "Stock Return",
-                path: "/stock-return",
-                cName: "sub-nav",
-            },
+
             {
                 title: "Check Price",
                 path: "/check-price",
@@ -92,8 +88,14 @@ export const SidebarData = [
         icon: <Icon icon="lucide:webhook" style={{ fontSize: '22px' }} />,
     },
     {
+        title: "Web Feedbacks",
+        path: "/web-feedbacks",
+        icon: <Icon icon="mdi:feedback-outline" style={{ fontSize: '22px' }} />,
+    },
+    {
         title: "Reporting",
-        path: "/reporting",
+        path: "/reporting/analysis",
         icon: <Icon icon="mdi:chart-donut" style={{ fontSize: '22px' }} />,
     },
+ 
 ];

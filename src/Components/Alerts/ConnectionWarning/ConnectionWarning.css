@@ -1,0 +1,23 @@
+.connection-warning {
+    position: fixed;
+    z-index: 999;
+    top: 80px;
+    right: 10px;
+    padding: 10px;
+    border-radius: 18px 0;
+    box-shadow: 0 6px 8px -1px rgba(3, 119, 168, 0.1), 0 4px 7px -1px rgba(3, 119, 168, 0.5);
+    transition: top 0.3s ease-in-out, right 0.3s ease-in-out;
+    font-family: 'Poppins';
+    color: white;
+    font-weight: 500;
+  }
+  
+  .connection-warning.offline {
+    background-color: rgba(255, 0, 0, 0.8);
+  }
+  
+  .connection-warning.online {
+    background-color: rgba(46, 125, 50, 0.8);
+    
+  }
+  

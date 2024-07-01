@@ -1,0 +1,141 @@
+/* Print-specific CSS */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .refund-receipt,
+    .refund-receipt * {
+        visibility: visible;
+    }
+
+    .refund-receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: #fff;
+        font-size: 12px;
+    }
+
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+}
+
+
+.refund-receipt {
+    width: 80mm;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    font-family: Poppins;
+}
+
+.refund-receipt-sys-logo {
+    width: 80px;
+    height: auto;
+}
+
+.refund-receipt-header {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.refund-receipt-store-details {
+    margin-top: 10px;
+}
+
+.payemnt-receipt-Txt {
+    text-align: center;
+}
+
+.branchAddress,
+.branchPhone,
+.branchEmail {
+    font-size: 12px;
+}
+
+.receipt-details-table {
+    width: 100%;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+.receipt-details-table .receipt-details-label {
+    font-weight: 500;
+}
+
+.receipt-details-table .receipt-details-value {
+    text-align: right;
+}
+
+.refund-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+.refund-items th,
+.refund-items td {
+    padding: 2px;
+    text-align: left;
+    font-size: 12px;
+
+}
+
+.refund-items thead th {
+    background-color: #ececec;
+
+}
+
+hr.invoice-line-top {
+    border-top: 1px solid black;
+}
+
+hr.invoice-line {
+    border-top: 1px dashed;
+}
+
+.refundBillMiddle {
+    justify-content: space-between;
+    width: 100%;
+}
+
+.refund-total-table {
+    width: 100%;
+    font-size: 12px;
+}
+
+.refund-total-table td {
+    padding: 2px;
+}
+
+.refund-total-table {
+    width: 100%;
+    font-size: 12px;
+    margin-right: 47px;
+
+}
+
+.refund-receipt-footer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.refund-receipt-footer p {
+    font-size: 10px;
+    margin-bottom: 10px;
+}
+
+.refund-receipt-footer .special-note {
+    margin-top: 8px;
+}

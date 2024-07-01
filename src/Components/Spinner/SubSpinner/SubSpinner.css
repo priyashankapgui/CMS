@@ -1,0 +1,17 @@
+.sweet-loading-sub {
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    height: 10vh;
+    background-color: transparent;
+}
+
+.SubSpinnerSystemText {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1; 
+    color: #0377A8;
+    font-family: 'Poppins', sans-serif; 
+    margin-bottom: 15px;
+}
