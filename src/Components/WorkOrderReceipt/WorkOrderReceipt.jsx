@@ -51,7 +51,7 @@ const WorkOrderReceipt = ({ onlineOrdNo, onClose }) => {
                 <InputLabel for="customerName">Customer Name: <span>{orderData.customer.firstName} {orderData.customer.lastName}</span></InputLabel>
             </div>
             <div className='WorkOrderDetails'>
-                <InputLabel for="acceptedat">Accepted At: <span>{new Date(orderData.acceptedAt).toLocaleString()}</span></InputLabel>
+                <InputLabel for="acceptedat">Accepted At: <span>{new Date().toLocaleString('en-GB')}</span></InputLabel>
             </div>
             <div className='WorkOrderDetails'>
                 <InputLabel for="acceptedby">Accepted By: <span>{orderData.acceptedBy}</span></InputLabel>
@@ -73,7 +73,7 @@ const WorkOrderReceipt = ({ onlineOrdNo, onClose }) => {
                             </tr>
                             <tr>
                                 <td></td>
-                                <td style={{ textAlign: 'left' }}>{item.PurchaseQty}</td>
+                                <td style={{ textAlign: 'center' }}>{parseFloat(item.PurchaseQty).toFixed(2)}</td>
                                 <td style={{ textAlign: 'center' }}>{item.batchNo}</td>
                                 <td style={{ textAlign: 'right' }}>{parseFloat(item.sellingPrice).toFixed(2)}</td>
                             </tr>

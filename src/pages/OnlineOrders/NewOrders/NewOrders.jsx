@@ -33,7 +33,7 @@ const NewOrders = ({ setNewOrdersCount }) => {
                     <th>Branch</th>
                     <th>Customer Name</th>
                     <th>Payment Method</th>
-                    <th>Hope to Pick Up</th>
+                    {/* <th>Hope to Pick Up</th> */}
                     <th>Comment</th>
                     <th></th>
                     {/* <th></th> */}
@@ -47,7 +47,7 @@ const NewOrders = ({ setNewOrdersCount }) => {
                         <td>{order.branch.branchName}</td>
                         <td>{order.customer.firstName} {order.customer.lastName}</td>
                         <td>Card</td>
-                        <td>{order.hopeToPickup ? new Date(order.hopeToPickup).toLocaleString() : 'N/A'}</td>
+                        {/* <td>{order.hopeToPickup ? new Date(order.hopeToPickup).toLocaleString() : 'N/A'}</td> */}
                         <td>{order.comment}</td>
                         <td>
                             <Link to={`/online-orders/viewOrder/${order.onlineBillNo}`}>

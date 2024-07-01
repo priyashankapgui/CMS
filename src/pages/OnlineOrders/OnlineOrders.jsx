@@ -17,11 +17,16 @@ import Badge from '@mui/material/Badge';
 export const OnlineOrders = () => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [newOrdersCount, setNewOrdersCount] = useState(0); 
-    const [processingOrdersCount, setprocessingOrdersCount] = useState(0);
-    const [pickupOrdersCount, setpickupOrdersCount] = useState(0);
+    const [processingOrdersCount, setProcessingOrdersCount] = useState(0);
+    const [pickupOrdersCount, setPickupOrdersCount] = useState(0);
+    const [tabIndex, setTabIndex] = useState(0); // State for tracking active tab index
 
     const handleBranchDropdownChange = (value) => {
         setSelectedBranch(value);
+    };
+
+    const handleTabSelect = (index) => {
+        setTabIndex(index);
     };
 
     return (
@@ -60,31 +65,33 @@ export const OnlineOrders = () => {
                         <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={''}> Clear </Buttons>
                     </div>
                 </div>
-                <Tabs className="OnlineOrdersTabs">
+                <Tabs className="OnlineOrdersTabs" selectedIndex={tabIndex} onSelect={handleTabSelect}>
                     <TabList className="OrderStatusTab">
-                        <Tab>
-                            New Orders 
+                        <Tab index={0}>
+                            New Orders
                             <Badge className="NewtabBadge" badgeContent={newOrdersCount} />
                         </Tab>
-                        <Tab>
+                        <Tab index={1}>
                             Processing
                             <Badge className="ProcessingtabBadge" badgeContent={processingOrdersCount}/>
                         </Tab>
-                        <Tab>
+                        <Tab index={2}>
                             Pending Pickup
                             <Badge className="PendingtabBadge" badgeContent={pickupOrdersCount}/>
                         </Tab>
-                        <Tab>Completed</Tab>
+                        <Tab index={3}>
+                            Completed
+                        </Tab>
                     </TabList>
 
                     <TabPanel>
                         <NewOrders setNewOrdersCount={setNewOrdersCount} />
                     </TabPanel>
                     <TabPanel>
-                        <ProcessingOrders setprocessingOrdersCount={setprocessingOrdersCount}/>
+                        <ProcessingOrders setProcessingOrdersCount={setProcessingOrdersCount} onTabChange={setTabIndex} />
                     </TabPanel>
                     <TabPanel>
-                        <PendingPickup setpickupOrdersCount={setpickupOrdersCount}/>
+                        <PendingPickup setPickupOrdersCount={setPickupOrdersCount} onTabChange={setTabIndex} />
                     </TabPanel>
                     <TabPanel>
                         <CompletedOrder />
