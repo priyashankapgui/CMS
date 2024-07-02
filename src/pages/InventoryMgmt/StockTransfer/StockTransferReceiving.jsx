@@ -4,9 +4,9 @@ import './StockTransferReceiving.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import { getStockTransferBySTN_NO, updateTransferQty } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const StockTransferReceiving = () => {
     const navigate = useNavigate();
@@ -16,12 +16,9 @@ export const StockTransferReceiving = () => {
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
-                const response = await axios.get(`/stock-transferAllDetails/${STN_NO}`);
-                if (response.data.success) {
-                    setStockTransferDetails(response.data.data);
-                } else {
-                    console.error('Failed to fetch stock transfer details:', response.data.message);
-                }
+                const response = await getStockTransferBySTN_NO(STN_NO);
+                setStockTransferDetails(response.data);
+
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
             }
@@ -54,7 +51,7 @@ export const StockTransferReceiving = () => {
         };
 
         try {
-            const response = await axios.put('/update-product-batch-sum', formattedData);
+            const response = await updateTransferQty(formattedData);
             if (response.data.success) {
                 console.log('Data successfully saved:', response.data.message);
                 // Handle success (e.g., show a success message, navigate to another page, etc.)
@@ -62,14 +59,14 @@ export const StockTransferReceiving = () => {
                 console.error('Failed to save data:', response.data.message);
             }
             // Navigate to the desired page after successful save
-            navigate('/stock-transfer/OUT');
+            navigate('/stock-transfer');
         } catch (error) {
             console.error('Error saving data:', error);
         }
     };
 
     const calculateTotalAmount = () => {
-        // Implement your logic here to calculate the total amount
+        
         return stockTransferDetails?.products.reduce((total, product) => 
             total + product.batches.reduce((batchTotal, batch) => batchTotal + batch.amount, 0), 0
         ) || 0;

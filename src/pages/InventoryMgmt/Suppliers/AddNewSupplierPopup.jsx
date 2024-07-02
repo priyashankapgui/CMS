@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
-import axios from 'axios';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { createSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
 

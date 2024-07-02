@@ -24,9 +24,10 @@ export const createGRN = async (grnData) => {
 export const getAllGRN = async () => {
     try {
         const response = await api.get('/grn');
+        console.log("grn data ",response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        console.error('Error fetching grn data:', error);
         throw error;
     }
 };

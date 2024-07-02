@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Joi from 'joi';
 import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';

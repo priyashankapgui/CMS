@@ -20,11 +20,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-
-    const [imageUrl, setImageUrl] = useState(null);
-    const [files, setFile] = useState(null);
-    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
-    const [showAlertError, setShowAlertError] = useState(false);
     const [loading, setLoading] = useState(false);
     
 
