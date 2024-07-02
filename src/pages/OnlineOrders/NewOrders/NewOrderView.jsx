@@ -2,20 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from "../../../Layout/Layout";
 import "./NewOrderView.css";
-import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import InputField from '../../../Components/InputField/InputField';
 import InputLabel from '../../../Components/Label/InputLabel';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { MdDone } from "react-icons/md";
+import { MdDone } from 'react-icons/md';
 import WorkOrderReceipt from '../../../Components/WorkOrderReceipt/WorkOrderReceipt';
-import {getOnlineBillByNumber} from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx'
-import {getOnlineBillProductsByBillNo} from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx'
+import { getOnlineBillByNumber, updateOnlineBill } from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx';
+import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
+import secureLocalStorage from 'react-secure-storage';
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
 
 export function NewOrderView() {
     const { onlineBillNo } = useParams();
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
+    const [userDetails, setUserDetails] = useState({ username: '' });
+    const [showAlert, setShowAlert] = useState(false);
+    const [alertDetails, setAlertDetails] = useState({
+        severity: 'success',
+        title: 'Success',
+        message: 'You have successfully accepted the order!',
+        duration: 3000
+    });
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+    }, []);
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -33,12 +53,44 @@ export function NewOrderView() {
         fetchOrderData();
     }, [onlineBillNo]);
 
-    const handleAcceptClick = () => {
-        setShowPopup(true);
+    const handleAcceptClick = async () => {
+        if (userDetails.username) {
+            const currentTime = new Date().toISOString(); 
+            const updates = {
+                acceptedBy: userDetails.username,
+                status: "Processing",
+                acceptedAt: currentTime 
+            };
+
+            try {
+                await updateOnlineBill(onlineBillNo, updates);
+                setOrderData((prevData) => ({
+                    ...prevData,
+                    acceptedBy: updates.acceptedBy,
+                    status: updates.status,
+                    acceptedAt: currentTime 
+                }));
+                setShowPopup(true);
+                setShowAlert(true);
+            } catch (error) {
+                console.error('Error updating online bill:', error);
+                setAlertDetails({
+                    severity: 'error',
+                    title: 'Error',
+                    message: 'Failed to accept the order. Please try again.',
+                    duration: 3000
+                });
+                setShowAlert(true);
+            }
+        }
     };
 
     const handleClosePopup = () => {
         setShowPopup(false);
+    };
+
+    const handleCloseAlert = () => {
+        setShowAlert(false);
     };
 
     const calculateAmount = (item) => {
@@ -143,42 +195,41 @@ export function NewOrderView() {
                                 </tr>
                             )}
                             <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th>Gross Total</th>
-                                <td><InputField id="" name="grossTotal" editable={false} width="100%" value={calculateGrossTotal()} /></td>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th>Total Discount</th>
-                                <td><InputField id="" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} /></td>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th>Net Total</th>
-                                <td><InputField id="" name="netTotal" editable={false} width="100%" value={calculateNetTotal()} /></td>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th>Number of Items</th>
-                                <td><InputField id="" name="itemCount" editable={false} width="100%" value={numberOfItems} /></td>
+                                <td colSpan="6">
+                                    <div className="summary-box">
+                                        <div className="summary-row">
+                                            <span>Gross Total:</span>
+                                            <InputField className="Onlineinput" id="" name="grossTotal" editable={false} width="100%" value={calculateGrossTotal()} />
+                                        </div>
+                                        <div className="summary-row">
+                                            <span>Total Discount:</span>
+                                            <InputField className="Onlineinput" id="" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} />
+                                        </div>
+                                        <div className="summary-row">
+                                            <span>Net Total:</span>
+                                            <InputField className="Onlineinput" id="" name="netTotal" editable={false} width="100%" value={calculateNetTotal()} />
+                                        </div>
+                                        <div className="summary-row">
+                                            <span>Number of Items:</span>
+                                            <InputField className="Onlineinput" id="" name="itemCount" editable={false} width="100%" value={numberOfItems} />
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </Layout>
             {showPopup && <WorkOrderReceipt onlineOrdNo={orderData.onlineBillNo} onClose={handleClosePopup} />}
+            {showAlert && (
+                <CustomAlert
+                    severity={alertDetails.severity}
+                    title={alertDetails.title}
+                    message={alertDetails.message}
+                    duration={alertDetails.duration}
+                    onClose={handleCloseAlert}
+                />
+            )}
         </>
     );
 }

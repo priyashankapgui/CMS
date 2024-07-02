@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import ReceiptPopup from '../../SalesReceiptTemp/ReceiptPopup/ReceiptPopup';
 import './GrnDoc.css';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; // Import the spinner
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; 
+import { getGRNByGRN_NO } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 const GrnDoc = ({ GRN_NO, onClose }) => {
     console.log("data ohh", GRN_NO);
@@ -13,8 +13,8 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
         const fetchGRNData = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:8080/grn-all?GRN_NO=${GRN_NO}`);
-                setGRNData(response.data.data);
+                const response = await getGRNByGRN_NO(GRN_NO);
+                setGRNData(response.data);
 
             } catch (error) {
                 console.error("Error fetching GRN data:", error);

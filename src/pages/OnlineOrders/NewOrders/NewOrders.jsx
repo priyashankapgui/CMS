@@ -6,21 +6,23 @@ import { MdPrint } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx"; 
 
-const NewOrders = () => {
+const NewOrders = ({ setNewOrdersCount }) => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills(); 
-                setOrders(response);
+                const newOrders = response.filter(order => order.status === "New");
+                setOrders(newOrders);
+                setNewOrdersCount(newOrders.length);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
         };
 
         fetchOrders();
-    }, []);
+    }, [setNewOrdersCount]);
 
     return (
         <table className="NewOrderTable">
@@ -31,10 +33,10 @@ const NewOrders = () => {
                     <th>Branch</th>
                     <th>Customer Name</th>
                     <th>Payment Method</th>
-                    <th>Hope to Pick Up</th>
+                    {/* <th>Hope to Pick Up</th> */}
                     <th>Comment</th>
                     <th></th>
-                    <th></th>
+                    {/* <th></th> */}
                 </tr>
             </thead>
             <tbody>
@@ -45,12 +47,14 @@ const NewOrders = () => {
                         <td>{order.branch.branchName}</td>
                         <td>{order.customer.firstName} {order.customer.lastName}</td>
                         <td>Card</td>
-                        <td>{new Date(order.hopeToPickup).toLocaleString()}</td>
+                        {/* <td>{order.hopeToPickup ? new Date(order.hopeToPickup).toLocaleString() : 'N/A'}</td> */}
                         <td>{order.comment}</td>
-                        <Link to={`/online-orders/viewOrder/${order.onlineBillNo}`}>
-                            <td><RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />}/></td>
-                        </Link>
-                        <td><RoundButtons id={`printViewBtn`} type="print" name={`printViewBtn`} icon={<MdPrint />}/></td>
+                        <td>
+                            <Link to={`/online-orders/viewOrder/${order.onlineBillNo}`}>
+                                <RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />}/>
+                            </Link>
+                        </td>
+                        {/* <td><RoundButtons id={`printViewBtn`} type="print" name={`printViewBtn`} icon={<MdPrint />}/></td> */}
                     </tr>
                 ))}
             </tbody>

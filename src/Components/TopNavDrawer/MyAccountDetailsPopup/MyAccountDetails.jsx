@@ -2,130 +2,24 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import SubPopup from "../../PopupsWindows/SubPopup";
 import Buttons from "../../Buttons/SquareButtons/Buttons";
-import InputLabel from "../../Label/InputLabel";
-import InputField from "../../InputField/InputField";
-import { useDropzone } from "react-dropzone";
-import CustomAlert from "../../Alerts/CustomAlert/CustomAlert";
 import "./MyAccountDetails.css";
-import PasswordStrengthBar from "react-password-strength-bar";
 import secureLocalStorage from "react-secure-storage";
-import { useNavigate } from "react-router-dom";
-import SubSpinner from "../../Spinner/SubSpinner/SubSpinner";
-import { updatePersonalAccount } from "../../../Api/BranchMgmt/UserAccountsAPI";
-
+import MyAccountDetailsMain from "./MyAccountDetailsMain";
+import MyAccountDetailsPassword from "./MyAccountDetailsPassword";
 
 function MyAccountDetails() {
-  const navigate = useNavigate();
-  const [showSubPopup, setShowSubPopup] = useState(false);
-  const [employeeData, setEmployeeData] = useState({
-    employeeName: "",
-    employeeId: "",
-    branchName: "",
-    userRoleName: "",
-    email: "",
-  });
   const [editable, setEditable] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
-  const [file, setFile] = useState(null); // State for storing the image file
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showAlertSuccess, setShowAlertSuccess] = useState(false);
-  const [showAlertError, setShowAlertError] = useState("");
   const [profilePicExists, setProfilePicExists] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [viewPassword, setViewPassword] = useState(false);
   let user = JSON.parse(secureLocalStorage.getItem("user"));
 
   const toggleEditable = () => {
+    console.log("toggleEditable");
     setEditable(!editable);
   };
 
-  const handleDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
-    setFile(file);
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "",
-    multiple: false,
-    onDrop: handleDrop,
-  });
-
-  const handleCloseSubPopup = () => {
-    setShowSubPopup(false);
-  };
-
-  useEffect(() => {
-    setEmployeeData({
-      employeeName: user?.userName || "",
-      employeeId: user?.userID || user?.employeeId || "",
-      branchName: user?.branchName || "",
-      userRoleName: user?.role || "",
-      email: user?.email || "",
-    });
-  }, []);
-
-  const handleUpdate = async () => {
-    if (!employeeData.employeeName || !employeeData.email) {
-      setShowAlertError("Please fill in all fields");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setShowAlertError("Passwords do not match");
-      return;
-    }
-    setLoading(true);
-    try {
-      let body = {};
-      const token = secureLocalStorage.getItem("accessToken");
-      let response;
-      if (password === "") {
-        body = {
-          employeeName: employeeData.employeeName,
-          branchName: employeeData.branchName,
-          userRoleName: employeeData.userRoleName,
-          email: employeeData.email,
-        };
-      } else {
-        body = {
-          employeeName: employeeData.employeeName,
-          branchName: employeeData.branchName,
-          userRoleName: employeeData.userRoleName,
-          email: employeeData.email,
-          password: password,
-        };
-      }
-      const formData = new FormData();
-      formData.append("data", JSON.stringify(body));
-      if (file) {
-        formData.append("image", file);
-      }
-      response = await updatePersonalAccount(formData, token);
-      if (response.status !== 200) {
-        const data = await response.data;
-        console.log("Error:", data.error);
-        setShowAlertError(data.error);
-      } else {
-        const updatedUser = {
-          userName: body.employeeName || body.superAdminName,
-          userID: employeeData.employeeId,
-          branchName: (body.branchName === "None" ? "" : body.branchName) || "",
-          role: employeeData.userRoleName,
-          email: body.email,
-        };
-        secureLocalStorage.setItem("user", JSON.stringify(updatedUser));
-        setShowAlertSuccess(true);
-      }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      setShowAlertError(true);
-      console.error("Error:", error);
-    }
+  const toggleViewPassword = () => {
+    setViewPassword(!viewPassword);
   };
 
   return (
@@ -151,17 +45,18 @@ function MyAccountDetails() {
             </div>
           </div>
         }
-        popupPositionLeft="70%"
+        popupPositionLeft="0%"
         popupPositionTop="0%"
+        justifyContent="flex-end"
         headBG="none"
         title={
           <>
             <div className="popupProfileTxt">
               My Profile{" "}
-              <div className="editPopIcon" >
+              <div className={editable?"editPopIcon editPopIcon-clicked" : "editPopIcon"}>
                 <Icon
                   icon="fluent:person-edit-48-regular"
-                  style={{ fontSize: "1em", cursor: "pointer", alignContent: 'center' }}
+                  style={{ fontSize: "1em", cursor: "pointer", alignContent: "center", justifyContent: "center"}}
                   onClick={toggleEditable}
                 />
               </div>
@@ -170,192 +65,26 @@ function MyAccountDetails() {
         }
         headTextColor="black"
         closeIconColor="red"
-        show={showSubPopup}
-        onClose={handleCloseSubPopup}
         bodyContent={
-          <div className="view-profile-form-background">
-            <div className="branch-field">
-              <InputLabel for="branchName" color="#0377A8">
-                Branch
-              </InputLabel>
-              <InputField
-                type="text"
-                id="branchName"
-                name="branchName"
-                value={employeeData.branchName}
-                width="250px"
-              />
-            </div>
-            <div className="flex-content-ViewP">
-              <div className="user-role-field">
-                <InputLabel for="userRole" color="#0377A8">
-                  User Role
-                </InputLabel>
-                <InputField
-                  type="text"
-                  id="role"
-                  name="role"
-                  value={employeeData.userRoleName}
-                  width="250px"
-                />
-              </div>
-              <div className={editable ? "change-dp" : "change-dp-no-hover"}  {...(editable ? getRootProps() : {})}>
-                {editable && (
-                  <label className="upload-label" htmlFor="profilePicture">
-                    <Icon icon="fluent:camera-add-20-regular" />
-                  </label>
-                )}
-                {imageUrl && (
-                  <img className={"preview-image"} src={imageUrl} alt="Preview" />
-                )}
-                {profilePicExists && !imageUrl ? (
-                  <img
-                    className="preview-image"
-                    src={`https://flexflowstorage01.blob.core.windows.net/cms-data/${user.userID}.png`}
-                    alt="Profile"
-                  />
-                ) : (
-                  <img
-                    className="preview-image"
-                    // src={accountCircle}
-                    src={`${process.env.PUBLIC_URL}/Images/account_circle.svg`}
-                    alt="Profile"
-                  />
-                )}
-                {editable && (
-                  <div>
-                    <input {...getInputProps()} />
-                    {isDragActive ? <p>Drop the image here...</p> : null}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="emp-id-field">
-              <InputLabel for="empID" color="#0377A8">
-                Emp ID
-              </InputLabel>
-              <InputField
-                type="text"
-                id="empID"
-                name="empID"
-                value={employeeData.employeeId}
-              />
-            </div>
-            <div className="emp-name-field">
-              <InputLabel for="empName" color="#0377A8">
-                Emp Name
-              </InputLabel>
-              <InputField
-                type="text"
-                id="empName"
-                name="empName"
-                value={employeeData.employeeName}
-                className={editable ? "blue-border" : ""}
-                editable={editable}
-                onChange={(e) =>
-                  setEmployeeData({
-                    ...employeeData,
-                    employeeName: e.target.value,
-                  })
+          <div >
+            {viewPassword ? null : (
+              <>
+                <MyAccountDetailsMain editable={editable} profilePicExists={profilePicExists} toggleEditable={toggleEditable}/>
+                {!editable && 
+                <Buttons
+                  id="change-view-btn"
+                  btnWidth="fit-content"
+                  marginTop={"20px"}
+                  fontSize={"14px"}
+                  style={{ backgroundColor: "white", color:"#0377A8"}}
+                  onClick={toggleViewPassword}
+                >
+                  Change Your Password?
+                </Buttons>
                 }
-              />
-            </div>
-            <div className="email-field">
-              <InputLabel for="empEmail" color="#0377A8">
-                Official Email (Optional)
-              </InputLabel>
-              <InputField
-                type="email"
-                id="empEmail"
-                name="empEmail"
-                value={employeeData.email}
-                editable={editable}
-                className={editable ? "blue-border" : ""}
-                onChange={(e) =>
-                  setEmployeeData({ ...employeeData, email: e.target.value })
-                }
-              />
-            </div>
-            {editable && (
-              <div>
-                <div className="password-field">
-                  <InputLabel for="userPassword" color="#0377A8">
-                    Do you want to change your password?
-                  </InputLabel>
-                  <InputField
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    placeholder="New Password"
-                    value={password}
-                    editable={editable}
-                    className={editable ? "blue-border" : ""}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  {password && (
-                    <PasswordStrengthBar
-                      password={password}
-                      minLength={8}
-                      scoreWordStyle={{
-                        fontSize: "14px",
-                        fontFamily: "Poppins",
-                      }}
-                      scoreWords={[
-                        "very weak",
-                        "weak",
-                        "good",
-                        "strong",
-                        "very strong",
-                      ]}
-                      shortScoreWord="should be atlest 8 characters long"
-                    />
-                  )}
-                  <InputField
-                    type="password"
-                    id="conf_newPassword"
-                    name="conf_newPassword"
-                    placeholder="Confirm New Password"
-                    value={confirmPassword}
-                    editable={editable}
-                    className={editable ? "blue-border" : ""}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </div>
-                {loading ?
-                  <SubSpinner loading={loading} spinnerText="Updating" />
-                  :
-                  <Buttons
-                    type="submit"
-                    id="update-btn"
-                    btnWidth="22em"
-                    style={{ backgroundColor: "#23A3DA", color: "white" }}
-                    onClick={handleUpdate}
-                  >
-                    Update
-                  </Buttons>
-                }
-              </div>
+              </>
             )}
-
-            {showAlertSuccess && (
-              <CustomAlert
-                severity="success"
-                title="Success"
-                message="Employee updated successfully"
-                duration={3000}
-                onClose={() => navigate(0)}
-              />
-            )}
-
-            {showAlertError && (
-              <CustomAlert
-                severity="error"
-                title="Error"
-                message={showAlertError}
-                duration={10000}
-                onClose={() => setShowAlertError("")}
-              />
-            )}
+            {viewPassword && <MyAccountDetailsPassword toggleViewPassword={toggleViewPassword}/>}
           </div>
         }
       />

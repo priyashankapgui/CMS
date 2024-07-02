@@ -20,7 +20,7 @@ export const getActiveStock = async (branchName, productId) => {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching product batch details:', error);
+        console.error('Error fetching actiive stock details:', error);
         throw error;
     }
 };

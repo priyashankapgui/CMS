@@ -50,12 +50,8 @@ const Login = () => {
       if (response.status === 200) {
         const data = response.data;
         console.log("Response data:", data);
-
-        // Store the token in local storage
         secureLocalStorage.setItem("accessToken", data.token);
         secureLocalStorage.setItem("user", JSON.stringify(data.user));
-        secureLocalStorage.setItem("accessToken", data.token);
-
         setLoggingSuccess(true);
       } else {
         // Login failed, handle error

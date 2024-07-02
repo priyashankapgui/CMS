@@ -5,7 +5,6 @@ import TableWithPagi from "../../../Components/Tables/TableWithPagi";
 import DeletePopup from "../../../Components/PopupsWindows/DeletePopup";
 import UpdateBranchPopup from "./UpdateBranchPopup";
 import AddNewBranchPopup from "./AddNewBranchPopup";
-import { useNavigate } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { getBranchOptions, deleteBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx';
@@ -15,9 +14,9 @@ export const AdjustBranch = () => {
     const [loading, setLoading] = useState(true);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
-    const navigate = useNavigate();
+
     const fetchBranchData = async () => {
-        setLoading(true); 
+        setLoading(true);
         try {
             const branches = await getBranchOptions();
             setBranchData(Array.isArray(branches) ? branches : []);
@@ -30,12 +29,11 @@ export const AdjustBranch = () => {
                 duration: 3000
             });
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
-    useEffect(() => {
-        
 
+    useEffect(() => {
         fetchBranchData();
 
         const storedAlertConfig = localStorage.getItem('alertConfig');
@@ -55,12 +53,11 @@ export const AdjustBranch = () => {
     };
 
     const handleDelete = async (branchId) => {
-        setLoading(true); 
+        setLoading(true);
         try {
             await deleteBranch(branchId);
             const updatedBranchData = branchData.filter(branch => branch.branchId !== branchId);
             setBranchData(updatedBranchData);
-            console.log("Branch deleted successfully");
 
             showAlert({
                 severity: 'success',
@@ -78,8 +75,12 @@ export const AdjustBranch = () => {
                 duration: 3000
             });
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
+    };
+
+    const handlePopupClose = () => {
+        fetchBranchData(); // Call fetchBranchData when closing the popup
     };
 
     return (
@@ -119,7 +120,7 @@ export const AdjustBranch = () => {
 
                                 action: (
                                     <div style={{ display: "flex", gap: "0.5em" }}>
-                                        <UpdateBranchPopup branchId={branch.branchId} />
+                                        <UpdateBranchPopup branchId={branch.branchId} onClose={handlePopupClose} />
                                         <DeletePopup handleDelete={() => handleDelete(branch.branchId)} />
                                     </div>
                                 )
