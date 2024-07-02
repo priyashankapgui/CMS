@@ -1,7 +1,8 @@
 {
   "repoTypes": [
     "Stock Summary",
-    "Upcoming Expiry Stock"
+    "Upcoming Expiry Stock",
+    "Already Expired Stock"
   ],
   "salesChartData": {
     "2023": [

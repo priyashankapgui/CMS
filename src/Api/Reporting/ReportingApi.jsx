@@ -29,6 +29,15 @@ export const getExpStockDocDataByBranch = async (branchName) => {
 };
 
 
+export const getAlreadyExpStockDocDataByBranch = async (branchName) => {
+    try {
+        const response = await api.get(`/product-batch-sum-expired-stock-branch?branchName=${branchName}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetchingAlready exp stock summery data:', error);
+        throw error;
+    }
+};
 
 
 

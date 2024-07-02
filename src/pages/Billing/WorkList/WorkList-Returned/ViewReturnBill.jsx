@@ -65,7 +65,7 @@ export function ViewReturnBill() {
         return <div>Refund Bill not found</div>;
     }
 
-    const { RTBNo: selectedRTBNo, branchName, billNo, createdAt, returnedBy, customerName, status, contactNo, refundTotalAmount, refundBillProducts = [] } = refundBillData;
+    const { RTBNo: selectedRTBNo, branchName, billNo, createdAt, returnedBy, customerName, status, reason,contactNo, refundTotalAmount, refundBillProducts = [] } = refundBillData;
 
     return (
         <>
@@ -109,6 +109,9 @@ export function ViewReturnBill() {
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="cusContact" color="#0377A8">Contact No: <span>{contactNo}</span></InputLabel>
+                            </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="teason" color="#0377A8">Reason: <span>{reason}</span></InputLabel>
                             </div>
                         </div>
                     </div>
