@@ -30,6 +30,15 @@
     font-weight: 500;
 }
 
+.view-returnbill-top-cont-bottom span {
+    color: black;
+}
+
+.ReturnTotAmount .input-label {
+    font-weight: 600;
+    font-size: 16px;
+}
+
 .inputFlex {
     display: flex;
 }
@@ -38,7 +47,7 @@ hr {
     margin: 10px 0 10px 0;
 }
 
-.view-returnbill-top-cont-bottom{
+.view-returnbill-top-cont-bottom {
     display: flex;
     justify-content: space-between;
 }
@@ -53,6 +62,7 @@ hr {
 
 .returned-item-table {
     margin: 0 auto;
+   
 }
 
 .returned-item-table thead {

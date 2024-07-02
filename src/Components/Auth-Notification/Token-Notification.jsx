@@ -5,7 +5,7 @@ import Buttons from "../Buttons/SquareButtons/Buttons";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 
-const ErrorNotification = ({errorType}) => {
+const ErrorNotification = ({ errorType }) => {
     const navigate = useNavigate();
     console.log(errorType);
     let notificationContent;
@@ -22,8 +22,9 @@ const ErrorNotification = ({errorType}) => {
                             </h2>
                         </div>
                         <Buttons
-                            style={{ backgroundColor: "#EEEEEE", color: "red" }}
-                            btnWidth={150}
+                            style={{ backgroundColor: "#ed5252", color: "white" }}
+                            btnWidth='12.5em'
+                            btnHeight='3.125em'
                             marginTop="1.625em"
                             onClick={() => {
                                 secureLocalStorage.removeItem('accessToken');
@@ -48,8 +49,10 @@ const ErrorNotification = ({errorType}) => {
                             </h2>
                         </div>
                         <Buttons
-                            style={{ backgroundColor: "#EEEEEE", color: "red" }}
-                            btnWidth={150}
+
+                            style={{ backgroundColor: "#ed5252", color: "white" }}
+                            btnWidth='12.5em'
+                            btnHeight='3.125em'
                             marginTop="1.625em"
                             onClick={() => {
                                 navigate(0);

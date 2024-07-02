@@ -4,9 +4,9 @@ import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import { createBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx';
+import { createBranch, getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
-function AddNewBranchPopup({fetchData}) {
+function AddNewBranchPopup({ fetchData }) {
     const navigate = useNavigate();
     const [branchName, setBranchName] = useState('');
     const [address, setAddress] = useState('');
@@ -29,37 +29,61 @@ function AddNewBranchPopup({fetchData}) {
         setIsSaveDisabled(!(branchName && address && branchEmail && contactNo));
     }, [branchName, address, branchEmail, contactNo]);
 
-    const handleSave = async (e) => {
-        //if
+    const showAlert = (config) => {
+        setAlertConfig(config);
+        setAlertVisible(true);
+        setTimeout(() => {
+            setAlertVisible(false);
+        }, config.duration || 3000);
+    };
+
+    const checkBranchExists = async (branchName) => {
         try {
+            const branches = await getBranchOptions();
+            return branches.some(branch => branch.branchName.toLowerCase() === branchName.toLowerCase());
+        } catch (error) {
+            console.error('Error checking if branch exists:', error);
+            return false;
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            const branchExists = await checkBranchExists(branchName);
+            if (branchExists) {
+                showAlert({
+                    severity: 'warning',
+                    title: 'Branch Exists',
+                    message: 'Branch with this name already exists.',
+                    duration: 3000
+                });
+                return;
+            }
+
             await createBranch({
                 branchName: branchName,
                 address: address,
                 email: branchEmail,
                 contactNumber: contactNo
             });
+
             console.log("Branch added successfully");
-            const alertData = {
+            showAlert({
                 severity: 'success',
-                title: 'Added',
+                title: 'Branch Added',
                 message: 'Branch added successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            fetchData()
-            // navigate('/adjust-branch');
-            window.location.reload();
+            });
+
+            fetchData();
         } catch (error) {
             console.error("Error:", error);
-            const alertData = {
+            showAlert({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to add branch.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            });
         }
     };
 

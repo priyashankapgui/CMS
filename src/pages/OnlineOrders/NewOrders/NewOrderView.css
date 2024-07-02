@@ -1,9 +1,10 @@
-.ViewOnlineDetails{
+.ViewOnlineDetails {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
-.View-onlineorder-top{
+
+.View-onlineorder-top {
     background-color: white;
     width: 100%;
     height: 180px;
@@ -12,37 +13,73 @@
     font-size: 1em;
     margin-bottom: 20px;
 }
-.View-onlineorder-top-cont{
+
+.View-onlineorder-top-cont {
     display: flex;
     gap: 300px;
 }
-.View-onlineorder-top-cont span{
+
+.View-onlineorder-top-cont span {
     color: black;
     font-weight: 500;
 }
+
 .inputFlex {
     display: flex;
 }
+
 hr {
     margin: 10px 0 10px 0;
 }
-.View-onlineorder-bottom-cont{
+
+.View-onlineorder-bottom-cont {
     display: flex;
-    justify-content:end;
+    justify-content: end;
 }
-.onlineOrderRBtn{
+
+.onlineOrderRBtn {
     margin-left: 20px;
 }
-.viewOnlineOrderItem{
+
+.viewOnlineOrderItem {
     overflow: auto;
     width: 100%;
     height: 60vh;
     align-items: center;
     margin-bottom: 20px;
 }
-.viewonlineitemtable{
+
+.viewonlineitemtable {
     margin: 0 auto;
 }
-.viewonlineitemtable thead{
+
+.viewonlineitemtable thead {
     background-color: #E9E9E9;
+}
+.summary-box {
+    margin-left: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #f5f5f5;
+    border-radius: 20px;
+    width: 600px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    width: 500px;
+}
+
+.summary-row span {
+    font-weight: bold;
+    color: #0377A8;
+    width: 300px;
+}
+.Onlineinput {
+    color: black;
+    font-weight: 400;
+    font-size: 14px;
 }

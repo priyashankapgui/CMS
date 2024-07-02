@@ -40,7 +40,7 @@ export default function CustomAlert({ severity, title, message, duration, onClos
           severity={severity}
           sx={{
             position: 'fixed',
-            zIndex: '999',
+            zIndex: '9999',
             top: '80px',
             right: '10px',
             marginBottom: '30px',

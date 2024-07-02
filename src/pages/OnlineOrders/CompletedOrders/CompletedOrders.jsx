@@ -1,14 +1,32 @@
-import React from "react";
-import './CompletedOrders.css'
+import React, { useEffect, useState } from "react";
+import './CompletedOrders.css';
 import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons";
 import { BsEye } from 'react-icons/bs';
+import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 
 const Completed = () => {
+    const [orders, setOrders] = useState([]);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const response = await getAllOnlineBills(); 
+                const completedOrders = response.filter(order => order.status === "Completed");
+                setOrders(completedOrders);
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            }
+        };
+
+        fetchOrders();
+    }, []);
+
     return (
         <table className="CompletedOrderTable">
             <thead>
                 <tr>
                     <th>ORD No</th>
+                    <th>Ordered At</th>
                     <th>Branch</th>
                     <th>Customer Name</th>
                     <th>Payment Method</th>
@@ -17,22 +35,30 @@ const Completed = () => {
                     <th>Pickup At</th>
                     <th>Issued By</th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>ORD2312228</td>
-                    <td>22-12-2023  11:21</td>
-                    <td>Galle</td>
-                    <td>Anuththara Udeshi</td>
-                    <td>Card</td>
-                    <td>22-12-2023  16:00</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td><RoundButtons id={`eyeViewBtn`} type="submit" name={`eyeViewBtn`} icon={<BsEye />}/></td>
-                </tr>
+                {orders.map(order => (
+                    <tr key={order.onlineBillNo}>
+                        <td>{order.onlineBillNo}</td>
+                        <td>{new Date(order.createdAt).toLocaleString()}</td>
+                        <td>{order.branch.branchName}</td>
+                        <td>{order.customer.firstName} {order.customer.lastName}</td>
+                        <td>Card</td>
+                        <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
+                        <td>{order.acceptedBy}</td>
+                        <td>{order.pickupTime ? new Date(order.pickupTime).toLocaleString() : 'N/A'}</td>
+                        <td>{order.pickupBy}</td>
+                        <td>
+                            <RoundButtons 
+                                id={`eyeViewBtn-${order.onlineBillNo}`} 
+                                type="button" 
+                                name={`eyeViewBtn-${order.onlineBillNo}`} 
+                                icon={<BsEye />} 
+                            />
+                        </td>
+                    </tr>
+                ))}
             </tbody>
         </table>
     );
