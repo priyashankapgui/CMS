@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from 'react-router-dom'; // Import useLocation
 import Layout from "../../Layout/Layout";
 import "./OnlineOrders.css";
 import SearchBar from '../../Components/SearchBar/SearchBar';
@@ -20,6 +21,16 @@ export const OnlineOrders = () => {
     const [processingOrdersCount, setProcessingOrdersCount] = useState(0);
     const [pickupOrdersCount, setPickupOrdersCount] = useState(0);
     const [tabIndex, setTabIndex] = useState(0); // State for tracking active tab index
+
+    const location = useLocation();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const tab = queryParams.get('tab');
+        if (tab === 'completed') {
+            setTabIndex(3);
+        }
+    }, [location]);
 
     const handleBranchDropdownChange = (value) => {
         setSelectedBranch(value);
