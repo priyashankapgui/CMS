@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import './NewStockTransfer.css';
-import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import secureLocalStorage from "react-secure-storage";
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { createstockTransferOUT } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
 
 export function NewStockTransfer() {
 
@@ -41,9 +42,9 @@ export function NewStockTransfer() {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -57,8 +58,8 @@ export function NewStockTransfer() {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
-            setBranches(response.data);
+            const response = await getBranchOptions();
+            setBranches(response.data.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
         }
@@ -88,10 +89,8 @@ export function NewStockTransfer() {
 
     const handleDeleteRow = (id) => {
         if (id === 1) {
-            // Clear data for the first row
             setRows(rows.map(row => (row.id === 1 ? initialRowData : row)));
         } else {
-            // Delete other rows
             setRows(rows.filter(row => row.id !== id));
         }
     };
@@ -103,14 +102,12 @@ export function NewStockTransfer() {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        // Get the currently logged-in user's username from session storage
         const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
             const user = JSON.parse(userJSON);
             console.log("user data",user);
         console.log("name", user);
 
-        // Prepare data to be sent to the backend
         const stockTransferData = {
             requestedBy: user.userName,
             requestBranch,
@@ -123,7 +120,7 @@ export function NewStockTransfer() {
         };
 
         try {
-            await axios.post('http://localhost:8080/stockTransferOUT', stockTransferData);
+            await createstockTransferOUT (stockTransferData);
             setAlert({
                 show: true,
                 severity: 'success',
@@ -190,7 +187,7 @@ export function NewStockTransfer() {
                             </div>
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
-                            <InputDropdown
+                            <BranchDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}

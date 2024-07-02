@@ -4,6 +4,7 @@ import Joi from 'joi';
 import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
+import InputFile from '../../../Components/InputFile/InputFile';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
@@ -20,11 +21,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-
-    const [imageUrl, setImageUrl] = useState(null);
-    const [files, setFile] = useState(null);
-    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
-    const [showAlertError, setShowAlertError] = useState(false);
     const [loading, setLoading] = useState(false);
     
 
@@ -184,7 +180,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                     <div style={{ display: 'block', width: '100%' }}>
                     <div style={{ marginBottom: "5px" }}>
                             <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
+                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
                         
                         </div>
                         <div>

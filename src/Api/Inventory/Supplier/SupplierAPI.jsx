@@ -26,7 +26,7 @@ export const getSuppliers = async () => {
         const response = await api.get('/suppliers');
         return response.data;
     } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        console.error('Error fetching suppliers:', error);
         throw error;
     }
 };

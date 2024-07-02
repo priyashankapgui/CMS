@@ -3,11 +3,12 @@
         visibility: hidden;
     }
 
-    .StockTranOut-paper-frame * {
+    .expiaryStockDoc-paper-frame,
+    .expiaryStockDoc-paper-frame * {
         visibility: visible;
     }
 
-    .StockTranOut-paper-frame {
+    .expiaryStockDoc-paper-frame {
         position: absolute;
         left: 0;
         top: 0;
@@ -19,40 +20,58 @@
         background-color: #fff;
         font-size: 12px;
     }
+
+    .expiaryStockDoc-paper-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+    }
+
+    .pageNumber::after {
+        content: counter(page);
+    }
+
+    .pageNumber::before {
+        content: "Page ";
+    }
 }
 
-.StockTranOut-paper-frame {
+.expiaryStockDoc-paper-frame {
     width: 297mm;
     height: 210mm;
     margin: 0 auto;
-    padding: 10px;
+    padding: 15px 25px 15px 25px;
     border: 1px solid #ddd;
     background-color: #fafafa;
     font-family: Poppins, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.StockTranOut-paper-sys-logo {
+.expiaryStockDoc-paper-sys-logo {
     width: 90px;
     height: auto;
     margin: 0 auto;
 }
 
-.StockTranOut-paper-header {
+.expiaryStockDoc-paper-header {
     display: block;
     text-align: center;
 }
 
-.StockTranOut-paper-title {
+.expiaryStockDoc-paper-title {
     font-size: 14px;
     text-align: center;
     margin-top: 10px;
     color: #fff;
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
-
 }
 
-.StockTranOut-top-details {
+.expiaryStockDoc-top-details {
     margin: 10px 20px 0 20px;
     font-size: 12px;
     font-weight: 500;
@@ -60,29 +79,31 @@
     justify-content: space-between;
 }
 
-.StockTranOut-bodyContent-table {
+.expiaryStockDoc-bodyContent-table {
     width: 100%;
-    height: 10vh;
     margin: 0 auto;
-    border-collapse:collapse ;
+    border-collapse: collapse;
 }
 
-.StockTranOut-bodyContent-table th {
-    text-align: center;
+.expiaryStockDoc-bodyContent-table th {
     background-color: #e8e8e8;
-    padding: 6px;
     font-size: 12px;
+    padding: 6px 0;
 }
 
-.StockTranOut-bodyContent-table td {
+.expiaryStockDoc-bodyContent-table td {
     font-size: 12px;
+    padding: 6px 0;
 }
 
-.StockTranOut-bottomContent{
+.expiaryStockDoc-bottomContent {
     margin-top: 10px;
 }
 
-.StockTranOut-paper-footer{
+.expiaryStockDoc-paper-footer {
     font-size: 10px;
     text-align: center;
+    position: fixed;
+    bottom: 0;
+    
 }

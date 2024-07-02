@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import { Link } from 'react-router-dom';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
@@ -9,40 +8,19 @@ import { TiTickOutline } from "react-icons/ti";
 import { MdOutlineCancel } from "react-icons/md";
 import secureLocalStorage from "react-secure-storage";
 import StockTranIn from '../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
+import { getAllTransfers } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
 
 const StockTransferIn = ({ searchParams }) => {
+    console.log("searchPramas",searchParams);
     const [stockData, setStockData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedSTN_NO, setSelectedSTN_NO] = useState(null);
+    const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
-    const [activeTab, setActiveTab] = useState('all'); 
+    
 
     useEffect(() => {
-        if (searchParams && searchParams.STN_NO) {
-            fetchStockTransferData(searchParams.STN_NO);
-        } else {
-            fetchStockData();
-        }
-    }, [searchParams]);
-
-    const fetchStockTransferData = async (STN_NO) => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`http://localhost:8080/stock-transferAllDetails/${STN_NO}`);
-            const data = response.data?.data;
-            if (data) {
-                setStockData([data]);
-            } else {
-                setStockData([]);
-                console.error('Unexpected response structure:', response.data);
-            }
-        } catch (error) {
-            console.error('Error fetching stock transfer data:', error);
-            setStockData([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+        fetchStockData();
+    }, [searchParams]); 
 
     const fetchStockData = async () => {
         setLoading(true);
@@ -52,20 +30,50 @@ const StockTransferIn = ({ searchParams }) => {
                 const user = JSON.parse(userJSON);
                 let response;
                 if (user.role === 'Super Admin') {
-                    response = await axios.get('http://localhost:8080/allTransfers');
+                    response = await getAllTransfers();
                 } else if (user.branchName) {
-                    response = await axios.get(`http://localhost:8080/stock-transfer/supplying-branch/${user.branchName}`);
+                    response = await getAllTransfers();
+                    response.data = response.data.filter(transfer => transfer.supplyingBranch === user.branchName);
                 } else {
                     console.error('Branch name is not available for the user');
                     setLoading(false);
                     return;
                 }
-                setStockData(response.data?.data || []);
+
+                let filteredData = response.data || [];
+                if (searchParams.STN_NO) {
+                    filteredData = filteredData.filter((item) =>
+                        item.STN_NO.includes(searchParams.STN_NO)
+                    );
+                }
+                if (searchParams.fromDate && searchParams.toDate) {
+                    const fromDate = new Date(searchParams.fromDate);
+                    const toDate = new Date(searchParams.toDate);
+                    filteredData = filteredData.filter((item) => {
+                        const createdAt = new Date(item.createdAt);
+                        return createdAt >= fromDate && createdAt <= toDate;
+                    });
+                }
+                if (searchParams.requestBranch !== 'All' && searchParams.supplyingBranch === 'All') {
+                    filteredData = filteredData.filter(
+                        (item) => item.requestBranch === searchParams.requestBranch
+                    );
+                } if (searchParams.supplyingBranch !== 'All' && searchParams.requestBranch === 'All') {
+                    filteredData = filteredData.filter(
+                        (item) => item.supplyingBranch === searchParams.supplyingBranch
+                    );
+                } else if (searchParams.productId) {
+                    filteredData = filteredData.filter((item) =>
+                        item.products.some(product => product.productId.includes(searchParams.productId))
+                    );
+                }
+
+                setStockData(filteredData); 
             } else {
                 console.error('User details not found in secure storage');
             }
         } catch (error) {
-            console.error('Error fetching Stock transfer data:', error);
+            console.error('Error fetching stock transfer data:', error);
         } finally {
             setLoading(false);
         }
@@ -77,7 +85,6 @@ const StockTransferIn = ({ searchParams }) => {
     };
 
     const handleReprintClick = (STN_NO) => {
-        console.log("Reprint button clicked for STN NO:", STN_NO);
         setSelectedSTN_NO(STN_NO);
         setShowRefundReceipt(true);
     };

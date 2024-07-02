@@ -4,9 +4,9 @@ import './StockTransferReceiving.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import { getStockTransferBySTN_NO } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const ReceivingRaised = () => {
     const navigate = useNavigate();
@@ -16,12 +16,8 @@ export const ReceivingRaised = () => {
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
-                const response = await axios.get(`/stock-transferAllDetails/${STN_NO}`);
-                if (response.data.success) {
-                    setStockTransferDetails(response.data.data);
-                } else {
-                    console.error('Failed to fetch stock transfer details:', response.data.message);
-                }
+                const response = await getStockTransferBySTN_NO(STN_NO);
+                    setStockTransferDetails(response.data);
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
             }
@@ -33,7 +29,7 @@ export const ReceivingRaised = () => {
     }, [STN_NO]);
 
     const handleButtonClick = () => {
-        navigate('/stock-transfer/OUT');
+        navigate('/stock-transfer');
     };
 
 
@@ -47,7 +43,7 @@ export const ReceivingRaised = () => {
         <>
             <div className="top-nav-blue-text">
             <div className="stockReceiving-top-link">
-                    <Link to="/stock-transfer/OUT">
+                    <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>Stock Transfer - OUT Raised</h4>
@@ -96,7 +92,7 @@ export const ReceivingRaised = () => {
                         )}
                     </div>
                     <div className="Grn-BtnSection">
-                        {/* <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons> */}
+                        
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         
                     </div>

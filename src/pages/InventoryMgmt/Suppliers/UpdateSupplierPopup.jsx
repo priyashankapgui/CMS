@@ -4,7 +4,6 @@ import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import Joi from 'joi';
 import { getSupplierById , updateSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';

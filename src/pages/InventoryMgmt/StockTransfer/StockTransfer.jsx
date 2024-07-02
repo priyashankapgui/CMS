@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Layout from "../../../Layout/Layout";
-import axios from 'axios';
 import "./StockTransfer.css";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
@@ -16,20 +15,20 @@ import StockTransferIn from './StockTransferIN';
 import StockTransferOUT from './StockTransferOUT';
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
-import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
 export const StockTransfer = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
     const [branches, setBranches] = useState([]);
-    const [selectedBranch, setSelectedBranch] = useState('');
     const [searchParams, setSearchParams] = useState({
         fromDate: '',
         toDate: '',
         STN_NO: '',
         productId: '',
-        requestBranch: '',  
+        requestBranch: '',
+        supplyingBranch: '',  
     });
     const [products, setProducts] = useState([]);
+    const [searchTriggered, setSearchTriggered] = useState(false);
 
     const navigate = useNavigate();
 
@@ -45,25 +44,27 @@ export const StockTransfer = () => {
     const fetchBranches = async () => {
         try {
             const response = await getBranchOptions()
-            setBranches(response.data);
+            setBranches(response.data || []); 
         } catch (error) {
             console.error('Error fetching branches:', error);
+            setBranches([]); 
         }
     };
 
     const fetchProducts = async () => {
         try {
             const response = await getProducts()
-            setProducts(response.data);
+            setProducts(response.data || []);
         } catch (error) {
             console.error('Error fetching products:', error);
+            setProducts([]); 
         }
     };
 
-    const handleDropdownChange = (value) => {
+    const handleDropdownChange = (name, value) => {
         setSearchParams(prevState => ({
             ...prevState,
-            requestBranch: value
+            [name]: value
         }));
     };
 
@@ -89,8 +90,9 @@ export const StockTransfer = () => {
             toDate: '',
             productId: '',
             requestBranch: '',
+            supplyingBranch: '',  
         });
-        setSelectedBranch('');
+        setSearchTriggered(false); 
     };
 
     const handleNewButtonClick = () => {
@@ -114,8 +116,10 @@ export const StockTransfer = () => {
     };
 
     const handleSearch = () => {
-        setClickedLink('StockRequest-IN');
+        setSearchTriggered(true); 
+        setClickedLink("StockRequest-IN");
     };
+    
 
     return (
         <>
@@ -135,24 +139,25 @@ export const StockTransfer = () => {
                                 <DatePicker id="dateTo" name="toDate" onDateChange={(date) => handleDateChange('toDate', date)} />
                             </div>
                             <div className="SupplyingbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Request Branch</InputLabel>
+                                <InputLabel htmlFor="supplyingBranch" color="#0377A8">Supplying Branch</InputLabel>
                                 <BranchDropdown
-                                    id="branchName"
-                                    name="branchName"
+                                    id="supplyingBranch"
+                                    name="supplyingBranch"
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
-                                    onChange={handleDropdownChange}
+                                    onChange={(value) => handleDropdownChange('supplyingBranch', value)}
+                                    addOptions={["All"]}
                                 />
                             </div>
                             <div className="RequestbranchField">
-                                <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
-                                <InputDropdown
-                                    id="branchName"
-                                    name="branchName"
+                                <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch</InputLabel>
+                                <BranchDropdown
+                                    id="requestBranch"
+                                    name="requestBranch"
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
-                                    value={selectedBranch}
-                                    onChange={handleDropdownChange}
+                                    onChange={(value) => handleDropdownChange('requestBranch', value)}
+                                    addOptions={["All"]}
                                 />
                             </div>
                             <div className="STNNoField">
@@ -166,7 +171,7 @@ export const StockTransfer = () => {
                                 <SearchBar
                                     searchTerm={searchParams.productId}
                                     setSearchTerm={value => setSearchParams(prevState => ({ ...prevState, productId: value }))}
-                                    onSelectSuggestion={suggestion => setSearchParams(prevState => ({ ...prevState, productId: `${suggestion.displayText}` }))}
+                                    onSelectSuggestion={suggestion => setSearchParams(prevState => ({ ...prevState, productId: suggestion.id }))}
                                     fetchSuggestions={fetchProductsSuggestions}
                                 />
                             </div>
@@ -184,10 +189,10 @@ export const StockTransfer = () => {
                         <Tab>Stock Request OUT</Tab>
                     </TabList>
                     <TabPanel>
-                        {clickedLink === 'StockRequest-IN' && <StockTransferIn searchParams={searchParams} />}
+                        {clickedLink === 'StockRequest-IN' && <StockTransferIn searchParams={searchTriggered ? searchParams : {}} />}
                     </TabPanel>
                     <TabPanel>
-                        {clickedLink === 'StockRequest-OUT' && <StockTransferOUT searchParams={searchParams} />}
+                        {clickedLink === 'StockRequest-OUT' && <StockTransferOUT searchParams={searchTriggered ? searchParams : {}} />}
                     </TabPanel>
                 </Tabs>
             </Layout>
