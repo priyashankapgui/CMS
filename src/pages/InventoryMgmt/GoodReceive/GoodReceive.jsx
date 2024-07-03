@@ -13,7 +13,6 @@ import { BsEye } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link, useParams } from "react-router-dom";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
-import ViewGRN from "./ViewGRN";
 import BranchDropdown from "../../../Components/InputDropdown/BranchDropdown";
 import GrnDoc from "../../../Components/InventoryDocuments/GrnDoc/GrnDoc";
 import secureLocalStorage from "react-secure-storage";
@@ -38,20 +37,19 @@ export const GoodReceive = () => {
   const [product, setProducts] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [selectedGRN_NO, setSelectedGRN_NO] = useState(null);
-  const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+  const [showGRNReceipt, setshowGRNReceipt] = useState(false);
   
-
   const { GRN_NO } = useParams();
   const navigate = useNavigate();
 
   const handleReprintClick = (GRN_NO) => {
     console.log("Reprint button clicked for GRN No:", GRN_NO);
     setSelectedGRN_NO(GRN_NO);
-    setShowRefundReceipt(true);
+    setshowGRNReceipt(true);
   };
 
-  const handleCloseRefundReceipt = () => {
-    setShowRefundReceipt(false);
+  const handleCloseGRNReceipt = () => {
+    setshowGRNReceipt(false);
     setSelectedGRN_NO(null);
   };
 
@@ -160,7 +158,8 @@ export const GoodReceive = () => {
           return createdAt >= fromDate && createdAt <= toDate;
         });
       }
-      if (supplierId) {
+      if (supplierId && selectedBranch === 'All' ) {
+        console.log("supplierId", supplierId);
         data = data.filter(
           (item) => item.supplierId && item.supplierId.includes(supplierId)
         );
@@ -180,7 +179,7 @@ export const GoodReceive = () => {
       if (selectedBranch && selectedBranch !== "All") {
         data = data.filter((item) => item.branchName === selectedBranch);
       }
-      if (supplierId && selectedBranch) {
+      if (supplierId && selectedBranch !== 'All') {
         data = data.filter(
           (item) =>
             item.supplierId &&
@@ -209,7 +208,7 @@ export const GoodReceive = () => {
     }
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
     setSearchParams({
       GRN_NO: "",
       fromDate: "",
@@ -218,7 +217,28 @@ export const GoodReceive = () => {
       productId: "",
       supplierId: "",
     });
-    window.location.reload();
+    try {
+      setLoading(true);
+      const response = await getAllGRN();
+      const userJSON = secureLocalStorage.getItem("user");
+  
+      if (userJSON) {
+        const user = JSON.parse(userJSON);
+        let data = response.data || [];
+  
+        if (user.role !== "Super Admin") {
+          data = data.filter((item) => item.branchName === user.branchName);
+        }
+  
+        setGrnData(data);
+      } else {
+        console.error("User details not found in secure storage");
+      }
+    } catch (error) {
+      console.error("Error fetching GRN data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNewButtonClick = () => {
@@ -435,7 +455,7 @@ export const GoodReceive = () => {
                           id={`eyeViewBtn-${index}`}
                           type="submit"
                           name={`eyeViewBtn-${index}`}
-                          icon={<BsEye />}
+                          icon={<BsEye style={{ fontSize: '14px' }} />}
                         />
                       </Link>
                       <RoundButtons
@@ -453,9 +473,9 @@ export const GoodReceive = () => {
           </div>
         </div>
       </Layout>
-      {showRefundReceipt && (
+      {showGRNReceipt && (
         <div className="grn-doc-popup">
-          <GrnDoc GRN_NO={selectedGRN_NO} onClose={handleCloseRefundReceipt} />
+          <GrnDoc GRN_NO={selectedGRN_NO} onClose={handleCloseGRNReceipt} />
         </div>
       )}
     </>

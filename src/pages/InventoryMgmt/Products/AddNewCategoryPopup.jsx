@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import InputFile from '../../../Components/InputFile/InputFile';
@@ -9,7 +8,6 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { createCategory } from '../../../Api/Inventory/Category/CategoryAPI';
 
 const AddNewCategoryPopup = ({ onClose, onSave }) => {
-    const navigate = useNavigate();
     const [categoryName, setCategoryName] = useState('');
     const [image, setImage] = useState(null);
     const [alertVisible, setAlertVisible] = useState(false);
@@ -28,7 +26,7 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         if (!result.error) return null;
 
         const errorMessages = {};
-        result.error.details.forEach(detail => {
+        result.error.details.forEach(detail => { 
             errorMessages[detail.path[0]] = detail.message;
         });
         return errorMessages;
@@ -91,26 +89,27 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         try {
            await createCategory(formData);
 
-            const alertData = {
-                severity: 'success',
-                title: 'Added',
-                message: 'Category added successfully!',
-                duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+           setAlertConfig({
+            severity: 'success',
+            title: 'Added',
+            message: 'Category added successfully!',
+            duration: 5000
+        });
+        setAlertVisible(true);
+
+        // Reset form fields
+        setCategoryName('');
+        setImage('');
+            
         } catch (error) {
             console.error('Error posting data:', error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to add category.',
                 duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } finally {
             setIsLoading(false);
         }

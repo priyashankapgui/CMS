@@ -1,6 +1,6 @@
 import Layout from "../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
-import './StockTransferReceiving.css';
+import './Cancelled.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -42,18 +42,18 @@ export const ReceivingCancelled = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-            <div className="stockReceiving-top-link">
+            <div className="stockCancel-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer -  OUT Cancelled</h4>
+                    <h4>Stock Transfer OUT - Cancelled</h4>
                 </div>
                 
             </div>
             <Layout>
-                <div className="viewNewGRN-bodycontainer">
-                    <div className="view-grn-filter-container">
-                        <div className="StockTransferField">
+                <div className="stockCancel-bodycontainer">
+                    <div className="stockCancel-filter-container">
+                        <div className="stockCancelField">
                             <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
                             <div className="data-box">
                                 <span>{stockTransferDetails?.STN_NO}</span>
@@ -84,7 +84,7 @@ export const ReceivingCancelled = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="GRN-content-middle">
+                    <div className="stockCancel-content-middle">
                         {stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
@@ -96,7 +96,7 @@ export const ReceivingCancelled = () => {
                             <p>No products available</p>
                         )}
                     </div>
-                    <div className="Grn-BtnSection">
+                    <div className="stockCancel-BtnSection">
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         
                     </div>

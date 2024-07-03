@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './NewStockTransfer.css';
 import Layout from "../../../Layout/Layout";
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ export function NewStockTransfer() {
     const [requestBranch, setRequestBranch] = useState('');
     const [rows, setRows] = useState([{ id: 1, productId: '', Qty: '', comment: '' }]);
     const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
+    const branchDropdownRef = useRef(null);
     const navigate = useNavigate();
 
     const initialRowData = {
@@ -130,6 +131,7 @@ export function NewStockTransfer() {
             // Reset form fields
             setRequestBranch('');
             setSelectedBranch('');
+            branchDropdownRef.current.reset();
             setRows([{ id: 1, productId: '', Qty: '', comment: '' }]);
         } catch (error) {
             console.error('Error:', error.response);
@@ -176,23 +178,28 @@ export function NewStockTransfer() {
             <div className="addNewStock-bodycontainer">
                     <div className="new-stock-filter-container">
                             <div className="SupplyingbranchField">
-                                <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch</InputLabel>
+                                <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="requestBranch"
                                     name="requestBranch"
                                     editable={true}
                                     onChange={(e) => handleRequestBranchChange(e)}
                                     addOptions={["All"]}
+                                    value={selectedBranch}
+                                    ref={branchDropdownRef}
                                 />
                             </div>
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
                                 options={branches.map(branch => branch.branchName)}
                                 onChange={handleDropdownChange}
+                                addOptions={["All"]}
+                                value={selectedBranch}
+                                ref={branchDropdownRef}
                             />
                         </div>
 

@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import { Link } from 'react-router-dom';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { BsEye } from "react-icons/bs";
+import { BsEye, BsCheckCircle, BsXCircle  } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
-import { TiTickOutline } from "react-icons/ti";
-import { MdOutlineCancel } from "react-icons/md";
 import secureLocalStorage from "react-secure-storage";
 import StockTranIn from '../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
 import { getAllTransfers } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
@@ -15,7 +13,7 @@ const StockTransferIn = ({ searchParams }) => {
     const [stockData, setStockData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 
-    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+    const [showStockINReceipt, setShowStockINReceipt] = useState(false);
     
 
     useEffect(() => {
@@ -86,11 +84,11 @@ const StockTransferIn = ({ searchParams }) => {
 
     const handleReprintClick = (STN_NO) => {
         setSelectedSTN_NO(STN_NO);
-        setShowRefundReceipt(true);
+        setShowStockINReceipt(true);
     };
 
-    const handleCloseRefundReceipt = () => {
-        setShowRefundReceipt(false);
+    const handleCloseStockINReceipt = () => {
+        setShowStockINReceipt(false);
         setSelectedSTN_NO(null);
     };
 
@@ -117,7 +115,7 @@ const StockTransferIn = ({ searchParams }) => {
                                                 id={`eyeViewBtn-${index}`}
                                                 type="submit"
                                                 name={`eyeViewBtn-${index}`}
-                                                icon={<BsEye />}
+                                                icon={<BsEye style={{ fontSize: '14px' }} />} 
                                             />
                                         </Link>
                                     )}
@@ -128,14 +126,14 @@ const StockTransferIn = ({ searchParams }) => {
                                                     id={`tickBtn-${index}`}
                                                     type="submit"
                                                     name={`tickBtn-${index}`}
-                                                    icon={<TiTickOutline />}
+                                                    icon={<BsCheckCircle style={{ fontSize: '17px' }} />}
                                                 />
                                             </Link>
                                             <RoundButtons
                                                 id={`printBtn-${index}`}
                                                 type="submit"
                                                 name={`printBtn-${index}`}
-                                                icon={<RiPrinterFill />}
+                                                icon={<RiPrinterFill style={{ fontSize: '15px' }} />}
                                                 onClick={() => handleReprintClick(data.STN_NO)}
                                             />
                                         </>
@@ -146,7 +144,7 @@ const StockTransferIn = ({ searchParams }) => {
                                                 id={`tickBtn-${index}`}
                                                 type="submit"
                                                 name={`tickBtn-${index}`}
-                                                icon={<MdOutlineCancel />}
+                                                icon={<BsXCircle style={{ fontSize: '17px' }} />}
                                             />
                                         </Link>
                                     )}
@@ -158,11 +156,11 @@ const StockTransferIn = ({ searchParams }) => {
                     />
                 </div>
             </div>
-            {showRefundReceipt && (
+            {showStockINReceipt && (
                 <div className="transfer-doc-popup">
                     <StockTranIn
                         STN_NO={selectedSTN_NO}
-                        onClose={handleCloseRefundReceipt}
+                        onClose={handleCloseStockINReceipt}
                     />
                 </div>
             )}

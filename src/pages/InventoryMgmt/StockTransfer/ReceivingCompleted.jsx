@@ -1,17 +1,21 @@
 import Layout from "../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
-import './StockTransferReceiving.css';
+import './ReceivingCompleted.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import { getStockTransferBySTN_NO, updateTransferQty } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
-export const StockTransferReceiving = () => {
+export const ReceivingCompleted = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
+    const [isSaved, setIsSaved] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false); 
+    const [alertConfig, setAlertConfig] = useState({}); 
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
@@ -19,6 +23,11 @@ export const StockTransferReceiving = () => {
                 const response = await getStockTransferBySTN_NO(STN_NO);
                 setStockTransferDetails(response.data);
 
+                // Check if data has already been saved
+                const savedState = localStorage.getItem(`isSaved_${STN_NO}`);
+                if (savedState === 'true' || response.data.isSaved) {
+                    setIsSaved(true);
+                }
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
             }
@@ -52,21 +61,40 @@ export const StockTransferReceiving = () => {
 
         try {
             const response = await updateTransferQty(formattedData);
-            if (response.data.success) {
-                console.log('Data successfully saved:', response.data.message);
-                // Handle success (e.g., show a success message, navigate to another page, etc.)
+            if (response.success) {
+                console.log('Data successfully saved:', response.message);
+                setIsSaved(true); 
+                setAlertConfig({
+                    severity: 'success',
+                    title: 'Saved',
+                    message: 'Data successfully saved!',
+                    duration: 5000
+                });
+                setAlertVisible(true);
+                localStorage.setItem(`isSaved_${STN_NO}`, 'true');
             } else {
                 console.error('Failed to save data:', response.data.message);
+                setAlertConfig({
+                    severity: 'error',
+                    title: 'Error',
+                    message: 'Failed to save data.',
+                    duration: 5000
+                });
+                setAlertVisible(true);
             }
-            // Navigate to the desired page after successful save
-            navigate('/stock-transfer');
         } catch (error) {
             console.error('Error saving data:', error);
+            setAlertConfig({
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to save data.',
+                duration: 5000
+            });
+            setAlertVisible(true);
         }
     };
 
     const calculateTotalAmount = () => {
-        
         return stockTransferDetails?.products.reduce((total, product) => 
             total + product.batches.reduce((batchTotal, batch) => batchTotal + batch.amount, 0), 0
         ) || 0;
@@ -83,14 +111,22 @@ export const StockTransferReceiving = () => {
 
     return (
         <>
+         {alertVisible && (
+                <CustomAlert
+                    severity={alertConfig.severity}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    duration={alertConfig.duration}
+                    onClose={() => setAlertVisible(false)}
+                />
+            )}
             <div className="top-nav-blue-text">
-            <div className="stockReceiving-top-link">
+                <div className="stockReceiving-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer - Receiving Completed</h4>
+                    <h4>Stock Transfer OUT - Completed</h4>
                 </div>
-                
             </div>
             <Layout>
                 <div className="stockReceiving-bodycontainer">
@@ -141,7 +177,9 @@ export const StockTransferReceiving = () => {
                         )}
                     </div>
                     <div className="stockReceiving-BtnSection">
-                        <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
+                        {!isSaved ? (
+                            <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
+                        ) : null}
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
                     </div>
@@ -151,4 +189,4 @@ export const StockTransferReceiving = () => {
     );
 };
 
-export default StockTransferReceiving;
+export default ReceivingCompleted;
