@@ -14,7 +14,7 @@ import StockTraOut from '../../../Components/InventoryDocuments/St-Out-Doc/Stock
 export const StockTransferOUT = ({ searchParams }) => {
     const [stockData, setStockData] = useState([]);
     const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 
-    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
+    const [showStockOUTReceipt, setShowStockOUTReceipt] = useState(false);
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
@@ -86,12 +86,12 @@ export const StockTransferOUT = ({ searchParams }) => {
 
     const handleReprintClick = (STN_NO) => {
         setSelectedSTN_NO(STN_NO);
-        setShowRefundReceipt(true);
+        setShowStockOUTReceipt(true);
     };
 
 
-    const handleCloseRefundReceipt = () => {
-        setShowRefundReceipt(false);
+    const handleCloseStockOUTReceipt = () => {
+        setShowStockOUTReceipt(false);
         setSelectedSTN_NO(null);
     };
 
@@ -121,7 +121,7 @@ export const StockTransferOUT = ({ searchParams }) => {
                                                     id={`eyeViewBtn-${index}`}
                                                     type="submit"
                                                     name={`eyeViewBtn-${index}`}
-                                                    icon={<BsEye />}
+                                                    icon={<BsEye style={{ fontSize: '15px' }} />}
                                                 />
                                             </Link>
                                         )}
@@ -132,14 +132,14 @@ export const StockTransferOUT = ({ searchParams }) => {
                                                         id={`tickBtn-${index}`}
                                                         type="submit"
                                                         name={`tickBtn-${index}`}
-                                                        icon={<BsCheckCircle />}
+                                                        icon={<BsCheckCircle style={{ fontSize: '18px' }} />}
                                                     />
                                                 </Link>
                                                 <RoundButtons
                                                     id={`printBtn-${index}`}
                                                     type="submit"
                                                     name={`printBtn-${index}`}
-                                                    icon={<RiPrinterFill />}
+                                                    icon={<RiPrinterFill style={{ fontSize: '16px' }} />}
                                                     onClick={() => handleReprintClick(data.STN_NO)}
                                                 />
                                             </>
@@ -150,7 +150,7 @@ export const StockTransferOUT = ({ searchParams }) => {
                                                     id={`cancelBtn-${index}`}
                                                     type="submit"
                                                     name={`cancelBtn-${index}`}
-                                                    icon={<BsXCircle />}
+                                                    icon={<BsXCircle style={{ fontSize: '18px' }} />}
                                                 />
                                             </Link>
                                         )}
@@ -163,11 +163,11 @@ export const StockTransferOUT = ({ searchParams }) => {
                     )}
                 </div>
             </div>
-            {showRefundReceipt && (
+            {showStockOUTReceipt && (
                 <div className="transfer-doc-popup">
                     <StockTraOut
                         STN_NO={selectedSTN_NO}
-                        onClose={handleCloseRefundReceipt}
+                        onClose={handleCloseStockOUTReceipt}
                     />
                 </div>
             )}

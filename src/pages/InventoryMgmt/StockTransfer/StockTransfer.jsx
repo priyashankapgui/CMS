@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./StockTransfer.css";
 import InputField from "../../../Components/InputField/InputField";
@@ -19,6 +19,7 @@ import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
 export const StockTransfer = () => {
     const [clickedLink, setClickedLink] = useState('StockRequest-IN');
     const [branches, setBranches] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
     const [searchParams, setSearchParams] = useState({
         fromDate: '',
         toDate: '',
@@ -29,6 +30,7 @@ export const StockTransfer = () => {
     });
     const [products, setProducts] = useState([]);
     const [searchTriggered, setSearchTriggered] = useState(false);
+    const branchDropdownRef = useRef(null);
 
     const navigate = useNavigate();
 
@@ -93,6 +95,10 @@ export const StockTransfer = () => {
             supplyingBranch: '',  
         });
         setSearchTriggered(false); 
+        setSelectedBranch('');
+        if (branchDropdownRef.current) {
+            branchDropdownRef.current.reset();
+        }
     };
 
     const handleNewButtonClick = () => {
@@ -147,6 +153,8 @@ export const StockTransfer = () => {
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('supplyingBranch', value)}
                                     addOptions={["All"]}
+                                    value={searchParams.supplyingBranch} // Use supplyingBranch from searchParams
+                                    ref={branchDropdownRef} // Ensure ref is correctly assigned
                                 />
                             </div>
                             <div className="RequestbranchField">
@@ -158,6 +166,8 @@ export const StockTransfer = () => {
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('requestBranch', value)}
                                     addOptions={["All"]}
+                                    value={searchParams.requestBranch} // Use requestBranch from searchParams
+                                    ref={branchDropdownRef} // Ensure ref is correctly assigned
                                 />
                             </div>
                             <div className="STNNoField">

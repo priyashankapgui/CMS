@@ -1,6 +1,6 @@
 import Layout from "../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
-import './StockTransferReceiving.css';
+import './IssuingCompleted.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -8,7 +8,7 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import { getStockTransferBySTN_NO } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
-export const Completed = () => {
+export const IssuingCompleted = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
@@ -17,7 +17,7 @@ export const Completed = () => {
         const fetchStockTransferDetails = async () => {
             try {
                 const response = await getStockTransferBySTN_NO(STN_NO);
-                console.log("Fetched data haa:", response.data);
+                console.log("Fetched data :", response.data);
                 setStockTransferDetails(response.data);
                 
             } catch (error) {
@@ -55,18 +55,18 @@ export const Completed = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-            <div className="stockReceiving-top-link">
+            <div className="stockIssuingCompleted-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer - Completed</h4>
+                    <h4>Stock Transfer IN - Completed</h4>
                 </div>
                 
             </div>
             <Layout>
-                <div className="viewNewGRN-bodycontainer">
-                    <div className="view-grn-filter-container">
-                        <div className="StockTransferField">
+                <div className="stockIssuingCompleted-bodycontainer">
+                    <div className="stockIssuingCompleted-filter-container">
+                        <div className="stockIssuingCompletedField">
                             <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
                             <div className="data-box">
                                 <span>{stockTransferDetails?.STN_NO}</span>
@@ -97,7 +97,7 @@ export const Completed = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="GRN-content-middle">
+                    <div className="stockIssuingCompleted-content-middle">
                         {stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
@@ -112,7 +112,7 @@ export const Completed = () => {
                             <p>No products available</p>
                         )}
                     </div>
-                    <div className="Grn-BtnSection">
+                    <div className="stockIssuingCompleted-BtnSection">
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
                     </div>
@@ -122,4 +122,4 @@ export const Completed = () => {
     );
 };
 
-export default Completed;
+export default IssuingCompleted;

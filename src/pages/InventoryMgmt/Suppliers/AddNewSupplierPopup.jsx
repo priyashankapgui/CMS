@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
@@ -9,7 +8,6 @@ import { createSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
 
 function AddNewSupplierPopup() {
-    const navigate = useNavigate();
     const [supplierName, setSupplierName] = useState('');
     const [regNo, setRegNo] = useState('');
     const [address, setAddress] = useState('');
@@ -66,27 +64,30 @@ function AddNewSupplierPopup() {
             const createdSupplier = await createSupplier(supplierData);
             console.log('Supplier created successfully:', createdSupplier);
 
-            const alertData = {
+            setAlertConfig({
                 severity: 'success',
                 title: 'Added',
                 message: 'Supplier added successfully!',
                 duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Suppliers');
-            window.location.reload();
+            });
+            setAlertVisible(true);
+            
+            // Reset form fields
+            setSupplierName('');
+            setRegNo('');
+            setAddress('');
+            setEmail('');
+            setContactNo('');
         } catch (error) {
             console.error('Error creating supplier:', error);
 
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to add supplier.',
                 duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Suppliers');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         }
     };
 
