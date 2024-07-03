@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import Joi from 'joi';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
@@ -26,16 +26,16 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         if (!result.error) return null;
 
         const errorMessages = {};
-        result.error.details.forEach(detail => { 
+        result.error.details.forEach(detail => {
             errorMessages[detail.path[0]] = detail.message;
         });
         return errorMessages;
     };
 
-    const resetFields = () => {
-        setCategoryName('');
-        setImage(null);
-    };
+    // const resetFields = () => {
+    //     setCategoryName('');
+    //     setImage(null);
+    // };
 
     const handleCategoryImageUpload = (e) => {
         const file = e.target.files[0];
@@ -75,7 +75,7 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
                 severity: 'error',
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
             return;
@@ -87,27 +87,27 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
 
         setIsLoading(true);
         try {
-           await createCategory(formData);
+            await createCategory(formData);
 
-           setAlertConfig({
-            severity: 'success',
-            title: 'Added',
-            message: 'Category added successfully!',
-            duration: 5000
-        });
-        setAlertVisible(true);
+            setAlertConfig({
+                severity: 'success',
+                title: 'Added',
+                message: 'Category added successfully!',
+                duration: 4000
+            });
+            setAlertVisible(true);
 
-        // Reset form fields
-        setCategoryName('');
-        setImage('');
-            
+            // Reset form fields
+            setCategoryName('');
+            setImage('');
+
         } catch (error) {
             console.error('Error posting data:', error);
             setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to add category.',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
         } finally {
@@ -135,13 +135,13 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
             >
                 <form onSubmit={addCategoryHandler} encType='multipart/form-data'>
                     <div style={{ display: 'block', width: '100%' }}>
-                        <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
-                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleCategoryImageUpload} />
-                        </div>
                         <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <InputField type="text" id="categoryName" name="categoryName" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleCategoryImageUpload} />
                         </div>
                     </div>
                 </form>

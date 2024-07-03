@@ -14,7 +14,7 @@ function UpdateCategoryPopup({ categoryId }) {
 
     const [post, setPost] = useState({
         categoryName: '',
-        image: null 
+        image: null
     });
 
     const [alertVisible, setAlertVisible] = useState(false);
@@ -32,7 +32,7 @@ function UpdateCategoryPopup({ categoryId }) {
                 const categoryData = await getCategoryById(categoryId);
                 setPost({
                     categoryName: categoryData.data.categoryName,
-                    image: null 
+                    image: null
                 });
             } catch (error) {
                 console.error('Error fetching category:', error);
@@ -71,7 +71,7 @@ function UpdateCategoryPopup({ categoryId }) {
     const TransformFile = (file) => {
         const reader = new FileReader();
 
-        reader.onloadend = () => { 
+        reader.onloadend = () => {
             setPost({ ...post, image: reader.result });
         };
 
@@ -106,7 +106,7 @@ function UpdateCategoryPopup({ categoryId }) {
         try {
             const formData = new FormData();
             formData.append('categoryName', post.categoryName);
-            if (post.image ) {
+            if (post.image) {
                 formData.append('image', post.image);
             }
 
@@ -154,12 +154,12 @@ function UpdateCategoryPopup({ categoryId }) {
                 <form onSubmit={handleSave} encType='multipart/form-data'>
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
-                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
-                            <InputFile id="image" name="image" onChange={handleFileChange} />
-                        </div>
-                        <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>
                             <InputField type="text" id="categoryName" name="categoryName" value={post.categoryName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div>
+                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
+                            <InputFile id="image" name="image" onChange={handleFileChange} />
                         </div>
                     </div>
                     <button type="submit" style={{ display: 'none' }}>Submit</button>

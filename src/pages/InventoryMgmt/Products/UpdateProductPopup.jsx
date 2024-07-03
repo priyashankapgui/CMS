@@ -46,7 +46,7 @@ function UpdateProductPopup({ productId }) {
                         minQty,
                         image
                     });
-                    
+
                 })
                 .catch(err => console.error('Error fetching product:', err));
         }
@@ -112,7 +112,7 @@ function UpdateProductPopup({ productId }) {
                 severity: 'error',
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
             return;
@@ -190,10 +190,6 @@ function UpdateProductPopup({ productId }) {
                 <form onSubmit={handleSave} encType='multipart/form-data'>
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
-                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
-                            <InputFile id="image" name="image" onChange={handleFileChange} />
-                        </div>
-                        <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={post.productName} onChange={handleUpdate} editable={true} style={{ width: '100%' }} />
                         </div>
@@ -209,6 +205,10 @@ function UpdateProductPopup({ productId }) {
                                 onSelectSuggestion={(suggestion) => setPost({ ...post, categoryName: suggestion.displayText.split(' ')[1] })}
                                 fetchSuggestions={fetchCategorySuggestions}
                             />
+                        </div>
+                        <div>
+                            <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
+                            <InputFile id="image" name="image" onChange={handleFileChange} />
                         </div>
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>

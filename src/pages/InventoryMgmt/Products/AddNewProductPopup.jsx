@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState} from 'react';
 import axios from 'axios';
 import Joi from 'joi';
 import InputLabel from '../../../Components/Label/InputLabel';
@@ -19,7 +19,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    
+
 
     const productSchema = Joi.object({
         productName: Joi.string().required().label('Product Name'),
@@ -32,7 +32,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
 
 
     const validate = () => {
-        const result = productSchema.validate({ productName, description, image, categoryName, barcode , minQty }, { abortEarly: false });
+        const result = productSchema.validate({ productName, description, image, categoryName, barcode, minQty }, { abortEarly: false });
         if (!result.error) return null;
 
         const errorMessages = {};
@@ -77,14 +77,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
             e.preventDefault();
         }
 
-    
+
         const validationErrors = validate();
         if (validationErrors) {
             setAlertConfig({
                 severity: 'error',
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
             return;
@@ -97,7 +97,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         formData.append('description', description);
         formData.append('categoryName', categoryName);
         formData.append('barcode', barcode);
-        formData.append('minQty',minQty);
+        formData.append('minQty', minQty);
 
         setIsLoading(true);
         try {
@@ -107,10 +107,10 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 severity: 'success',
                 title: 'Added',
                 message: 'Product added successfully!',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
-    
+
             // Reset form fields
             setProductName('');
             setDescription('');
@@ -118,14 +118,14 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
             setBarcode('');
             setMinQty('');
             setImage('');
-                
+
         } catch (error) {
             console.error('Error posting data:', error);
             setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to add Product.',
-                duration: 5000
+                duration: 4000
             });
             setAlertVisible(true);
         } finally {
@@ -148,7 +148,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     };
 
 
-     
+
 
     return (
         <>
@@ -167,17 +167,12 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                 buttonText="Save"
                 onClick={addProductHandler}
                 isLoading={isLoading}
-                
-                
+
+
             >
                 <form onSubmit={addProductHandler} encType='multipart/form-data'>
 
                     <div style={{ display: 'block', width: '100%' }}>
-                    <div style={{ marginBottom: "5px" }}>
-                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
-                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
-                        
-                        </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>
                             <InputField type="text" id="productName" name="productName" value={productName} onChange={(e) => setProductName(e.target.value)} editable={true} style={{ width: '100%' }} />
@@ -198,6 +193,11 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                         <div>
                             <InputLabel htmlFor="minQty" color="#0377A8">Min Qty</InputLabel>
                             <InputField type="text" id="minQty" name="barminQtycode" value={minQty} onChange={(e) => setMinQty(e.target.value)} editable={true} style={{ width: '100%' }} />
+                        </div>
+                        <div style={{ marginBottom: "5px" }}>
+                            <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel>
+                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
+
                         </div>
                         <div>
                             <InputLabel htmlFor="description" color="#0377A8">Description</InputLabel>
