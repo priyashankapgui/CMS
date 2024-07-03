@@ -65,6 +65,17 @@ export const updateOnlineBill = async (onlineBillNo, onlineBillData) => {
     }
 };
 
+export const updateOnlineBillAmount = async (onlineBillNo, onlineBillTotal) => {
+    try {
+        const authApi = createAuthInstance();
+        const response = await authApi.put(`/onlineBills/${onlineBillNo}`, { onlineBillTotal });
+        return response.data;
+    } catch (error) {
+        console.error(`Error updating online bill amount with number ${onlineBillNo}:`, error);
+        throw error;
+    }
+};
+
 export const deleteOnlineBill = async (onlineBillNo) => {
     try {
         const authApi = createAuthInstance();
