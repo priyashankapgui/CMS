@@ -1,15 +1,22 @@
 import React from 'react';
+import axios from 'axios';
 import ReactApexChart from 'react-apexcharts';
 import './SalesChart.css';
-import salesChartData from '../Data.json'; // Import data from Data.json
 import BranchDropdown from '../InputDropdown/BranchDropdown';
 
 class SalesChart extends React.Component {
     constructor(props) {
         super(props);
 
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1; // Months are 0-indexed in JavaScript
+
         this.state = {
-            series: [],
+            series: [
+                { name: 'Physical Sale', data: [] },
+                { name: 'Online Sale', data: [] }
+            ],
             options: {
                 chart: {
                     height: 350,
@@ -26,7 +33,7 @@ class SalesChart extends React.Component {
                         show: false
                     }
                 },
-                colors: ['#F79E1B', '#2FCF15'],
+                colors: ['#2FCF15', '#F79E1B'],
                 dataLabels: {
                     enabled: true,
                 },
@@ -53,7 +60,7 @@ class SalesChart extends React.Component {
                     size: 1
                 },
                 xaxis: {
-                    categories: Array.from(Array(32).keys()).map(String),
+                    categories: Array.from({ length: 31 }, (_, i) => (i + 1).toString()), // Days of the month
                     title: {
                         text: 'Days',
                         style: {
@@ -71,7 +78,6 @@ class SalesChart extends React.Component {
                         }
                     },
                     min: 0,
-                    max: 1000000, // Set maximum value to 1000000
                     tickAmount: 6,
                     labels: {
                         formatter: (value) => {
@@ -94,28 +100,73 @@ class SalesChart extends React.Component {
                     fontFamily: 'Poppins'
                 }
             },
-            selectedYear: 2023,
-            selectedMonth: 1,
+            selectedYear: currentYear,
+            selectedMonth: currentMonth,
             totalSales: 0,
             selectedBranch: 'All' // Adding selectedBranch to state
         };
     }
 
     componentDidMount() {
-        // Fetch initial data
-        this.fetchData(this.state.selectedYear, this.state.selectedMonth);
+        this.fetchData(this.state.selectedYear, this.state.selectedMonth, this.state.selectedBranch);
     }
 
-    fetchData(year, month) {
-        // Fetch data from Data.json file
-        const seriesData = salesChartData.salesChartData[year.toString()]; // Access chart data from imported salesChartData
-        const totalSales = this.calculateTotalSales(seriesData[month - 1].data);
-
-        this.setState({
-            series: seriesData, // Update series state with fetched data
-            totalSales
-        });
+    componentDidUpdate(prevProps, prevState) {
+        if (
+            prevState.selectedYear !== this.state.selectedYear ||
+            prevState.selectedMonth !== this.state.selectedMonth ||
+            prevState.selectedBranch !== this.state.selectedBranch
+        ) {
+            this.fetchData(this.state.selectedYear, this.state.selectedMonth, this.state.selectedBranch);
+        }
     }
+    fetchData = async (year, month, branchName) => {
+        try {
+            const onlineResponse = await axios.get('http://localhost:8080/daily-online-sales-data', {
+                params: { branchName, year, month }
+            });
+
+            console.log('Online Sales Data Response:', onlineResponse.data);
+            const onlineSalesData = new Array(31).fill(0); // Initialize array with 31 days filled with 0
+            onlineResponse.data.data.onlineSalesData.forEach(item => {
+                onlineSalesData[item.day - 1] = item.totalAmount;
+            });
+
+            const physicalResponse = await axios.get('http://localhost:8080/daily-sales-data-chart', {
+                params: { branchName, year, month }
+            });
+
+            console.log('Physical Sales Data Response:', physicalResponse.data);
+            const physicalSalesData = new Array(31).fill(0); // Initialize array with 31 days filled with 0
+            physicalResponse.data.data.salesData.forEach(item => {
+                console.log(`Day: ${item.day}, TotalAmount: ${item.totalAmount}`);
+                physicalSalesData[item.day - 1] = item.totalAmount;
+            });
+
+            console.log('Mapped Online Sales Data:', onlineSalesData);
+            console.log('Mapped Physical Sales Data:', physicalSalesData);
+
+            // Calculate the new maximum value for the Y-axis
+            const newYMax = Math.max(...onlineSalesData, ...physicalSalesData);
+
+            this.setState({
+                series: [
+                    { name: 'Physical Sale', data: physicalSalesData },
+                    { name: 'Online Sale', data: onlineSalesData }
+                ],
+                options: {
+                    ...this.state.options,
+                    yaxis: {
+                        ...this.state.options.yaxis,
+                        max: newYMax // Update the maximum value dynamically
+                    }
+                },
+                totalSales: this.calculateTotalSales(onlineSalesData) + this.calculateTotalSales(physicalSalesData)
+            });
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     // Calculate total sales amount
     calculateTotalSales(seriesData) {
@@ -124,21 +175,17 @@ class SalesChart extends React.Component {
 
     handleYearChange = event => {
         const selectedYear = parseInt(event.target.value);
-        this.fetchData(selectedYear, this.state.selectedMonth);
         this.setState({ selectedYear });
     };
 
     handleMonthChange = event => {
         const selectedMonth = parseInt(event.target.value);
-        this.fetchData(this.state.selectedYear, selectedMonth);
         this.setState({ selectedMonth });
     };
 
     // Handle Branch Dropdown Change
     handleBranchDropdownChange = (value) => {
-        // Update selected branch in state
         this.setState({ selectedBranch: value });
-        console.log('Selected Branch:', value);
     };
 
     render() {

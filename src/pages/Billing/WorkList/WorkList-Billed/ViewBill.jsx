@@ -276,7 +276,7 @@ export const ViewBill = () => {
                     severity={alert.severity}
                     title={alert.title}
                     message={alert.message}
-                    duration={4000}
+                    duration={6000}
                     open={alert.open}
                     onClose={() => setAlert({ ...alert, open: false })}
                 />
