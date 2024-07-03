@@ -70,6 +70,7 @@ export const postRefundBillData = async (payload) => {
         throw error;
     }
 };
+
 export const getRefundedBillData = async (RTBNo) => {
     try {
         const response = await api.get(`/refund-all?RTBNo=${RTBNo}`);
@@ -79,10 +80,19 @@ export const getRefundedBillData = async (RTBNo) => {
         throw error;
     }
 };
+export const getAllRefundBills = async ({ startDate, endDate } = {}) => {
+    const params = {};
 
-export const getAllRefundBills = async () => {
+    if (startDate) {
+        params.startDate = startDate;
+    }
+
+    if (endDate) {
+        params.endDate = endDate;
+    }
+
     try {
-        const response = await api.get('/refund');
+        const response = await api.get('/refund', { params });
         return response.data;
     } catch (error) {
         console.error('Error fetching all refund bills:', error);
@@ -90,6 +100,26 @@ export const getAllRefundBills = async () => {
     }
 };
 
-
+export const postCancelBill = async (payload) => {
+    try {
+        const response = await api.post('/bills/cancel', payload);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching cancel bills:', error);
+        throw error;
+    }
+};
 
 export default api;
+
+// export const putCancelBill = async (payload) => {
+//     console.log("Thank youuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
+//     try {
+//         const response = await axios.put('/api/cancel-bill', payload);
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error in putCancelBill:', error);
+//         throw error;
+//     }
+// };
+// export default api;

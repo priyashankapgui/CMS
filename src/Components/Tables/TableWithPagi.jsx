@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React,{useState} from 'react';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,10 +12,10 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 // Styled components
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({ theme, color }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#f9f7f7',
-    color: '#0377A8',
+    color: color || '#0377A8',
     fontWeight: 'bold',
     fontFamily: 'Poppins',
     fontSize: 14,
@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 // TableWithPagi component
-function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
+function TableWithPagi({ rows, columns, itemsPerPage = 5, headerColor }) {
   const [page, setPage] = useState(1);
 
   // Handlers
@@ -56,7 +56,9 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <StyledTableCell key={index}>{column}</StyledTableCell>
+                <StyledTableCell key={index} color={headerColor}>
+                  {column}
+                </StyledTableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -65,17 +67,16 @@ function TableWithPagi({ rows, columns, itemsPerPage = 5 }) {
               rows.slice(startIndex, endIndex).map((row, rowIndex) => (
                 <StyledTableRow key={rowIndex}>
                   {Object.values(row).map((cell, cellIndex) => (
-                    <StyledTableCell key={cellIndex}>{cell}</StyledTableCell>
+                    <StyledTableCell key={cellIndex}>
+                      {cell}
+                    </StyledTableCell>
                   ))}
                 </StyledTableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} align="center">
-                  <Typography
-                    variant="h6"
-                    sx={{ color: '#B1ABAB' }}
-                  >
+                  <Typography variant="h6" sx={{ color: '#B1ABAB' }}>
                     Data is not available....
                   </Typography>
                 </TableCell>

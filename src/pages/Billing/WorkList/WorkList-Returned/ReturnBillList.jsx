@@ -10,7 +10,8 @@ import { BsEye } from "react-icons/bs";
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import { getAllRefundBills } from '../../../../Api/Billing/SalesApi';
-
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 
 export const ReturnBillList = () => {
     const [clickedLink, setClickedLink] = useState('Returned');
@@ -149,52 +150,43 @@ export const ReturnBillList = () => {
                         </div>
                     </div>
                     {loading ? (
-                        <div>Loading...</div>
+                        <div><SubSpinner /></div>
                     ) : error ? (
-                        <div>Error: {error.message}</div>
+                        <div>{error.message}</div>
                     ) : (
-                        <table className="return-bill-history-table">
-                            <thead>
-                                <tr>
-                                    <th>Return Bill No</th>
-                                    <th>Returned At</th>
-                                    <th>Bill No</th>
-                                    <th>Branch</th>
-                                    <th>Customer Name</th>
-                                    <th>Status</th>
-                                    <th>Returned By</th>
-                                    <th>Reason</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {Array.isArray(returnBillData) && returnBillData.map((row, index) => (
-                                    <tr key={index}>
-                                        <td>{row.RTBNo}</td>
-                                        <td>{new Date(row.createdAt).toLocaleString('en-GB')}</td>
-                                        <td>{row.billNo}</td>
-                                        <td>{row.branchName}</td>
-                                        <td>{row.customerName}</td>
-                                        <td>{row.status}</td>
-                                        <td>{row.returnedBy}</td>
-                                        <td>{row.reason}</td>
-                                        <td>
+                        <div className="return-bill-history-table">
+                            <TableWithPagi
+                                itemsPerPage={10}
+                                headerColor="#262626"
+                                columns={['Return Bill No', 'Returned At', 'Bill No', 'Branch', 'Customer Name', 'Status', 'Returned By', 'Reason', '']}
+                                rows={returnBillData.map(row => ({
+                                    RTBNo: row.RTBNo,
+                                    refundAt: new Date(row.createdAt).toLocaleString('en-GB'),
+                                    billNo: row.billNo,
+                                    branchName: row.branchName,
+                                    customerName: row.customerName,
+                                    status: row.status,
+                                    returnedBy: row.returnedBy,
+                                    reason: row.reason,
+
+                                    action: (
+                                        <div style={{ display: "flex", gap: "0.5em" }}>
                                             <Link to={`/work-list/returnbill-list/viewreturnbill/${row.RTBNo}`}>
                                                 <RoundButtons
-                                                    id={`eyeViewBtn-${index}`}
+                                                    id="eyeViewBtn"
                                                     type="submit"
-                                                    name={`eyeViewBtn-${index}`}
+                                                    name="eyeViewBtn"
                                                     icon={<BsEye />}
                                                 />
                                             </Link>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                        </div>
+                                    )
+                                }))}
+                            />
+                        </div>
                     )}
                 </div>
-            </Layout>
+            </Layout >
         </>
     );
 };

@@ -11,7 +11,10 @@ import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButto
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
 import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner';
-import { getBilledData } from '../../../../Api/Billing/SalesApi';
+import secureLocalStorage from "react-secure-storage";
+import { getBilledData, postCancelBill } from '../../../../Api/Billing/SalesApi';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import ConfirmationModal from '../../../../Modal/ConfirmationModal';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
@@ -19,6 +22,16 @@ export const ViewBill = () => {
     const [showSalesReceipt, setShowSalesReceipt] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [alert, setAlert] = useState({
+        severity: '',
+        title: '',
+        message: '',
+        open: false
+    });
+    const [userDetails, setUserDetails] = useState({
+        userName: "", userRole: ""
+    });
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -45,6 +58,63 @@ export const ViewBill = () => {
             setError('No bill number provided');
         }
     }, [billNo]);
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                userName: user?.userName || user?.employeeName || "",
+                userRole: user?.userRole || user?.role || "",
+            });
+        }
+    }, []);
+
+    const handleSubmitCancelBill = async () => {
+        const payload = {
+            billNo,
+            branchName: billData.branchName,
+            products: billData.billProducts.map(item => ({
+                productId: item.productId,
+                batchNo: item.batchNo,
+                billQty: item.billQty,
+                returnQty: item.billQty,
+                sellingPrice: item.sellingPrice,
+                discount: item.discount
+            }))
+        };
+
+        console.log("Cancel Bill Payload:", payload);
+
+        try {
+            const response = await postCancelBill(payload);
+            console.log("Response:", response);
+            if (response.success) {
+                console.log("Form submitted!");
+                setAlert({
+                    severity: 'success',
+                    title: 'Bill Cancellation Successfully',
+                    message: `${billNo}`,
+                    open: true
+                });
+                window.location.reload();
+            } else {
+                console.error('Error processing return: Unexpected status', response.status);
+                setError('Error processing return');
+                setAlert({
+                    severity: 'error',
+                    title: 'Error',
+                    message: 'Error processing return: Unexpected status',
+                    open: true
+                });
+            }
+        } catch (error) {
+            console.error('Error processing return:', error);
+            console.error('Error details:', error.response || error.message || error);
+            setError('Error processing return');
+        }
+    };
+
     const handleReprintClick = () => {
         console.log("Reprint button clicked");
         setShowSalesReceipt(true);
@@ -52,6 +122,21 @@ export const ViewBill = () => {
 
     const handleCloseSalesReceipt = () => {
         setShowSalesReceipt(false);
+    };
+
+    const openConfirmationModal = () => {
+        setIsConfirmationModalOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setIsConfirmationModalOpen(false);
+    };
+
+    const confirmCancelBill = () => {
+        setIsConfirmationModalOpen(false);
+        handleSubmitCancelBill();
+        getBilledData(billNo)
+
     };
 
     if (loading) {
@@ -67,6 +152,18 @@ export const ViewBill = () => {
     }
 
     const { billNo: selectedBillNo, branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount, billProducts } = billData;
+
+    const userRole = userDetails.userRole.toLowerCase();
+    const billedDate = new Date(createdAt);
+    const currentTime = new Date();
+    const timeDifferenceInHours = (currentTime - billedDate) / (1000 * 60 * 60);
+
+    const isCashier = userRole.includes('cashier');
+    const isAdmin = userRole.includes('admin');
+    const isSuperAdmin = userRole.includes('super admin');
+
+    const showReturnButton = isSuperAdmin || (isCashier ? timeDifferenceInHours <= 24 : !isAdmin || timeDifferenceInHours <= 240);
+    const showCancelButton = isSuperAdmin || (!isCashier && (!isAdmin || timeDifferenceInHours <= 240));
 
     return (
         <>
@@ -118,20 +215,29 @@ export const ViewBill = () => {
                             <h4>Total Amount: <span>Rs. {billTotalAmount.toFixed(2)}</span></h4>
                         </div>
                         <div className="btnSection-viewBill">
-                            <div className="returnBtn">
-                                <InputLabel> Return Items</InputLabel>
-                                <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
-                                    <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
-                                </Link>
-                            </div>
-                            <div className="reprintBtn">
-                                <InputLabel> Reprint </InputLabel>
-                                <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
-                            </div>
-                            <div className="cancelBillBtn">
-                                <InputLabel> Cancel Bill </InputLabel>
-                                <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={() => console.log("Cancel Bill Button clicked")} />} />
-                            </div>
+                            {status !== "Canceled" && (
+                                <>
+                                    {showReturnButton && (
+                                        <div className="returnBtn">
+                                            <InputLabel> Return Items</InputLabel>
+                                            <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
+                                                <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                                            </Link>
+                                        </div>
+                                    )}
+                                    {!isCashier && showCancelButton && (
+                                        <div className="cancelBillBtn">
+                                            <InputLabel> Cancel Bill </InputLabel>
+                                            <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={openConfirmationModal} />} />
+                                        </div>
+                                    )}
+
+                                    <div className="reprintBtn">
+                                        <InputLabel> Reprint </InputLabel>
+                                        <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -151,11 +257,11 @@ export const ViewBill = () => {
                             {billProducts.map((item, index) => (
                                 <tr key={index}>
                                     <td><InputField id={`productId-${index}`} name={`productId-${index}`} editable={false} width="100%" value={`${item.productId} ${item.productName}`} /></td>
-                                    <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty.toFixed(3)} textAlign='center' /></td>
+                                    <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
-                                    <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='right' /></td>
+                                    <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
-                                    <td><InputField id={`amount-${index}`} name={`amount-${index}`} editable={false} width="100%" value={item.amount.toFixed(2)} textAlign='right' /></td>
+                                    <td><InputField id={`totalAmount-${index}`} name={`totalAmount-${index}`} editable={false} width="100%" value={item.totalAmount ? item.totalAmount.toFixed(2) : '0.00'} textAlign='center' /></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -165,8 +271,21 @@ export const ViewBill = () => {
             {showSalesReceipt && (
                 <SalesReceipt billNo={billNo} onClose={handleCloseSalesReceipt} />
             )}
+            {alert.open && (
+                <CustomAlert
+                    severity={alert.severity}
+                    title={alert.title}
+                    message={alert.message}
+                    duration={4000}
+                    open={alert.open}
+                    onClose={() => setAlert({ ...alert, open: false })}
+                />
+            )}
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={confirmCancelBill}
+            />
         </>
     );
 };
-
-export default ViewBill;

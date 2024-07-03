@@ -9,6 +9,7 @@ import repoTypes from '../../../Components/Data.json';
 import { Link } from "react-router-dom";
 import StockSummeryDoc from '../../../Components/InventoryDocuments/StockSummeryDoc/StockSummeryDoc';
 import UpcomingExpDoc from '../../../Components/InventoryDocuments/UpcomingExpDoc/UpcomingExpDoc';
+import ExpiaryStockDoc from '../../../Components/InventoryDocuments/ExpiaryStockDoc/ExpiaryStockDoc';
 
 export const Reports = () => {
     const [clickedLink, setClickedLink] = useState('Generate Reports');
@@ -16,6 +17,7 @@ export const Reports = () => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [showStockSummeryReport, setShowStockSummeryReport] = useState(false);
     const [showUpcomingExpiryReport, setShowUpcomingExpiryReport] = useState(false);
+    const [showAlreadyExpiryReport, setShowAlreadyExpiryReport] = useState(false);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -36,18 +38,23 @@ export const Reports = () => {
         } else if (selectedReportType === 'Upcoming Expiry Stock') {
             setShowUpcomingExpiryReport(true);
         }
+        else if (selectedReportType === 'Already Expired Stock') {
+            setShowAlreadyExpiryReport(true);
+        }
     };
 
     const handleCloseDoc = () => {
         setShowStockSummeryReport(false);
         setShowUpcomingExpiryReport(false);
+        setShowAlreadyExpiryReport(false);
     };
 
     const handleClearButtonClick = () => {
-        setSelectedBranch(''); 
-        setSelectedReportType(''); 
+        setSelectedBranch('');
+        setSelectedReportType('');
         setShowStockSummeryReport(false);
         setShowStockSummeryReport(false);
+        setShowAlreadyExpiryReport(false);
 
     }
     return (
@@ -102,9 +109,11 @@ export const Reports = () => {
                             <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewButtonClick}> View </Buttons>
                             <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClearButtonClick}> Clear </Buttons>
                         </div>
+
                     </div>
                     {showStockSummeryReport && <StockSummeryDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
-                    {showUpcomingExpiryReport && <UpcomingExpDoc selectedBranch={selectedBranch} onClose={handleCloseDoc}/>}
+                    {showUpcomingExpiryReport && <UpcomingExpDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
+                    {showAlreadyExpiryReport && <ExpiaryStockDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
                 </div>
             </Layout>
         </>

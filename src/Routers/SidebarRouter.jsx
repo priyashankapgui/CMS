@@ -39,6 +39,7 @@ import Login from '../pages/LoginPart/Login/Login';
 import ForgetPw from '../pages/LoginPart/ForgetPw/ForgetPw';
 import ChangePw from "../pages/LoginPart/ResetPw/ResetPw";
 import { NewOrderView } from '../pages/OnlineOrders/NewOrders/NewOrderView';
+import { CompletedOrders } from '../pages/OnlineOrders/CompletedOrders/CompleteOrderView';
 
 
 export function SidebarRouter() {
@@ -122,6 +123,7 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="online-orders" />}>
         <Route path="/online-orders" element={<OnlineOrders />} />
         <Route path="/online-orders/viewOrder/:onlineBillNo" element={<NewOrderView />} />
+        <Route path="/online-orders/viewCompleteOrder/:onlineBillNo" element={<CompletedOrders />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="reporting/reports" />}>
