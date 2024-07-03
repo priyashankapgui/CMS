@@ -8,27 +8,34 @@ import InputLabel from '../../../../Components/Label/InputLabel';
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
 import { getBilledData, postRefundBillData } from '../../../../Api/Billing/SalesApi';
-
+import RefundReceipt from '../../../../Components/SalesReceiptTemp/RefundReceipt/RefundReceipt';
 
 export const StartReturnItems = () => {
     const { billNo } = useParams();
-    const navigate = useNavigate();
     const [billData, setBillData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [RTBNo, setRTBNo] = useState(null);
+    const [showRefundReceipt, setShowRefundReceipt] = useState(false);
     const [error, setError] = useState(null);
     const [returnItems, setReturnItems] = useState([]);
     const [retQtyEditable, setRetQtyEditable] = useState([]);
     const [reason, setReason] = useState("");
-    const [alertSuccessOpen, setAlertSuccessOpen] = useState(false);
-    const [alertWarningOpen, setAlertWarningtOpen] = useState(false);
+    const [alert, setAlert] = useState({
+        severity: '',
+        title: '',
+        message: '',
+        open: false
+    });
+    const navigate = useNavigate();
+
     const [userDetails, setUserDetails] = useState({
         username: ""
     });
 
     useEffect(() => {
-
         const fetchBillData = async () => {
             try {
                 const response = await getBilledData(billNo);
@@ -38,6 +45,7 @@ export const StartReturnItems = () => {
                         ...product,
                         returnQty: 0
                     })));
+                    setRetQtyEditable(response.data.billProducts.map(() => false)); // Initialize retQtyEditable state
                 } else {
                     setError('Bill not found');
                 }
@@ -51,7 +59,6 @@ export const StartReturnItems = () => {
         fetchBillData();
     }, [billNo]);
 
-
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
@@ -64,24 +71,59 @@ export const StartReturnItems = () => {
 
     const handleReturnQtyChange = (index, value) => {
         const updatedItems = [...returnItems];
-        updatedItems[index].returnQty = Number(value) || 0;
+        const returnQty = Number(value) || 0;
+
+        if (returnQty > updatedItems[index].billQty) {
+            setAlert({
+                severity: 'warning',
+                title: 'Warning',
+                message: `Return quantity cannot exceed billed quantity for ${updatedItems[index].productName}.`,
+                open: true
+            });
+            updatedItems[index].returnQty = updatedItems[index].billQty;
+        } else {
+            updatedItems[index].returnQty = returnQty;
+        }
+
         setReturnItems(updatedItems);
     };
 
-
     const handleSubmitReturn = async () => {
-        const selectedItems = returnItems.filter((item, index) => retQtyEditable[index] && item.returnQty > 0);
-        if (selectedItems.length === 0 || !reason.trim()) {
-            setAlertWarningtOpen(true);
+        const refundTotalAmount = calculateTotalRefund();
+        if (refundTotalAmount <= 0 && !reason) {
+            setAlert({
+                severity: 'warning',
+                title: 'Warning',
+                message: 'Fill required things.',
+                open: true
+            });
+            return;
+        } else if (refundTotalAmount > 0 && !reason) {
+            setAlert({
+                severity: 'warning',
+                title: 'Warning',
+                message: 'Please add the reason.',
+                open: true
+            });
+            return;
+        } else if (reason && refundTotalAmount <= 0) {
+            setAlert({
+                severity: 'warning',
+                title: 'Warning',
+                message: 'Please select the items to return.',
+                open: true
+            });
             return;
         }
 
+        const selectedItems = returnItems.filter((item, index) => retQtyEditable[index] && item.returnQty > 0);
+
         const payload = {
             billNo,
-            branchName,
+            branchName: billData.branchName,
             returnedBy: userDetails.username,
             reason,
-            refundTotalAmount: calculateTotalRefund(),
+            refundTotalAmount,
             products: selectedItems.map(item => ({
                 productId: item.productId,
                 returnQty: item.returnQty,
@@ -91,21 +133,42 @@ export const StartReturnItems = () => {
                 discount: item.discount
             }))
         };
-
+        setLoading(true);
         try {
             const response = await postRefundBillData(payload);
-            console.log("Response:", response); // Log response for debugging
-            if (response.success) {
+            console.log("Response:", response);
+
+            if (response && response.message && response.message.includes("Refund Bill and refund_Bill_Product entries created successfully")) {
                 console.log("Form submitted!");
-                setAlertSuccessOpen(true);
-                navigate(`/work-list/viewbill/${billNo}`);
+                setAlert({
+                    severity: 'success',
+                    title: 'Success',
+                    message: 'Return processed successfully.',
+                    open: true
+                });
+                const RTBNo = response.newRefundBill.RTBNo; // Correct the path to RTBNo
+                setRTBNo(RTBNo);
+                setShowRefundReceipt(true);
+                console.log('RTB No set:', RTBNo);
             } else {
-                console.error('Error processing return: Unexpected status', response.status);
-                setAlertWarningtOpen(true);// Show warning alert for unexpected status
+                console.error('Error processing return: Unexpected status', response ? response.message : 'No response');
+                setAlert({
+                    severity: 'warning',
+                    title: 'Warning',
+                    message: response && response.message ? response.message : 'Unexpected status occurred.',
+                    open: true
+                });
             }
         } catch (error) {
             console.error('Error processing return:', error);
-            setAlertWarningtOpen(true); // Show warning alert for general error
+            setAlert({
+                severity: 'error',
+                title: 'Error',
+                message: 'An error occurred while processing the return.',
+                open: true
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -118,6 +181,9 @@ export const StartReturnItems = () => {
     const toggleRetQtyEditable = (index) => {
         const updatedState = [...retQtyEditable];
         updatedState[index] = !updatedState[index];
+        if (!updatedState[index]) {
+            handleReturnQtyChange(index, 0);
+        }
         setRetQtyEditable(updatedState);
     };
 
@@ -132,6 +198,12 @@ export const StartReturnItems = () => {
         }, 0).toFixed(2);
     };
 
+    const handleCloseRefundReceipt = () => {
+        setShowRefundReceipt(false);
+        navigate(`/work-list/returnbill-list`);
+    };
+
+
     if (loading) {
         return <div><MainSpinner /></div>;
     }
@@ -144,7 +216,7 @@ export const StartReturnItems = () => {
         return <div>Bill not found</div>;
     }
 
-    const { branchName, customerName, contactNo } = billData;
+    const { branchName, customerName, contactNo, createdAt } = billData;
 
     return (
         <>
@@ -158,24 +230,32 @@ export const StartReturnItems = () => {
             </div>
 
             <Layout>
+                {loading && (
+                    <div className="loading-overlay">
+                        <SubSpinner spinnerText='Saving' />
+                    </div>
+                )}
                 <div className="return-items-top">
+                    {showRefundReceipt && <RefundReceipt RTBNo={RTBNo} onClose={handleCloseRefundReceipt} />}
                     <div className='return-items-top-cont'>
-                        <div className="cont1">
-                            <div className='inputFlex'>
-                                <InputLabel for="branchName" color="#0377A8">Branch: <span>{branchName}</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo} </span></InputLabel>
-                            </div>
+                        <div className='inputFlex'>
+                            <InputLabel for="branchName" color="#0377A8">Branch: <span>{branchName}</span></InputLabel>
                         </div>
-                        <div className="cont2">
-                            <div className='inputFlex'>
-                                <InputLabel for="cusName" color="#0377A8">Customer Name: <span>{customerName}</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="cusContact" color="#0377A8">Contact No: <span>{contactNo} </span></InputLabel>
-                            </div>
+                        <div className='inputFlex'>
+                            <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo} </span></InputLabel>
                         </div>
+
+                        <div className='inputFlex'>
+                            <InputLabel for="billedAt" color="#0377A8">Billed At: <span>{new Date(createdAt).toLocaleString('en-GB')}</span></InputLabel>
+                        </div>
+
+                        <div className='inputFlex'>
+                            <InputLabel for="cusName" color="#0377A8">Customer Name: <span>{customerName}</span></InputLabel>
+                        </div>
+                        <div className='inputFlex'>
+                            <InputLabel for="cusContact" color="#0377A8">Contact No: <span>{contactNo} </span></InputLabel>
+                        </div>
+
                     </div>
                     <hr />
                     <div className="return-items-reason-cont-btm">
@@ -187,12 +267,9 @@ export const StartReturnItems = () => {
                             <InputField id="return-items-reason" name="return-items-reason" value={reason} onChange={handleReasonChange} editable={true} width="400px" height="60px" placeholder="Type the reason here..." />
                             <div className="btnSection-return-items">
                                 <Buttons type="button" onClick={handleSubmitReturn} id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-
                             </div>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div className="return-items-container">
@@ -205,7 +282,7 @@ export const StartReturnItems = () => {
                                 <th>Billed Qty</th>
                                 <th>Batch No</th>
                                 <th>Unit Price</th>
-                                <th>Dis</th>
+                                <th>Dis%</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -233,40 +310,27 @@ export const StartReturnItems = () => {
                                             placeholder='Type here'
                                             className={retQtyEditable[index] ? 'blue-border' : ''}
                                             onChange={(e) => handleReturnQtyChange(index, e.target.value)}
+                                            value={item.returnQty}
                                         />
-
                                     </td>
-                                    <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.billQty} textAlign='center' /></td>
+                                    <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.billQty.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`batchNo_${index}`} name="batchNo" editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
-                                    <td><InputField id={`unitPrice_${index}`} name="unitPrice" editable={false} width="100%" value={item.sellingPrice} textAlign='center' /></td>
-                                    <td><InputField id={`discount_${index}`} name="discount" editable={false} width="100%" value={item.discount} textAlign='center' /></td>
+                                    <td><InputField id={`unitPrice_${index}`} name="unitPrice" editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
+                                    <td><InputField id={`discount_${index}`} name="discount" editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-                {alertWarningOpen && (
+                {alert.open && (
                     <CustomAlert
-                        open={alertWarningOpen}
-                        onClose={() => setAlertWarningtOpen(false)}
-                        severity="warning"
-                        title="Please add the reason."
-                        message="You cannot go forward until you do it."
-                        duration={5000}
+                        severity={alert.severity}
+                        title={alert.title}
+                        message={alert.message}
+                        duration={4000}
+                        onClose={() => setAlert({ ...alert, open: false })}
                     />
                 )}
-
-                {alertSuccessOpen && (
-                    <CustomAlert
-                        open={alertSuccessOpen}
-                        onClose={() => setAlertSuccessOpen(false)}
-                        severity="success"
-                        title="Return items quantity updated successfully!"
-                        message="Go to the WorkList Page"
-                        duration={3000}
-                    />
-                )}
-
             </Layout>
         </>
     );

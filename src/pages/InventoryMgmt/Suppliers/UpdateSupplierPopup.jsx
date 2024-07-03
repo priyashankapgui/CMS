@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import Joi from 'joi';
 import { getSupplierById , updateSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
@@ -13,7 +11,6 @@ import { getSupplierById , updateSupplier } from '../../../Api/Inventory/Supplie
 
 function UpdateSupplierPopup({ supplierId }) {
     console.log("supplirId received",supplierId);
-    const navigate = useNavigate();
     const [post, setPost] = useState({
         supplierName: '',
         regNo: '',
@@ -92,27 +89,24 @@ function UpdateSupplierPopup({ supplierId }) {
         try {
             const resp = await updateSupplier(supplierId, post);
             console.log('Supplier updated successfully:', resp.data);
-            const alertData = {
-                severity: 'info',
+            setAlertConfig({
+                severity: 'success',
                 title: 'Successfully Updated!',
                 message: 'Supplier updated successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Suppliers');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error updating supplier:', error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to update supplier.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Suppliers');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         }
+        
     };
 
     return (

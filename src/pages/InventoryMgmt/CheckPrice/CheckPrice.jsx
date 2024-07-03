@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./CheckPrice.css";
 import InputLabel from "../../../Components/Label/InputLabel";
@@ -8,9 +8,7 @@ import SearchBar from "../../../Components/SearchBar/SearchBar";
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
-import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
-import { getProductBatchDetails } from '../../../Api/Inventory/Product/ProductAPI';
-
+import { getProducts, getProductBatchDetails } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const CheckPrice = () => {
     const [branches, setBranches] = useState([]);
@@ -19,6 +17,7 @@ export const CheckPrice = () => {
     const [selectedProduct, setSelectedProduct] = useState('');
     const [batchDetails, setBatchDetails] = useState([]);
     const [loading, setLoading] = useState(false);
+    const branchDropdownRef = useRef(null);
 
     useEffect(() => {
         fetchBranches();
@@ -41,7 +40,7 @@ export const CheckPrice = () => {
     const fetchProductsSuggestions = async (query) => {
         try {
             const response = await getProducts();
-            if (response.data && response.data) {
+            if (response.data) {
                 return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
@@ -81,7 +80,7 @@ export const CheckPrice = () => {
         setProduct(null);
         setSelectedProduct('');
         setBatchDetails([]);
-        window.location.reload();
+        branchDropdownRef.current.reset();
     };
 
     return (
@@ -101,7 +100,8 @@ export const CheckPrice = () => {
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
                                     addOptions={["All"]}
-
+                                    value={selectedBranch}
+                                    ref={branchDropdownRef}
                                 />
                             </div>
                             <div className="product-field">

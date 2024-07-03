@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
+import InputFile from '../../../Components/InputFile/InputFile';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { createProduct } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
-    const navigate = useNavigate();
     const [productName, setProductName] = useState('');
     const [description, setDescription] = useState('');
     const [categoryName, setCategoryName] = useState('');
@@ -20,12 +19,6 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-
-    const [imageUrl, setImageUrl] = useState(null);
-    const [files, setFile] = useState(null);
-    const [showAlertSuccess, setShowAlertSuccess] = useState(false);
-    const [showAlertError, setShowAlertError] = useState(false);
-    const [loading, setLoading] = useState(false);
     
 
     const productSchema = Joi.object({
@@ -49,14 +42,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         return errorMessages;
     };
 
-    const resetFields = () => {
-        setProductName('');
-        setDescription('');
-        setCategoryName('');
-        setImage(null);
-        setBarcode('');
-        setMinQty('');
-    };
+
 
     const handleProductImageUpload = (e) => {
         const file = e.target.files[0];
@@ -117,26 +103,31 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
         try {
             await createProduct(formData);
 
-            const alertData = {
+            setAlertConfig({
                 severity: 'success',
                 title: 'Added',
                 message: 'Product added successfully!',
                 duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
+    
+            // Reset form fields
+            setProductName('');
+            setDescription('');
+            setCategoryName('');
+            setBarcode('');
+            setMinQty('');
+            setImage('');
+                
         } catch (error) {
             console.error('Error posting data:', error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
-                message: 'Failed to add product.',
+                message: 'Failed to add Product.',
                 duration: 5000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } finally {
             setIsLoading(false);
         }
@@ -184,7 +175,7 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
                     <div style={{ display: 'block', width: '100%' }}>
                     <div style={{ marginBottom: "5px" }}>
                             <InputLabel htmlFor="uploadImage" color="#0377A8">Upload Image</InputLabel> 
-                            <input type="file" id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
+                            <InputFile id="uploadImage" name="image" style={{ width: '100%' }} onChange={handleProductImageUpload} />
                         
                         </div>
                         <div>

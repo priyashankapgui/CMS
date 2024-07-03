@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./MinimumStock.css";
 import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
@@ -21,6 +20,7 @@ export const MinimunStock = () => {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
     const [loading, setLoading] = useState(true);
+    const branchDropdownRef = useRef(null);
 
     useEffect(() => {
         fetchBranches();
@@ -120,13 +120,22 @@ export const MinimunStock = () => {
         }
     };
 
-    const handleClear = () => {
+    const handleClear = async () => {
         setSelectedBranch('');
         setProduct(null);
+        setSelectedProduct('');
         setBatchNo('');
         setCategory(null);
-        setStockDetails([]);
-        window.location.reload();
+        branchDropdownRef.current.reset();
+        try {
+            setLoading(true);
+            const response = await getProductMinQty();
+            setStockDetails(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -135,17 +144,19 @@ export const MinimunStock = () => {
                 <div className="min-stock-filter-container">
                     <div className="min-stock-content-top">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
                                 onChange={(e) => handleDropdownChange(e)}
                                 addOptions={["All"]}
+                                value={selectedBranch}
+                                ref={branchDropdownRef}
                             />
                         </div>
                         <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
                             <SearchBar
                                 searchTerm={selectedProduct}
                                 setSearchTerm={setSelectedProduct}

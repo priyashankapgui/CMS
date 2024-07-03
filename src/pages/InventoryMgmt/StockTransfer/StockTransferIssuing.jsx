@@ -4,16 +4,16 @@ import './StockTransferIssuing.css';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { Link , useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import axios from 'axios';
 import InputLabel from "../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
-import { FiPlus } from "react-icons/fi"; // Import all icons
+import { FiPlus } from "react-icons/fi"; 
 import { AiOutlineDelete } from "react-icons/ai";
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
-import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
 import secureLocalStorage from "react-secure-storage";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
+import { getStockTransferBySTN_NO, getBatchNo, createstockTransferIN } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { cancelStockRequest } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const StockTransferIssuing = () => {
     const { STN_NO } = useParams();
@@ -22,30 +22,23 @@ export const StockTransferIssuing = () => {
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [submittedBy, setSubmittedBy] = useState(""); // Assuming you have a way to get the currently logged in user
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [alertConfig, setAlertConfig] = useState({});
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
 
-    const showAlert = (severity, title, message, duration) => {
-        setAlertConfig({ severity, title, message, duration });
-        setAlertVisible(true);
-        setTimeout(() => {
-            setAlertVisible(false);
-        }, duration);
-    };
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
                 
                 
-                const response = await axios.get(`http://localhost:8080/stock-transferDetails/${STN_NO}`);
-                setStockTransferDetails(response.data.data);
-                const products = response.data.data.products.map((product, index) => ({
+                const response = await getStockTransferBySTN_NO(STN_NO);
+                console.log("Fetched data:", response.data);
+                setStockTransferDetails(response.data);
+                const products = response.data.products.map((product, index) => ({
                     id: index + 1,
                     productId: `${product.productId} / ${product.productName}`,
                     reqQty: product.requestedQty,
-                    batchNo: '', // Initialize batchNo as empty
+                    batchNo: '', 
                     transferQty: '',
                     unitPrice: 0,
                     amount: 0,
@@ -63,15 +56,14 @@ export const StockTransferIssuing = () => {
     }, [STN_NO]);
 
     const fetchBatchSuggestions = async (productId, branchName, searchTerm) => {
+        console.log("data",searchTerm);
         try {
-            const response = await axios.get(`http://localhost:8080/batchNumbers`, {
-                params: { productId, branchName, searchTerm }
-            });
-            console.log("Batch suggestions response:", response.data.data);
-            return response.data.data.map(batch => ({
+            const response = await getBatchNo(productId,branchName);
+            console.log("Batch suggestions response:", response.data);
+            return response.data.map(batch => ({
                 value: batch.batchNo,
                 displayText: `${batch.batchNo} (Available: ${batch.totalAvailableQty})`,
-                unitPrice: batch.sellingPrice // Include unitPrice in the suggestions
+                unitPrice: batch.sellingPrice 
             }));
         } catch (error) {
             console.error("Error fetching batch suggestions:", error);
@@ -112,17 +104,26 @@ export const StockTransferIssuing = () => {
 
             console.log("Data to be sent:", data);
 
-            const response = await axios.post(`http://localhost:8080/stockTransferIN`, data);
+            const response = await createstockTransferIN(data);
             console.log("Save response:", response.data);
-            showAlert('success', 'Success', 'Stock transfer successful!', 5000);
-            // Navigate to the desired page after successful save
-            navigate('/stock-transfer');
+            setAlert({
+                show: true,
+                severity: 'success',
+                title: 'Success',
+                message: 'Stock transfer successful!'
+            });
+            
         } else {
             console.error('User details not found in secure storage');
         }
      } catch (error) {
             console.error("Error saving stock transfer:", error);
-            showAlert('error', 'Error', 'Failed to save stock transfer.', 5000);
+            setAlert({
+                show: true,
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to save stock transfer.'
+            });
         }
     
     };
@@ -150,7 +151,7 @@ export const StockTransferIssuing = () => {
             id: rows.length + 1,
             productId: selectedRow.productId,
             reqQty: selectedRow.reqQty,
-            batchNo: '', // Initialize batchNo as empty
+            batchNo: '', 
             transferQty: '',
             unitPrice: 0,
             amount: 0,
@@ -176,7 +177,7 @@ export const StockTransferIssuing = () => {
         "Transfer Qty",
         "Unit Price",
         "Amount",
-        "Actions"
+        
     ];
 
     const tableRows = rows.map(row => ({
@@ -205,27 +206,62 @@ export const StockTransferIssuing = () => {
             />
         ),
         amount: row.amount,
-        actions: (
-            <div>
-                <FiPlus onClick={() => handleAddRow(row)} style={{ cursor: 'pointer', marginRight: '8px' }} />
-                <AiOutlineDelete onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
-            </div>
-        )
+        
     }));
 
-    const handleClick = async () => {
 
-    }
+   
+    const handleCancel = () => {
+        setShowConfirmation(true);
+    };
 
+    const handleConfirmCancel = async () => {
+        try {
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+
+                const data = {
+                    STN_NO: stockTransferDetails?.STN_NO,
+                    submittedBy: user.userName,
+                };
+
+                const response = await cancelStockRequest(data);
+                console.log("Cancellation response:", response.data);
+                setAlert({
+                    show: true,
+                    severity: 'success',
+                    title: 'Success',
+                    message: 'Stock transfer cancellation successful!.'
+                });
+            } else {
+                console.error('User details not found in secure storage');
+            }
+        } catch (error) {
+            console.error("Error cancelling stock transfer:", error);
+            setAlert({
+                show: true,
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to cancel stock transfer.'
+            });
+        } finally {
+            setShowConfirmation(false); // Close the confirmation popup
+        }
+    };
+
+    const handleCloseAlert = () => {
+        setAlert({ show: false, severity: '', title: '', message: '' });
+    };
     return (
         <>
-          {alertVisible && (
+         {alert.show && (
                 <CustomAlert
-                    severity={alertConfig.severity}
-                    title={alertConfig.title}
-                    message={alertConfig.message}
-                    duration={alertConfig.duration}
-                    onClose={() => setAlertVisible(false)}
+                    severity={alert.severity}
+                    title={alert.title}
+                    message={alert.message}
+                    duration={3000}
+                    onClose={handleCloseAlert}
                 />
             )}
             <div className="top-nav-blue-text">
@@ -233,7 +269,7 @@ export const StockTransferIssuing = () => {
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer - Issuing</h4>
+                    <h4>Stock Transfer IN - Issuing</h4>
                 </div>
                
             </div>
@@ -266,12 +302,19 @@ export const StockTransferIssuing = () => {
                     <div className="StockIn-BtnSection">
                         <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Issue </Buttons>
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={() => navigate('/stock-transfer')}>Close</Buttons>
-                        <Buttons type="button" id="cancel-btn" style={{ backgroundColor: "white", color: "red" }} onClick={<ConfirmationPopup/> }>Cancel</Buttons> 
+                        <Buttons type="button" id="cancel-btn" style={{ backgroundColor: "white", color: "red" }}  onClick={handleCancel} >Cancel</Buttons> 
                        
                         <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
                     </div>
                 </div>
-                
+                {showConfirmation && (
+                    <ConfirmationPopup
+                        title="Cancel Confirmation"
+                        message="Are you sure you want to cancel?"
+                        onConfirm={handleConfirmCancel}
+                        onCancel={() => setShowConfirmation(false)}
+                    />
+                )}
             </Layout>
         </>
     );

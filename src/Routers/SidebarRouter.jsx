@@ -27,11 +27,11 @@ import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
 import ProtectedRoute from './ProtectedRoute';
 import StockTransferIssuing from '../pages/InventoryMgmt/StockTransfer/StockTransferIssuing';
-import StockTransferReceiving from '../pages/InventoryMgmt/StockTransfer/StockTransferReceiving';
+import ReceivingCompleted from '../pages/InventoryMgmt/StockTransfer/ReceivingCompleted';
 import StockTransferOUT from '../pages/InventoryMgmt/StockTransfer/StockTransferOUT';
-import Completed from '../pages/InventoryMgmt/StockTransfer/completed';
+import IssuingCompleted from '../pages/InventoryMgmt/StockTransfer/IssuingCompleted';
 import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
-import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
+import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/ReceivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
 import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
 import NotFound from '../pages/NotFound/NotFound';
@@ -39,6 +39,7 @@ import Login from '../pages/LoginPart/Login/Login';
 import ForgetPw from '../pages/LoginPart/ForgetPw/ForgetPw';
 import ChangePw from "../pages/LoginPart/ResetPw/ResetPw";
 import { NewOrderView } from '../pages/OnlineOrders/NewOrders/NewOrderView';
+import { CompletedOrders } from '../pages/OnlineOrders/CompletedOrders/CompleteOrderView';
 
 
 export function SidebarRouter() {
@@ -85,10 +86,10 @@ export function SidebarRouter() {
         <Route path="/stock-transfer" element={<StockTransfer />} />
         <Route path="/stock-transfer/new" element={<NewStockTransfer />} />
         <Route path="/stock-transfer/issuing/:STN_NO" element={<StockTransferIssuing />} />
-        <Route path="/stock-transfer/completed/:STN_NO" element={<Completed />} />
+        <Route path="/stock-transfer/completed/:STN_NO" element={<IssuingCompleted />} />
         <Route path="/stock-transfer/cancelled/:STN_NO" element={<Cancelled />} />
         <Route path="/stock-transfer/OUT/cancelled/:STN_NO" element={<ReceivingCancelled/>} />
-        <Route path="/stock-transfer/receiving/:STN_NO" element={<StockTransferReceiving />} />
+        <Route path="/stock-transfer/receiving/:STN_NO" element={<ReceivingCompleted />} />
         <Route path="/stock-transfer/OUT/raised/:STN_NO" element={<ReceivingRaised />} />
       </Route>
 
@@ -122,6 +123,7 @@ export function SidebarRouter() {
       <Route element={<ProtectedRoute groupName="online-orders" />}>
         <Route path="/online-orders" element={<OnlineOrders />} />
         <Route path="/online-orders/viewOrder/:onlineBillNo" element={<NewOrderView />} />
+        <Route path="/online-orders/viewCompleteOrder/:onlineBillNo" element={<CompletedOrders />} />
       </Route>
 
       <Route element={<ProtectedRoute groupName="reporting/reports" />}>

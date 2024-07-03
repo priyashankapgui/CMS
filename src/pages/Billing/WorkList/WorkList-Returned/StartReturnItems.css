@@ -17,7 +17,7 @@
 
 .return-items-top-cont {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
 
 }
 
@@ -26,9 +26,6 @@
     font-weight: 500;
 }
 
-.inputFlex {
-    display: flex;
-}
 
 
 .blue-border {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import "./StockTransferOUT.css";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
@@ -9,147 +8,74 @@ import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
+import { getAllTransfers } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
+import StockTraOut from '../../../Components/InventoryDocuments/St-Out-Doc/StockTraOut';
 
-export const StockTransferOUT = () => {
-    const [clickedLink, setClickedLink] = useState('StockRequest-IN');
+export const StockTransferOUT = ({ searchParams }) => {
     const [stockData, setStockData] = useState([]);
-    const [branches, setBranches] = useState([]);
-    const [selectedBranch, setSelectedBranch] = useState('');
+    const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 
+    const [showStockOUTReceipt, setShowStockOUTReceipt] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [searchParams, setSearchParams] = useState({
-        fromDate: '',
-        toDate: '',
-        STNNo: '',
-        productId: '',
-    });
-    const [products, setProducts] = useState([]);
-    const [userDetails, setUserDetails] = useState({});
-    
 
     const navigate = useNavigate();
 
-    const handleLinkClick = (linkText) => {
-        setClickedLink(linkText);
-    };
-
     useEffect(() => {
         fetchStockData();
-        fetchBranches();
-        fetchProducts();
-    }, []);
+    }, [searchParams]); // Add searchParams as dependency to re-fetch data when they change
 
     const fetchStockData = async () => {
-        const userJSON = secureLocalStorage.getItem("user");
-        if (userJSON) {
-          const user = JSON.parse(userJSON);
-          console.log("data",user.role);
-    
+        setLoading(true);
         try {
-            let response;
-            if (user.role === 'Super Admin') {
-                response = await axios.get('http://localhost:8080/allTransfers');
-            } else if (user.branchName) {
-                response = await axios.get(`http://localhost:8080/stock-transfer/request-branch/${user.branchName}`);
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+                let response;
+                if (user.role === 'Super Admin') {
+                    response = await getAllTransfers();
+                } else if (user.branchName) {
+                    response = await getAllTransfers();
+                    response.data = response.data.filter(transfer => transfer.requestBranch === user.branchName);
+                } else {
+                    console.error('Branch name is not available for the user');
+                    setLoading(false);
+                    return;
+                }
+
+                let filteredData = response.data || [];
+                if (searchParams.STN_NO) {
+                    filteredData = filteredData.filter((item) =>
+                        item.STN_NO.includes(searchParams.STN_NO)
+                    );
+                }
+                if (searchParams.fromDate && searchParams.toDate) {
+                    const fromDate = new Date(searchParams.fromDate);
+                    const toDate = new Date(searchParams.toDate);
+                    filteredData = filteredData.filter((item) => {
+                        const createdAt = new Date(item.createdAt);
+                        return createdAt >= fromDate && createdAt <= toDate;
+                    });
+                }  if (searchParams.requestBranch !== 'All' && searchParams.supplyingBranch === 'All') {
+                    filteredData = filteredData.filter(
+                        (item) => item.requestBranch === searchParams.requestBranch
+                    );
+                } if (searchParams.supplyingBranch !== 'All' && searchParams.requestBranch === 'All') {
+                    filteredData = filteredData.filter(
+                        (item) => item.supplyingBranch === searchParams.supplyingBranch
+                    );
+                } else if (searchParams.productId) {
+                    filteredData = filteredData.filter((item) =>
+                        item.products.some(product => product.productId.includes(searchParams.productId))
+                    );
+                }
+
+                setStockData(filteredData); // Ensure state is updated here
             } else {
-                console.error('Branch name is not available for the user');
-                setLoading(false);
-                return;
+                console.error('User details not found in secure storage');
             }
-            setStockData(response.data?.data || []);
         } catch (error) {
-            console.error('Error fetching Stock transfer data:', error);
+            console.error('Error fetching stock transfer data:', error);
         } finally {
             setLoading(false);
-        }
-    }
-       
-    
-    };
-
-    const fetchBranches = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
-            setBranches(response.data);
-        } catch (error) {
-            console.error('Error fetching branches:', error);
-        }
-    };
-
-    const fetchProducts = async () => {
-        try {
-            const response = await axios.get('http://localhost:8080/products');
-            setProducts(response.data.data);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
-
-    const handleDropdownChange = (value) => {
-        setSelectedBranch(value);
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setSearchParams(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
-
-    const handleDateChange = (name, date) => {
-        setSearchParams(prevState => ({
-            ...prevState,
-            [name]: date
-        }));
-    };
-
-    const handleSearch = async () => {
-        try {
-            setLoading(true);
-
-            const params = {
-                fromDate: searchParams.fromDate,
-                toDate: searchParams.toDate,
-                STNNo: searchParams.STNNo,
-                productId: searchParams.productId.split(' ')[0], 
-            };
-
-            const response = await axios.get(`http://localhost:8080/stock-transfer`, { params });
-
-            setStockData(response.data?.data || []);
-        } catch (error) {
-            console.error('Error searching:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleClear = () => {
-        setSearchParams({
-            STNNo: '',
-            fromDate: '',
-            toDate: '',
-            productId: '',
-        });
-    };
-
-    const handleNewButtonClick = () => {
-        navigate('/stock-transfer/new');
-    };
-
-    const fetchProductsSuggestions = async (query) => {
-        try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
-                    id: product.productId,
-                    displayText: `${product.productId} ${product.productName}`
-                }));
-            }
-            return [];
-        } catch (error) {
-            console.error('Error fetching product suggestions:', error);
-            return [];
         }
     };
 
@@ -158,17 +84,26 @@ export const StockTransferOUT = () => {
         return date.toISOString().split('T')[0];
     };
 
+    const handleReprintClick = (STN_NO) => {
+        setSelectedSTN_NO(STN_NO);
+        setShowStockOUTReceipt(true);
+    };
+
+
+    const handleCloseStockOUTReceipt = () => {
+        setShowStockOUTReceipt(false);
+        setSelectedSTN_NO(null);
+    };
+
     return (
         <>
-                <div className="stockTransferOUT-bodycontainer">
-                    
-                    <div className="stockTransferOUT-content-middle">
+            <div className="stockTransferOUT-bodycontainer">
+                <div className="stockTransferOUT-content-middle">
                     {loading ? (
-                            <div><SubSpinner/></div>
-                        ) : (
-
+                        <div><SubSpinner/></div> 
+                    ) : (
                         <TableWithPagi
-                            columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch',  'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
+                            columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch', 'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
                             rows={stockData.map((data, index) => ({
                                 'STN No': data.STN_NO,
                                 'Created At': formatDate(data.createdAt),
@@ -186,66 +121,58 @@ export const StockTransferOUT = () => {
                                                     id={`eyeViewBtn-${index}`}
                                                     type="submit"
                                                     name={`eyeViewBtn-${index}`}
-                                                    icon={<BsEye />}
+                                                    icon={<BsEye style={{ fontSize: '15px' }} />}
                                                 />
                                             </Link>
                                         )}
                                         {data.status === 'completed' && (
                                             <>
-                                            <Link to={`/stock-transfer/receiving/${data.STN_NO}`}>
-                                            <RoundButtons
-                                                id={`tickBtn-${index}`}
-                                                type="submit"
-                                                name={`tickBtn-${index}`}
-                                                icon={<BsCheckCircle />}
-                                            />
-                                            </Link>
-                                             <RoundButtons
-                                             id={`printBtn-${index}`}
-                                             type="submit"
-                                             name={`printBtn-${index}`}
-                                             icon={<RiPrinterFill />}
-                                         />
-                                         </>
+                                                <Link to={`/stock-transfer/receiving/${data.STN_NO}`}>
+                                                    <RoundButtons
+                                                        id={`tickBtn-${index}`}
+                                                        type="submit"
+                                                        name={`tickBtn-${index}`}
+                                                        icon={<BsCheckCircle style={{ fontSize: '18px' }} />}
+                                                    />
+                                                </Link>
+                                                <RoundButtons
+                                                    id={`printBtn-${index}`}
+                                                    type="submit"
+                                                    name={`printBtn-${index}`}
+                                                    icon={<RiPrinterFill style={{ fontSize: '16px' }} />}
+                                                    onClick={() => handleReprintClick(data.STN_NO)}
+                                                />
+                                            </>
                                         )}
                                         {data.status === 'cancelled' && (
-                                             <Link to={`/stock-transfer/OUT/cancelled/${data.STN_NO}`}>
-                                            <RoundButtons
-                                                id={`cancelBtn-${index}`}
-                                                type="submit"
-                                                name={`cancelBtn-${index}`}
-                                                icon={<BsXCircle />}
-                                            />
+                                            <Link to={`/stock-transfer/OUT/cancelled/${data.STN_NO}`}>
+                                                <RoundButtons
+                                                    id={`cancelBtn-${index}`}
+                                                    type="submit"
+                                                    name={`cancelBtn-${index}`}
+                                                    icon={<BsXCircle style={{ fontSize: '18px' }} />}
+                                                />
                                             </Link>
                                         )}
-                                        
                                     </div>
                                 ),
                             }))}
                             customTableStyle={{ top: '20%', width: '100%' }}
                             itemsPerPage={10}
                         />
-                        )}
-                    </div>
+                    )}
                 </div>
-            
+            </div>
+            {showStockOUTReceipt && (
+                <div className="transfer-doc-popup">
+                    <StockTraOut
+                        STN_NO={selectedSTN_NO}
+                        onClose={handleCloseStockOUTReceipt}
+                    />
+                </div>
+            )}
         </>
-   
     );
 };
 
 export default StockTransferOUT;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

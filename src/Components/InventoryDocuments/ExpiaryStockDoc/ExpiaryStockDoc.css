@@ -3,12 +3,12 @@
         visibility: hidden;
     }
 
-    .GrnDoc-paper-frame,
-    .GrnDoc-paper-frame * {
+    .expiaryStockDoc-paper-frame,
+    .expiaryStockDoc-paper-frame * {
         visibility: visible;
     }
 
-    .GrnDoc-paper-frame {
+    .expiaryStockDoc-paper-frame {
         position: absolute;
         left: 0;
         top: 0;
@@ -21,6 +21,14 @@
         font-size: 12px;
     }
 
+    .expiaryStockDoc-paper-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+    }
+
     .pageNumber::after {
         content: counter(page);
     }
@@ -30,7 +38,7 @@
     }
 }
 
-.GrnDoc-paper-frame {
+.expiaryStockDoc-paper-frame {
     width: 297mm;
     height: 210mm;
     margin: 0 auto;
@@ -38,30 +46,32 @@
     border: 1px solid #ddd;
     background-color: #fafafa;
     font-family: Poppins, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.GrnDoc-paper-sys-logo {
+.expiaryStockDoc-paper-sys-logo {
     width: 90px;
     height: auto;
     margin: 0 auto;
 }
 
-.GrnDoc-paper-header {
+.expiaryStockDoc-paper-header {
     display: block;
     text-align: center;
 }
 
-.GrnDoc-paper-title {
+.expiaryStockDoc-paper-title {
     font-size: 14px;
     text-align: center;
     margin-top: 10px;
     color: #fff;
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
-
 }
 
-.GrnDoc-top-details {
+.expiaryStockDoc-top-details {
     margin: 10px 20px 0 20px;
     font-size: 12px;
     font-weight: 500;
@@ -69,30 +79,31 @@
     justify-content: space-between;
 }
 
-.GrnDoc-bodyContent-table {
+.expiaryStockDoc-bodyContent-table {
     width: 100%;
     margin: 0 auto;
     border-collapse: collapse;
 }
 
-.GrnDoc-bodyContent-table th {
+.expiaryStockDoc-bodyContent-table th {
     background-color: #e8e8e8;
     font-size: 12px;
     padding: 6px 0;
 }
 
-.GrnDoc-bodyContent-table td {
+.expiaryStockDoc-bodyContent-table td {
     font-size: 12px;
-    padding: 40px 0;
+    padding: 6px 0;
 }
 
-.GrnDoc-bottomContent {
-    margin-top: 20px;
+.expiaryStockDoc-bottomContent {
+    margin-top: 10px;
 }
 
-.GrnDoc-paper-footer {
+.expiaryStockDoc-paper-footer {
     font-size: 10px;
     text-align: center;
-    /* margin-top: 33.56em;
-    position: relative; */
+    position: fixed;
+    bottom: 0;
+    
 }

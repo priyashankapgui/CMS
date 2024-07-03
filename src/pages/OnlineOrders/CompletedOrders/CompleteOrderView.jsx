@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Layout from "../../../Layout/Layout";
-import "./NewOrderView.css";
+import "./CompleteOrderView.css";
 import { IoChevronBackCircleOutline } from 'react-icons/io5';
 import InputField from '../../../Components/InputField/InputField';
 import InputLabel from '../../../Components/Label/InputLabel';
-import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { MdDone } from 'react-icons/md';
 import WorkOrderReceipt from '../../../Components/WorkOrderReceipt/WorkOrderReceipt';
-import { getOnlineBillByNumber, updateOnlineBill } from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx';
+import { getOnlineBillByNumber } from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx';
 import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
-import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
 
-export function NewOrderView() {
+export function CompletedOrders() {
     const { onlineBillNo } = useParams();
+    const navigate = useNavigate(); // Use useNavigate
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
-    const [userDetails, setUserDetails] = useState({ username: '' });
     const [showAlert, setShowAlert] = useState(false);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
@@ -26,16 +23,6 @@ export function NewOrderView() {
         message: 'You have successfully accepted the order!',
         duration: 3000
     });
-
-    useEffect(() => {
-        const userJSON = secureLocalStorage.getItem("user");
-        if (userJSON) {
-            const user = JSON.parse(userJSON);
-            setUserDetails({
-                username: user?.userName || user?.employeeName || "",
-            });
-        }
-    }, []);
 
     useEffect(() => {
         const fetchOrderData = async () => {
@@ -52,38 +39,6 @@ export function NewOrderView() {
 
         fetchOrderData();
     }, [onlineBillNo]);
-
-    const handleAcceptClick = async () => {
-        if (userDetails.username) {
-            const currentTime = new Date().toISOString(); 
-            const updates = {
-                acceptedBy: userDetails.username,
-                status: "Processing",
-                acceptedAt: currentTime 
-            };
-
-            try {
-                await updateOnlineBill(onlineBillNo, updates);
-                setOrderData((prevData) => ({
-                    ...prevData,
-                    acceptedBy: updates.acceptedBy,
-                    status: updates.status,
-                    acceptedAt: currentTime 
-                }));
-                setShowPopup(true);
-                setShowAlert(true);
-            } catch (error) {
-                console.error('Error updating online bill:', error);
-                setAlertDetails({
-                    severity: 'error',
-                    title: 'Error',
-                    message: 'Failed to accept the order. Please try again.',
-                    duration: 3000
-                });
-                setShowAlert(true);
-            }
-        }
-    };
 
     const handleClosePopup = () => {
         setShowPopup(false);
@@ -124,16 +79,16 @@ export function NewOrderView() {
     return (
         <>
             <div className='top-nav-blue-text'>
-                <div className='ViewOnlineDetails'>
-                    <Link to="/online-orders">
+                <div className='ViewCompletedDetails'>
+                    <Link to="/online-orders" onClick={() => navigate('/online-orders?tab=completed')}>
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>View Order</h4>
+                    <h4>View Completed Order</h4>
                 </div>
             </div>
             <Layout>
-                <div className='View-onlineorder-top'>
-                    <div className='View-onlineorder-top-cont'>
+                <div className='View-Completed-top'>
+                    <div className='View-Completed-top-cont'>
                         <div className='detail1'>
                             <div className='inputFlex'>
                                 <InputLabel for="branchName" color="#0377A8">Branch: <span>{orderData.branch.branchName}</span></InputLabel>
@@ -158,15 +113,9 @@ export function NewOrderView() {
                         </div>
                     </div>
                     <hr />
-                    <div className='View-onlineorder-bottom-cont'>
-                        <div className='onlineOrderRBtn'>
-                            <InputLabel> Accept </InputLabel>
-                            <RoundButtons id="acceptbtn" type="submit" name="acceptbtn" icon={<MdDone />} onClick={handleAcceptClick} />
-                        </div>
-                    </div>
                 </div>
-                <div className='viewOnlineOrderItem'>
-                    <table className='viewonlineitemtable'>
+                <div className='viewCompletedItem'>
+                    <table className='viewCompletedtable'>
                         <thead>
                             <tr>
                                 <th>Product ID</th>

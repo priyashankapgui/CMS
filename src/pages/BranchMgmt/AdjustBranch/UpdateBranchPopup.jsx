@@ -1,34 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import axios from 'axios';
 import PropTypes from 'prop-types';
+import { getBranchById, updateBranch } from '../../../Api/BranchMgmt/BranchAPI.jsx'; 
 
-const branchesApiUrl = process.env.REACT_APP_BRANCHES_API;
-
-function UpdateBranchPopup({ branchId }) {
-    const navigate = useNavigate();
+function UpdateBranchPopup({ branchId, onClose }) {
     const [post, setPost] = useState({
         branchName: '',
         address: '',
         email: '',
         contactNumber: ''
     });
+    const [originalPost, setOriginalPost] = useState({});
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
+    const [isUpdated, setIsUpdated] = useState(false); 
 
     useEffect(() => {
         if (branchId) {
-            axios.get(`${branchesApiUrl}/${branchId}`)
-                .then(res => setPost({
-                    branchName: res.data.branchName,
-                    address: res.data.address,
-                    email: res.data.email,
-                    contactNumber: res.data.contactNumber
-                }))
+            getBranchById(branchId)
+                .then(res => {
+                    setPost({
+                        branchName: res.branchName,
+                        address: res.address,
+                        email: res.email,
+                        contactNumber: res.contactNumber
+                    });
+                    setOriginalPost({
+                        branchName: res.branchName,
+                        address: res.address,
+                        email: res.email,
+                        contactNumber: res.contactNumber
+                    });
+                })
                 .catch(err => console.log(err));
         }
     }, [branchId]);
@@ -43,19 +49,24 @@ function UpdateBranchPopup({ branchId }) {
     }, []);
 
     const handleUpdate = (event) => {
-        setPost({ ...post, [event.target.name]: event.target.value });
+        const { name, value } = event.target;
+        setPost(prevPost => ({
+            ...prevPost,
+            [name]: value
+        }));
+        setIsUpdated(true); 
     };
 
     const handleSave = async (event) => {
         event.preventDefault();
         try {
-            const resp = await axios.put(`${branchesApiUrl}/${branchId}`, {
+            const resp = await updateBranch(branchId, {
                 branchName: post.branchName,
                 address: post.address,
                 email: post.email,
                 contactNumber: post.contactNumber
             });
-            console.log('Branch updated successfully:', resp.data);
+            console.log('Branch updated successfully:', resp);
             const alertData = {
                 severity: 'info',
                 title: 'Successfully Updated!',
@@ -63,8 +74,11 @@ function UpdateBranchPopup({ branchId }) {
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
+            setIsUpdated(false); 
+            setOriginalPost({ ...post }); 
+            onClose(); 
         } catch (error) {
             console.error('Error updating branch:', error);
             const alertData = {
@@ -74,9 +88,17 @@ function UpdateBranchPopup({ branchId }) {
                 duration: 3000
             };
             localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/adjust-branch');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         }
+    };
+
+    const handleClose = () => {
+        if (isUpdated) {
+            setPost({ ...originalPost });
+            setIsUpdated(false); 
+        }
+        setAlertVisible(false);
     };
 
     return (
@@ -90,7 +112,7 @@ function UpdateBranchPopup({ branchId }) {
                     onClose={() => setAlertVisible(false)}
                 />
             )}
-            <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={handleSave}>
+            <EditPopup topTitle="Update Branch Details" buttonId="update-btn" buttonText="Update" onClick={handleSave} disabled={!isUpdated}>
                 <form onSubmit={handleSave}>
                     <div className="content1" style={{ display: 'block', width: '100%' }}>
                         <div className="BranchField">
@@ -117,7 +139,8 @@ function UpdateBranchPopup({ branchId }) {
 }
 
 UpdateBranchPopup.propTypes = {
-    branchId: PropTypes.string.isRequired
+    branchId: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired 
 };
 
 export default UpdateBranchPopup;

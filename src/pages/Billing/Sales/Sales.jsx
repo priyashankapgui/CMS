@@ -326,14 +326,18 @@ export const Sales = () => {
         });
     };
 
-
     const handleSave = async () => {
         const customerNameElement = document.getElementById('customerName');
         const contactNoElement = document.getElementById('contactNo');
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
         const receivedAmountElement = document.getElementById('receivedAmount');
 
-        if (netTotal > 0 && !paymentMethodElement) {
+        const customerName = customerNameElement ? customerNameElement.value : '';
+        const contactNo = contactNoElement ? contactNoElement.value : '';
+        const paymentMethod = paymentMethodElement ? paymentMethodElement.value : null;
+        const receivedAmount = receivedAmountElement ? parseFloat(receivedAmountElement.value) : NaN;
+
+        if (netTotal > 0 && !paymentMethod) {
             setAlert({
                 severity: 'warning',
                 title: 'Payment Method & Received Amount Missing',
@@ -341,7 +345,7 @@ export const Sales = () => {
                 open: true
             });
             return;
-        } else if (paymentMethodElement && !receivedAmountElement.value) {
+        } else if (paymentMethod && isNaN(receivedAmount)) {
             setAlert({
                 severity: 'warning',
                 title: 'Received Amount Missing',
@@ -349,7 +353,7 @@ export const Sales = () => {
                 open: true
             });
             return;
-        } else if (parseFloat(receivedAmountElement.value) < parseFloat(netTotal)) {
+        } else if (receivedAmount < parseFloat(netTotal)) {
             setAlert({
                 severity: 'warning',
                 title: 'Received Amount Error',
@@ -361,12 +365,12 @@ export const Sales = () => {
 
         const data = {
             branchName: selectedBranch,
-            customerName: customerNameElement ? customerNameElement.value : '',
-            contactNo: contactNoElement ? contactNoElement.value : '',
-            paymentMethod: paymentMethodElement.value,
+            customerName: customerName,
+            contactNo: contactNo,
+            paymentMethod: paymentMethod,
             billedBy: userDetails.username,
             billTotalAmount: parseFloat(netTotal) || 0,
-            receivedAmount: parseFloat(receivedAmountElement.value) || 0,
+            receivedAmount: receivedAmount,
             products: rows.map(row => ({
                 productId: row.productDetails.productId,
                 barcode: row.productDetails.barcode,

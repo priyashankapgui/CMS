@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from 'react-router-dom';
 import './CompletedOrders.css';
 import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons";
 import { BsEye } from 'react-icons/bs';
@@ -47,15 +48,18 @@ const Completed = () => {
                         <td>Card</td>
                         <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
                         <td>{order.acceptedBy}</td>
-                        <td>{order.pickupAt ? new Date(order.pickupAt).toLocaleString() : 'N/A'}</td>
-                        <td>{order.issuedBy}</td>
+                        <td>{order.pickupTime ? new Date(order.pickupTime).toLocaleString() : 'N/A'}</td>
+                        <td>{order.pickupBy}</td>
                         <td>
-                            <RoundButtons 
-                                id={`eyeViewBtn-${order.onlineBillNo}`} 
-                                type="button" 
-                                name={`eyeViewBtn-${order.onlineBillNo}`} 
-                                icon={<BsEye />} 
-                            />
+                            <Link to={`/online-orders/viewCompleteOrder/${order.onlineBillNo}`}>
+                                <RoundButtons 
+                                    id={`eyeViewBtn-${order.onlineBillNo}`} 
+                                    type="button" 
+                                    name={`eyeViewBtn-${order.onlineBillNo}`} 
+                                    icon={<BsEye />} 
+                                />
+                            </Link>
+                            
                         </td>
                     </tr>
                 ))}

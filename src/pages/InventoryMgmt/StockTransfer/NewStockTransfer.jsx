@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './NewStockTransfer.css';
-import axios from 'axios';
 import Layout from "../../../Layout/Layout";
 import { Link, useNavigate } from 'react-router-dom';
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import secureLocalStorage from "react-secure-storage";
+import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
+import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import { createstockTransferOUT } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
 
 export function NewStockTransfer() {
 
@@ -22,6 +23,7 @@ export function NewStockTransfer() {
     const [requestBranch, setRequestBranch] = useState('');
     const [rows, setRows] = useState([{ id: 1, productId: '', Qty: '', comment: '' }]);
     const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
+    const branchDropdownRef = useRef(null);
     const navigate = useNavigate();
 
     const initialRowData = {
@@ -41,9 +43,9 @@ export function NewStockTransfer() {
 
     const fetchProductsSuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/products?search=${query}`);
-            if (response.data && response.data.data) {
-                return response.data.data.map(product => ({
+            const response = await getProducts();
+            if (response.data && response.data) {
+                return response.data.map(product => ({
                     id: product.productId,
                     displayText: `${product.productId} ${product.productName}`
                 }));
@@ -57,8 +59,8 @@ export function NewStockTransfer() {
 
     const fetchBranches = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/branchesWeb');
-            setBranches(response.data);
+            const response = await getBranchOptions();
+            setBranches(response.data.data);
         } catch (error) {
             console.error('Error fetching branches:', error);
         }
@@ -88,10 +90,8 @@ export function NewStockTransfer() {
 
     const handleDeleteRow = (id) => {
         if (id === 1) {
-            // Clear data for the first row
             setRows(rows.map(row => (row.id === 1 ? initialRowData : row)));
         } else {
-            // Delete other rows
             setRows(rows.filter(row => row.id !== id));
         }
     };
@@ -103,14 +103,12 @@ export function NewStockTransfer() {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        // Get the currently logged-in user's username from session storage
         const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
             const user = JSON.parse(userJSON);
             console.log("user data",user);
         console.log("name", user);
 
-        // Prepare data to be sent to the backend
         const stockTransferData = {
             requestedBy: user.userName,
             requestBranch,
@@ -123,7 +121,7 @@ export function NewStockTransfer() {
         };
 
         try {
-            await axios.post('http://localhost:8080/stockTransferOUT', stockTransferData);
+            await createstockTransferOUT (stockTransferData);
             setAlert({
                 show: true,
                 severity: 'success',
@@ -133,6 +131,7 @@ export function NewStockTransfer() {
             // Reset form fields
             setRequestBranch('');
             setSelectedBranch('');
+            branchDropdownRef.current.reset();
             setRows([{ id: 1, productId: '', Qty: '', comment: '' }]);
         } catch (error) {
             console.error('Error:', error.response);
@@ -179,23 +178,28 @@ export function NewStockTransfer() {
             <div className="addNewStock-bodycontainer">
                     <div className="new-stock-filter-container">
                             <div className="SupplyingbranchField">
-                                <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch</InputLabel>
+                                <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                 <BranchDropdown
                                     id="requestBranch"
                                     name="requestBranch"
                                     editable={true}
                                     onChange={(e) => handleRequestBranchChange(e)}
                                     addOptions={["All"]}
+                                    value={selectedBranch}
+                                    ref={branchDropdownRef}
                                 />
                             </div>
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch</InputLabel>
-                            <InputDropdown
+                            <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <BranchDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
                                 options={branches.map(branch => branch.branchName)}
                                 onChange={handleDropdownChange}
+                                addOptions={["All"]}
+                                value={selectedBranch}
+                                ref={branchDropdownRef}
                             />
                         </div>
 

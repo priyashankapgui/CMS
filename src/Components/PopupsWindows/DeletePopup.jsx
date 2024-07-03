@@ -10,9 +10,8 @@ function DeletePopup({ handleDelete }) {
 
   async function DeleteAndClose() {
     setOpen(undefined)
-    // Call the handleDelete function passed as a prop
+
     await handleDelete();
-    // Close the popup
     setOpen(false);
     console.log("closed")
 
@@ -37,7 +36,6 @@ function DeletePopup({ handleDelete }) {
         bodyContent={(
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <p>Do you really want to delete this one?</p> <br />
-            {/* Pass the handleDelete function to the Buttons component */}
             <Buttons type="submit" id="yes-btn" style={{ backgroundColor: "#EB1313", color: "white" }} onClick={DeleteAndClose}> Yes </Buttons>
           </div>
         )}

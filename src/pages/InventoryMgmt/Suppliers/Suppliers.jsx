@@ -49,9 +49,17 @@ export const Suppliers = () => {
         }
     };
 
-    const handleClearBtn = () => {
+    const handleClearBtn = async () => {
         setSelectedSupplier('');
-        setSuppliersData([]);
+        try {
+            setLoading(true);
+            const response = await getSuppliers();
+            setSuppliersData(response.data);
+        } catch (error) {
+            console.error('Error fetching suppliers:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSearch = async () => {
