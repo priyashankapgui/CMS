@@ -6,7 +6,7 @@ import { getAdjustStockDetails } from '../../../Api/Inventory/StockBalance/Stock
 
 function StockSummary({ productId, productName, branchName, qty }) {
     const [rows, setRows] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); //Set loading
 
     useEffect(() => {
         const fetchStockDetails = async () => {
