@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
+import InputFile from '../../../Components/InputFile/InputFile';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
@@ -11,7 +11,6 @@ import { getCategoryById, updateCategory } from '../../../Api/Inventory/Category
 
 
 function UpdateCategoryPopup({ categoryId }) {
-    const navigate = useNavigate();
 
     const [post, setPost] = useState({
         categoryName: '',
@@ -113,26 +112,22 @@ function UpdateCategoryPopup({ categoryId }) {
 
             await updateCategory(categoryId, formData);
 
-            const alertData = {
+            setAlertConfig({
                 severity: 'success',
                 title: 'Successfully Updated!',
                 message: 'Category updated successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error updating category:', error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to update category.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } finally {
             setIsLoading(false);
         }
@@ -160,7 +155,7 @@ function UpdateCategoryPopup({ categoryId }) {
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
                             <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
-                            <input type="file" id="image" name="image" onChange={handleFileChange} />
+                            <InputFile id="image" name="image" onChange={handleFileChange} />
                         </div>
                         <div>
                             <InputLabel htmlFor="categoryName" color="#0377A8">Category Name</InputLabel>

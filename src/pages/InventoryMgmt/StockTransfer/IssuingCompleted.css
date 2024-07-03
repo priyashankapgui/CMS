@@ -1,17 +1,10 @@
-.new-st-top-link {
+.stockIssuingCompleted-top-link {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-
-.new-stock-top-link {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-}
-
-.addNewStock-bodycontainer {
+.stockIssuingCompleted-bodycontainer {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     border-radius: 0.625em;
@@ -20,7 +13,7 @@
     padding: 0 20px 0 20px;
 }
 
-.new-stock-filter-container {
+.stockIssuingCompleted-filter-container {
     background-color: white;
     padding: 20px;
     border-radius: 0.625em;
@@ -30,43 +23,39 @@
     gap: 50px;
 }
 
-.Stock-content-middle {
+.stockIssuingCompleted-content-middle {
     width: 100%;
     height: 50vh;
     overflow: auto;
     margin-bottom: 20px;
 }
 
-.Stock-container-table {
+.stockIssuingCompleted-container-table {
     border-collapse: collapse;
     margin: 0 auto;
     width: 100%;
 
 }
 
-.Stock-container-table th {
+.stockIssuingCompleted-container-table th {
     background-color: #f0efef;
     text-align: center;
 
 }
 
-.Stock-container-table td {
+.stockIssuingCompleted-container-table td {
     padding: 2px;
 }
 
-.Stock-BtnSection{
+.stockIssuingCompleted-BtnSection {
     display: flex;
     gap: 20px;
 
 }
-.tot-amount-txt{
+
+.tot-amount-txt {
     align-content: center;
     margin-top: 12px;
     font-weight: 500;
 }
-
-.Stock-container-table td:first-child, .Stock-container-table th:first-child {
-    width: 250px; 
-}
-
 

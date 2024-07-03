@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './AddNewGRN.css';
 import Layout from "../../../Layout/Layout";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
@@ -11,7 +11,6 @@ import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import DatePicker from '../../../Components/DatePicker/DatePicker';
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
@@ -20,7 +19,6 @@ import { createGRN } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 export function AddNewGRN() {
 
-    
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [productsData, setProductsData] = useState([]);
@@ -31,6 +29,7 @@ export function AddNewGRN() {
     const [rows, setRows] = useState([{ id: 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
     const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
     const navigate = useNavigate();
+    const branchDropdownRef = useRef(null);
 
     const initialRowData = {
         id: 1,
@@ -111,6 +110,7 @@ export function AddNewGRN() {
             setSupplierId('');
             setSelectedSupplier('');
             setBranchName('');
+            branchDropdownRef.current.reset();
             setRows([{ id: 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
         } catch (error) {
             console.error('Error:', error.response);
@@ -243,21 +243,23 @@ export function AddNewGRN() {
                 <div className="AddNewGRN-bodycontainer">
                     <div className="new-grn-filter-container">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
                             <BranchDropdown
                                     id="branchName"
                                     name="branchName"
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
                                     addOptions={["All"]}
+                                    value={selectedBranch}
+                                    ref={branchDropdownRef}
                                     />
                         </div>
                         <div className="InvoiceNoField">
-                            <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No</InputLabel>
+                            <InputLabel htmlFor="invoiceNo" color="#0377A8">Invoice No<span style={{ color: 'red' }}>*</span></InputLabel>
                             <InputField type="text" id="invoiceNo" name="invoiceNo" editable={true} value={invoiceNo} onChange={(e) => setInvoiceNo(e.target.value)} width="250px" required />
                         </div>
                         <div className="SupplierField">
-                            <InputLabel htmlFor="supplierName" color="#0377A8">Supplier ID / Name</InputLabel>
+                            <InputLabel htmlFor="supplierName" color="#0377A8">Supplier ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
                             <SearchBar
                                 searchTerm={selectedSupplier}
                                 setSearchTerm={setSelectedSupplier}

@@ -20,7 +20,7 @@ function AdjustPopup({ topTitle, children, buttonId, buttonText, onClick }) {
                     id="summary-btn"
                     name="summary-btn"
                     type="button" 
-                    icon={<BiMessageSquareEdit />}
+                    icon={<BiMessageSquareEdit style={{ fontSize: '15px' }} />}
                     onClick={() => setOpen(!open)}
                 />
             }

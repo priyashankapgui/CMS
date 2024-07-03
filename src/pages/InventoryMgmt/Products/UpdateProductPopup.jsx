@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Joi from 'joi';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
+import InputFile from '../../../Components/InputFile/InputFile';
 import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
@@ -12,7 +12,6 @@ import { getCategories } from '../../../Api/Inventory/Category/CategoryAPI';
 
 
 function UpdateProductPopup({ productId }) {
-    const navigate = useNavigate();
     const [post, setPost] = useState({
         productName: '',
         description: '',
@@ -133,26 +132,22 @@ function UpdateProductPopup({ productId }) {
 
             await updateProduct(productId, formData);
 
-            const alertData = {
+            setAlertConfig({
                 severity: 'success',
                 title: 'Successfully Updated!',
                 message: 'Product updated successfully!',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error updating product:', error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to update product.',
                 duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/Products');
-            window.location.reload();
+            });
+            setAlertVisible(true);
         } finally {
             setIsLoading(false);
         }
@@ -196,7 +191,7 @@ function UpdateProductPopup({ productId }) {
                     <div style={{ display: 'block', width: '100%' }}>
                         <div>
                             <InputLabel htmlFor="image" color="#0377A8">Image</InputLabel>
-                            <input type="file" id="image" name="image" onChange={handleFileChange} />
+                            <InputFile id="image" name="image" onChange={handleFileChange} />
                         </div>
                         <div>
                             <InputLabel htmlFor="productName" color="#0377A8">Product Name</InputLabel>

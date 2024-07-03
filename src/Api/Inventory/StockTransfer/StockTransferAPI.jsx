@@ -80,7 +80,9 @@ export const updateTransferQty = async (updates) => {
     console.log("received data for save",updates);
     try {
         const response = await api.put('/update-product-batch-sum', { updates });
+        console.log(" response:", response.data);
         return response.data;
+        
     } catch (error) {
         console.error('Error updating transfer stock details:', error);
         throw error;

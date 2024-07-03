@@ -15,7 +15,7 @@ function SummaryPopup({ topTitle, children }) {
                     name="summary-btn"
                     type="button" 
                     onClick={() => setOpen(!open)}
-                    icon={<IoReorderThreeOutline />}
+                    icon={<IoReorderThreeOutline style={{ fontSize: '18px' }} />}
                 />
             }
             headBG="#23A3DA"

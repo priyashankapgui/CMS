@@ -9,7 +9,6 @@ import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import { FiPlus } from "react-icons/fi"; 
 import { AiOutlineDelete } from "react-icons/ai";
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import secureLocalStorage from "react-secure-storage";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
@@ -23,18 +22,9 @@ export const StockTransferIssuing = () => {
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [alertVisible, setAlertVisible] = useState(false);
-    const [alertConfig, setAlertConfig] = useState({});
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
 
-
-    const showAlert = (severity, title, message, duration) => {
-        setAlertConfig({ severity, title, message, duration });
-        setAlertVisible(true);
-        setTimeout(() => {
-            setAlertVisible(false);
-        }, duration);
-    };
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
@@ -116,14 +106,24 @@ export const StockTransferIssuing = () => {
 
             const response = await createstockTransferIN(data);
             console.log("Save response:", response.data);
-            showAlert('success', 'Success', 'Stock transfer successful!', 5000);
-            navigate('/stock-transfer');
+            setAlert({
+                show: true,
+                severity: 'success',
+                title: 'Success',
+                message: 'Stock transfer successful!'
+            });
+            
         } else {
             console.error('User details not found in secure storage');
         }
      } catch (error) {
             console.error("Error saving stock transfer:", error);
-            showAlert('error', 'Error', 'Failed to save stock transfer.', 5000);
+            setAlert({
+                show: true,
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to save stock transfer.'
+            });
         }
     
     };
@@ -177,7 +177,7 @@ export const StockTransferIssuing = () => {
         "Transfer Qty",
         "Unit Price",
         "Amount",
-        "Actions"
+        
     ];
 
     const tableRows = rows.map(row => ({
@@ -206,12 +206,7 @@ export const StockTransferIssuing = () => {
             />
         ),
         amount: row.amount,
-        actions: (
-            <div>
-                <FiPlus onClick={() => handleAddRow(row)} style={{ cursor: 'pointer', marginRight: '8px' }} />
-                <AiOutlineDelete onClick={() => handleDeleteRow(row.id)} style={{ cursor: 'pointer' }} />
-            </div>
-        )
+        
     }));
 
 
@@ -233,27 +228,40 @@ export const StockTransferIssuing = () => {
 
                 const response = await cancelStockRequest(data);
                 console.log("Cancellation response:", response.data);
-                showAlert('success', 'Success', 'Stock transfer cancellation successful!', 5000);
-                navigate('/stock-transfer');
+                setAlert({
+                    show: true,
+                    severity: 'success',
+                    title: 'Success',
+                    message: 'Stock transfer cancellation successful!.'
+                });
             } else {
                 console.error('User details not found in secure storage');
             }
         } catch (error) {
             console.error("Error cancelling stock transfer:", error);
-            showAlert('error', 'Error', 'Failed to cancel stock transfer.', 5000);
+            setAlert({
+                show: true,
+                severity: 'error',
+                title: 'Error',
+                message: 'Failed to cancel stock transfer.'
+            });
         } finally {
             setShowConfirmation(false); // Close the confirmation popup
         }
     };
+
+    const handleCloseAlert = () => {
+        setAlert({ show: false, severity: '', title: '', message: '' });
+    };
     return (
         <>
-          {alertVisible && (
+         {alert.show && (
                 <CustomAlert
-                    severity={alertConfig.severity}
-                    title={alertConfig.title}
-                    message={alertConfig.message}
-                    duration={alertConfig.duration}
-                    onClose={() => setAlertVisible(false)}
+                    severity={alert.severity}
+                    title={alert.title}
+                    message={alert.message}
+                    duration={3000}
+                    onClose={handleCloseAlert}
                 />
             )}
             <div className="top-nav-blue-text">
@@ -261,7 +269,7 @@ export const StockTransferIssuing = () => {
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer - Issuing</h4>
+                    <h4>Stock Transfer IN - Issuing</h4>
                 </div>
                
             </div>

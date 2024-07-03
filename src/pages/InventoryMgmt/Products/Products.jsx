@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Products.css";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
@@ -19,7 +18,6 @@ import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { getProductById , getProducts , deleteProductById, getProductBatchDetails, getProductByCategoryId, updateProductDiscount } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const Products = () => {
-    const navigate = useNavigate();
 
     const [productsData, setProductsData] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(true);
@@ -43,6 +41,7 @@ export const Products = () => {
     const [alertConfig, setAlertConfig] = useState({});
     const [loading, setLoading] = useState(true);
     const [hasChanges, setHasChanges] = useState(false);
+    const branchDropdownRef = useRef(null);
 
     const fetchProductsSuggestions = async (query) => {
         try {
@@ -78,19 +77,46 @@ export const Products = () => {
     };
 
 
+    const handleClearBtnCategorySection = async () => {
+        setSelectedAdjustCategory(''); // Clear the search bar data
+        try {
+            setLoadingCategories(true);
+            const response = await getCategories();
+            if (response.data && response.data) {
+                setCategoryData(response.data);
+                setFilteredCategories(response.data);
+            } else {
+                console.error('Invalid response format:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        } finally {
+            setLoading(false);
+        }
+       
+    };
 
-    const handleClearBtnProductSection = () => {
+
+    const handleClearBtnProductSection = async () => {
         setSelectedProduct('');
         setSelectedCategory('');
-        window.location.reload();
+        try {
+            setLoading(true);
+            const response = await getProducts();
+            setProductsData(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setLoading(false);
+        }
+        
     };
 
     const handleClear = () => {
-        setSelectedBranch('');
-        setProduct(null);
-        setSelectedProduct('');
+        setSelectedProductData('');
         setBatchDetails([]);
-        window.location.reload();
+        branchDropdownRef.current.reset();
+        
     };
 
     const handleDropdownChange = (value) => {
@@ -246,8 +272,8 @@ export const Products = () => {
                 message: 'Category deleted successfully!',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error deleting Category:', error);
     
@@ -257,8 +283,8 @@ export const Products = () => {
                 message: 'Failed to delete Category.',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } finally {
             setLoading(false);
         }
@@ -280,9 +306,8 @@ export const Products = () => {
                 message: 'Product deleted successfully!',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/products');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } catch (error) {
             console.error('Error deleting Product:', error);
 
@@ -292,9 +317,8 @@ export const Products = () => {
                 message: 'Failed to delete Product.',
                 duration: 3000
             };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/products');
-            window.location.reload();
+            setAlertConfig(alertData);
+            setAlertVisible(true);
         } finally {
             setLoading(false);
         }
@@ -421,7 +445,7 @@ const handleSave = async () => {
                             </div>
                         </div>
                         <div className='p-BtnSection'>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} >Clear</Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearBtnCategorySection} >Clear</Buttons>
                             <AddNewCategoryPopup />
                         </div>
                     </div>
@@ -512,7 +536,7 @@ const handleSave = async () => {
                          <h3 className="product-discount-title">Registered Product's Discount</h3>
                             <div className="discount-content-top">
                                 <div className="branch-field">
-                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                     
                                     <BranchDropdown
                                         id="branchName"
@@ -520,10 +544,12 @@ const handleSave = async () => {
                                         editable={true}
                                         onChange={(e) => handleDropdownChange(e)}
                                         addOptions={["All"]}
+                                        value={selectedBranch}
+                                        ref={branchDropdownRef}
                                         />
                                 </div>
                                 <div className="product-field">
-                                    <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name</InputLabel>
+                                    <InputLabel htmlFor="productName" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
                                     <SearchBar
                                         searchTerm={selectedProductData} 
                                         setSearchTerm={setSelectedProductData}
@@ -542,14 +568,9 @@ const handleSave = async () => {
                             </div>
                         </div>
                         <div className="discount-content-middle">
-                            {loading ? (
-                                <div><SubSpinner /></div>
-                            ) : (
-                                <TableWithPagi rows={tableRows} columns={columns} />
-                                    
-                                       
-                                  
-                            )}
+                           
+                          <TableWithPagi rows={tableRows} columns={columns} />    
+                            
                         <div className="discount-btn-section">
                             {hasChanges && (
                                 <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}>

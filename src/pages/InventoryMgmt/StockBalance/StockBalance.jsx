@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./StockBalance.css";
 import InputLabel from "../../../Components/Label/InputLabel";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import StockSummary from './StockSummary';
 import AdjustStock from './AdjustStock';
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
@@ -22,6 +21,7 @@ export const StockBalance = () => {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState('');
     const [loading, setLoading] = useState(true);
+    const branchDropdownRef = useRef(null);
 
     useEffect(() => {
         fetchBranches();
@@ -99,10 +99,11 @@ export const StockBalance = () => {
     const handleClear = () => {
         setSelectedBranch('');
         setProduct(null);
+        setSelectedProduct('');
         setBatchNo('');
         setCategory(null);
         setStockDetails([]);
-        window.location.reload();
+        branchDropdownRef.current.reset();
     };
 
     return (
@@ -118,6 +119,8 @@ export const StockBalance = () => {
                                 editable={true}
                                 onChange={(e) => handleDropdownChange(e)}
                                 addOptions={["All"]}
+                                value={selectedBranch}
+                                ref={branchDropdownRef}
                             />
                         </div>
                         <div className="productField">
