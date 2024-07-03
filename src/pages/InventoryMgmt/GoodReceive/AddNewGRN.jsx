@@ -20,7 +20,6 @@ import { createGRN } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 export function AddNewGRN() {
 
-    
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [productsData, setProductsData] = useState([]);
