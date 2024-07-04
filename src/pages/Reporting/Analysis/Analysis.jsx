@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useMemo } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Analysis.css";
 import InputLabel from "../../../Components/Label/InputLabel";
@@ -8,12 +7,12 @@ import DatePicker from "../../../Components/DatePicker/DatePicker";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import { Link } from "react-router-dom";
 import SalesChart from '../../../Components/Charts/SalesChart';
+import { getPhysicalSaleTotal, getOnlineSaleTotal } from '../../../Api/Analysis/AnalysisApi';
 
 export const Analysis = () => {
     const [clickedLink, setClickedLink] = useState('Analysis');
     const [selectedBranch, setSelectedBranch] = useState('');
-    const currentDate = new Date(); // Initialize with current date object
-    const [date, setDate] = useState(currentDate); // Set date state to current date
+    const [date, setDate] = useState('');
     const [totalSaleAmount, setTotalSaleAmount] = useState(null);
     const [totalOnlineSaleAmount, setTotalOnlineSaleAmount] = useState(null);
 
@@ -29,58 +28,39 @@ export const Analysis = () => {
         setDate(selectedDate);
     };
 
-    const formatDate = (date) => {
-        return date.toISOString().slice(0, 10); // Format date as YYYY-MM-DD
-    };
-
-    const fetchTotalAmount = async (branch, date) => {
+    const fetchAmountsInParallel = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/netBillTotalAmountForDate', {
-                params: {
-                    branchName: branch,
-                    date: date
-                }
-            });
-            console.log("fetchTotalAmount", response);
-            setTotalSaleAmount(response.data.data.newTotalAmount);
+            const [totalSaleResponse, onlineSaleResponse] = await Promise.all([
+                getPhysicalSaleTotal(selectedBranch, date),
+                getOnlineSaleTotal(selectedBranch, date)
+            ]);
+
+            console.log("Physical Sale Response:", totalSaleResponse);
+            console.log("Online Sale Response:", onlineSaleResponse);
+
+            setTotalSaleAmount(totalSaleResponse.newTotalAmount || 0); 
+            setTotalOnlineSaleAmount(onlineSaleResponse.onlineBillTotalAmount || 0);
+
         } catch (error) {
-            console.error('Error fetching total sales amount:', error);
+            console.error('Error fetching sales amounts:', error);
         }
     };
-
-    const fetchOnlineBillTotalAmount = async (branch, date) => {
-        try {
-            const response = await axios.get('http://localhost:8080/billTotalsForDate', {
-                params: {
-                    branchName: branch,
-                    date: date
-                }
-            });
-            console.log("fetchOnlineBillTotalAmount", response);
-            setTotalOnlineSaleAmount(response.data.onlineBillTotalAmount);
-        } catch (error) {
-            console.error('Error fetching Online Sale amount:', error);
-        }
-    };
-
-    useEffect(() => {
-        const formattedDate = formatDate(currentDate);
-        fetchTotalAmount(selectedBranch, formattedDate);
-        fetchOnlineBillTotalAmount(selectedBranch, formattedDate);
-    }, [selectedBranch, currentDate]); // Include currentDate in the dependency array
 
     const handleViewTotal = () => {
-        const formattedDate = formatDate(date);
-        fetchTotalAmount(selectedBranch, formattedDate);
-        fetchOnlineBillTotalAmount(selectedBranch, formattedDate);
+        fetchAmountsInParallel();
     };
 
     const handleClearTotalView = () => {
-        setDate(currentDate); // Reset the date to current date
-        const formattedDate = formatDate(currentDate);
-        fetchTotalAmount(selectedBranch, formattedDate);
-        fetchOnlineBillTotalAmount(selectedBranch, formattedDate);
+        setTotalSaleAmount(null);
+        setTotalOnlineSaleAmount(null);
     };
+
+    const totalNetSales = useMemo(() => {
+        if (totalSaleAmount !== null && totalOnlineSaleAmount !== null) {
+            return (totalSaleAmount + totalOnlineSaleAmount).toFixed(2);
+        }
+        return 0;
+    }, [totalSaleAmount, totalOnlineSaleAmount]);
 
     return (
         <>
@@ -134,7 +114,7 @@ export const Analysis = () => {
                     <div className="reportRightContent">
                         <h5 className='physicalSaleAmountTxt'>Physical Sale : <span style={{ color: "black" }}>Rs {totalSaleAmount !== null ? totalSaleAmount.toFixed(2) : 0}</span></h5>
                         <h5 className='onlineSaleAmountTxt'>Online Sale : <span style={{ color: "black" }}>Rs {totalOnlineSaleAmount !== null ? totalOnlineSaleAmount.toFixed(2) : 0}</span></h5>
-                        <h3 className='totalNetSaleTxt'>Total Net Sales Amount : <span style={{ color: "black" }}>Rs {totalSaleAmount !== null && totalOnlineSaleAmount !== null ? (totalSaleAmount + totalOnlineSaleAmount).toFixed(2) : 0}</span></h3>
+                        <h3 className='totalNetSaleTxt'>Total Net Sales Amount : <span style={{ color: "black" }}>Rs {totalNetSales}</span></h3>
                     </div>
                 </div>
                 <div className="reportingMiddle">
@@ -144,5 +124,3 @@ export const Analysis = () => {
         </>
     );
 };
-
-export default Analysis;
