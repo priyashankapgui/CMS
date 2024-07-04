@@ -116,7 +116,7 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
           type="text"
           id="branchName"
           name="branchName"
-          value={employeeData.branchName}
+          value={employeeData.branchName || 'All'}
           width="250px"
         />
       </div>

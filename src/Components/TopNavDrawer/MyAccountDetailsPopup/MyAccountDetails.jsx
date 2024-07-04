@@ -73,10 +73,10 @@ function MyAccountDetails() {
                 {!editable && 
                 <Buttons
                   id="change-view-btn"
-                  btnWidth="fit-content"
-                  marginTop={"20px"}
+                  btnWidth="100%"
+                  marginTop={"15px"}
                   fontSize={"14px"}
-                  style={{ backgroundColor: "white", color:"#0377A8"}}
+                  style={{ backgroundColor: "white", color:'red'}}
                   onClick={toggleViewPassword}
                 >
                   Change Your Password?

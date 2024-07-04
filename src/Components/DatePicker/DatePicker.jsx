@@ -9,9 +9,13 @@ const DatePicker = ({ selectedDate, onDateChange }) => {
   }, [selectedDate]);
 
   const handleDateChange = (event) => {
-    const newDate = new Date(event.target.value);
+    const newDate = event.target.value ? new Date(event.target.value) : null;
     setDate(newDate);
     onDateChange(newDate);
+  };
+
+  const formatDate = (date) => {
+    return date ? date.toISOString().split('T')[0] : '';
   };
 
   return (
@@ -21,7 +25,7 @@ const DatePicker = ({ selectedDate, onDateChange }) => {
         id="date"
         name="date"
         type="date"
-        value={date ? date.toISOString().split('T')[0] : ''}
+        value={formatDate(date)}
         onChange={handleDateChange}
       />
     </div>

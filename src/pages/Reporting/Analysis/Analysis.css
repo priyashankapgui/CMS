@@ -52,14 +52,26 @@
   width: 28.125em;
   height: 10em;
   padding: 0.625em;
+  align-content: center;
 }
 
-.reportRightContent h3 {
+.reportRightContent .totalNetSaleTxt {
   text-align: left;
-  margin-top: 2.55em;
+  margin-top: 10px;
   color: #0377A8;
-
 }
+
+.reportRightContent .physicalSaleAmountTxt {
+  text-align: left;
+  color: #2FCF15;
+}
+
+.reportRightContent .onlineSaleAmountTxt {
+  text-align: left;
+  margin-top: 3px;
+  color: #F79E1B;
+}
+
 
 .reportingMiddle {
   background-color: white;
@@ -68,4 +80,8 @@
   padding: 0.9375em 1.25em;
   width: 100%;
   height: fit-content;
+}
+.analysis-btn-section{
+  display: flex;
+  gap: 15px;
 }
