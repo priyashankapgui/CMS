@@ -34,7 +34,7 @@ export const createstockTransferIN = async (stockTransferData) => {
 export const getAllTransfers = async () => {
     try {
         const response = await api.get('/allTransfers');
-        console.log("grn data ",response.data);
+        console.log("trsnafer data ",response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching transfer details:', error);

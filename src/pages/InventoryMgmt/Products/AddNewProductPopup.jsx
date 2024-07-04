@@ -8,6 +8,7 @@ import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { createProduct } from '../../../Api/Inventory/Product/ProductAPI';
+import { getCategories } from '../../../Api/Inventory/Category/CategoryAPI';
 
 export const AddNewProductPopup = ({ onClose, onSave }) => {
     const [productName, setProductName] = useState('');
@@ -135,8 +136,8 @@ export const AddNewProductPopup = ({ onClose, onSave }) => {
 
     const fetchCategorySuggestions = async (query) => {
         try {
-            const response = await axios.get(`http://localhost:8080/categories?search=${query}`);
-            const formattedData = response.data.data.map(category => ({
+            const response = await getCategories();
+            const formattedData = response.data.map(category => ({
                 id: category.categoryId,
                 displayText: `${category.categoryId} ${category.categoryName}`
             }));

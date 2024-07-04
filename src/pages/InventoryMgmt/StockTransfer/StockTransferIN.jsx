@@ -9,7 +9,6 @@ import StockTranIn from '../../../Components/InventoryDocuments/St-In-Doc/StockT
 import { getAllTransfers } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
 
 const StockTransferIn = ({ searchParams }) => {
-    console.log("searchPramas",searchParams);
     const [stockData, setStockData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 

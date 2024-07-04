@@ -153,8 +153,8 @@ export const StockTransfer = () => {
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('supplyingBranch', value)}
                                     addOptions={["All"]}
-                                    value={searchParams.supplyingBranch} // Use supplyingBranch from searchParams
-                                    ref={branchDropdownRef} // Ensure ref is correctly assigned
+                                    value={searchParams.supplyingBranch} 
+                                    ref={branchDropdownRef} 
                                 />
                             </div>
                             <div className="RequestbranchField">
@@ -166,8 +166,8 @@ export const StockTransfer = () => {
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('requestBranch', value)}
                                     addOptions={["All"]}
-                                    value={searchParams.requestBranch} // Use requestBranch from searchParams
-                                    ref={branchDropdownRef} // Ensure ref is correctly assigned
+                                    value={searchParams.requestBranch} 
+                                    ref={branchDropdownRef} 
                                 />
                             </div>
                             <div className="STNNoField">
