@@ -245,3 +245,4 @@ class SalesChart extends React.Component {
 }
 
 export default SalesChart;
+

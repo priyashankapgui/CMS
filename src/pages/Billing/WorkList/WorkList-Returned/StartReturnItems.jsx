@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Layout from '../../../../Layout/Layout';
 import './StartReturnItems.css';
@@ -15,7 +16,8 @@ import RefundReceipt from '../../../../Components/SalesReceiptTemp/RefundReceipt
 
 export const StartReturnItems = () => {
     const { billNo } = useParams();
-    const [billData, setBillData] = useState(null);
+    const [billData, setBillData] = useState(null)
+    const [test, setTest] = useState([]);
     const [loading, setLoading] = useState(true);
     const [RTBNo, setRTBNo] = useState(null);
     const [showRefundReceipt, setShowRefundReceipt] = useState(false);
@@ -39,11 +41,13 @@ export const StartReturnItems = () => {
         const fetchBillData = async () => {
             try {
                 const response = await getBilledData(billNo);
+                console.log("data:", response);
                 if (response.data) {
                     setBillData(response.data);
                     setReturnItems(response.data.billProducts.map(product => ({
                         ...product,
-                        returnQty: 0
+                        returnQty: 0,
+                        remainingQty: product.billQty // Assuming refundedQty is part of product object from API
                     })));
                     setRetQtyEditable(response.data.billProducts.map(() => false)); // Initialize retQtyEditable state
                 } else {
@@ -59,6 +63,18 @@ export const StartReturnItems = () => {
         fetchBillData();
     }, [billNo]);
 
+
+    const fetchRefundBilDataTest = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/refund/bill/${billNo}`);
+            console.log("fetchRefundBilDataTest", response);
+            setTest(response.data.refundBillProducts)
+        }
+        catch (error) {
+            console.error('Error fetchRefundBilDataTest:', error);
+        }
+    };
+
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
@@ -67,20 +83,36 @@ export const StartReturnItems = () => {
                 username: user?.userName || user?.employeeName || "",
             });
         }
-    }, []);
+
+        fetchRefundBilDataTest();
+    }, [billNo]);
+
+
+
+    const testData = (productId, batchNo) => {
+        console.log("testData", test);
+        for (let testItem of test) {
+            if (testItem.productId === productId && testItem.batchNo === batchNo) {
+                console.log('RE', testItem.returnQty);
+                return testItem.returnQty;
+            }
+        }
+        return undefined;
+    };
+
 
     const handleReturnQtyChange = (index, value) => {
         const updatedItems = [...returnItems];
         const returnQty = Number(value) || 0;
 
-        if (returnQty > updatedItems[index].billQty) {
+        if (returnQty > updatedItems[index].remainingQty) {
             setAlert({
                 severity: 'warning',
                 title: 'Warning',
-                message: `Return quantity cannot exceed billed quantity for ${updatedItems[index].productName}.`,
+                message: `Return quantity cannot exceed remaining quantity for ${updatedItems[index].productName}.`,
                 open: true
             });
-            updatedItems[index].returnQty = updatedItems[index].billQty;
+            updatedItems[index].returnQty = updatedItems[index].remainingQty;
         } else {
             updatedItems[index].returnQty = returnQty;
         }
@@ -146,7 +178,7 @@ export const StartReturnItems = () => {
                     message: 'Return processed successfully.',
                     open: true
                 });
-                const RTBNo = response.newRefundBill.RTBNo; // Correct the path to RTBNo
+                const RTBNo = response.newRefundBill.RTBNo;
                 setRTBNo(RTBNo);
                 setShowRefundReceipt(true);
                 console.log('RTB No set:', RTBNo);
@@ -202,7 +234,6 @@ export const StartReturnItems = () => {
         setShowRefundReceipt(false);
         navigate(`/work-list/returnbill-list`);
     };
-
 
     if (loading) {
         return <div><MainSpinner /></div>;
@@ -293,6 +324,7 @@ export const StartReturnItems = () => {
                                             <input
                                                 type="checkbox"
                                                 className="checkbox-input"
+                                                disabled={item.billQty === testData(item.productId, item.batchNo)}
                                                 checked={retQtyEditable[index]}
                                                 onChange={() => toggleRetQtyEditable(index)}
                                             />
@@ -313,7 +345,7 @@ export const StartReturnItems = () => {
                                             value={item.returnQty}
                                         />
                                     </td>
-                                    <td><InputField id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={item.billQty.toFixed(2)} textAlign='center' /></td>
+                                    <td><InputField type="number" id={`billedQty_${index}`} name="billedQty" editable={false} width="100%" value={(item.billQty).toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`batchNo_${index}`} name="batchNo" editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
                                     <td><InputField id={`unitPrice_${index}`} name="unitPrice" editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`discount_${index}`} name="discount" editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
