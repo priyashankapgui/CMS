@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import { useLocation } from 'react-router-dom';
 import Layout from "../../Layout/Layout";
 import "./OnlineOrders.css";
 import SearchBar from '../../Components/SearchBar/SearchBar';
@@ -20,7 +20,7 @@ export const OnlineOrders = () => {
     const [newOrdersCount, setNewOrdersCount] = useState(0); 
     const [processingOrdersCount, setProcessingOrdersCount] = useState(0);
     const [pickupOrdersCount, setPickupOrdersCount] = useState(0);
-    const [tabIndex, setTabIndex] = useState(0); // State for tracking active tab index
+    const [tabIndex, setTabIndex] = useState(0); 
 
     const location = useLocation();
 
@@ -64,10 +64,6 @@ export const OnlineOrders = () => {
                         </div>
                         <div className="customerName">
                             <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
-                            <SearchBar />
-                        </div>
-                        <div className="prodcutName">
-                            <InputLabel htmlFor="ProductID/Name" color="#0377A8">Product ID / Name</InputLabel>
                             <SearchBar />
                         </div>
                     </div>

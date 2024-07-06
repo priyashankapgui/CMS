@@ -22,7 +22,7 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                 const processingOrders = response.filter(order => order.status === "Processing");
                 console.log("Processing Orders Fetched:", processingOrders); // Debug log
                 setOrders(processingOrders);
-                setProcessingOrdersCount(processingOrders.length); // This should update the count in the parent component
+                setProcessingOrdersCount(processingOrders.length); 
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
