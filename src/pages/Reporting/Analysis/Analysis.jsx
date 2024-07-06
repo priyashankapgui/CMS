@@ -5,8 +5,8 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import DatePicker from "../../../Components/DatePicker/DatePicker";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
-import { Link } from "react-router-dom";
 import SalesChart from '../../../Components/Charts/SalesChart';
+import { Link } from "react-router-dom";
 import { getPhysicalSaleTotal, getOnlineSaleTotal } from '../../../Api/Analysis/AnalysisApi';
 
 export const Analysis = () => {
@@ -15,6 +15,8 @@ export const Analysis = () => {
     const [date, setDate] = useState('');
     const [totalSaleAmount, setTotalSaleAmount] = useState(null);
     const [totalOnlineSaleAmount, setTotalOnlineSaleAmount] = useState(null);
+    const [isViewClicked, setIsViewClicked] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -29,6 +31,7 @@ export const Analysis = () => {
     };
 
     const fetchAmountsInParallel = async () => {
+        setIsLoading(true);
         try {
             const [totalSaleResponse, onlineSaleResponse] = await Promise.all([
                 getPhysicalSaleTotal(selectedBranch, date),
@@ -38,29 +41,36 @@ export const Analysis = () => {
             console.log("Physical Sale Response:", totalSaleResponse);
             console.log("Online Sale Response:", onlineSaleResponse);
 
-            setTotalSaleAmount(totalSaleResponse.newTotalAmount || 0); 
-            setTotalOnlineSaleAmount(onlineSaleResponse.onlineBillTotalAmount || 0);
+            setTotalSaleAmount(Number(totalSaleResponse.newTotalAmount) || 0);
+            setTotalOnlineSaleAmount(Number(onlineSaleResponse.onlineBillTotalAmount) || 0);
 
         } catch (error) {
             console.error('Error fetching sales amounts:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleViewTotal = () => {
+        setIsViewClicked(true);
         fetchAmountsInParallel();
     };
 
     const handleClearTotalView = () => {
         setTotalSaleAmount(null);
         setTotalOnlineSaleAmount(null);
+        setDate('');
+        setIsViewClicked(false);
     };
 
     const totalNetSales = useMemo(() => {
-        if (totalSaleAmount !== null && totalOnlineSaleAmount !== null) {
-            return (totalSaleAmount + totalOnlineSaleAmount).toFixed(2);
-        }
-        return 0;
+        const physicalSaleAmount = Number(totalSaleAmount) || 0;
+        const onlineSaleAmount = Number(totalOnlineSaleAmount) || 0;
+
+        return (physicalSaleAmount + onlineSaleAmount).toFixed(2);
     }, [totalSaleAmount, totalOnlineSaleAmount]);
+
+    const shouldShowResults = totalNetSales !== '0.00';
 
     return (
         <>
@@ -92,7 +102,7 @@ export const Analysis = () => {
                         <div className="rep-Cont1">
                             <div className="rep-Cont1-top">
                                 <div className="branchField">
-                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
+                                    <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
                                     <BranchDropdown
                                         id="branchName"
                                         name="branchName"
@@ -101,26 +111,41 @@ export const Analysis = () => {
                                     />
                                 </div>
                                 <div className="dateField">
-                                    <InputLabel htmlFor="date" color="#0377A8">Date</InputLabel>
+                                    <InputLabel htmlFor="date" color="#0377A8">Date<span style={{ color: 'red' }}>*</span></InputLabel>
                                     <DatePicker selectedDate={date} onDateChange={handleDateChange} />
                                 </div>
                             </div>
                             <div className="analysis-btn-section">
-                                <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewTotal}> View </Buttons>
-                                <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearTotalView}> Clear </ Buttons>
+                                <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewTotal} disabled={!date}> View </Buttons>
+                                <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearTotalView}> Clear </Buttons>
                             </div>
                         </div>
                     </div>
-                    <div className="reportRightContent">
-                        <h5 className='physicalSaleAmountTxt'>Physical Sale : <span style={{ color: "black" }}>Rs {totalSaleAmount !== null ? totalSaleAmount.toFixed(2) : 0}</span></h5>
-                        <h5 className='onlineSaleAmountTxt'>Online Sale : <span style={{ color: "black" }}>Rs {totalOnlineSaleAmount !== null ? totalOnlineSaleAmount.toFixed(2) : 0}</span></h5>
-                        <h3 className='totalNetSaleTxt'>Total Net Sales Amount : <span style={{ color: "black" }}>Rs {totalNetSales}</span></h3>
+                    <div className='reportRightContentMain'>
+                        <div className="reportRightContentImg">
+                            <img className="logoAnalysis-right" src={`${process.env.PUBLIC_URL}/Images/dailyAnalysis.png`} alt="analysis logo" />
+                            {isViewClicked && isLoading ? (
+                                <div className='alertText'>
+                                    <p className='analysis-loadingTxt'>Calculating...</p>
+                                </div>
+                            ) : isViewClicked && shouldShowResults ? (
+                                <div className="reportRightContent">
+                                    <h5 className='physicalSaleAmountTxt'>Physical Sale : <span style={{ color: "black" }}>Rs {totalSaleAmount !== null ? totalSaleAmount.toFixed(2) : '-'}</span></h5>
+                                    <h5 className='onlineSaleAmountTxt'>Online Sale : <span style={{ color: "black" }}>Rs {totalOnlineSaleAmount !== null ? totalOnlineSaleAmount.toFixed(2) : '-'}</span></h5>
+                                    <h3 className='totalNetSaleTxt'>Total Net Sales Amount : <span style={{ color: "black" }}>Rs {totalNetSales}</span></h3>
+                                </div>
+                            ) : isViewClicked && totalNetSales === '0.00' ? (
+                                <div className='alertText'>
+                                    <p className='analysis-noSearchResultTxt'>Sorry!, Sales data not found.</p>
+                                </div>
+                            ) : null}
+                        </div>
                     </div>
                 </div>
                 <div className="reportingMiddle">
                     <SalesChart />
                 </div>
-            </Layout>
+            </Layout >
         </>
     );
 };
