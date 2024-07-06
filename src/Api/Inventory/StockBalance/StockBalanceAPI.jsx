@@ -1,4 +1,7 @@
 import axios from "axios";
+import secureLocalStorage from 'react-secure-storage';
+
+const getAccessToken = () => secureLocalStorage.getItem('accessToken');
 
 
 const api = axios.create({
@@ -8,15 +11,15 @@ const api = axios.create({
     }
 });
 
-
-
 export const getActiveStock = async (branchName, productId) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/active-stock', {
             params: {
                 branchName,
                 productId
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {
@@ -29,11 +32,13 @@ export const getActiveStock = async (branchName, productId) => {
 
 export const getProductMinQty = async (branchName, productId) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/product-quantities', {
             params: {
                 branchName,
                 productId
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {
@@ -46,11 +51,13 @@ export const getProductMinQty = async (branchName, productId) => {
 
 export const getAdjustStockDetails = async (branchName, productId) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/adjust-stock', {
             params: {
                 branchName,
                 productId
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {
@@ -62,7 +69,10 @@ export const getAdjustStockDetails = async (branchName, productId) => {
 
 export const updateAdjustStock = async (updates) => {
     try {
-        const response = await api.put('/adjust-stock-quantity', { updates });
+        const token = getAccessToken();
+        const response = await api.put('/adjust-stock-quantity',  updates, {
+            headers: { Authorization: `Bearer ${token}`  } 
+         });
         return response.data;
     } catch (error) {
         console.error('Error updating adjust stock details:', error);

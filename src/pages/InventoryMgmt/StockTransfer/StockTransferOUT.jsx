@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import "./StockTransferOUT.css";
 import TableWithPagi from '../../../Components/Tables/TableWithPagi';
 import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
-import { useNavigate } from 'react-router-dom';
 import { BsEye, BsCheckCircle, BsXCircle } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
@@ -17,11 +16,9 @@ export const StockTransferOUT = ({ searchParams }) => {
     const [showStockOUTReceipt, setShowStockOUTReceipt] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         fetchStockData();
-    }, [searchParams]); // Add searchParams as dependency to re-fetch data when they change
+    }, [searchParams]); 
 
     const fetchStockData = async () => {
         setLoading(true);
@@ -68,7 +65,7 @@ export const StockTransferOUT = ({ searchParams }) => {
                     );
                 }
 
-                setStockData(filteredData); // Ensure state is updated here
+                setStockData(filteredData); 
             } else {
                 console.error('User details not found in secure storage');
             }

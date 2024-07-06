@@ -6,7 +6,6 @@ import InputLabel from "../../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import DeletePopup from "../../../../Components/PopupsWindows/DeletePopup";
 import AddNewUserRolePopup from './AddNewUserRolePopup';
-import UpdateUserRolePopup from './UpdateUserRolePopup';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
