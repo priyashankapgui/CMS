@@ -53,10 +53,10 @@ function MyAccountDetails() {
           <>
             <div className="popupProfileTxt">
               My Profile{" "}
-              <div className={editable?"editPopIcon editPopIcon-clicked" : "editPopIcon"}>
+              <div className={editable ? "editPopIcon editPopIcon-clicked" : "editPopIcon"}>
                 <Icon
                   icon="fluent:person-edit-48-regular"
-                  style={{ fontSize: "1em", cursor: "pointer", alignContent: "center", justifyContent: "center"}}
+                  style={{ fontSize: "1em", cursor: "pointer", alignContent: "center", justifyContent: "center" }}
                   onClick={toggleEditable}
                 />
               </div>
@@ -69,22 +69,22 @@ function MyAccountDetails() {
           <div >
             {viewPassword ? null : (
               <>
-                <MyAccountDetailsMain editable={editable} profilePicExists={profilePicExists} toggleEditable={toggleEditable}/>
-                {!editable && 
-                <Buttons
-                  id="change-view-btn"
-                  btnWidth="100%"
-                  marginTop={"15px"}
-                  fontSize={"14px"}
-                  style={{ backgroundColor: "white", color:'red'}}
-                  onClick={toggleViewPassword}
-                >
-                  Change Your Password?
-                </Buttons>
+                <MyAccountDetailsMain editable={editable} profilePicExists={profilePicExists} toggleEditable={toggleEditable} />
+                {!editable &&
+                  <Buttons
+                    id="change-view-btn"
+                    btnWidth="100%"
+                    marginTop={"15px"}
+                    fontSize={"14px"}
+                    style={{ backgroundColor: "white", color: 'red' }}
+                    onClick={toggleViewPassword}
+                  >
+                    Change Your Password?
+                  </Buttons>
                 }
               </>
             )}
-            {viewPassword && <MyAccountDetailsPassword toggleViewPassword={toggleViewPassword}/>}
+            {viewPassword && <MyAccountDetailsPassword toggleViewPassword={toggleViewPassword} />}
           </div>
         }
       />
