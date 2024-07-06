@@ -31,4 +31,5 @@ export const getOnlineSaleTotal = async (branchName, date) => {
     }
 };
 
+
 export default api;
