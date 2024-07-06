@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Layout from "../../../../Layout/Layout";
 import "./Accounts.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputLabel from "../../../../Components/Label/InputLabel";
 import Buttons from "../../../../Components/Buttons/SquareButtons/Buttons";
 import InputField from "../../../../Components/InputField/InputField";
@@ -30,27 +30,29 @@ export function Accounts() {
   const branchDropdownRef = useRef(null);
   const roleDropdownRef = useRef(null);
   const token = secureLocalStorage.getItem("accessToken");
+  const navigate = useNavigate();
+
+  const getEmployeeData = useCallback(async () => {
+    try {
+      setLoading(true); // Set loading to true before fetching data
+      const response = await getAllEmployees(token);
+      console.log("Response:", response);
+      if (response.status !== 200) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.data;
+      setEmployeeData(data);
+      setFilteredEmployees(data);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false); // Set loading to false after fetching data
+    }
+  }, [token]);
 
   useEffect(() => {
-    const getEmployeeData = async () => {
-      try {
-        setLoading(true); // Set loading to true before fetching data
-        const response = await getAllEmployees(token);
-        console.log("Response:", response);
-        if (response.status !== 200) {
-          throw new Error("Failed to fetch data");
-        }
-        const data = await response.data;
-        setEmployeeData(data);
-        setFilteredEmployees(data);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false); // Set loading to false after fetching data
-      }
-    };
     getEmployeeData();
-  }, [token]);
+  }, [getEmployeeData]);
 
   const handleDropdownBranchChange = (value) => {
     setSelectedBranch(value);
@@ -66,7 +68,7 @@ export function Accounts() {
     const user = JSON.parse(secureLocalStorage.getItem("user"));
     console.log("User:", user);
     if (user.userID.startsWith("SA")|| user.branchName === editBranch){
-      window.location.href = `/accounts/update-account?employeeId=${employeeId}`;
+     navigate(`/accounts/update-account?employeeId=${employeeId}`);
     } else {
       console.log("User is not authorized to edit");
       setShowAlert(true);
@@ -85,12 +87,12 @@ export function Accounts() {
       }
       const response = await deleteEmployee(employeeId, token);
       if (response.status === 200) {
-        const updatedEmployees = filteredEmployees.filter(
-          (employee) => employee.employeeId !== employeeId
-        );
-        setFilteredEmployees(updatedEmployees);
+        // const updatedEmployees = filteredEmployees.filter(
+        //   (employee) => employee.employeeId !== employeeId
+        // );
+        // setFilteredEmployees(updatedEmployees);
         setShowAlertSuccess("Employee deleted successfully");
-        console.log("Employee deleted:", employeeId);
+        getEmployeeData();
       } else {
         const data = await response.data;
         console.error("Error deleting employee:", data.error);
@@ -303,7 +305,7 @@ export function Accounts() {
             message={showAlertSuccess}
             duration={3000}
             onClose={() => {
-              window.location.reload();
+              return;
             }}
           />
         )}

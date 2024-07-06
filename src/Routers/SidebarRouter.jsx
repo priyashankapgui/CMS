@@ -29,7 +29,7 @@ import StockTransferIssuing from '../pages/InventoryMgmt/StockTransfer/StockTran
 import ReceivingCompleted from '../pages/InventoryMgmt/StockTransfer/ReceivingCompleted';
 import IssuingCompleted from '../pages/InventoryMgmt/StockTransfer/IssuingCompleted';
 import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
-import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/ReceivingRaised';
+import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
 import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
 import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
 import NotFound from '../pages/NotFound/NotFound';

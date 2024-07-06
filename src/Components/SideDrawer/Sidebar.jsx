@@ -1,4 +1,3 @@
-// Sidebar.jsx
 import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { SidebarData } from "./SidebarData";
