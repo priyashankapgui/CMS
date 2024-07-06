@@ -20,6 +20,12 @@ export const WebFeedbacks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const rowsPerPage = 6; 
+    const [filtered,setFiltered] = useState([]);
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [selectedAction, setSelectedAction] = useState('');
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+   
 
 
     const [rows, setRows] = useState([]);
@@ -28,7 +34,7 @@ export const WebFeedbacks = () => {
         branch: 'All',
         toDate: '',
         fromDate: '',
-        actionType: 'All',
+        actionType: '',
     });
     const [userDetails, setUserDetails] = useState({
         username: "",
@@ -46,6 +52,7 @@ export const WebFeedbacks = () => {
                     return new Date(a.createdAt) - new Date(b.createdAt);
                 });
     
+                setFiltered(sortedData);
                 setRows(sortedData);
             } catch (error) {
 
@@ -103,18 +110,6 @@ export const WebFeedbacks = () => {
             console.log('Feedback updated successfully:', response);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
             const sortedRows = updatedRows.sort((a, b) => {
                 if (a.action === 'Pending' && b.action !== 'Pending') return -1;
                 if (a.action !== 'Pending' && b.action === 'Pending') return 1;
@@ -134,7 +129,7 @@ export const WebFeedbacks = () => {
 
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-    const currentRows = rows.slice(indexOfFirstRow, indexOfLastRow);
+    const currentRows = filtered.slice(indexOfFirstRow, indexOfLastRow);
 
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -162,25 +157,84 @@ export const WebFeedbacks = () => {
         }
     };
 
-    const handleDateChange = (name, date) => {
-        setFilters({
-            ...filters,
-            [name]: date.toISOString().slice(0, 10),
-        });
+    const handleStartDateChange = (date) => {
+        setStartDate(date);
     };
+
+    const handleEndDateChange = (date) => {
+        setEndDate(date);
+    };
+
+    const handleBranchDropdownChange = (value) => {
+        setSelectedBranch(value);
+    };
+
+    const handleActionDropdownChange = (value) => {
+        setSelectedAction(value);
+    };
+
 
     const handleSearch = () => {
         
-        console.log('Search button clicked');
+       
+            // Normalize the dates to start of the day
+            const normalizeDate = (date) => {
+                const newDate = new Date(date);
+                newDate.setHours(0, 0, 0, 0);
+                return newDate;
+            };
+    
+            let filtered = [...rows];
+    
+            if (selectedBranch) {
+                filtered=filtered.filter(item => item.branch === selectedBranch) ;
+            }
+    
+            if (startDate && endDate) {
+                const normalizedStartDate = normalizeDate(startDate).getTime();
+                const normalizedEndDate = normalizeDate(endDate).getTime();
+    
+                filtered = filtered.filter(item => {
+                    const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                    return itemDate >= normalizedStartDate && itemDate <= normalizedEndDate;
+                });
+            } else if (startDate) {
+                const normalizedStartDate = normalizeDate(startDate).getTime();
+                filtered = filtered.filter(item => {
+                    const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                    return itemDate >= normalizedStartDate;
+                });
+            } else if (endDate) {
+                const normalizedEndDate = normalizeDate(endDate).getTime();
+                filtered = filtered.filter(item => {
+                    const itemDate = normalizeDate(new Date(item.createdAt)).getTime();
+                    return itemDate <= normalizedEndDate;
+                });
+            }
+    
+            if (filters.actionType && filters.actionType !== 'All') {
+                filtered = filtered.filter(item => item.action === filters.actionType);
+            }
+    
+          
+            
+    
+            setFiltered(filtered);
+        
+    
     };
 
     const handleClear = () => {
-        setFilters({
-            branch: 'All',
-            toDate: '',
-            fromDate: '',
-            actionType: 'All',
-        });
+       
+        const currentDate = new Date();
+        const previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - 1); // Previous date
+
+        setSelectedAction('');
+        setSelectedBranch('');
+        setStartDate(previousDate); 
+        setEndDate(currentDate); // Set to current date
+        handleSearch();
 
     };
 
@@ -220,7 +274,7 @@ export const WebFeedbacks = () => {
                                     options={['All', ...branchOptions.map(branch => branch.branchName)]}
                                     value={filters.branch || 'All'} 
                                     addOptions={["All"]}
-                                    onChange={handleFilterChange}
+                                    onChange={(e) => handleBranchDropdownChange(e)}
                                 />
                             </div>
                             <div className="dateField">
@@ -228,8 +282,8 @@ export const WebFeedbacks = () => {
                                 <DatePicker
                                     id="to-date"
                                     name="toDate"
-                                    selected={filters.toDate ? new Date(filters.toDate) : null}
-                                    onChange={(date) => handleDateChange('toDate', date)}
+                                    selectedDate={startDate}
+                                    onDateChange={handleStartDateChange}
                                 />
                             </div>
                             <div className="dateField">
@@ -237,8 +291,8 @@ export const WebFeedbacks = () => {
                                 <DatePicker
                                     id="from-date"
                                     name="fromDate"
-                                    selected={filters.fromDate ? new Date(filters.fromDate) : null}
-                                    onChange={(date) => handleDateChange('fromDate', date)}
+                                    selectedDate={endDate}
+                                    onDateChange={handleEndDateChange}
                                 />
                             </div>
                             <div className="actionField">
@@ -248,8 +302,8 @@ export const WebFeedbacks = () => {
                                     name="actionType"
                                     editable={true}
                                     options={['All', 'Taken', 'Pending']}
-                                    value={filters.actionType}
-                                    onChange={handleFilterChange}
+                                    value={filters.actionType || 'All'}
+                                    onChange={(e) => handleActionDropdownChange(e)}
                                 />
                             </div>
                         </div>
@@ -350,7 +404,7 @@ export const WebFeedbacks = () => {
                         {/* Pagination */}
                         <div className="pagination">
                             <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}><IoIosArrowBack /></button>
-                            <button onClick={() => paginate(currentPage + 1)} disabled={indexOfLastRow >= rows.length}><IoIosArrowForward /></button>
+                            <button onClick={() => paginate(currentPage + 1)} disabled={indexOfLastRow >= filtered.length}><IoIosArrowForward /></button>
                         </div>
                     </div>
                 </div>
