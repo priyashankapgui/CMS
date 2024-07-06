@@ -5,12 +5,9 @@ import EditPopup from '../../../Components/PopupsWindows/EditPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
 import Joi from 'joi';
-import { getSupplierById , updateSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
-
-
+import { getSupplierById, updateSupplier } from '../../../Api/Inventory/Supplier/SupplierAPI';
 
 function UpdateSupplierPopup({ supplierId }) {
-    console.log("supplirId received",supplierId);
     const [post, setPost] = useState({
         supplierName: '',
         regNo: '',
@@ -18,6 +15,7 @@ function UpdateSupplierPopup({ supplierId }) {
         email: '',
         contactNo: ''
     });
+    const [originalPost, setOriginalPost] = useState(null);
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
 
@@ -26,22 +24,19 @@ function UpdateSupplierPopup({ supplierId }) {
         regNo: Joi.string().required().label('Reg No'),
         email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
         address: Joi.string().required().label('Address'),
-        contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No'),
+        contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No').messages({
+            'string.pattern.base': 'Contact No must be a 10-digit number.'
+        }),
     });
 
-   
     useEffect(() => {
         const fetchSupplierDetails = async () => {
             try {
                 const res = await getSupplierById(supplierId);
-                const { supplierName, regNo, address, email, contactNo } = res.data;  
-                setPost({
-                    supplierName,
-                    regNo,
-                    address,
-                    email,
-                    contactNo
-                });
+                const { supplierName, regNo, address, email, contactNo } = res.data;
+                const fetchedData = { supplierName, regNo, address, email, contactNo };
+                setPost(fetchedData);
+                setOriginalPost(fetchedData);
             } catch (error) {
                 console.error('Error fetching supplier:', error);
             }
@@ -51,7 +46,6 @@ function UpdateSupplierPopup({ supplierId }) {
             fetchSupplierDetails();
         }
     }, [supplierId]);
-
 
     const validate = () => {
         const result = schema.validate(post, { abortEarly: false });
@@ -79,16 +73,25 @@ function UpdateSupplierPopup({ supplierId }) {
             setAlertConfig({
                 severity: 'error',
                 title: 'Validation Error',
-                message: 'Please fill out all required fields correctly.',
+                message: Object.values(validationErrors).join('\n'),
                 duration: 5000
+            });
+            setAlertVisible(true);
+            return;
+        }
+        if (JSON.stringify(post) === JSON.stringify(originalPost)) {
+            setAlertConfig({
+                severity: 'info',
+                title: 'No Changes',
+                message: 'No changes were made to the supplier details.',
+                duration: 3000
             });
             setAlertVisible(true);
             return;
         }
 
         try {
-            const resp = await updateSupplier(supplierId, post);
-            console.log('Supplier updated successfully:', resp.data);
+            await updateSupplier(supplierId, post);
             setAlertConfig({
                 severity: 'success',
                 title: 'Successfully Updated!',
@@ -106,7 +109,6 @@ function UpdateSupplierPopup({ supplierId }) {
             });
             setAlertVisible(true);
         }
-        
     };
 
     return (

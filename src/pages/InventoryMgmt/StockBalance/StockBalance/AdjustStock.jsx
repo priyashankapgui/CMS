@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import AdjustPopup from '../../../Components/PopupsWindows/AdjustPopup';
+import AdjustPopup from '../../../../Components/PopupsWindows/AdjustPopup';
 import "./AdjustStock.css";
 import { useNavigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
-import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import { getAdjustStockDetails, updateAdjustStock } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import { getAdjustStockDetails, updateAdjustStock } from '../../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
 function AdjustStock({ productId, productName, branchName }) {
     const navigate = useNavigate();
@@ -33,12 +33,10 @@ function AdjustStock({ productId, productName, branchName }) {
     }, [productId, branchName]);
 
     useEffect(() => {
-        console.log("Rows updated:", rows);
     }, [rows]);
 
     const handleAdjustStock = async () => {
         const user = JSON.parse(secureLocalStorage.getItem("user"));
-       
 
         const updates = rows
             .filter((row, index) => {
@@ -68,67 +66,59 @@ function AdjustStock({ productId, productName, branchName }) {
                 return updatePayload;
             });
 
-        console.log("Updates:", updates);
-
         if (updates.length === 0) {
-            console.log("No changes to save.");
+            setAlertConfig({
+                severity: 'info',
+                title: 'No Changes',
+                message: 'No changes were made.',
+                duration: 5000
+            });
+            setAlertVisible(true);
             return;
         }
 
         try {
             const response = await updateAdjustStock(updates);
-            console.log("Adjust stock response:", response.data);
-            const alertData = {
+            setAlertConfig({
                 severity: 'success',
-                title: 'Successfully Updated!',
+                title: 'Success',
                 message: 'Stock adjusted successfully!',
-                duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/stock-balance');
-            window.location.reload();
-            
+                duration: 5000
+            });
+            setAlertVisible(true);
         } catch (error) {
             console.error("Error adjusting stock:", error);
-            const alertData = {
+            setAlertConfig({
                 severity: 'error',
                 title: 'Error',
                 message: 'Failed to adjust stock.',
-                duration: 3000
-            };
-            localStorage.setItem('alertConfig', JSON.stringify(alertData));
-            navigate('/stock-balance');
-            window.location.reload();
-           
+                duration: 5000
+            });
+            setAlertVisible(true);
         }
     };
 
     const handleQtyChange = (index, newQty) => {
         const updatedRows = [...rows];
         updatedRows[index] = { ...updatedRows[index], totalAvailableQty: newQty };
-        console.log("Updated Rows (Qty Change):", updatedRows);
         setRows(updatedRows);
     };
 
     const handleSellingPriceChange = (index, newSellingPrice) => {
         const updatedRows = [...rows];
         updatedRows[index] = { ...updatedRows[index], sellingPrice: newSellingPrice };
-        console.log("Updated Rows (Price Change):", updatedRows);
         setRows(updatedRows);
     };
 
     const handleReasonChange = (index, newReason) => {
         const updatedRows = [...rows];
         updatedRows[index] = { ...updatedRows[index], reason: newReason };
-        console.log("Updated Rows (Reason Change):", updatedRows);
         setRows(updatedRows);
     };
 
-    console.log("Rendering AdjustStock Component");
-
     return (
         <>
-        {alertVisible && (
+            {alertVisible && (
                 <CustomAlert
                     severity={alertConfig.severity}
                     title={alertConfig.title}
@@ -146,16 +136,16 @@ function AdjustStock({ productId, productName, branchName }) {
                 <div className="adjust-stock-container">
                     <div className="product-info">
                         <div className="field">
-                            <span className="label">Product ID:</span>
-                            <span className="value">{productId}</span>
+                            <span className="productid">Product ID:</span>
+                            <span className="value1">{productId}</span>
                         </div>
                         <div className="field">
-                            <span className="label">Product Name:</span>
-                            <span className="value">{productName}</span>
+                            <span className="productname">Product Name:</span>
+                            <span className="value2">{productName}</span>
                         </div>
                         <div className="field">
-                            <span className="label">Branch:</span>
-                            <span className="value">{branchName}</span>
+                            <span className="branchname">Branch:</span>
+                            <span className="value3">{branchName}</span>
                         </div>
                     </div>
 
@@ -164,7 +154,7 @@ function AdjustStock({ productId, productName, branchName }) {
                             <tr>
                                 <th>Batch No</th>
                                 <th>Exp Date</th>
-                                <th>Selling Price(Rs)</th>
+                                <th>Selling Price (Rs)</th>
                                 <th>Qty</th>
                                 <th>Reason</th>
                             </tr>
@@ -176,23 +166,26 @@ function AdjustStock({ productId, productName, branchName }) {
                                     <td>{new Date(row.expDate).toLocaleDateString()}</td>
                                     <td>
                                         <input
+                                            className="data-box-table"
                                             type="number"
                                             value={row.sellingPrice}
                                             onChange={(e) => handleSellingPriceChange(index, parseFloat(e.target.value))}
-                                            step="0.01"  
-                                            min="0"  
+                                            step="0.01"
+                                            min="0"
                                         />
                                     </td>
                                     <td>
                                         <input
+                                            className="data-box-table"
                                             type="number"
                                             value={row.totalAvailableQty}
                                             onChange={(e) => handleQtyChange(index, parseInt(e.target.value))}
-                                            min="0"  
+                                            min="0"
                                         />
                                     </td>
                                     <td>
                                         <input
+                                            className="data-box-table"
                                             type="text"
                                             value={row.reason || ""}
                                             onChange={(e) => handleReasonChange(index, e.target.value)}

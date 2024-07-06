@@ -3,8 +3,8 @@ import Layout from "../../../Layout/Layout";
 import "./StockBalanceMain.css";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import StockBalance from './StockBalance';
-import MinimunStock from './MinimumStock';
+import StockBalance from './StockBalance/StockBalance';
+import MinimunStock from './MinimumStock/MinimumStock';
 
 export const StockBalanceMain = () => {
     return (
