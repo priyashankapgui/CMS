@@ -1,5 +1,6 @@
 import { React, useCallback, useState} from 'react'
 import { useDropzone } from 'react-dropzone';
+import { useNavigate } from "react-router-dom";
 import Layout from "../../../../Layout/Layout";
 import './CreateNewAccounts.css';
 import { Icon } from "@iconify/react";
@@ -40,7 +41,7 @@ export function CreateNewAccounts() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
-    //console.log("Current User:", currentUser);
+    const navigate = useNavigate();
 
     
     const handleBranchChange = useCallback((branch) => {   
@@ -367,7 +368,8 @@ export function CreateNewAccounts() {
               message="Employee updated successfully"
               duration={1500}
               onClose={() => {
-                window.location.href = "/accounts";
+                // window.location.href = "/accounts";
+                navigate("/accounts", { state: { reload: true } });
               }}
             />
           )}

@@ -1,16 +1,20 @@
-import {useState, useEffect} from 'react';
-import './AddNewUserRolePopup.css';
-import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
-import AddNewPopup from '../../../../Components/PopupsWindows/AddNewPopup';
-import InputLabel from '../../../../Components/Label/InputLabel';
-import InputField from '../../../../Components/InputField/InputField';
-import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
-import PermissionMap from '../../../../Components/PermissionMap/PermissionMap';
-import secureLocalStorage from 'react-secure-storage';
-import { createUserRole, getUserRolePermissionsByToken } from '../../../../Api/BranchMgmt/UserRoleAPI';
-const token = secureLocalStorage.getItem('accessToken');
+import { useState, useEffect } from "react";
+import "./AddNewUserRolePopup.css";
+import { useNavigate } from "react-router-dom";
+import CustomAlert from "../../../../Components/Alerts/CustomAlert/CustomAlert";
+import AddNewPopup from "../../../../Components/PopupsWindows/AddNewPopup";
+import InputLabel from "../../../../Components/Label/InputLabel";
+import InputField from "../../../../Components/InputField/InputField";
+import BranchDropdown from "../../../../Components/InputDropdown/BranchDropdown";
+import PermissionMap from "../../../../Components/PermissionMap/PermissionMap";
+import secureLocalStorage from "react-secure-storage";
+import {
+    createUserRole,
+    getUserRolePermissionsByToken,
+} from "../../../../Api/BranchMgmt/UserRoleAPI";
+const token = secureLocalStorage.getItem("accessToken");
 
-function AddNewUserRolePopup() {
+function AddNewUserRolePopup({ refresh }) {
     const [permissionArray, setPermissionArray] = useState([]);
     const [checkedPages, setCheckedPages] = useState(new Map());
     const [roleName, setRoleName] = useState();
@@ -21,7 +25,7 @@ function AddNewUserRolePopup() {
     const handleBranchChange = (branch) => {
         setSelectedBranch(branch);
         // console.log("Selected branch:", selectedBranch);
-        }
+    };
 
     useEffect(() => {
         const getPermissions = async () => {
@@ -32,54 +36,56 @@ function AddNewUserRolePopup() {
                 setPermissionArray(data);
                 setCheckedPages(new Map(data.map((page) => [page.pageId, false])));
             } catch (error) {
-                console.error('Error fetching permissions:', error);
+                console.error("Error fetching permissions:", error);
             }
-        }
+        };
         getPermissions();
-    }
-    ,[]);
+    }, []);
 
-    const handleSave = async() => {
+    const handleSave = async () => {
         try {
             const selectedPages = Array.from(checkedPages.entries())
                 .filter(([pageId, isChecked]) => isChecked)
                 .map(([pageId, isChecked]) => pageId);
             console.log(selectedPages, selectedBranch, roleName);
             if (!roleName || !selectedBranch || selectedPages.length === 0) {
-                throw new Error('Please fill all the fields');
+                throw new Error("Please fill all the fields");
             }
             let tempBranch = selectedBranch;
-            if (selectedBranch === 'None') {
+            if (selectedBranch === "None") {
                 tempBranch = null;
             }
-           const token = secureLocalStorage.getItem("accessToken");
-           console.log(token);
+            const token = secureLocalStorage.getItem("accessToken");
+            console.log(token);
             const response = await createUserRole(roleName, tempBranch, selectedPages, token);
-            if (!response){
-                throw new Error('Server Error');
+            if (!response) {
+                throw new Error("Server Error");
             }
             if (response.status !== 201) {
-                const data = await response.data;   
+                const data = await response.data;
                 throw new Error(data.error);
             }
             const data = await response.data;
             console.log(data);
+            refresh();
             setSuccess(`User Role '${roleName}' created successfully`);
             return null;
         } catch (error) {
             setShowAlert(error.message);
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
-    }
+    };
     return (
         <>
-            <AddNewPopup 
-            topTitle="Add New User Role " 
-            buttonId="save-btn" 
-            buttonText="Create" 
-            onClick={handleSave}>
-                <div className='first-row'>
-                    <div className='roleNameInput'>
+            <AddNewPopup
+                topTitle="Add New User Role "
+                buttonId="save-btn"
+                buttonText="Create"
+                onClick={handleSave}
+                forceClose={success}
+            >
+                <div className="first-row">
+                    <div className="roleNameInput">
                         <InputLabel colour="#0377A8">Role Name</InputLabel>
                         <InputField
                             type="text"
@@ -92,39 +98,44 @@ function AddNewUserRolePopup() {
                     </div>
                     <div>
                         <InputLabel colour="#0377A8">Branch</InputLabel>
-                        <BranchDropdown id="branchName" name="branchName" editable={true} onChange={(e) => handleBranchChange(e)} />
+                        <BranchDropdown
+                            id="branchName"
+                            name="branchName"
+                            editable={true}
+                            onChange={(e) => handleBranchChange(e)}
+                        />
                     </div>
                 </div>
-                <div className='second-row'>
-                    <div className='permission-title'>Permission Mapping</div>
-                    <div className='permissions'>
-                        <PermissionMap checkedPages={checkedPages} permissionArray={permissionArray}/>
+                <div className="second-row">
+                    <div className="permission-title">Permission Mapping</div>
+                    <div className="permissions">
+                        <PermissionMap
+                            checkedPages={checkedPages}
+                            permissionArray={permissionArray}
+                        />
                     </div>
-                    {showAlert &&
-                    <CustomAlert
-                    severity="error"
-                    title="Error"
-                    message={showAlert}
-                    duration={3000}
-                    onClose={() => setShowAlert(false)}
-                    />
-                    }
-                    {success &&
-                    <CustomAlert
-                        severity="success"
-                        title="Success"
-                        message={success}
-                        duration={1500}
-                        onClose={() => {
-                            window.location.reload();
-                        }}
-                    />
-                    }
+                    {showAlert && (
+                        <CustomAlert
+                            severity="error"
+                            title="Error"
+                            message={showAlert}
+                            duration={3000}
+                            onClose={() => setShowAlert(false)}
+                        />
+                    )}
                 </div>
-
             </AddNewPopup>
-
-
+            {success && (
+                <CustomAlert
+                    severity="success"
+                    title="Success"
+                    message={success}
+                    duration={1500}
+                    onClose={() => {
+                        setSuccess(false);
+                    }}
+                />
+            )}
         </>
     );
 }
