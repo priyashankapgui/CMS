@@ -14,7 +14,7 @@ import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner'
 import secureLocalStorage from "react-secure-storage";
 import { getBilledData, postCancelBill } from '../../../../Api/Billing/SalesApi';
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
-import ConfirmationModal from '../../../../Modal/ConfirmationModal';
+import ConfirmationModal from '../../../../Components/PopupsWindows/Modal/ConfirmationModal';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
@@ -285,6 +285,9 @@ export const ViewBill = () => {
                 open={isConfirmationModalOpen}
                 onClose={closeConfirmationModal}
                 onConfirm={confirmCancelBill}
+                topContentBgColor="#EB1313"
+                bodyContent="Are you sure you want to cancel this bill?"
+                yesBtnBgColor="#EB1313"
             />
         </>
     );

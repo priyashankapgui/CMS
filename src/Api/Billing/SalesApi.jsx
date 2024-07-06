@@ -110,7 +110,7 @@ export const postCancelBill = async (payload) => {
     }
 };
 
-export const getRefundBillDataStartReturn = async (billNo) => {
+export const getCheckRefundBillData = async (billNo) => {
     try {
         const response = await api.get(`/refund/bill/${billNo}`);
         return response.data;
