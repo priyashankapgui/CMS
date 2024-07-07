@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReceiptPopup from '../../SalesReceiptTemp/ReceiptPopup/ReceiptPopup';
 import './GrnDoc.css';
-import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'; 
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import { getGRNByGRN_NO } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 const GrnDoc = ({ GRN_NO, onClose }) => {
@@ -69,12 +69,12 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
                                     <th style={{ textAlign: 'left' }}>Product ID / Name</th>
                                     <th style={{ textAlign: 'left' }}>Batch No</th>
                                     <th style={{ textAlign: 'center' }}>Purchase Qty</th>
-                                    <th style={{ textAlign: 'right' }}>Purchase Price</th>
-                                    <th style={{ textAlign: 'right' }}>Selling Price</th>
-                                    <th>Free Qty</th>
-                                    <th style={{ textAlign: 'right' }}>Exp Date</th>
-                                    <th style={{ textAlign: 'right' }}>Amount</th>
-                                    <th>Comment</th>
+                                    <th style={{ textAlign: 'center' }}>Purchase Price</th>
+                                    <th style={{ textAlign: 'center' }}>Selling Price</th>
+                                    <th style={{ textAlign: 'center' }}>Free Qty</th>
+                                    <th style={{ textAlign: 'center' }}>Exp Date</th>
+                                    <th style={{ textAlign: 'center' }}>Amount</th>
+                                    <th style={{ textAlign: 'right' }}>Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,13 +83,13 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
                                         <td>{index + 1}.</td>
                                         <td style={{ textAlign: 'left' }}>{productGRN.productId} {productGRN.productName}</td>
                                         <td style={{ textAlign: 'left' }}>{productGRN.batchNo}</td>
-                                        <td style={{ textAlign: 'center' }}>{productGRN.totalQty}</td>
-                                        <td style={{ textAlign: 'right' }}>{productGRN.purchasePrice}</td>
-                                        <td style={{ textAlign: 'right' }}>{productGRN.sellingPrice}</td>
-                                        <td style={{ textAlign: 'center' }}>{productGRN.freeQty}</td>
-                                        <td style={{ textAlign: 'right' }}>{new Date(productGRN.expDate).toLocaleDateString('en-GB')}</td>
-                                        <td style={{ textAlign: 'right' }}>{productGRN.amount}</td>
-                                        <td style={{ textAlign: 'left' }}>{productGRN.comment}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.totalQty.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.purchasePrice.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.sellingPrice.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.freeQty.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'center' }}>{new Date(productGRN.expDate).toLocaleDateString('en-GB')}</td>
+                                        <td style={{ textAlign: 'center' }}>{productGRN.amount.toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right' }}>{productGRN.comment}</td>
                                     </tr>
                                 ))}
                             </tbody>
