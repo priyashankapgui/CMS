@@ -111,9 +111,9 @@ const RefundReceipt = ({ RTBNo, onClose }) => {
                                     </tr>
                                     <tr>
                                         <td style={{ textAlign: 'left' }}>{(item.sellingPrice || 0).toFixed(2)}</td>
-                                        <td style={{ textAlign: 'center' }}>{(item.billQty || 0).toFixed(3)}</td>
+                                        <td style={{ textAlign: 'center' }}>{(item.returnQty || 0).toFixed(3)}</td>
                                         <td style={{ textAlign: 'right' }}>{(item.discount || 0).toFixed(2)}</td>
-                                        <td style={{ textAlign: 'right' }}>{((item.sellingPrice || 0) * (item.billQty || 0) * (1 - (item.discount) / 100)).toFixed(2)}</td>
+                                        <td style={{ textAlign: 'right' }}>{((item.sellingPrice || 0) * (item.returnQty || 0) * (1 - (item.discount) / 100)).toFixed(2)}</td>
                                     </tr>
                                 </React.Fragment>
                             ))}

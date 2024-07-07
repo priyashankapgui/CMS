@@ -4,10 +4,12 @@ import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons"
 import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 
 const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
     const [orders, setOrders] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
         title: 'Success',
@@ -25,6 +27,8 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                 setProcessingOrdersCount(processingOrders.length); // This should update the count in the parent component
             } catch (error) {
                 console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -64,6 +68,14 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
         setShowAlert(false);
     };
 
+    if (loading) {
+        return <SubSpinner />;
+    }
+
+    if (orders.length === 0) {
+        return <div style={{ color: '#dc0808' }}>Processing orders are not here...</div>;
+    }
+
     return (
         <>
             <table className="ProcessingOrdersTable">
@@ -85,15 +97,16 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                             <td>{order.branch.branchName}</td>
                             <td>{order.customer.firstName} {order.customer.lastName}</td>
                             <td>Card</td>
-                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
+                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString('en-GB') : 'N/A'}</td>
                             <td>{order.acceptedBy}</td>
                             <td>
-                                <RoundButtons 
-                                    id={`doneBtn-${order.onlineBillNo}`} 
-                                    type="submit" 
-                                    name={`doneBtn-${order.onlineBillNo}`} 
-                                    icon={<MdDone />} 
-                                    onClick={() => handleProcessingDone(order)} 
+                                <RoundButtons
+                                    id={`doneBtn-${order.onlineBillNo}`}
+                                    backgroundColor='#16A8D6'
+                                    type="submit"
+                                    name={`doneBtn-${order.onlineBillNo}`}
+                                    icon={<MdDone color="white" />}
+                                    onClick={() => handleProcessingDone(order)}
                                 />
                             </td>
                         </tr>

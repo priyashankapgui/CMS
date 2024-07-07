@@ -12,6 +12,7 @@ import { getOnlineBillByNumber, updateOnlineBill } from '../../../Api/OnlineOrde
 import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
 import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import MainSpinner from '../../../Components/Spinner/MainSpinner/MainSpinner.jsx';
 
 export function NewOrderView() {
     const { onlineBillNo } = useParams();
@@ -24,8 +25,9 @@ export function NewOrderView() {
         severity: 'success',
         title: 'Success',
         message: 'You have successfully accepted the order!',
-        duration: 3000
+        duration: 4000
     });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
@@ -47,6 +49,8 @@ export function NewOrderView() {
                 setProducts(productsResponse);
             } catch (error) {
                 console.error('Error fetching order data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -55,11 +59,11 @@ export function NewOrderView() {
 
     const handleAcceptClick = async () => {
         if (userDetails.username) {
-            const currentTime = new Date().toISOString(); 
+            const currentTime = new Date().toISOString();
             const updates = {
                 acceptedBy: userDetails.username,
                 status: "Processing",
-                acceptedAt: currentTime 
+                acceptedAt: currentTime
             };
 
             try {
@@ -68,7 +72,7 @@ export function NewOrderView() {
                     ...prevData,
                     acceptedBy: updates.acceptedBy,
                     status: updates.status,
-                    acceptedAt: currentTime 
+                    acceptedAt: currentTime
                 }));
                 setShowPopup(true);
                 setShowAlert(true);
@@ -117,8 +121,8 @@ export function NewOrderView() {
 
     const numberOfItems = products.length;
 
-    if (!orderData) {
-        return <div>Loading...</div>;
+    if (loading) {
+        return <div><MainSpinner /></div>;
     }
 
     return (
@@ -128,7 +132,7 @@ export function NewOrderView() {
                     <Link to="/online-orders">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>View Order</h4>
+                    <h4>View Online Order</h4>
                 </div>
             </div>
             <Layout>
@@ -142,7 +146,7 @@ export function NewOrderView() {
                                 <InputLabel for="ordNo" color="#0377A8">ORD No: <span>{orderData.onlineBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString()}</span></InputLabel>
+                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString('en-GB')}</span></InputLabel>
                             </div>
                         </div>
                         <div className='detail2'>
@@ -161,7 +165,7 @@ export function NewOrderView() {
                     <div className='View-onlineorder-bottom-cont'>
                         <div className='onlineOrderRBtn'>
                             <InputLabel> Accept </InputLabel>
-                            <RoundButtons id="acceptbtn" type="submit" name="acceptbtn" icon={<MdDone />} onClick={handleAcceptClick} />
+                            <RoundButtons id="acceptbtn" type="submit" name="acceptbtn" backgroundColor='#00933dc8' icon={<MdDone color='white' />} onClick={handleAcceptClick} />
                         </div>
                     </div>
                 </div>
@@ -169,8 +173,7 @@ export function NewOrderView() {
                     <table className='viewonlineitemtable'>
                         <thead>
                             <tr>
-                                <th>Product ID</th>
-                                <th>Product Name</th>
+                                <th>Product ID / Name</th>
                                 <th>Qty</th>
                                 <th>Unit Price</th>
                                 <th>Dis%</th>
@@ -181,12 +184,11 @@ export function NewOrderView() {
                             {products.length > 0 ? (
                                 products.map(item => (
                                     <tr key={`${item.productId}-${item.batchNo}-${item.branchId}`}>
-                                        <td><InputField id="" name="productId" editable={false} width="100%" value={item.productId} /></td>
-                                        <td><InputField id="" name="productName" editable={false} width="300px" value={item.productName} /></td>
-                                        <td><InputField id="" name="qty" editable={false} width="100%" value={item.PurchaseQty} /></td>
-                                        <td><InputField id="" name="unitPrice" editable={false} width="100%" value={item.sellingPrice} /></td>
-                                        <td><InputField id="" name="discount" editable={false} width="100%" value={item.discount} /></td>
-                                        <td><InputField id="" name="amount" editable={false} width="100%" value={calculateAmount(item)} /></td>
+                                        <td><InputField id="" name="productName" editable={false} width="400px" value={`${item.productId}  ${item.productName}`} /></td>
+                                        <td><InputField id="" name="qty" editable={false} width="100%" value={item.PurchaseQty.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="unitPrice" editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="discount" editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="amount" editable={false} width="100%" value={calculateAmount(item)} textAlign='center' /></td>
                                     </tr>
                                 ))
                             ) : (
@@ -194,30 +196,34 @@ export function NewOrderView() {
                                     <td colSpan="6">No items found</td>
                                 </tr>
                             )}
-                            <tr>
-                                <td colSpan="6">
-                                    <div className="summary-box">
-                                        <div className="summary-row">
-                                            <span>Gross Total:</span>
-                                            <InputField className="Onlineinput" id="" name="grossTotal" editable={false} width="100%" value={calculateGrossTotal()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Total Discount:</span>
-                                            <InputField className="Onlineinput" id="" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Net Total:</span>
-                                            <InputField className="Onlineinput" id="" name="netTotal" editable={false} width="100%" value={calculateNetTotal()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Number of Items:</span>
-                                            <InputField className="Onlineinput" id="" name="itemCount" editable={false} width="100%" value={numberOfItems} />
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
+                </div>
+                <div className="onlineOrderpaymentSummeryrWrapper">
+                    <div className="onlineOrderpaymentSummeryrContainer">
+                        <div className="online-payment-summery-middle">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><InputLabel htmlFor="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
+                                        <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} value={calculateGrossTotal()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="discountBill" color="#0377A8">Total Discount</InputLabel></td>
+                                        <td><InputField id="discount" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="netTotal" color="#0377A8" fontSize="1.125em" fontWeight="510">Net Total</InputLabel></td>
+                                        <td><InputField type="text" id="netTotal" name="netTotal" editable={false} value={calculateNetTotal()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="noItems" color="#0377A8">No Items:</InputLabel></td>
+                                        <td><InputField type="text" id="noItems" name="noItems" editable={false} value={numberOfItems} /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </Layout>
             {showPopup && <WorkOrderReceipt onlineOrdNo={orderData.onlineBillNo} onClose={handleClosePopup} />}
