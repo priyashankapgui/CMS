@@ -2,18 +2,22 @@ import React, { useEffect, useState } from "react";
 import './NewOrders.css';
 import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons";
 import { BsEye } from 'react-icons/bs';
-import { MdPrint } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx"; 
+import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 
-const NewOrders = ({ setNewOrdersCount }) => {
+const NewOrders = ({ selectedBranch, setNewOrdersCount, searchClicked }) => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await getAllOnlineBills(); 
-                const newOrders = response.filter(order => order.status === "New");
+                const response = await getAllOnlineBills();
+                let newOrders = response.filter(order => order.status === "New");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    newOrders = newOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+
                 setOrders(newOrders);
                 setNewOrdersCount(newOrders.length);
             } catch (error) {
@@ -22,7 +26,7 @@ const NewOrders = ({ setNewOrdersCount }) => {
         };
 
         fetchOrders();
-    }, [setNewOrdersCount]);
+    }, [selectedBranch, searchClicked, setNewOrdersCount]);
 
     return (
         <table className="NewOrderTable">
@@ -33,10 +37,8 @@ const NewOrders = ({ setNewOrdersCount }) => {
                     <th>Branch</th>
                     <th>Customer Name</th>
                     <th>Payment Method</th>
-                    {/* <th>Hope to Pick Up</th> */}
                     <th>Comment</th>
                     <th></th>
-                    {/* <th></th> */}
                 </tr>
             </thead>
             <tbody>
@@ -47,14 +49,12 @@ const NewOrders = ({ setNewOrdersCount }) => {
                         <td>{order.branch.branchName}</td>
                         <td>{order.customer.firstName} {order.customer.lastName}</td>
                         <td>Card</td>
-                        {/* <td>{order.hopeToPickup ? new Date(order.hopeToPickup).toLocaleString() : 'N/A'}</td> */}
                         <td>{order.comment}</td>
                         <td>
                             <Link to={`/online-orders/viewOrder/${order.onlineBillNo}`}>
-                                <RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />}/>
+                                <RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />} />
                             </Link>
                         </td>
-                        {/* <td><RoundButtons id={`printViewBtn`} type="print" name={`printViewBtn`} icon={<MdPrint />}/></td> */}
                     </tr>
                 ))}
             </tbody>

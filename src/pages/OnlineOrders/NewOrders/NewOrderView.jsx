@@ -12,6 +12,7 @@ import { getOnlineBillByNumber, updateOnlineBill } from '../../../Api/OnlineOrde
 import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
 import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 
 export function NewOrderView() {
     const { onlineBillNo } = useParams();
@@ -26,6 +27,7 @@ export function NewOrderView() {
         message: 'You have successfully accepted the order!',
         duration: 3000
     });
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
@@ -53,7 +55,16 @@ export function NewOrderView() {
         fetchOrderData();
     }, [onlineBillNo]);
 
-    const handleAcceptClick = async () => {
+    const handleAcceptClick = () => {
+        setIsConfirmationModalOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setIsConfirmationModalOpen(false);
+    };
+
+    const confirmAcceptOrder = async () => {
+        setIsConfirmationModalOpen(false);
         if (userDetails.username) {
             const currentTime = new Date().toISOString(); 
             const updates = {
@@ -142,7 +153,7 @@ export function NewOrderView() {
                                 <InputLabel for="ordNo" color="#0377A8">ORD No: <span>{orderData.onlineBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString()}</span></InputLabel>
+                            <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString()}</span></InputLabel>
                             </div>
                         </div>
                         <div className='detail2'>
@@ -151,9 +162,6 @@ export function NewOrderView() {
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>Card</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="hopetoPickUp" color="#0377A8">Hope to Pick Up: <span>{orderData.hopeToPickup ? new Date(orderData.hopeToPickup).toLocaleString() : 'N/A'}</span></InputLabel>
                             </div>
                         </div>
                     </div>
@@ -230,6 +238,13 @@ export function NewOrderView() {
                     onClose={handleCloseAlert}
                 />
             )}
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={confirmAcceptOrder}
+                bodyContent="Are you sure you want to accept this order?"
+                yesBtnBgColor="#23A3DA"
+            />
         </>
     );
 }

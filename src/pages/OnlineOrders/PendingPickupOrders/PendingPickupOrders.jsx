@@ -5,6 +5,8 @@ import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
+import emailjs from 'emailjs-com';
 
 const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
     const [orders, setOrders] = useState([]);
@@ -16,6 +18,8 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
         message: 'Order picked up successfully!',
         duration: 3000
     });
+    const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
@@ -42,8 +46,8 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
         fetchOrders();
     }, [setPickupOrdersCount]);
 
-    const handleOrderPickedUp = async (order) => {
-        if (userDetails.username) {
+    const handleOrderPickedUp = async () => {
+        if (userDetails.username && selectedOrder) {
             const currentTime = new Date().toISOString(); 
             const updates = {
                 pickupBy: userDetails.username,
@@ -52,8 +56,8 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
             };
     
             try {
-                await updateOnlineBill(order.onlineBillNo, updates);
-                setOrders((prevOrders) => prevOrders.filter(o => o.onlineBillNo !== order.onlineBillNo));
+                await updateOnlineBill(selectedOrder.onlineBillNo, updates);
+                setOrders((prevOrders) => prevOrders.filter(o => o.onlineBillNo !== selectedOrder.onlineBillNo));
                 setPickupOrdersCount((prevCount) => prevCount - 1);
                 setAlertDetails({
                     severity: 'success',
@@ -62,6 +66,20 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                     duration: 3000
                 });
                 setShowAlert(true);
+
+                // Send email to customer
+                const templateParams = {
+                    customer_name: `${selectedOrder.customer.firstName} ${selectedOrder.customer.lastName}`,
+                    order_number: selectedOrder.onlineBillNo,
+                    email: selectedOrder.customer.email,
+                };
+
+                emailjs.send("service_ase4f59","template_1qxggvp", templateParams, 'c0LBbcJjnX0kOW0AK')
+                    .then((response) => {
+                        console.log('Email sent successfully:', response.status, response.text);
+                    }, (error) => {
+                        console.error('Failed to send email:', error);
+                    });
 
                 // Switch tab to Completed (index 3)
                 onTabChange(3);
@@ -74,10 +92,21 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                     duration: 3000
                 });
                 setShowAlert(true);
+            } finally {
+                setConfirmationModalOpen(false); // Close the modal after handling
             }
         }
     };
-    
+
+    const handleOpenConfirmationModal = (order) => {
+        setSelectedOrder(order);
+        setConfirmationModalOpen(true);
+    };
+
+    const handleCloseConfirmationModal = () => {
+        setConfirmationModalOpen(false);
+        setSelectedOrder(null);
+    };
 
     const handleCloseAlert = () => {
         setShowAlert(false);
@@ -112,7 +141,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                                     type="submit" 
                                     name={`doneBtn-${order.onlineBillNo}`} 
                                     icon={<MdDone />} 
-                                    onClick={() => handleOrderPickedUp(order)} 
+                                    onClick={() => handleOpenConfirmationModal(order)} 
                                 />
                             </td>
                         </tr>
@@ -128,6 +157,13 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                     onClose={handleCloseAlert}
                 />
             )}
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={handleCloseConfirmationModal}
+                onConfirm={handleOrderPickedUp}
+                bodyContent="Are you sure you want to mark this order as Completed?"
+                yesBtnBgColor="#23A3DA"
+            />
         </>
     );
 };

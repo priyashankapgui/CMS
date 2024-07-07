@@ -80,7 +80,7 @@ export function CompletedOrders() {
         <>
             <div className='top-nav-blue-text'>
                 <div className='ViewCompletedDetails'>
-                    <Link to="/online-orders" onClick={() => navigate('/online-orders?tab=completed')}>
+                <Link to="/online-orders?tab=completed">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>View Completed Order</h4>
@@ -106,9 +106,6 @@ export function CompletedOrders() {
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>Card</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="hopetoPickUp" color="#0377A8">Hope to Pick Up: <span>{orderData.hopeToPickup ? new Date(orderData.hopeToPickup).toLocaleString() : 'N/A'}</span></InputLabel>
                             </div>
                         </div>
                     </div>

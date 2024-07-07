@@ -4,6 +4,8 @@ import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons"
 import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
+import emailjs from 'emailjs-com';
 
 const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
     const [orders, setOrders] = useState([]);
@@ -14,6 +16,8 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
         message: 'Order processed successfully!',
         duration: 3000
     });
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -48,6 +52,20 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
 
             // Switch tab to Pending Pickup (index 2)
             onTabChange(2);
+
+            // Send email to customer
+            const templateParams = {
+                customer_name: `${order.customer.firstName} ${order.customer.lastName}`,
+                order_number: order.onlineBillNo,
+                email: order.customer.email,
+            };
+
+            emailjs.send("service_ase4f59","template_iigr25h", templateParams, 'c0LBbcJjnX0kOW0AK')
+                .then((response) => {
+                    console.log('Email sent successfully:', response.status, response.text);
+                }, (error) => {
+                    console.error('Failed to send email:', error);
+                });
         } catch (error) {
             console.error("Error updating order status:", error);
             setAlertDetails({
@@ -58,6 +76,23 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
             });
             setShowAlert(true);
         }
+    };
+
+    const openConfirmationModal = (order) => {
+        setSelectedOrder(order);
+        setIsConfirmationModalOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setSelectedOrder(null);
+        setIsConfirmationModalOpen(false);
+    };
+
+    const confirmProcessingDone = () => {
+        if (selectedOrder) {
+            handleProcessingDone(selectedOrder);
+        }
+        closeConfirmationModal();
     };
 
     const handleCloseAlert = () => {
@@ -93,7 +128,7 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                                     type="submit" 
                                     name={`doneBtn-${order.onlineBillNo}`} 
                                     icon={<MdDone />} 
-                                    onClick={() => handleProcessingDone(order)} 
+                                    onClick={() => openConfirmationModal(order)} 
                                 />
                             </td>
                         </tr>
@@ -109,6 +144,13 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                     onClose={handleCloseAlert}
                 />
             )}
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={confirmProcessingDone}
+                bodyContent="Are you sure you want to mark this order as processed and ready for pickup?"
+                yesBtnBgColor="#23A3DA"
+            />
         </>
     );
 };
