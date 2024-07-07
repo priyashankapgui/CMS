@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Layout from "../../../../Layout/Layout";
 import "./ViewBill.css";
@@ -6,27 +6,164 @@ import { RiPrinterFill } from "react-icons/ri";
 import { MdOutlineAssignmentReturn } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import InputField from '../../../../Components/InputField/InputField';
-import InputDropdown from '../../../../Components/InputDropdown/InputDropdown';
 import InputLabel from '../../../../Components/Label/InputLabel';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import jsonData from '../../../../Components/Data.json';
 import SalesReceipt from '../../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
+import MainSpinner from '../../../../Components/Spinner/MainSpinner/MainSpinner';
+import secureLocalStorage from "react-secure-storage";
+import { getBilledData, postCancelBill } from '../../../../Api/Billing/SalesApi';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import ConfirmationModal from '../../../../Components/PopupsWindows/Modal/ConfirmationModal';
 
 export const ViewBill = () => {
     const { billNo } = useParams();
-    const selectedBillData = jsonData.worklistTableData.find(bill => bill.billNo === billNo);
+    const [billData, setBillData] = useState(null);
     const [showSalesReceipt, setShowSalesReceipt] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [alert, setAlert] = useState({
+        severity: '',
+        title: '',
+        message: '',
+        open: false
+    });
+    const [userDetails, setUserDetails] = useState({
+        userName: "", userRole: ""
+    });
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await getBilledData(billNo);
+                console.log('Bill Data:', response);
+
+                if (response.data && Object.keys(response.data).length > 0) {
+                    setBillData(response.data);
+                } else {
+                    setError('Bill not found');
+                }
+            } catch (error) {
+                setError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (billNo) {
+            fetchData();
+        } else {
+            setLoading(false);
+            setError('No bill number provided');
+        }
+    }, [billNo]);
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                userName: user?.userName || user?.employeeName || "",
+                userRole: user?.userRole || user?.role || "",
+            });
+        }
+    }, []);
+
+    const handleSubmitCancelBill = async () => {
+        const payload = {
+            billNo,
+            branchName: billData.branchName,
+            products: billData.billProducts.map(item => ({
+                productId: item.productId,
+                batchNo: item.batchNo,
+                billQty: item.billQty,
+                returnQty: item.billQty,
+                sellingPrice: item.sellingPrice,
+                discount: item.discount
+            }))
+        };
+
+        console.log("Cancel Bill Payload:", payload);
+
+        try {
+            const response = await postCancelBill(payload);
+            console.log("Response:", response);
+            if (response.success) {
+                console.log("Form submitted!");
+                setAlert({
+                    severity: 'success',
+                    title: 'Bill Cancellation Successfully',
+                    message: `${billNo}`,
+                    open: true
+                });
+                window.location.reload();
+            } else {
+                console.error('Error processing return: Unexpected status', response.status);
+                setError('Error processing return');
+                setAlert({
+                    severity: 'error',
+                    title: 'Error',
+                    message: 'Error processing return: Unexpected status',
+                    open: true
+                });
+            }
+        } catch (error) {
+            console.error('Error processing return:', error);
+            console.error('Error details:', error.response || error.message || error);
+            setError('Error processing return');
+        }
+    };
 
     const handleReprintClick = () => {
+        console.log("Reprint button clicked");
         setShowSalesReceipt(true);
     };
 
-    if (!selectedBillData) {
+    const handleCloseSalesReceipt = () => {
+        setShowSalesReceipt(false);
+    };
+
+    const openConfirmationModal = () => {
+        setIsConfirmationModalOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setIsConfirmationModalOpen(false);
+    };
+
+    const confirmCancelBill = () => {
+        setIsConfirmationModalOpen(false);
+        handleSubmitCancelBill();
+        getBilledData(billNo)
+
+    };
+
+    if (loading) {
+        return <div><MainSpinner /></div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
+
+    if (!billData) {
         return <div>Bill not found</div>;
     }
 
-    const { branch, billedAt, billedBy, customerName, status, paymentMethod, contactNo } = selectedBillData;
+    const { billNo: selectedBillNo, branchName, billedBy, createdAt, customerName, status, paymentMethod, contactNo, billTotalAmount, billProducts } = billData;
+
+    const userRole = userDetails.userRole.toLowerCase();
+    const billedDate = new Date(createdAt);
+    const currentTime = new Date();
+    const timeDifferenceInHours = (currentTime - billedDate) / (1000 * 60 * 60);
+
+    const isCashier = userRole.includes('cashier');
+    const isAdmin = userRole.includes('admin');
+    const isSuperAdmin = userRole.includes('super admin');
+
+    const showReturnButton = isSuperAdmin || (isCashier ? timeDifferenceInHours <= 24 : !isAdmin || timeDifferenceInHours <= 240);
+    const showCancelButton = isSuperAdmin || (!isCashier && (!isAdmin || timeDifferenceInHours <= 240));
 
     return (
         <>
@@ -43,125 +180,120 @@ export const ViewBill = () => {
                     <div className='view-bill-top-cont'>
                         <div className="cont1">
                             <div className='inputFlex'>
-                                <InputLabel for="branchName" color="#0377A8">Branch: <span>{branch}</span></InputLabel>
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch: <span>{branchName}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo}</span></InputLabel>
+                                <InputLabel htmlFor="billNo" color="#0377A8">Bill No: <span>{selectedBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="status" color="#0377A8">Status: <span>{status}</span></InputLabel>
+                                <InputLabel htmlFor="status" color="#0377A8">
+                                    Status: <span style={{ fontWeight:'510', color: status === 'Canceled' ? 'red' : '#0dbe45e2' }}>{status}</span>
+                                </InputLabel>
                             </div>
                         </div>
                         <div className="cont2">
                             <div className='inputFlex'>
-                                <InputLabel for="billedAt" color="#0377A8">Billed At: <span>{billedAt}</span></InputLabel>
+                                <InputLabel htmlFor="billedAt" color="#0377A8">Billed At: <span>{new Date(createdAt).toLocaleString('en-GB')}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="billedBy" color="#0377A8">Billed By: <span>{billedBy}</span></InputLabel>
+                                <InputLabel htmlFor="billedBy" color="#0377A8">Billed By: <span>{billedBy}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>{paymentMethod}</span></InputLabel>
+                                <InputLabel htmlFor="paymentMethod" color="#0377A8">Payment Method: <span>{paymentMethod}</span></InputLabel>
                             </div>
                         </div>
                         <div className="cont3">
                             <div className='inputFlex'>
-                                <InputLabel for="cusName" color="#0377A8">Customer Name: <span>{customerName}</span></InputLabel>
+                                <InputLabel htmlFor="cusName" color="#0377A8">Customer Name: <span>{customerName}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="cusContact" color="#0377A8">Contact No: <span>{contactNo}</span></InputLabel>
+                                <InputLabel htmlFor="cusContact" color="#0377A8">Contact No: <span>{contactNo}</span></InputLabel>
                             </div>
                         </div>
                     </div>
                     <hr />
-                    <div className="btnSection-viewBill">
-                        <div className="returnBtn">
-                            <InputLabel> Return </InputLabel>
-                            <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
-                                <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
-                            </Link>
+                    <div>
+                        <div className='TotAmountBar-viewbill'>
+                            <h4>Total Amount: <span>Rs. {billTotalAmount.toFixed(2)}</span></h4>
                         </div>
+                        <div className="btnSection-viewBill">
+                            {status !== "Canceled" && (
+                                <>
+                                    {showReturnButton && (
+                                        <div className="returnBtn">
+                                            <InputLabel> Return Items</InputLabel>
+                                            <Link to={`/work-list/viewbill/start-return-items/${billNo}`}>
+                                                <RoundButtons id="returnBtn" type="submit" name="returnBtn" icon={<MdOutlineAssignmentReturn />} onClick={() => console.log("Return Button clicked")} />
+                                            </Link>
+                                        </div>
+                                    )}
+                                    {!isCashier && showCancelButton && (
+                                        <div className="cancelBillBtn">
+                                            <InputLabel> Cancel Bill </InputLabel>
+                                            <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={openConfirmationModal} />} />
+                                        </div>
+                                    )}
 
-                        <div className="reprintBtn">
-                            <InputLabel> Reprint </InputLabel>
-                            <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
-                        </div>
-                        <div className="cancelBillBtn">
-                            <InputLabel> Cancel Bill </InputLabel>
-                            <RoundButtons id="cancelBillBtn" type="submit" name="cancelBillBtn" backgroundColor="#EB1313" icon={<AiOutlineClose style={{ color: 'white' }} onClick={() => console.log("Cancel Bill Button clicked")} />} />
+                                    <div className="reprintBtn">
+                                        <InputLabel> Reprint </InputLabel>
+                                        <RoundButtons id="reprintBtn" type="submit" name="reprintBtn" icon={<RiPrinterFill />} onClick={handleReprintClick} />
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className="billed-item-container">
                     <table className='billed-item-table'>
                         <thead>
-                            <tr >
+                            <tr>
                                 <th>Product ID / Name</th>
-                                <th>Qty</th>
+                                <th>Billed Qty</th>
                                 <th>Batch No</th>
                                 <th>Unit Price</th>
                                 <th>Dis%</th>
-                                <th>Amount</th>
+                                <th>Amount (Rs)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {selectedBillData.billedItems.map((item, index) => (
+                            {billProducts.map((item, index) => (
                                 <tr key={index}>
-                                    <td><InputField id="" name="productName" editable={false} width="300px" value={item.name} /></td>
-                                    <td><InputField id="" name="billQty" editable={false} width="100%" value={item.quantity} textAlign='center' /></td>
-                                    <td><InputDropdown id="" name="batchNo" width="100%" options={[item.batchNo]} editable={true} /></td>
-                                    <td><InputField id="" name="unitPrice" editable={false} width="100%" value={item.rate} textAlign='right' /></td>
-                                    <td><InputField id="" name="discount" editable={false} width="100%" value={""} textAlign='right' /></td>
-                                    <td><InputField id="" name="amount" editable={false} width="100%" value={(item.rate * item.quantity).toFixed(2)} textAlign='right' /></td>
+                                    <td><InputField id={`productId-${index}`} name={`productId-${index}`} editable={false} width="100%" value={`${item.productId} ${item.productName}`} /></td>
+                                    <td><InputField id={`billQty-${index}`} name={`billQty-${index}`} editable={false} width="100%" value={item.billQty.toFixed(2)} textAlign='center' /></td>
+                                    <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
+                                    <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
+                                    <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
+                                    <td><InputField id={`totalAmount-${index}`} name={`totalAmount-${index}`} editable={false} width="100%" value={(item.billQty * item.sellingPrice * (1 - item.discount / 100)).toFixed(2)} textAlign='center' /></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-                <div className="payment-container-viewbill">
-                    <div className="payment-container-viewbill-middle">
-                        <table className='payment-container-viewbill-table'>
-                            <tbody>
-                                <tr>
-                                    <td><InputLabel for="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
-                                    <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} marginTop="0" textAlign='right' value={""} /></td>
-                                </tr>
-                                <tr>
-                                    <td><InputLabel for="discount" color="#0377A8">Discount %</InputLabel></td>
-                                    <td>
-                                        <div className="discount-fields-container-viewbill">
-                                            <InputField type="text" id="discountRate" name="discountRate" className="discountRate" editable={true} placeholder="%" width="3em" textAlign='right' value={""} />
-                                            <InputField type="text" id="discountAmount" name="discountAmount" className="discountAmount" editable={false} width="23.7em" textAlign='right' value={""} />
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><InputLabel for="netTotal" color="#0377A8" fontsize="1.125em" fontweight="510">Net Total</InputLabel></td>
-                                    <td><InputField type="text" id="netTotal" name="netTotal" editable={false} marginTop="0" textAlign='right' value={""} /></td>
-                                </tr>
-                                <tr>
-                                    <td><InputLabel for="received" color="#0377A8">Received</InputLabel></td>
-                                    <td><InputField type="text" id="received" name="received" editable={false} marginTop="0" textAlign='right' value={""} /></td>
-                                </tr>
-                                <tr>
-                                    <td><InputLabel for="balance" color="#0377A8">Balance</InputLabel></td>
-                                    <td><InputField type="text" id="balance" name="balance" editable={false} marginTop="0" textAlign='right' value={""} /></td>
-                                </tr>
-                                <tr>
-                                    <td colSpan="2"><InputLabel for="noQty" color="#0377A8">No Qty:<span> </span></InputLabel></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </Layout>
-            {showSalesReceipt && <SalesReceipt />}
+            </Layout >
+            {showSalesReceipt && (
+                <SalesReceipt billNo={billNo} onClose={handleCloseSalesReceipt} />
+            )
+            }
+            {
+                alert.open && (
+                    <CustomAlert
+                        severity={alert.severity}
+                        title={alert.title}
+                        message={alert.message}
+                        duration={6000}
+                        open={alert.open}
+                        onClose={() => setAlert({ ...alert, open: false })}
+                    />
+                )
+            }
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={confirmCancelBill}
+                topContentBgColor="#EB1313"
+                bodyContent="Are you sure you want to cancel this bill?"
+                yesBtnBgColor="#EB1313"
+            />
         </>
     );
 };
-
-
-
-export default ViewBill;
-
-

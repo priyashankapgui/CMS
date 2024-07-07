@@ -1,9 +1,9 @@
 import React from 'react';
-import './InputLabel.css'; 
+import './InputLabel.css';
 
-function InputLabel({ htmlFor, color, fontsize, fontweight, children }) {
+function InputLabel({ htmlFor, color, fontSize, fontWeight, textAlign, children }) {
     return (
-        <label htmlFor={htmlFor} className="input-label" style={{ fontSize: fontsize, fontWeight: fontweight, color: color }}>
+        <label htmlFor={htmlFor} className="input-label" style={{ fontSize: fontSize, fontWeight: fontWeight, color: color, textAlign: textAlign }}>
             {children}
         </label>
     );

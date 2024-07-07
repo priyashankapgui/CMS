@@ -5,25 +5,30 @@
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
-  background: linear-gradient(90deg, rgba(2, 0, 36, 0.7) 0%, rgba(0, 0, 0, 1) 0%, rgba(0, 212, 255, 0.8) 90%);
+  background: linear-gradient(90deg, rgba(174,229,238,1) 0%, rgba(3,119,168,1) 100%);
 }
 
 
 .s-flexflow-text-fp {
-  font-size: 5rem;
+  font-size: 4.5rem;
   line-height: 0;
   color: #ffffff;
   font-family: 'Princess Sofia', cursive;
 }
 
+.s-forgotText {
+  margin-bottom: 0.938em;
+}
+.s-EnterEmp-FW{
+  margin-bottom: 5px;
+}
 .s-fp-form {
   width: fit-content;
   margin: 0 auto;
   padding: 2em;
   border-radius: 0.75em;
   background-color: rgb(255, 255, 255);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 1px -1px 15px 1px rgba(0, 0, 0, 0.1), 0px 2px 6px -2px rgba(44, 179, 228, 0.05);
 }
 
 
@@ -35,5 +40,17 @@
 
 
 .backtologin {
-  margin-top: 2rem;
+  margin-top: 1.2em;
+}
+
+.loginPwTxt{
+  color: #099db4;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.loginPwTxt:hover{
+  color: #087d8f;
+  font-weight: 500;
+  text-decoration: underline;
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
+import secureLocalStorage from 'react-secure-storage';
+import { logout } from '../../../Api/Login/loginAPI';
 
 const style = {
     position: 'absolute',
@@ -22,16 +24,25 @@ const style = {
     '&:hover': {
         backgroundColor: 'rgba(235, 19, 19, 1)',
     },
+ 
 };
 
 const LogoutPopup = ({ open, onClose }) => {
-    const handleLogout = () => {
-        // Perform logout actions (e.g., redirect to the login page)
-        // ...
-        window.location.href = '/';
-
-        // Close the modal
-        onClose();
+    const handleLogout = async () => {
+        try {
+            const token = secureLocalStorage.getItem("accessToken");
+            const response = await logout(token);
+            if (!response.ok) {
+                console.log("Error:", response.statusText);
+            }
+            secureLocalStorage.removeItem('accessToken');
+            secureLocalStorage.removeItem('user');
+            window.location.href = '/';
+        }
+        catch (error) {
+            console.error("Error:", error);
+            window.alert(error.message);
+        }
     };
 
     return (

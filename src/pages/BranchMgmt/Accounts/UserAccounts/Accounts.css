@@ -21,7 +21,6 @@
 }
 
 
-
 .account-user-section {
     background-color: white;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
@@ -32,6 +31,8 @@
 
 .account-users-top {
     display: flex;
+    flex-wrap: wrap;
+    width: 100%;
     gap: 3em;
     margin-top: 0.7em;
     margin-bottom: 0.7em;
@@ -51,6 +52,11 @@
     margin-bottom: 0.625em;
 }
 
+.EmpidField-Section{
+    display: flex;
+    gap: 1.5em;
+    align-items: flex-start;
+}
 
 .Button-Section {
     display: flex;
@@ -61,4 +67,14 @@
 .account-users-middle {
     margin-top: 15px;
     padding: 0.9375em 1.25em;
+}
+
+.edit-button {
+    background-color: transparent;
+    border: none;
+}
+
+.edit-button:hover {
+    cursor: pointer;
+    color: #0377A8;
 }

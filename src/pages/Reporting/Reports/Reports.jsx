@@ -1,20 +1,62 @@
 import React, { useState } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Reports.css";
-import DatePicker from "../../../Components/DatePicker/DatePicker"
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
-import dropdownOptions from '../../../Components/Data.json';
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import repoTypes from '../../../Components/Data.json';
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import StockSummeryDoc from '../../../Components/InventoryDocuments/StockSummeryDoc/StockSummeryDoc';
+import UpcomingExpDoc from '../../../Components/InventoryDocuments/UpcomingExpDoc/UpcomingExpDoc';
+import ExpiaryStockDoc from '../../../Components/InventoryDocuments/ExpiaryStockDoc/ExpiaryStockDoc';
 
 export const Reports = () => {
     const [clickedLink, setClickedLink] = useState('Generate Reports');
+    const [selectedReportType, setSelectedReportType] = useState('');
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [showStockSummeryReport, setShowStockSummeryReport] = useState(false);
+    const [showUpcomingExpiryReport, setShowUpcomingExpiryReport] = useState(false);
+    const [showAlreadyExpiryReport, setShowAlreadyExpiryReport] = useState(false);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
     };
+
+    const handleDropdownChange = (value, type) => {
+        if (type === 'branch') {
+            setSelectedBranch(value);
+        } else if (type === 'reportType') {
+            setSelectedReportType(value);
+        }
+        console.log('Selected Drop Down Value:', value);
+    };
+
+    const handleViewButtonClick = () => {
+        if (selectedReportType === 'Stock Summary') {
+            setShowStockSummeryReport(true);
+        } else if (selectedReportType === 'Upcoming Expiry Stock') {
+            setShowUpcomingExpiryReport(true);
+        }
+        else if (selectedReportType === 'Already Expired Stock') {
+            setShowAlreadyExpiryReport(true);
+        }
+    };
+
+    const handleCloseDoc = () => {
+        setShowStockSummeryReport(false);
+        setShowUpcomingExpiryReport(false);
+        setShowAlreadyExpiryReport(false);
+    };
+
+    const handleClearButtonClick = () => {
+        setSelectedBranch('');
+        setSelectedReportType('');
+        setShowStockSummeryReport(false);
+        setShowStockSummeryReport(false);
+        setShowAlreadyExpiryReport(false);
+
+    }
     return (
         <>
             <div className="top-nav-blue-text">
@@ -44,31 +86,35 @@ export const Reports = () => {
                         <h3 className="repoTop-title">Generate Reports</h3>
                         <div className="repo-Content">
                             <div className="branchField">
-                                <InputLabel for="branchName" color="#0377A8">Branch Name</InputLabel>
-                                <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} />
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <BranchDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    onChange={(value) => handleDropdownChange(value, 'branch')}
+                                />
                             </div>
                             <div className="repoTypeField">
-                                <InputLabel for="repoType" color="#0377A8">Report Type</InputLabel>
-                                <InputDropdown id="repoType" name="repoType" editable={true} options={repoTypes.repoTypes} />
-                            </div>
-                            <div className="dateField">
-                                <InputLabel for="from-date" color="#0377A8">From</InputLabel>
-                                <DatePicker />
-                            </div>
-                            <div className="dateField">
-                                <InputLabel for="to-date" color="#0377A8">To</InputLabel>
-                                <DatePicker />
+                                <InputLabel htmlFor="repoType" color="#0377A8">Report Type<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <InputDropdown
+                                    id="repoType"
+                                    name="repoType"
+                                    editable={true}
+                                    options={repoTypes.repoTypes}
+                                    onChange={(value) => handleDropdownChange(value, 'reportType')}
+                                />
                             </div>
                         </div>
                         <div className="btnSection">
-                            <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> View </Buttons>
-                            <Buttons type="submit" id="print-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Print </Buttons>
-                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </Buttons>
+                            <Buttons type="submit" id="view-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleViewButtonClick}> View </Buttons>
+                            <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClearButtonClick}> Clear </Buttons>
                         </div>
+
                     </div>
-
+                    {showStockSummeryReport && <StockSummeryDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
+                    {showUpcomingExpiryReport && <UpcomingExpDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
+                    {showAlreadyExpiryReport && <ExpiaryStockDoc selectedBranch={selectedBranch} onClose={handleCloseDoc} />}
                 </div>
-
             </Layout>
         </>
     );

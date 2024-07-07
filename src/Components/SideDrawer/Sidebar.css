@@ -22,15 +22,12 @@ body {
     align-items: center;
     flex-direction: column;
     margin-top: -53px;
-    z-index: 3;
+    z-index: 6;
 }
-
-/* Sidebar.js */
 
 .sidebar-nav {
     background-color: #0377A8;
     width: 15.625em;
-    min-height: 160vh;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -38,10 +35,19 @@ body {
     left: -100%;
     transition: 350ms;
     z-index: 10;
-    position: absolute;
+    position: fixed;
+    overflow-y: scroll;
+}
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+.sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
 
-
+/* Hide scrollbar for IE, Edge, and Firefox */
+.sidebar-nav {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .show {

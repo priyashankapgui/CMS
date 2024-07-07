@@ -12,7 +12,7 @@
 .Content1 {
     display: flex;
     height: 80px;
-    gap: 30px;
+    justify-content: space-between;
     border-bottom: 3px solid #D9D9D9;
     width: 100%;
 }
@@ -48,25 +48,6 @@
 /* table css */
 
 .return-bill-history-table {
-    border-collapse: collapse;
     width: 100%;
 }
 
-.return-bill-history-table th {
-    background-color: #F5F3F3;
-    font-size: 0.9em;
-    padding: 6px;
-    margin: 4px;
-}
-
-.return-bill-history-table td,
-.return-bill-history-table th {
-    border-bottom: 1px solid #dddddd;
-    text-align: left;
-    padding: 6px;
-}
-
-.return-bill-history-table tbody {
-    font-size: 0.875em;
-
-}

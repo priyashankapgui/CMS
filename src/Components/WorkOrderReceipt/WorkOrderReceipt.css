@@ -1,0 +1,40 @@
+.work-order-receipt-frame{
+    width: 100mm;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    font-family: Poppins;
+}
+.workordertitle{
+    text-align: center;
+    margin-top: 15px;
+}
+.workOrderHeadingShopName{
+    text-align: center;
+}
+.WorkOrderDetails{
+    display: flex;
+    color: black;
+    margin-top: 1vh;
+    font-weight: 500;
+}
+.WorkOrderDetails span{
+    color: black;
+    font-weight: 400;
+}
+.WorkOrderTable{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+.WorkOrderTableHead{
+    background-color: #ececec;
+    padding: 2px;
+    text-align: left;
+    font-size: 12px;
+}
+.WorkOrderTable tbody{
+    font-size: 14px;
+}

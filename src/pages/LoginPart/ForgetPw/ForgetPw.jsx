@@ -1,58 +1,52 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaEnvelope } from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
 import "./ForgetPw.css";
 import InputField from "../../../Components/InputField/InputField";
 import Buttons from "../../../Components/Buttons/SquareButtons/Buttons";
 import SubPopup from "../../../Components/PopupsWindows/SubPopup";
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
+import { forgotPwEmployee,forgotPwSuperAdmin } from "../../../Api/Login/loginAPI";
 
 const ForgetPw = () => {
-  const [email, setEmail] = useState("");
+  //const API_FORGOT_PW_URL = `${process.env.REACT_APP_API_FORGOT_PASSWORD_URL}`;
+  //const API_FORGOT_PW_SUPERADMIN_URL = `${process.env.REACT_APP_API_SUPERADMIN_FORGOT_PASSWORD_URL}`;
+  const [empId, setEmpid] = useState("");
   const [error, setError] = useState("");
   const [showSubPopup, setShowSubPopup] = useState(false); // State to control the visibility of SubPopup
+  const [subLoading, setSubLoading] = useState(false);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+
+  const handleEmployeeIdSubmit = (e) => {
+    setEmpid(e.target.value);
     // Clear any previous error message when user starts typing
     setError("");
   };
 
   const handleOpen = async (e) => {
     e.preventDefault(); // Prevent default form submission
-
-
-    if (!email) {
-      setError("Please enter your email address.");
-      return;
+    setSubLoading(true);
+    if (!empId) {
+      setError("Please enter your employee ID.");
+      setSubLoading(false);
+      return; // Early return if empId is falsy
     }
-
-
-    if (
-      // !email.endsWith("@gmail.com") ||
-      !email.includes("@") ||
-      !email.includes(".") ||
-      !email.includes("com")
-    ) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    const response = await fetch("http://localhost:8080/api/login/fp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-      }),
-    }).catch((error) => console.error("Error:", error));
-
-
-    if (response.ok) {
-      setShowSubPopup(true);
-    } else {
-      const data = await response.json();
-      setError(data.message);
+    try {
+      let response;
+      if (!empId.startsWith("SA")) {
+        response = await forgotPwEmployee(empId);
+      } else {
+        response = await forgotPwSuperAdmin(empId);
+      }
+      if (response.status === 200) {
+        setShowSubPopup(true);
+      } else {
+        setError(response.data.error);
+      }
+    } catch (error) {
+      setError("Internal Server Error");
+    } finally {
+      setSubLoading(false);
     }
   };
 
@@ -62,44 +56,49 @@ const ForgetPw = () => {
 
   return (
     <div className="s-fp-container">
-       <h2 className="s-flexflow-text-fp">Flex Flow</h2>
+      <h2 className="s-flexflow-text-fp">Flex Flow</h2>
       <form className="s-fp-form">
         <div className="s-forgotText">
           <h2>Forgot Password</h2>
         </div>
 
-        <p>Enter your email to reset your password:</p>
+        <p className="s-EnterEmp-FW">Enter your employee ID to reset your password:</p>
 
         <div className="s-fp-inputField">
           <InputField
-            type="email"
-            id="emailF"
-            name="emailF"
-            placeholder="example@gmail.com"
+            type="text"
+            id="empId"
+            name="empId"
             editable={true}
-            height="3em"
-            width="30em"
-            onChange={handleEmailChange}
+            placeholder="Emp ID"
+            height="50px"
+            width="410px"
+            onChange={handleEmployeeIdSubmit}
             required
           >
-            <FaEnvelope className="s-fp-icon" />
+            <FaRegUserCircle className="s-fp-icon" />
           </InputField>
-          <Buttons
-            type="submit"
-            id="confirm-btn"
-            style={{ backgroundColor: "#23A3DA", color: "white" }}
-            onClick={handleOpen}
-          >
-            {" "}
-            Confirm{" "}
-          </Buttons>
+          {error && <p className="fp-error">{error}</p>}
+          {subLoading ?
+            <SubSpinner loading={subLoading} spinnerText="Checking" />
+            :
+            <Buttons
+              type="submit"
+              id="confirm-btn"
+              style={{ backgroundColor: "#23A3DA", color: "white" }}
+              btnHeight="50px"
+              btnWidth="410px"
+              fontSize="18px"
+              onClick={handleOpen}
+            >
+              {" "}
+              Confirm{" "}
+            </Buttons>
+          }
         </div>
-
-        {error && <p className="fp-error">{error}</p>}
-
         <p className="backtologin">
           Remember your password?
-          <Link to="/"> Login</Link>
+          <Link to="/" className="loginPwTxt"> Login</Link>
         </p>
       </form>
 
@@ -109,7 +108,7 @@ const ForgetPw = () => {
           show={showSubPopup}
           onClose={() => setShowSubPopup(false)}
           headBG="#23A3DA"
-          title="Alert"
+          title="Email Alert"
           headTextColor="White"
           closeIconColor="white"
           bodyContent={

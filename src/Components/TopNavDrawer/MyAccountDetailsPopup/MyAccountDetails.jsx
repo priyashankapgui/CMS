@@ -1,113 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
-import SubPopup from '../../PopupsWindows/SubPopup';
-import Buttons from '../../Buttons/SquareButtons/Buttons';
-import InputLabel from '../../Label/InputLabel';
-import InputField from '../../InputField/InputField';
-import InputDropdown from '../../InputDropdown/InputDropdown';
-import { useDropzone } from 'react-dropzone';
-import dropdownOptions from '../../Data.json';
-import './MyAccountDetails.css';
+import SubPopup from "../../PopupsWindows/SubPopup";
+import Buttons from "../../Buttons/SquareButtons/Buttons";
+import "./MyAccountDetails.css";
+import secureLocalStorage from "react-secure-storage";
+import MyAccountDetailsMain from "./MyAccountDetailsMain";
+import MyAccountDetailsPassword from "./MyAccountDetailsPassword";
 
 function MyAccountDetails() {
-    const [editable, setEditable] = useState(false);
-    const [imageUrl, setImageUrl] = useState(null);
-    const [showSubPopup, setShowSubPopup] = useState(false);
+  const [editable, setEditable] = useState(false);
+  const [profilePicExists, setProfilePicExists] = useState(true);
+  const [viewPassword, setViewPassword] = useState(false);
+  let user = JSON.parse(secureLocalStorage.getItem("user"));
 
-    const toggleEditable = () => {
-        setEditable(!editable);
-    };
+  const toggleEditable = () => {
+    console.log("toggleEditable");
+    setEditable(!editable);
+  };
 
-    const handleDrop = (acceptedFiles) => {
-        const file = acceptedFiles[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-            setImageUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
-    };
+  const toggleViewPassword = () => {
+    setViewPassword(!viewPassword);
+  };
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
-        accept: '',
-        multiple: false,
-        onDrop: handleDrop
-    });
-
-    const handleCloseSubPopup = () => {
-        setShowSubPopup(false);
-    };
-
-    const user=JSON.parse(sessionStorage.getItem('user'));
-    let employeeName=user?.employeeName;
-
-
-    return (
-        <div>
-            <SubPopup
-                triggerComponent={
-                    <div className="userProfile" >
-                        <div className="profile-dp" />
-                        <div className="userName">
-                            <h4>{employeeName}</h4>
-                        </div>
-                    </div>
-
+  return (
+    <div>
+      <SubPopup
+        triggerComponent={
+          <div className="userProfile">
+            <div className="profile-dp">
+              <img
+                className="preview-image"
+                src={`https://flexflowstorage01.blob.core.windows.net/cms-data/${user.userID}.png`}
+                color="black"
+                alt="Profile"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = `${process.env.PUBLIC_URL}/Images/account_circle.svg`;
+                  setProfilePicExists(false);
+                }}
+              />
+            </div>
+            <div className="userName">
+              <h4>{user.userName || user.employeeName}</h4>
+            </div>
+          </div>
+        }
+        popupPositionLeft="0%"
+        popupPositionTop="0%"
+        justifyContent="flex-end"
+        headBG="none"
+        title={
+          <>
+            <div className="popupProfileTxt">
+              My Profile{" "}
+              <div className={editable ? "editPopIcon editPopIcon-clicked" : "editPopIcon"}>
+                <Icon
+                  icon="fluent:person-edit-48-regular"
+                  style={{ fontSize: "1em", cursor: "pointer", alignContent: "center", justifyContent: "center" }}
+                  onClick={toggleEditable}
+                />
+              </div>
+            </div>
+          </>
+        }
+        headTextColor="black"
+        closeIconColor="red"
+        bodyContent={
+          <div >
+            {viewPassword ? null : (
+              <>
+                <MyAccountDetailsMain editable={editable} profilePicExists={profilePicExists} toggleEditable={toggleEditable} />
+                {!editable &&
+                  <Buttons
+                    id="change-view-btn"
+                    btnWidth="100%"
+                    marginTop={"15px"}
+                    fontSize={"14px"}
+                    style={{ backgroundColor: "white", color: 'red' }}
+                    onClick={toggleViewPassword}
+                  >
+                    Change Your Password?
+                  </Buttons>
                 }
-                popupPosition="70%"
-                headBG="none"
-                title={
-                    <>
-                        My Profile <Icon icon="tabler:edit" style={{ fontSize: "1em", cursor: "pointer" }} onClick={toggleEditable} />
-                    </>
-                }
-                headTextColor="black"
-                closeIconColor="red"
-                show={showSubPopup}
-                onClose={handleCloseSubPopup}
-                bodyContent={(
-                    <div className="view-profile-form-background">
-                        <div className="branch-field">
-                            <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={false} options={dropdownOptions.dropDownOptions.branchOptions} />
-                        </div>
-                        <div className="flex-content-ViewP">
-                            <div className="user-role-field">
-                                <InputLabel for="userRole" color="#0377A8">User Role</InputLabel>
-                                <InputDropdown id="userRole" name="userRole" editable={false} options={dropdownOptions.dropDownOptions.userRoleOptions} />
-                            </div>
-                            <div className="change-dp" {...(getRootProps())}>
-                                {imageUrl && <img className="preview-image" src={imageUrl} alt="Preview" />}
-                                <label className="upload-label" htmlFor="profilePicture">
-                                    <Icon icon="fluent:camera-add-20-regular" style={{ fontSize: "0.813em" }} />
-                                </label>
-                                <input {...getInputProps()} />
-                                {isDragActive ? <p>Drop the image here...</p> : <p>Drag 'n' drop or click to select an image</p>}
-                            </div>
-                        </div>
-                        <div className="emp-id-field">
-                            <InputLabel for="empID" color="#0377A8">Emp ID</InputLabel>
-                            <InputField type="text" id="empID" name="empID" editable={false} />
-                        </div>
-                        <div className="emp-name-field">
-                            <InputLabel for="empName" color="#0377A8">Emp Name</InputLabel>
-                            <InputField type="text" id="empName" name="empName" editable={editable} />
-                        </div>
-                        <div className="email-field">
-                            <InputLabel for="empEmail" color="#0377A8">Official Email (Optional)</InputLabel>
-                            <InputField type="email" id="empEmail" name="empEmail" placeholder="abc@greenleaf.com" editable={editable} />
-                        </div>
-                        <div className="password-field">
-                            <InputLabel for="userPassword" color="#0377A8">Do you want to change your password?</InputLabel>
-                            <InputField type="password" id="currentPassword" name="currentPassword" placeholder="Current Password" editable={editable} />
-                            <InputField type="password" id="newPassword" name="newPassword" placeholder="New Password" editable={editable} />
-                            <InputField type="password" id="conf_newPassword" name="conf_newPassword" placeholder="Confirm New Password" editable={editable} />
-                        </div>
-                        <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-                    </div>
-                )}
-            />
-        </div>
-    );
+              </>
+            )}
+            {viewPassword && <MyAccountDetailsPassword toggleViewPassword={toggleViewPassword} />}
+          </div>
+        }
+      />
+    </div>
+  );
 }
 
 export default MyAccountDetails;

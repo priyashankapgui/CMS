@@ -4,11 +4,13 @@ import { Icon } from '@iconify/react';
 import './TopNav.css';
 import MyAccountDetails from '../MyAccountDetailsPopup/MyAccountDetails';
 import LogoutPopup from '../LogoutPopup/LogoutPopup';
+import secureLocalStorage from 'react-secure-storage';
 
 const TopNav = ({ showSidebar }) => {
   const [logoutPopupOpen, setLogoutPopupOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const currentUser = JSON.parse(secureLocalStorage.getItem('user'));
 
   const openLogoutPopup = () => setLogoutPopupOpen(true);
   const closeLogoutPopup = () => setLogoutPopupOpen(false);
@@ -19,12 +21,12 @@ const TopNav = ({ showSidebar }) => {
     if (element.requestFullscreen) {
       element.requestFullscreen();
     }
-    else if (element.mozRequestFullScreen) { /* Firefox */
+    else if (element.mozRequestFullScreen) { 
       element.mozRequestFullScreen();
     }
-    else if (element.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    else if (element.webkitRequestFullscreen) { 
       element.webkitRequestFullscreen();
-    } else if (element.msRequestFullscreen) { /* IE/Edge */
+    } else if (element.msRequestFullscreen) { 
       element.msRequestFullscreen();
     }
   }
@@ -56,7 +58,7 @@ const TopNav = ({ showSidebar }) => {
       </Link>
       <h3 className="SystemName-1">Flex Flow</h3>
       <div className="TopNav-right-container">
-        <h4 className="ShopName">Green Leaf Super Mart</h4>
+        <h4 className="ShopName">Green Leaf Super Mart {currentUser?.branchName ? `- ${currentUser.branchName}` : null}</h4>
         <div className="TopNav-right-elements">
           <div className="QuickAccessBtn">
             <Link to="/Sales">
@@ -93,7 +95,7 @@ const TopNav = ({ showSidebar }) => {
             </Link>
           </div>
 
-          <div className="Profile" >
+          <div className="Profile">
             <MyAccountDetails />
           </div>
 

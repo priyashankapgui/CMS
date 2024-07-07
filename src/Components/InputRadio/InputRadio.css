@@ -1,7 +1,11 @@
 .radio-container {
-  margin-bottom: 1em;
+  display: block;
+  margin-bottom: 0.5em;
 }
 
-.radio-label {
-  margin-right: 1em;
+
+
+input[type="radio"] {
+  margin-left: 10px;
+  cursor: pointer;
 }

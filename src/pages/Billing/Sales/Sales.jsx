@@ -1,242 +1,748 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from "../../../Layout/Layout";
 import "./Sales.css";
 import InputField from "../../../Components/InputField/InputField";
+import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputLabel from "../../../Components/Label/InputLabel";
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { Icon } from "@iconify/react";
-import SearchBar from '../../../Components/SearchBar/SearchBar';
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import dropdownOptions from '../../../Components/Data.json';
 import InputRadio from '../../../Components/InputRadio/InputRadio';
-import radioBtnOptions from '../../../Components/Data.json';
+import SearchBar from '../../../Components/SearchBar/SearchBar';
+import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner'
+import secureLocalStorage from "react-secure-storage";
+import SalesReceipt from '../../../Components/SalesReceiptTemp/SalesReceipt/SalesReceipt';
+import { getProductByBranch, getProductByBarcode, postBillData } from '../../../Api/Billing/SalesApi';
 
 
 export const Sales = () => {
 
-    const fetchProductDetails = async (productId) => {
-        try {
-            const response = await fetch(`http://localhost:8080/listedProducts/${productId}`);
-            const data = await response.json();
-            console.log("Fetched Product Details:", data);
-            return data;
-        } catch (error) {
-            console.error('Error fetching product details:', error);
-            return {};
+    const [selectedBranch, setSelectedBranch] = useState('');
+    const [rows, setRows] = useState([createEmptyRow()]);
+    const [grossTotal, setGrossTotal] = useState(0);
+    const [netTotal, setNetTotal] = useState(0);
+    const [receivedAmount, setReceivedAmount] = useState();
+    const [balance, setBalance] = useState(0);
+    const [noItems, setNoItems] = useState(0);
+    const [discountBillRate, setDiscountBillRate] = useState(0);
+    const [alert, setAlert] = useState({
+        severity: '',
+        title: '',
+        message: '',
+        open: false
+    });
+    const [loading, setLoading] = useState(false);
+    const [billNo, setBillNo] = useState(null);
+    const [showSalesReceipt, setShowSalesReceipt] = useState(false);
+    const [userDetails, setUserDetails] = useState({
+        username: ""
+    });
+
+    const calculateTotals = useCallback(() => {
+        let totalGross = 0;
+        let totalNet = 0;
+        let itemCount = 0;
+
+        rows.forEach((row) => {
+            const { billQty = 0, sellingPrice = 0, discount = 0 } = row.productDetails;
+            const amount = billQty * sellingPrice * (1 - discount / 100);
+            row.productDetails.amount = amount.toFixed(2);
+
+            totalGross += billQty * sellingPrice;
+            totalNet += amount;
+            if (billQty > 0) itemCount++;
+        });
+
+        setGrossTotal(totalGross.toFixed(2));
+        setNetTotal(totalNet.toFixed(2));
+        setNoItems(itemCount);
+
+        if (discountBillRate > 0) {
+            const additionalDiscount = totalNet * (discountBillRate / 100);
+            const newNetTotal = totalNet - additionalDiscount;
+
+            setNetTotal(newNetTotal.toFixed(2));
         }
+
+        const calculatedBalance = receivedAmount - netTotal;
+        setBalance(calculatedBalance.toFixed(2));
+    }, [rows, discountBillRate, receivedAmount, netTotal]);
+
+    useEffect(() => {
+        calculateTotals();
+    }, [rows, discountBillRate, receivedAmount, calculateTotals]);
+
+    useEffect(() => {
+        const userJSON = secureLocalStorage.getItem("user");
+        if (userJSON) {
+            const user = JSON.parse(userJSON);
+            setUserDetails({
+                username: user?.userName || user?.employeeName || "",
+            });
+        }
+    }, []);
+
+    const handleBranchDropdownChange = (value) => {
+        setSelectedBranch(value);
     };
 
-    const fetchSuggestionsProducts = async (searchTerm) => {
+    const fetchProductsSuggestions = async (searchTerm) => {
+        if (!selectedBranch) {
+            console.error('Branch not selected');
+            return [];
+        }
         try {
-            const response = await fetch(`http://localhost:8080/listedProducts?query=${encodeURIComponent(searchTerm)}`);
-            const data = await response.json();
-            const formattedSuggestions = data.map(item => ({
-                id: item.productId,
-                name: `${item.productId} ${item.productName}`
-            }));
+            const products = await getProductByBranch(searchTerm, selectedBranch);
+            const productMap = new Map();
 
-            return formattedSuggestions;
+            products.forEach((product) => {
+                if (!productMap.has(product.productId)) {
+                    productMap.set(product.productId, {
+                        barcode: product.barcode,
+                        productId: product.productId,
+                        productName: product.productName,
+                        branchName: product.branchName,
+                        displayText: `${product.productId} ${product.productName}`,
+                    });
+                }
+            });
+
+            return Array.from(productMap.values());
         } catch (error) {
-            console.error('Error fetching Reg Products suggestions:', error);
+            console.error('Error fetching product suggestions:', error);
             return [];
         }
     };
 
-    const [rows, setRows] = useState([
-        { id: 1, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' }
-    ]);
+    const handleProductSelection = async (suggestion, rowIndex) => {
+        try {
+            const productData = await getProductByBranch(suggestion.productId, selectedBranch);
 
-    const handleAddRow = () => {
-        const newRow = { id: rows.length + 1, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
-        setRows([...rows, newRow]);
-    };
+            const updatedRows = [...rows];
+            const batchNumbers = productData.map((product) => product.batchNo);
 
-    const handleDeleteRow = (id) => {
-        if (id === 1) {
-            const updatedRows = rows.map(row => {
-                if (row.id === 1) {
-                    return { ...row, productId: '', productName: '', billQty: '', batchNo: '', avbQty: '', unitPrice: '', discount: '', amount: '' };
+            updatedRows[rowIndex] = {
+                ...updatedRows[rowIndex],
+                selectedProduct: suggestion.displayText,
+                suggestions: productData,
+                batchOptions: batchNumbers,
+                productDetails: productData[0] || {
+                    barcode: '',
+                    batchNo: '',
+                    totalAvailableQty: '',
+                    sellingPrice: '',
+                    discount: ''
                 }
-                return row;
-            });
+            };
+
             setRows(updatedRows);
-        } else {
-            const updatedRows = rows.filter(row => row.id !== id);
-            setRows(updatedRows);
+        } catch (error) {
+            console.error('Error fetching product by ID for batch details:', error);
         }
     };
 
-    const handleInputChange = async (id, name, value) => {
-        const updatedRows = rows.map(row => {
-            if (row.id === id) {
-                return { ...row, [name]: value };
+    const fetchProductsByBarcode = async (barcode, rowIndex) => {
+        try {
+            const productData = await getProductByBarcode(barcode, selectedBranch);
+
+            if (productData.length > 0) {
+                const product = productData[0];
+                const updatedRows = [...rows];
+                updatedRows[rowIndex].productDetails = product;
+                updatedRows[rowIndex].selectedProduct = `${product.productId} ${product.productName}`;
+                updatedRows[rowIndex].suggestions = productData.map((product) => ({
+                    productId: product.productId,
+                    productName: product.productName,
+                    batchNo: product.batchNo,
+                    barcode: product.barcode,
+                    totalAvailableQty: product.totalAvailableQty,
+                    discount: product.discount,
+                    branchId: product.branchId,
+                    branchName: product.branchName,
+                    expDate: product.expDate,
+                    sellingPrice: product.sellingPrice,
+                    displayText: `${product.productId} ${product.productName}`,
+                }));
+
+                const batchOptions = productData.map((product) => product.batchNo);
+                updatedRows[rowIndex].batchOptions = batchOptions;
+
+                if (batchOptions.length === 1) {
+                    updatedRows[rowIndex].productDetails = {
+                        ...product,
+                        batchNo: product.batchNo,
+                        totalAvailableQty: product.totalAvailableQty,
+                        sellingPrice: product.sellingPrice,
+                        discount: product.discount,
+                    };
+                } else {
+                    updatedRows[rowIndex].productDetails = {
+                        ...product,
+                        batchNo: '',
+                        totalAvailableQty: '',
+                        sellingPrice: '',
+                        discount: '',
+                    };
+                }
+
+                setRows(updatedRows);
+            } else {
+                clearRow(rowIndex);
             }
-            return row;
-        });
+        } catch (error) {
+            console.error('Error fetching products by barcode:', error);
+            clearRow(rowIndex);
+        }
+    };
+
+    const handleBarcodeChange = (e, rowIndex) => {
+        const barcode = e.target.value;
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].productDetails.barcode = barcode;
         setRows(updatedRows);
 
-        if (name === 'productId' || name === 'productName') {
-            const productDetails = await fetchProductDetails(value);
-            if (productDetails) {
-                const { avbQty, batchNo, unitPrice, productName } = productDetails;
-                const updatedRows = rows.map(row => {
-                    if (row.id === id) {
-                        return { ...row, avbQty, batchNo, unitPrice, productName };
-                    }
-                    return row;
-                });
-                setRows(updatedRows);
-            }
+        if (barcode.length >= 3) {
+            fetchProductsByBarcode(barcode, rowIndex);
         }
     };
 
-    const [branchName, setBranchName] = useState('');
-    const [customerName, setCustomerName] = useState('');
-    const [contactNo, setContactNo] = useState('');
-    const [grossTotal, setGrossTotal] = useState('');
-    const [discountRate, setDiscountRate] = useState('');
-    const [netTotal, setNetTotal] = useState('');
-    const [received, setReceived] = useState('');
-    const [balance, setBalance] = useState('');
-    const [error, setError] = useState(null);
-
-    const handleBranchNameChange = (event) => {
-        setBranchName(event.target.value);
+    const handleBatchChange = (selectedBatch, rowIndex) => {
+        const updatedRows = [...rows];
+        const product = updatedRows[rowIndex].suggestions.find((suggestion) => suggestion.batchNo === selectedBatch);
+        if (product) {
+            updatedRows[rowIndex].productDetails = product;
+        } else {
+            updatedRows[rowIndex].productDetails = {
+                barcode: '',
+                batchNo: '',
+                totalAvailableQty: '',
+                sellingPrice: '',
+                discount: ''
+            };
+        }
+        setRows(updatedRows);
     };
 
-    const handleCustomerNameChange = (event) => {
-        setCustomerName(event.target.value);
+    const handleQtyChange = (e, rowIndex) => {
+        const billQty = parseFloat(e.target.value) || 0;
+        const { totalAvailableQty } = rows[rowIndex].productDetails;
+
+        if (billQty < 0) {
+            console.error('Bill Qty cannot be negative.');
+            return;
+        }
+
+        if (billQty > totalAvailableQty) {
+            console.error('Bill Qty cannot exceed available quantity.');
+            setAlert({
+                severity: 'error',
+                title: 'Invalid Quantity',
+                message: 'Billing quantity cannot exceed available quantity.',
+                open: true
+            });
+            return;
+        }
+
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].productDetails.billQty = billQty;
+
+        const { sellingPrice = 0, discount = 0 } = updatedRows[rowIndex].productDetails;
+        const amount = billQty * sellingPrice * (1 - discount / 100);
+        updatedRows[rowIndex].productDetails.amount = amount.toFixed(2);
+
+        setRows(updatedRows);
     };
 
-    const handleContactNoChange = (event) => {
-        setContactNo(event.target.value);
+    const handleDiscountRateChange = (e) => {
+        const rate = parseFloat(e.target.value) || 0;
+        setDiscountBillRate(rate);
     };
 
-    const handleGrossTotalChange = (event) => {
-        setGrossTotal(event.target.value);
+
+    const addRow = () => {
+        const isInvalid = rows.some(row => (
+            !row.selectedProduct ||
+            !row.productDetails.billQty ||
+            !row.productDetails.totalAvailableQty ||
+            !row.productDetails.sellingPrice ||
+            row.productDetails.billQty > row.productDetails.totalAvailableQty
+        ));
+
+        if (isInvalid) {
+            setAlert({
+                severity: 'warning',
+                title: 'Warning',
+                message: 'Please fill the required fields',
+                open: true
+            });
+        } else {
+            setRows([createEmptyRow(), ...rows]);
+        }
     };
 
-    const handleDiscountRateChange = (event) => {
-        setDiscountRate(event.target.value);
+    const deleteRow = (index) => {
+        if (rows.length > 1) {
+            const updatedRows = [...rows];
+            updatedRows.splice(index, 1);
+            setRows(updatedRows);
+        } else {
+            clearRow(0);
+        }
     };
 
-    const handleReceivedChange = (event) => {
-        setReceived(event.target.value);
+    const clearRow = (index) => {
+        const updatedRows = [...rows];
+        updatedRows[index] = createEmptyRow();
+        setRows(updatedRows);
+    };
+
+    const handleReceivedAmountChange = (e) => {
+        const amount = parseFloat(e.target.value) || 0;
+        setReceivedAmount(amount);
+    };
+    function createEmptyRow() {
+        return {
+            selectedProduct: '',
+            productDetails: {
+                barcode: '',
+                batchNo: '',
+                totalAvailableQty: '',
+                sellingPrice: '',
+                discount: '',
+                billQty: '',
+                amount: '',
+            },
+            suggestions: [],
+            batchOptions: [],
+        };
+    }
+
+    const handleCloseAlert = () => {
+        setAlert({
+            ...alert,
+            open: false
+        });
+    };
+
+    const handleSave = async () => {
+        const customerNameElement = document.getElementById('customerName');
+        const contactNoElement = document.getElementById('contactNo');
+        const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+        const receivedAmountElement = document.getElementById('receivedAmount');
+
+        const customerName = customerNameElement ? customerNameElement.value : '';
+        const contactNo = contactNoElement ? contactNoElement.value : '';
+        const paymentMethod = paymentMethodElement ? paymentMethodElement.value : null;
+        const receivedAmount = receivedAmountElement ? parseFloat(receivedAmountElement.value) : NaN;
+
+        if (netTotal > 0 && !paymentMethod) {
+            setAlert({
+                severity: 'warning',
+                title: 'Payment Method & Received Amount Missing',
+                message: 'Please add the required things',
+                open: true
+            });
+            return;
+        } else if (paymentMethod && isNaN(receivedAmount)) {
+            setAlert({
+                severity: 'warning',
+                title: 'Received Amount Missing',
+                message: 'Please add the received amount',
+                open: true
+            });
+            return;
+        } else if (receivedAmount < parseFloat(netTotal)) {
+            setAlert({
+                severity: 'warning',
+                title: 'Received Amount Error',
+                message: 'Received amount cannot be less than Net Total',
+                open: true
+            });
+            return;
+        }
+
+        const data = {
+            branchName: selectedBranch,
+            customerName: customerName,
+            contactNo: contactNo,
+            paymentMethod: paymentMethod,
+            billedBy: userDetails.username,
+            billTotalAmount: parseFloat(netTotal) || 0,
+            receivedAmount: receivedAmount,
+            products: rows.map(row => ({
+                productId: row.productDetails.productId,
+                barcode: row.productDetails.barcode,
+                batchNo: row.productDetails.batchNo,
+                sellingPrice: parseFloat(row.productDetails.sellingPrice) || 0,
+                discount: parseFloat(row.productDetails.discount) || 0,
+                billQty: parseFloat(row.productDetails.billQty) || 0,
+                amount: parseFloat(row.productDetails.amount) || 0,
+            }))
+        };
+
+        console.log("Backend Data:", data);
+        setLoading(true);
+
+        try {
+            const response = await postBillData(data);
+            console.log('API Response:', response);
+
+            if (response.success) {
+                setAlert({
+                    severity: 'success',
+                    title: 'Success',
+                    message: 'Bill generated successfully!',
+                    open: true
+                });
+
+                const billNo = response.data.newBill.billNo;
+                setBillNo(billNo);
+                setShowSalesReceipt(true);
+                resetForm();
+                console.log('Bill number set:', billNo);
+            } else {
+                setAlert({
+                    severity: 'error',
+                    title: 'Error',
+                    message: 'Error saving data!',
+                    open: true
+                });
+            }
+        } catch (error) {
+            console.error('Error saving data:', error);
+            setAlert({
+                severity: 'error',
+                title: 'Error',
+                message: 'Error saving data!',
+                open: true
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+
+    const resetForm = () => {
+        setRows([createEmptyRow()]);
+        setGrossTotal(0);
+        setNetTotal(0);
+        setReceivedAmount('');
+        setBalance(0);
+        setNoItems(0);
+        setDiscountBillRate(0);
+
+        // Clear customerName and contactNo fields
+        const customerNameElement = document.getElementById('customerName');
+        if (customerNameElement) customerNameElement.value = '';
+
+        const contactNoElement = document.getElementById('contactNo');
+        if (contactNoElement) contactNoElement.value = '';
+        // Clear payment method radio buttons
+        const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethodElements.forEach(element => {
+            element.checked = false;
+        });
+
+        // Recalculate totals
+        calculateTotals();
+
+    };
+
+    const handleClear = () => {
+        setReceivedAmount('');
+        setBalance(0);
+        setAlert({
+            severity: 'info',
+            title: 'Cleared',
+            message: 'Payment container data cleared',
+            open: true
+        });
+
+        // Clear discount related fields
+        setDiscountBillRate(0);
+
+        // Clear discount rate input field
+        const discountBillRateElement = document.getElementById('discountBillRate');
+        if (discountBillRateElement) discountBillRateElement.value = '';
+
+        // Clear payment method radio buttons
+        const paymentMethodElements = document.querySelectorAll('input[name="paymentMethod"]');
+        paymentMethodElements.forEach(element => {
+            element.checked = false;
+        });
+
+        // Recalculate totals
+        calculateTotals();
+    };
+
+    const handleCloseReceipt = () => {
+        setShowSalesReceipt(false);
     };
 
     return (
         <>
+            {alert.open && (
+                <CustomAlert
+                    severity={alert.severity}
+                    title={alert.title}
+                    message={alert.message}
+                    duration={4000}
+                    onClose={handleCloseAlert}
+                />
+            )}
             <div className="top-nav-blue-text">
                 <h4>Sales</h4>
             </div>
             <Layout>
+                {loading && (
+                    <div className="loading-overlay">
+                        <SubSpinner spinnerText='Saving' />
+                    </div>
+                )}
                 <div className="salesBody">
+                    {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
                     <div className="sales-top-content">
                         <div className="branchName">
-                            <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
-                            <InputDropdown id="branchName" name="branchName" editable={true} options={dropdownOptions.dropDownOptions.branchOptions} value={branchName} onChange={handleBranchNameChange} />
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <BranchDropdown
+                                id="branchName"
+                                name="branchName"
+                                editable={true}
+                                onChange={(e) => handleBranchDropdownChange(e)}
+                            />
                         </div>
                         <div className="customerName">
-                            <InputLabel for="customerName" color="#0377A8" fontsize="">Customer Name</InputLabel>
-                            <InputField type="text" id="customerName" name="customerName" editable={true} value={customerName} onChange={handleCustomerNameChange} />
+                            <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
+                            <InputField type="text" id="customerName" name="customerName" editable={true} />
                         </div>
                         <div className="contactNo">
-                            <InputLabel for="contactNo" color="#0377A8">Contact No</InputLabel>
-                            <InputField type="text" id="contactNo" name="contactNo" editable={true} value={contactNo} onChange={handleContactNoChange} />
+                            <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
+                            <InputField type="text" id="contactNo" name="contactNo" editable={true} />
                         </div>
                     </div>
-                    <div className="billContainer">
-                        <table>
-                            <thead style={{ backgroundColor: "#E9E9E9", fontSize: "0.875em" }}>
-                                <tr >
-                                    <th>Product ID / Name</th>
-                                    <th>Qty</th>
-                                    <th>Batch No</th>
-                                    <th>Avb. Qty</th>
-                                    <th>Unit Price</th>
-                                    <th>Dis%</th>
-                                    <th>Amount</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {rows.map(row => (
-                                    <tr key={row.id}>
-                                        <td>
-                                            <SearchBar fetchSuggestions={fetchSuggestionsProducts} onSuggestionSelect={(productId) => handleInputChange(row.id, 'productId', productId)} />
-                                        </td>
-                                        <td><InputField type="text" id={`billQty_${row.id}`} name="billQty" editable={true} width="90px" value={row.billQty} onChange={(e) => handleInputChange(row.id, 'billQty', e.target.value)} /></td>
-                                        <td><InputDropdown id={`batchNo_${row.id}`} name="batchNo" width="154px" options={['',]} editable={true} value={row.batchNo} onChange={(e) => handleInputChange(row.id, 'batchNo', e.target.value)} /></td>
-                                        <td><InputField type="text" id={`avbQty_${row.id}`} name="avbQty" editable={false} width="90px" value={row.avbQty} onChange={(e) => handleInputChange(row.id, 'avbQty', e.target.value)} /></td>
-                                        <td><InputField type="text" id={`unitPrice_${row.id}`} name="unitPrice" editable={false} width="95px" value={row.unitPrice} onChange={(e) => handleInputChange(row.id, 'unitPrice', e.target.value)} /></td>
-                                        <td><InputField type="text" id={`discount_${row.id}`} name="discount" editable={true} width="60px" value={row.discount} onChange={(e) => handleInputChange(row.id, 'discount', e.target.value)} /></td>
-                                        <td><InputField type="text" id={`amount_${row.id}`} name="amount" editable={false} width="95px" value={row.amount} onChange={(e) => handleInputChange(row.id, 'amount', e.target.value)} /></td>
-                                        <td style={{ paddingRight: '15px', cursor: 'pointer' }}><FiPlus onClick={handleAddRow} style={{ cursor: 'pointer' }} /></td>
-                                        <td><AiOutlineDelete onClick={() => handleDeleteRow(row.id)} style={{cursor: 'pointer' }}/></td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className="paymentContainerWrapper">
-                        <div className="paymentContainer">
-                            <div className="payment-method-top">
-                                <h3>Select Payment Method</h3>
-                                <InputRadio options={radioBtnOptions.radioBtnOptions} />
-                            </div>
-                            <div className="payment-method-middle">
-                                <div className="payment-method-middle">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td><InputLabel for="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
-                                                <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} marginTop="0" value={grossTotal} onChange={handleGrossTotalChange} /></td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="discount" color="#0377A8">Discount %</InputLabel></td>
+                    <div className='mainBody'>
+
+                        <>
+                            <div className="billContainer">
+                                <table className='billContainerTable'>
+                                    <thead>
+                                        <tr>
+                                            <th>Barcode</th>
+                                            <th>Product ID / Name</th>
+                                            <th>Batch No</th>
+                                            <th>Bill Qty</th>
+                                            <th>Unit Price</th>
+                                            <th>Avb. Qty</th>
+                                            <th>Dis</th>
+                                            <th>Amount</th>
+                                            <th />
+                                            <th />
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {rows.map((row, rowIndex) => (
+                                            <tr key={rowIndex}>
                                                 <td>
-                                                    <div className="discountFieldsContainer">
-                                                        <InputField type="text" id="discountRate" name="discountRate" className="discountRate" editable={true} placeholder="%" width="3em" value={discountRate} onChange={handleDiscountRateChange} />
-                                                        <InputField type="text" id="discountAmount" name="discountAmount" className="discountAmount" editable={false} width="23.7em" />
-                                                    </div>
+                                                    <InputField
+                                                        type="text"
+                                                        id={`barcode-${rowIndex}`}
+                                                        name="barcode"
+                                                        editable={true}
+                                                        width="100%"
+                                                        value={row.productDetails.barcode || ''}
+                                                        onChange={(e) => handleBarcodeChange(e, rowIndex)}
+                                                    />
                                                 </td>
+                                                <td>
+                                                    <SearchBar
+                                                        searchTerm={row.selectedProduct}
+                                                        setSearchTerm={(term) => {
+                                                            const updatedRows = [...rows];
+                                                            updatedRows[rowIndex].selectedProduct = term;
+                                                            setRows(updatedRows);
+                                                        }}
+                                                        onSelectSuggestion={(suggestion) => handleProductSelection(suggestion, rowIndex)}
+                                                        fetchSuggestions={fetchProductsSuggestions}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {row.batchOptions.length > 1 ? (
+                                                        <InputDropdown
+                                                            id={`batchNo-${rowIndex}`}
+                                                            name="batchNo"
+                                                            editable={true}
+                                                            width="100%"
+                                                            value={row.productDetails.batchNo || ''}
+                                                            onChange={(e) => handleBatchChange(e, rowIndex)}
+                                                            options={row.batchOptions}
+                                                        />
+                                                    ) : (
+                                                        <InputField
+                                                            type="text"
+                                                            id={`batchNo-${rowIndex}`}
+                                                            name="batchNo"
+                                                            editable={false}
+                                                            width="100%"
+                                                            textAlign="center"
+                                                            value={row.productDetails.batchNo || ''}
+                                                        />
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    <InputField
+                                                        type="number"
+                                                        id={`billQty-${rowIndex}`}
+                                                        name="billQty"
+                                                        editable={true}
+                                                        width="100%"
+                                                        textAlign="center"
+                                                        value={row.productDetails.billQty || ''}
+                                                        onChange={(e) => handleQtyChange(e, rowIndex)}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <InputField
+                                                        type="number"
+                                                        id={`unitPrice-${rowIndex}`}
+                                                        name="unitPrice"
+                                                        editable={false}
+                                                        textAlign="right"
+                                                        width="100%"
+                                                        value={row.productDetails.sellingPrice || ''}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <InputField
+                                                        type="number"
+                                                        id={`avbQty-${rowIndex}`}
+                                                        name="avbQty"
+                                                        editable={false}
+                                                        width="100%"
+                                                        textAlign="center"
+                                                        value={row.productDetails.totalAvailableQty || ''}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <InputField
+                                                        type="text"
+                                                        id={`discountPerItem-${rowIndex}`}
+                                                        name="discountPerItem"
+                                                        editable={false}
+                                                        width="100%"
+                                                        textAlign="center"
+                                                        value={row.productDetails.discount || ''}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <InputField
+                                                        type="text"
+                                                        id={`amount-${rowIndex}`}
+                                                        name="amount"
+                                                        editable={false}
+                                                        width="100%"
+                                                        textAlign="right"
+                                                        value={row.productDetails.amount || ''}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <FiPlus onClick={addRow} style={{ cursor: 'pointer', marginRight: '12px' }} />
+                                                </td>
+                                                <td>
+                                                    <AiOutlineDelete onClick={() => deleteRow(rowIndex)} style={{ cursor: 'pointer' }} />
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                            </tr>
-
-                                            <tr>
-                                                <td><InputLabel for="netTotal" color="#0377A8" fontSize="1.125em" fontweight="510">Net Total</InputLabel></td>
-                                                <td><InputField type="tect" id="netTotal" name="netTotal" editable={false} marginTop="0" value={netTotal} onChange={(e) => setNetTotal(e.target.value)} /></td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="received" color="#0377A8">Received</InputLabel></td>
-                                                <td><InputField type="text" id="received" name="received" editable={true} marginTop="0" value={received} onChange={handleReceivedChange} /></td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="balance" color="#0377A8">Balance</InputLabel></td>
-                                                <td><InputField type="text" id="balance" name="balance" editable={false} marginTop="0" value={balance} onChange={(e) => setBalance(e.target.value)} /></td>
-                                            </tr>
-                                            <tr>
-                                                <td><InputLabel for="noQty" color="#0377A8">No Qty:</InputLabel></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="payment-method-bottom">
-                                    <Buttons type="submit" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }}> Save </Buttons>
-                                    <Buttons type="submit" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }}> Clear </Buttons>
-                                </div>
-                                <div className="cardLogos">
-                                    <Icon icon="fa:cc-visa" />
-                                    <Icon icon="logos:mastercard" />
+                            <div className="paymentContainerWrapper">
+                                <div className="paymentContainer">
+                                    <div className="payment-method-top">
+                                        <h3>Select Payment Method<span style={{ color: 'red' }}>*</span></h3>
+                                        <div className='paymentRadio'>
+                                            <InputRadio
+                                                name="paymentMethod"
+                                                options={[
+                                                    { value: 'Cash', label: 'Cash' },
+                                                    { value: 'Card', label: 'Card' }
+                                                ]}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="payment-method-middle">
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><InputLabel htmlFor="noItems" color="#0377A8">No Items:</InputLabel></td>
+                                                    <td><InputField type="text" id="noItems" name="noItems" editable={false} value={noItems} /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><InputLabel htmlFor="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
+                                                    <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} value={grossTotal} /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><InputLabel htmlFor="discountBill" color="#0377A8">Discount %</InputLabel></td>
+                                                    <td>
+                                                        <div className="discountFieldsContainer">
+                                                            <InputField
+                                                                type="text"
+                                                                id="discountBillRate"
+                                                                name="discountBillRate"
+                                                                className="discountBillRate"
+                                                                editable={true}
+                                                                placeholder="%"
+                                                                width="3em"
+                                                                onChange={handleDiscountRateChange}
+                                                            />
+                                                            <InputField
+                                                                type="text"
+                                                                id="discountBillAmount"
+                                                                name="discountBillAmount"
+                                                                className="discountBillAmount"
+                                                                editable={false}
+                                                                value={(grossTotal - netTotal).toFixed(2)}
+                                                                width="23.7em"
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><InputLabel htmlFor="netTotal" color="#0377A8" fontSize="18px" fontWeight="510">Net Total</InputLabel></td>
+                                                    <td><InputField type="text" id="netTotal" name="netTotal" editable={false} value={netTotal} /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><InputLabel htmlFor="receivedAmount" color="#0377A8">Received</InputLabel></td>
+                                                    <td><InputField type="number" id="receivedAmount" name="receivedAmount" editable={true} placeholder="0.00" value={receivedAmount} onChange={(e) => handleReceivedAmountChange(e)} /></td>
+                                                </tr>
+                                                {receivedAmount > 0 && (
+                                                    <tr>
+                                                        <td><InputLabel htmlFor="balance" color="#0377A8">Balance</InputLabel></td>
+                                                        <td><InputField type="text" id="balance" name="balance" editable={false} value={balance} /></td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div className="payment-method-bottom">
+                                        <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
+                                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClear}> Clear </Buttons>
+                                    </div>
+                                    <div className="cardLogos">
+                                        <Icon icon="game-icons:cash" />
+                                        <Icon icon="fa:cc-visa" />
+                                        <Icon icon="logos:mastercard" />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     </div>
                 </div>
             </Layout>
         </>
     );
-};
+}
