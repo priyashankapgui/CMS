@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
 import Layout from "../../../../Layout/Layout";
 import "./UpdateUser.css";
 import { Icon } from "@iconify/react";
@@ -29,6 +30,7 @@ export function UpdateUser() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const currentUser = JSON.parse(secureLocalStorage.getItem("user"));
+  const navigate = useNavigate();
 
   const urlParams = new URLSearchParams(window.location.search);
   const employeeId = urlParams.get("employeeId");
@@ -119,7 +121,7 @@ export function UpdateUser() {
         setShowAlertSuccess(true);
       }
     } catch (error) {
-      setShowAlertError(true);
+      setShowAlertError(error.message);
       console.error("Error:", error);
     }
   };
@@ -391,7 +393,10 @@ export function UpdateUser() {
             title="Success"
             message="Employee updated successfully"
             duration={3000}
-            onClose={() => window.history.back()}
+            onClose={() => 
+              // window.history.back()
+              navigate("/accounts")
+            }
           />
         )}
 

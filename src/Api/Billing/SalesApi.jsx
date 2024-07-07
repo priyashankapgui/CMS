@@ -110,16 +110,17 @@ export const postCancelBill = async (payload) => {
     }
 };
 
+export const getCheckRefundBillData = async (billNo) => {
+    try {
+        const response = await api.get(`/refund/bill/${billNo}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching RefundBillDataStartReturn data:', error.response ? error.response.data : error);
+        throw error;
+    }
+};
+
+
 export default api;
 
-// export const putCancelBill = async (payload) => {
-//     console.log("Thank youuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
-//     try {
-//         const response = await axios.put('/api/cancel-bill', payload);
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error in putCancelBill:', error);
-//         throw error;
-//     }
-// };
-// export default api;
+

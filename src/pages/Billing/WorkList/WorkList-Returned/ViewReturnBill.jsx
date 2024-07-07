@@ -65,7 +65,7 @@ export function ViewReturnBill() {
         return <div>Refund Bill not found</div>;
     }
 
-    const { RTBNo: selectedRTBNo, branchName, billNo, createdAt, returnedBy, customerName, status, reason,contactNo, refundTotalAmount, refundBillProducts = [] } = refundBillData;
+    const { RTBNo: selectedRTBNo, branchName, billNo, createdAt, returnedBy, customerName, status, reason, contactNo, refundTotalAmount, refundBillProducts = [] } = refundBillData;
 
     return (
         <>
@@ -89,7 +89,10 @@ export function ViewReturnBill() {
                                 <InputLabel for="rtbNo" color="#0377A8">RTB No: <span>{selectedRTBNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="billNo" color="#0377A8">Bill No: <span>{billNo}</span></InputLabel>
+                                <InputLabel for="billNo" color="#0377A8">
+                                    Bill No: <Link to={`/work-list/viewbill/${billNo}`} target="_blank" rel="noopener noreferrer"><span>{billNo}</span></Link>
+                                </InputLabel>
+
                             </div>
                         </div>
                         <div className="cont2">
@@ -149,7 +152,7 @@ export function ViewReturnBill() {
                                     <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
                                     <td><InputField id={`unitPrice-${index}`} name={`unitPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='right' /></td>
                                     <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
-                                    <td><InputField id={`amount-${index}`} name={`amount-${index}`} editable={false} width="100%" value={(item.sellingPrice * item.returnQty) * (1 - item.discount / 100).toFixed(2)} textAlign='right' /></td>
+                                    <td><InputField id={`amount-${index}`} name={`amount-${index}`} editable={false} width="100%" value={((item.sellingPrice * item.returnQty) * (1 - item.discount / 100)).toFixed(2)} textAlign='right' /></td>
                                 </tr>
                             ))}
                         </tbody>

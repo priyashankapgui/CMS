@@ -279,9 +279,10 @@ export const Sales = () => {
                 open: true
             });
         } else {
-            setRows([...rows, createEmptyRow()]);
+            setRows([createEmptyRow(), ...rows]);
         }
     };
+
     const deleteRow = (index) => {
         if (rows.length > 1) {
             const updatedRows = [...rows];
