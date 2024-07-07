@@ -186,7 +186,9 @@ export const ViewBill = () => {
                                 <InputLabel htmlFor="billNo" color="#0377A8">Bill No: <span>{selectedBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel htmlFor="status" color="#0377A8">Status: <span>{status}</span></InputLabel>
+                                <InputLabel htmlFor="status" color="#0377A8">
+                                    Status: <span style={{ fontWeight:'510', color: status === 'Canceled' ? 'red' : '#0dbe45e2' }}>{status}</span>
+                                </InputLabel>
                             </div>
                         </div>
                         <div className="cont2">
@@ -246,11 +248,11 @@ export const ViewBill = () => {
                         <thead>
                             <tr>
                                 <th>Product ID / Name</th>
-                                <th>Qty</th>
+                                <th>Billed Qty</th>
                                 <th>Batch No</th>
                                 <th>Unit Price</th>
                                 <th>Dis%</th>
-                                <th>Amount</th>
+                                <th>Amount (Rs)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -261,26 +263,29 @@ export const ViewBill = () => {
                                     <td><InputField id={`batchNo-${index}`} name={`batchNo-${index}`} editable={false} width="100%" value={item.batchNo} textAlign='center' /></td>
                                     <td><InputField id={`sellingPrice-${index}`} name={`sellingPrice-${index}`} editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
                                     <td><InputField id={`discount-${index}`} name={`discount-${index}`} editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
-                                    <td><InputField id={`totalAmount-${index}`} name={`totalAmount-${index}`} editable={false} width="100%" value={item.totalAmount ? item.totalAmount.toFixed(2) : '0.00'} textAlign='center' /></td>
+                                    <td><InputField id={`totalAmount-${index}`} name={`totalAmount-${index}`} editable={false} width="100%" value={(item.billQty * item.sellingPrice * (1 - item.discount / 100)).toFixed(2)} textAlign='center' /></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-            </Layout>
+            </Layout >
             {showSalesReceipt && (
                 <SalesReceipt billNo={billNo} onClose={handleCloseSalesReceipt} />
-            )}
-            {alert.open && (
-                <CustomAlert
-                    severity={alert.severity}
-                    title={alert.title}
-                    message={alert.message}
-                    duration={6000}
-                    open={alert.open}
-                    onClose={() => setAlert({ ...alert, open: false })}
-                />
-            )}
+            )
+            }
+            {
+                alert.open && (
+                    <CustomAlert
+                        severity={alert.severity}
+                        title={alert.title}
+                        message={alert.message}
+                        duration={6000}
+                        open={alert.open}
+                        onClose={() => setAlert({ ...alert, open: false })}
+                    />
+                )
+            }
             <ConfirmationModal
                 open={isConfirmationModalOpen}
                 onClose={closeConfirmationModal}

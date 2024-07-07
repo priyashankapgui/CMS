@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Buttons from "../../Buttons/SquareButtons/Buttons";
 import InputLabel from "../../Label/InputLabel";
 import InputField from "../../InputField/InputField";
@@ -8,7 +8,7 @@ import PasswordStrengthBar from "react-password-strength-bar";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import SubSpinner from "../../Spinner/SubSpinner/SubSpinner";
-import { updatePassword, updatePersonalAccount } from "../../../Api/BranchMgmt/UserAccountsAPI";
+import { updatePassword } from "../../../Api/BranchMgmt/UserAccountsAPI";
 
 export default function MyAccountDetailsPassword({ toggleViewPassword }) {
   const navigate = useNavigate();

@@ -10,13 +10,12 @@ import { getUserRoleById, getUserRolePermissionsById, getUserRolePermissionsByTo
 
 
 
-const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId}, ref) {
+const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId, refresh, handleClose, displaySuccess}, ref) {
     const [permissionArray, setPermissionArray] = useState([]);
     const [checkedPages, setCheckedPages] = useState(new Map());
     const [roleName, setRoleName] = useState();
     const [selectedBranch, setSelectedBranch] = useState();
     const [showAlert, setShowAlert] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
     const token = secureLocalStorage.getItem('accessToken');
 
@@ -94,7 +93,9 @@ const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId}
             const data = await response.data;
             throw new Error(data.error);
         }
-        setShowSuccess(`User Role '${roleName}' Updated successfully`);
+        displaySuccess(`User Role '${roleName}' Updated successfully`);
+        refresh();
+        handleClose();
         return null;
       } catch (error) {
           setShowAlert(error.message);
@@ -156,15 +157,6 @@ const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId}
                 message={showAlert}
                 duration={3000}
                 onClose={() => setShowAlert(false)}
-              />
-            )}
-            {showSuccess && (
-              <CustomAlert
-                severity="success"
-                title="Success"
-                message={showSuccess}
-                duration={1500}
-                onClose={() => window.location.reload()}
               />
             )}
           </div>
