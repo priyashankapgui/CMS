@@ -49,21 +49,21 @@ const Login = () => {
     try {
       if (response.status === 200) {
         const data = response.data;
-        console.log("Response data:", data);
+        //console.log("Response data:", data);
         secureLocalStorage.setItem("accessToken", data.token);
         secureLocalStorage.setItem("user", JSON.stringify(data.user));
         setLoggingSuccess(true);
       } else {
         // Login failed, handle error
         const data = response.data;
-        console.log("Error:", data.error);
+        //console.log("Error:", data.error);
         setError(data.error);
         setSubLoading(false);
       }
     }
     catch (error) {
       setError("Internal Server Error")
-      console.error("Error:", error);
+      //console.error("Error:", error);
       setSubLoading(false);
     }
   };
