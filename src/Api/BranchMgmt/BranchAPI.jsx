@@ -27,6 +27,7 @@ export const getBranchOptions = async () => {
     try {
         const authApi = createAuthInstance();
         const response = await authApi.get('/branchesWeb');
+        console.log("branches",response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching branches:', error);

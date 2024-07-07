@@ -7,13 +7,12 @@ import InputDropdown from "../../../Components/InputDropdown/InputDropdown";
 import InputLabel from "../../../Components/Label/InputLabel";
 import DatePicker from '../../../Components/DatePicker/DatePicker';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
-import { useNavigate } from 'react-router-dom';
-import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import StockTransferIn from './StockTransferIN';
-import StockTransferOUT from './StockTransferOUT';
-import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
+import StockTransferIn from './StockTransferIN/StockTransferIN.jsx'; 
+import StockTransferOUT from './StockTransferOUT/StockTransferOUT.jsx';
+import { useNavigate } from 'react-router-dom';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { getBranchOptions} from '../../../Api/BranchMgmt/BranchAPI';
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
 
 export const StockTransfer = () => {
@@ -45,11 +44,12 @@ export const StockTransfer = () => {
 
     const fetchBranches = async () => {
         try {
-            const response = await getBranchOptions()
-            setBranches(response.data || []); 
+            const response = await getBranchOptions();
+            console.log('Fetched branches:', response);
+            setBranches(response || []);
         } catch (error) {
             console.error('Error fetching branches:', error);
-            setBranches([]); 
+            setBranches([]);
         }
     };
 
@@ -146,28 +146,22 @@ export const StockTransfer = () => {
                             </div>
                             <div className="SupplyingbranchField">
                                 <InputLabel htmlFor="supplyingBranch" color="#0377A8">Supplying Branch</InputLabel>
-                                <BranchDropdown
+                                 <InputDropdown
                                     id="supplyingBranch"
-                                    name="supplyingBranch"
+                                    name="supplyingBranch" 
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('supplyingBranch', value)}
-                                    addOptions={["All"]}
-                                    value={searchParams.supplyingBranch} 
-                                    ref={branchDropdownRef} 
                                 />
                             </div>
                             <div className="RequestbranchField">
                                 <InputLabel htmlFor="requestBranch" color="#0377A8">Request Branch</InputLabel>
-                                <BranchDropdown
+                                  <InputDropdown
                                     id="requestBranch"
-                                    name="requestBranch"
+                                    name="requestBranch" 
                                     editable={true}
                                     options={branches.map(branch => branch.branchName)}
                                     onChange={(value) => handleDropdownChange('requestBranch', value)}
-                                    addOptions={["All"]}
-                                    value={searchParams.requestBranch} 
-                                    ref={branchDropdownRef} 
                                 />
                             </div>
                             <div className="STNNoField">

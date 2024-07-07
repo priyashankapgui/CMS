@@ -30,8 +30,7 @@ export const createCategory = async (newCategory) => {
 
 export const getCategories = async () => {
     try {
-        const token = getAccessToken();
-        const response = await api.get('/categories', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await api.get('/categories');
         return response.data;
     } catch (error) {
         console.error('Error fetching categories:', error);

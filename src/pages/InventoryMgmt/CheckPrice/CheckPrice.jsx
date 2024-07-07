@@ -34,7 +34,6 @@ export const CheckPrice = () => {
 
     const handleDropdownChange = (value) => {
         setSelectedBranch(value);
-        console.log('Selected Drop Down Value:', value);
     };
 
     const fetchProductsSuggestions = async (query) => {

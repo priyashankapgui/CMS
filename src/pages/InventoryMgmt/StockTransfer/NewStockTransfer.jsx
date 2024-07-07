@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './NewStockTransfer.css';
 import Layout from "../../../Layout/Layout";
-import { Link, useNavigate } from 'react-router-dom';
-import { FiPlus } from "react-icons/fi";
-import { AiOutlineDelete } from "react-icons/ai";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import { IoChevronBackCircleOutline } from "react-icons/io5";
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import secureLocalStorage from "react-secure-storage";
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { Link, useNavigate } from 'react-router-dom';
+import { FiPlus } from "react-icons/fi";
+import { AiOutlineDelete } from "react-icons/ai";
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { createstockTransferOUT } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
@@ -106,8 +106,6 @@ export function NewStockTransfer() {
         const userJSON = secureLocalStorage.getItem("user");
         if (userJSON) {
             const user = JSON.parse(userJSON);
-            console.log("user data",user);
-        console.log("name", user);
 
         const stockTransferData = {
             requestedBy: user.userName,

@@ -8,10 +8,12 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import PropTypes from 'prop-types';
 import { getCategoryById, updateCategory } from '../../../Api/Inventory/Category/CategoryAPI';
 
-
-
 function UpdateCategoryPopup({ categoryId }) {
 
+    const [initialPost, setInitialPost] = useState({
+        categoryName: '',
+        image: null
+    });
     const [post, setPost] = useState({
         categoryName: '',
         image: null
@@ -30,10 +32,12 @@ function UpdateCategoryPopup({ categoryId }) {
         const fetchCategory = async () => {
             try {
                 const categoryData = await getCategoryById(categoryId);
-                setPost({
+                const initialData = {
                     categoryName: categoryData.data.categoryName,
                     image: null
-                });
+                };
+                setInitialPost(initialData);
+                setPost(initialData);
             } catch (error) {
                 console.error('Error fetching category:', error);
             }
@@ -64,6 +68,16 @@ function UpdateCategoryPopup({ categoryId }) {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            if (!file.type.match('image.*')) {
+                setAlertConfig({
+                    severity: 'error',
+                    title: 'Invalid File Type',
+                    message: 'Please upload a valid image file (JPEG, PNG, GIF, etc.).',
+                    duration: 5000
+                });
+                setAlertVisible(true);
+                return;
+            }
             TransformFile(file);
         }
     };
@@ -97,6 +111,16 @@ function UpdateCategoryPopup({ categoryId }) {
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
                 duration: 5000
+            });
+            setAlertVisible(true);
+            return;
+        }
+        if (JSON.stringify(post) === JSON.stringify(initialPost)) {
+            setAlertConfig({
+                severity: 'info',
+                title: 'No Changes Made',
+                message: 'No changes were made to the category.',
+                duration: 3000
             });
             setAlertVisible(true);
             return;

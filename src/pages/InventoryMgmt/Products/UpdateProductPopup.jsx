@@ -20,6 +20,7 @@ function UpdateProductPopup({ productId }) {
         minQty: '',
         image: null
     });
+    const [originalPost, setOriginalPost] = useState({});
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertConfig, setAlertConfig] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -38,28 +39,22 @@ function UpdateProductPopup({ productId }) {
             getProductById(productId)
                 .then(res => {
                     const { productName, description, categoryName, barcode, minQty, image } = res.data;
-                    setPost({
+                    const productData = {
                         productName,
                         description,
                         categoryName,
                         barcode,
                         minQty,
                         image
-                    });
+                    };
+                    setPost(productData);
+                    setOriginalPost(productData);
 
                 })
                 .catch(err => console.error('Error fetching product:', err));
         }
     }, [productId]);
 
-    useEffect(() => {
-        const storedAlertConfig = localStorage.getItem('alertConfig');
-        if (storedAlertConfig) {
-            setAlertConfig(JSON.parse(storedAlertConfig));
-            setAlertVisible(true);
-            localStorage.removeItem('alertConfig');
-        }
-    }, []);
 
     const validate = () => {
         const result = schema.validate(post, { abortEarly: false });
@@ -74,12 +69,36 @@ function UpdateProductPopup({ productId }) {
 
     const handleUpdate = (event) => {
         const { name, value } = event.target;
+        if (name === 'minQty') {
+            // Validate minQty as a number
+            if (isNaN(value)) {
+                setAlertConfig({
+                    severity: 'error',
+                    title: 'Invalid Min Qty',
+                    message: 'Minimum Quantity must be a valid number.',
+                    duration: 4000
+                });
+                setAlertVisible(true);
+                return;
+            }
+        }
         setPost({ ...post, [name]: value });
     };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                setAlertConfig({
+                    severity: 'error',
+                    title: 'Invalid File Type',
+                    message: 'Please upload a valid image file (JPEG, PNG, GIF, etc.).',
+                    duration: 4000
+                });
+                setAlertVisible(true);
+                return;
+            }
             TransformFile(file);
         }
     };
@@ -113,6 +132,16 @@ function UpdateProductPopup({ productId }) {
                 title: 'Validation Error',
                 message: 'Please fill out all required fields correctly.',
                 duration: 4000
+            });
+            setAlertVisible(true);
+            return;
+        }
+        if (JSON.stringify(post) === JSON.stringify(originalPost)) {
+            setAlertConfig({
+                severity: 'info',
+                title: 'No Changes',
+                message: 'No changes detected in the product details.',
+                duration: 3000
             });
             setAlertVisible(true);
             return;
