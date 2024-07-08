@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './ReturnBillList.css';
 import Layout from "../../../../Layout/Layout";
 import { Link } from "react-router-dom";
@@ -9,20 +9,33 @@ import DatePicker from "../../../../Components/DatePicker/DatePicker";
 import { BsEye } from "react-icons/bs";
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
-import { getAllRefundBills } from '../../../../Api/Billing/SalesApi';
 import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import { getAllRefundBillsByDate } from '../../../../Api/Billing/SalesApi';
 
 export const ReturnBillList = () => {
     const [clickedLink, setClickedLink] = useState('Returned');
-    const [returnBillData, setReturnBillData] = useState([]);
+
+    const [filteredBillData, setFilteredBillData] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [billNo, setBillNo] = useState('');
     const [customerName, setCustomerName] = useState('');
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
-    const [loading, setLoading] = useState(true);
+
+    const currentDate = new Date();
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(currentDate.getDate() + 1);
+
+    const [startDate, setStartDate] = useState(currentDate);
+    const [endDate, setEndDate] = useState(nextDate);
+
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (selectedBranch) {
+            handleSearch();
+        }
+    }, [selectedBranch]);
 
     const handleLinkClick = (linkText) => {
         setClickedLink(linkText);
@@ -32,37 +45,81 @@ export const ReturnBillList = () => {
         setSelectedBranch(value);
     };
 
-    const fetchData = async () => {
+    const handleStartDateChange = (date) => {
+        setStartDate(date);
+    };
+
+    const handleEndDateChange = (date) => {
+        setEndDate(date);
+    };
+
+
+    const filterData = useCallback((data) => {
+        return data.filter(row =>
+            (!selectedBranch || row.branchName === selectedBranch) &&
+            (!billNo || row.billNo.includes(billNo)) &&
+            (!customerName || row.customerName.includes(customerName))
+        ).sort((a, b) => new Date(b.returnedAt) - new Date(a.returnedAt));
+    }, [selectedBranch, billNo, customerName]);
+
+    const handleSearch = useCallback(async () => {
+        setLoading(true);
+        try {
+            const fromDate = startDate ? new Date(startDate).toISOString() : new Date().toISOString();
+            let toDate = endDate ? new Date(endDate).toISOString() : new Date().toISOString();
+            const data = await getAllRefundBillsByDate({
+                branchName: selectedBranch,
+                startDate: fromDate,
+                endDate: toDate,
+            });
+            const sortedData = filterData(data);
+            setFilteredBillData(sortedData);
+        } catch (error) {
+            console.error("Error fetching return bills:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [selectedBranch, startDate, endDate, filterData]);
+
+    const handleClear = async () => {
+        const currentDate = new Date();
+        const nextDate = new Date(currentDate);
+        nextDate.setDate(currentDate.getDate() + 1);
+
+        setStartDate(currentDate);
+        setEndDate(nextDate);
+        setBillNo('');
+        setCustomerName('');
+
         setLoading(true);
         setError(null);
         try {
-            const response = await getAllRefundBills();
-            console.log('Refund Bill:', response);
-            setReturnBillData(Array.isArray(response.data) ? response.data : []);
+            const fromDate = currentDate.toISOString();
+            const toDate = nextDate.toISOString();
+
+            const data = await getAllRefundBillsByDate({
+                branchName: selectedBranch,
+                startDate: fromDate,
+                endDate: toDate,
+            });
+            const sortedData = filterData(data);
+            setFilteredBillData(sortedData);
         } catch (error) {
-            console.error('Error fetching refund bills:', error);
-            setError(error.message);
+            setError(error);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    if (error) {
+        return (
+            <div>
+                <h4>Error: {error.message}</h4>
+                <pre>{JSON.stringify(error.response?.data, null, 2)}</pre>
+            </div>
+        );
+    }
 
-    const handleSearch = () => {
-        // Add search filter logic here
-    };
-
-    const handleClear = () => {
-        setSelectedBranch('');
-        setBillNo('');
-        setCustomerName('');
-        setFromDate(null);
-        setToDate(null);
-        fetchData();
-    };
 
     return (
         <>
@@ -73,7 +130,7 @@ export const ReturnBillList = () => {
                 <div className="returnbill-filter-container">
                     <div className="Content1">
                         <div className="branchField">
-                            <InputLabel for="branchName" color="#0377A8">Branch</InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
@@ -83,18 +140,12 @@ export const ReturnBillList = () => {
                             />
                         </div>
                         <div className="dateFieldFrom">
-                            <InputLabel for="to-date" color="#0377A8">To</InputLabel>
-                            <DatePicker
-                                selected={toDate}
-                                onChange={date => setToDate(date)}
-                            />
+                            <InputLabel htmlFor="from-date" color="#0377A8">From</InputLabel>
+                            <DatePicker selectedDate={startDate} onDateChange={handleStartDateChange} />
                         </div>
                         <div className="dateFieldTo">
-                            <InputLabel for="from-date" color="#0377A8">From</InputLabel>
-                            <DatePicker
-                                selected={fromDate}
-                                onChange={date => setFromDate(date)}
-                            />
+                            <InputLabel htmlFor="to-date" color="#0377A8">To</InputLabel>
+                            <DatePicker selectedDate={endDate} onDateChange={handleEndDateChange} />
                         </div>
                         <div className="billNoField">
                             <InputLabel htmlFor="billNo" color="#0377A8">Bill No</InputLabel>
@@ -151,24 +202,21 @@ export const ReturnBillList = () => {
                     </div>
                     {loading ? (
                         <div><SubSpinner /></div>
-                    ) : error ? (
-                        <div>{error.message}</div>
                     ) : (
                         <div className="return-bill-history-table">
                             <TableWithPagi
                                 itemsPerPage={10}
                                 headerColor="#262626"
                                 columns={['Return Bill No', 'Returned At', 'Bill No', 'Branch', 'Customer Name', 'Status', 'Returned By', 'Reason', '']}
-                                rows={returnBillData.map(row => ({
+                                rows={filteredBillData.map(row => ({
                                     RTBNo: row.RTBNo,
-                                    refundAt: new Date(row.createdAt).toLocaleString('en-GB'),
+                                    returnedAt: new Date(row.createdAt).toLocaleString('en-GB'),
                                     billNo: row.billNo,
                                     branchName: row.branchName,
                                     customerName: row.customerName,
                                     status: row.status,
                                     returnedBy: row.returnedBy,
                                     reason: row.reason,
-
                                     action: (
                                         <div style={{ display: "flex", gap: "0.5em" }}>
                                             <Link to={`/work-list/returnbill-list/viewreturnbill/${row.RTBNo}`}>
@@ -181,12 +229,16 @@ export const ReturnBillList = () => {
                                             </Link>
                                         </div>
                                     )
-                                }))}
+                                }))
+                                    .sort((a, b) => new Date(b.returnedAt) - new Date(a.returnedAt))
+                                }
                             />
                         </div>
                     )}
                 </div>
-            </Layout >
+            </Layout>
         </>
     );
 };
+
+export default ReturnBillList;

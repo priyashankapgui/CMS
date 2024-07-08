@@ -70,7 +70,7 @@ export function CreateNewAccounts() {
 
     const handleCreateAccount = async () => {
       setLoading(true);
-      console.log("Employee data:", employeeData);
+      //console.log("Employee data:", employeeData);
       try {
       if (!employeeData.employeeId || !employeeData.employeeName || !employeeData.password || !employeeData.userRoleName || !employeeData.branchName) {
           throw new Error("Please fill in required fields");

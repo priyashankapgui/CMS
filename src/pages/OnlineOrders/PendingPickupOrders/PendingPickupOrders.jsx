@@ -5,6 +5,7 @@ import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 import emailjs from 'emailjs-com';
 
@@ -12,6 +13,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
     const [orders, setOrders] = useState([]);
     const [userDetails, setUserDetails] = useState({ username: '' });
     const [showAlert, setShowAlert] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
         title: 'Success',
@@ -44,12 +46,17 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
                 setPickupOrdersCount(pickupOrders.length);
             } catch (error) {
                 console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
             }
         };
     
         fetchOrders();
     }, [selectedBranch, searchClicked, setPickupOrdersCount]);
 
+    const handleOrderPickedUp = async (order) => {
+        if (userDetails.username) {
+            const currentTime = new Date().toISOString();
     const handleOrderPickedUp = async () => {
         if (userDetails.username && selectedOrder) {
             const currentTime = new Date().toISOString(); 
@@ -58,7 +65,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
                 pickupTime: currentTime,
                 status: "Completed"
             };
-    
+
             try {
                 await updateOnlineBill(selectedOrder.onlineBillNo, updates);
                 setOrders((prevOrders) => prevOrders.filter(o => o.onlineBillNo !== selectedOrder.onlineBillNo));
@@ -114,6 +121,14 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
         setShowAlert(false);
     };
 
+    if (loading) {
+        return <SubSpinner />;
+    }
+
+    if (orders.length === 0) {
+        return <div style={{color:'#dc0808'}}>No pending pickups here...</div>;
+    }
+
     return (
         <>
             <table className="PendingPickupTable">
@@ -135,9 +150,16 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
                             <td>{order.branch.branchName}</td>
                             <td>{order.customer.firstName} {order.customer.lastName}</td>
                             <td>Card</td>
-                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
+                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString('en-GB') : 'N/A'}</td>
                             <td>{order.acceptedBy}</td>
                             <td>
+                                <RoundButtons
+                                    id={`doneBtn-${order.onlineBillNo}`}
+                                    backgroundColor='#EBBC00'
+                                    type="submit"
+                                    name={`doneBtn-${order.onlineBillNo}`}
+                                    icon={<MdDone color="white" />}
+                                    onClick={() => handleOrderPickedUp(order)}
                                 <RoundButtons 
                                     id={`doneBtn-${order.onlineBillNo}`} 
                                     type="submit" 

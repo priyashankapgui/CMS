@@ -15,7 +15,6 @@ const BranchDropdown = forwardRef(
       marginTop,
       addOptions,
       displayValue,
-      selectedBranch,
     },
     ref
   ) => {
@@ -23,6 +22,7 @@ const BranchDropdown = forwardRef(
     const [branchData, setBranchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
       const getBranches = async () => {
@@ -42,16 +42,8 @@ const BranchDropdown = forwardRef(
             };
           });
           const tempBranches = branches.map((branch) => branch.label);
-          if (data.isSuperAdmin) {
-            if (displayValue) {
-              tempBranches.splice(tempBranches.indexOf(displayValue), 1);
-              tempBranches.unshift(displayValue);
-            }
-          }
-          onChange(tempBranches[0]);
           console.log(tempBranches, displayValue);
           setBranchData(tempBranches);
-          console.log(0)
         } catch (error) {
           console.error("Error:", error);
         }
@@ -74,8 +66,8 @@ const BranchDropdown = forwardRef(
         }
         setBranches(branches);
         onChange(branches[0]);
+        setCount(count + 1);
         setLoading(false);
-        console.log(1)
       }
     }, [branchData]);
 

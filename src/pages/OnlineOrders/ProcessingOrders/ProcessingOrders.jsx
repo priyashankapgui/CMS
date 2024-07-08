@@ -6,10 +6,12 @@ import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/O
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
 import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 import emailjs from 'emailjs-com';
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 
 const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch,searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
         title: 'Success',
@@ -33,6 +35,8 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch
                 setProcessingOrdersCount(processingOrders.length); 
             } catch (error) {
                 console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
             }
         };
     
@@ -101,6 +105,14 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch
         setShowAlert(false);
     };
 
+    if (loading) {
+        return <SubSpinner />;
+    }
+
+    if (orders.length === 0) {
+        return <div style={{ color: '#dc0808' }}>Processing orders are not here...</div>;
+    }
+
     return (
         <>
             <table className="ProcessingOrdersTable">
@@ -122,14 +134,15 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch
                             <td>{order.branch.branchName}</td>
                             <td>{order.customer.firstName} {order.customer.lastName}</td>
                             <td>Card</td>
-                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
+                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString('en-GB') : 'N/A'}</td>
                             <td>{order.acceptedBy}</td>
                             <td>
                                 <RoundButtons 
                                     id={`doneBtn-${order.onlineBillNo}`} 
+                                    backgroundColor='#16A8D6'
                                     type="submit" 
                                     name={`doneBtn-${order.onlineBillNo}`} 
-                                    icon={<MdDone />} 
+                                    icon={<MdDone color="white" />} 
                                     onClick={() => openConfirmationModal(order)} 
                                 />
                             </td>

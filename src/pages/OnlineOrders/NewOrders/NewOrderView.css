@@ -7,7 +7,7 @@
 .View-onlineorder-top {
     background-color: white;
     width: 100%;
-    height: 200px;
+    height: 100%;
     padding: 20px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
     font-size: 1em;
@@ -46,41 +46,37 @@ hr {
     overflow: auto;
     width: 100%;
     height: 60vh;
-    align-items: center;
-    margin-bottom: 20px;
+    margin: 20px 0 20px 0;
+    position: relative;
 }
 
 .viewonlineitemtable {
     margin: 0 auto;
 }
 
-.viewonlineitemtable thead {
+.viewonlineitemtable th {
     background-color: #E9E9E9;
-}
-.summary-box {
-    margin-left: 300px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 10px;
-    background-color: #f5f5f5;
-    border-radius: 20px;
-    width: 600px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
-.summary-row {
+
+.onlineOrderpaymentSummeryrWrapper {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-    width: 500px;
+    justify-content: flex-start;
 }
 
-.summary-row span {
-    font-weight: bold;
-    color: #0377A8;
-    width: 300px;
+.onlineOrderpaymentSummeryrContainer {
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 8px 10px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
 }
-.Onlineinput {
-    color: black;
-    font-weight: 400;
-    font-size: 14px;
+
+.onlineOrderpaymentSummeryrContainer table td {
+    padding-right: 10px;
 }

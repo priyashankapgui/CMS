@@ -122,9 +122,7 @@ export const getProductByCategoryId = async ( categoryId) => {
 
 export const updateProductDiscount = async (updates) => {
     try {
-        console.log("updatess",updates);
         const token = getAccessToken();
-        console.log("token",token);
         const response = await api.put('/product-batch-sum-discount', updates, {
              headers: { Authorization: `Bearer ${token}`  } });
         return response.data;

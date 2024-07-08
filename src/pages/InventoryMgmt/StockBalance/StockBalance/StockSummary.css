@@ -84,24 +84,36 @@
     align-items: center;
     margin-left: 20px;
     margin-right: 20px;
+    flex-direction: column;
+    margin-bottom: 10px; 
 }
 
 .field span {
     display: block;
-}
-.value3{
-    margin-right: 40px;
-    color: black;
+    margin-top: 5px; 
+    text-align: center;
 }
 .totalqty{
-    margin-left: 350px;
+    /* margin-left: 348px; */
     font-weight: bold;
     color: black;
+    text-align: center;
     
 }
 .value1{
     color: black;
+    text-align: center;
+    padding-left: 30px;
 }
 .value2{
     color: black;
 }
+.value3{
+    color: black;
+    padding-left: 30px;
+}
+.value{
+    color: dimgrey;
+    font-weight: bold;
+}
+

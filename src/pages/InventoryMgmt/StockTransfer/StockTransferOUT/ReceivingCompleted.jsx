@@ -1,13 +1,13 @@
-import Layout from "../../../Layout/Layout";
+import Layout from "../../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
 import './ReceivingCompleted.css';
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import InputLabel from "../../../../Components/Label/InputLabel";
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import InputLabel from "../../../Components/Label/InputLabel";
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import { getStockTransferBySTN_NO, updateTransferQty } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { getStockTransferBySTN_NO, updateTransferQty } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const ReceivingCompleted = () => {
     const navigate = useNavigate();
@@ -23,7 +23,6 @@ export const ReceivingCompleted = () => {
                 const response = await getStockTransferBySTN_NO(STN_NO);
                 setStockTransferDetails(response.data);
 
-                // Check if data has already been saved
                 const savedState = localStorage.getItem(`isSaved_${STN_NO}`);
                 if (savedState === 'true' || response.data.isSaved) {
                     setIsSaved(true);
@@ -62,7 +61,6 @@ export const ReceivingCompleted = () => {
         try {
             const response = await updateTransferQty(formattedData);
             if (response.success) {
-                console.log('Data successfully saved:', response.message);
                 setIsSaved(true); 
                 setAlertConfig({
                     severity: 'success',

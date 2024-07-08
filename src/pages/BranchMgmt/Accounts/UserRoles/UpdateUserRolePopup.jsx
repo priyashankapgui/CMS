@@ -61,6 +61,7 @@ const UpdateUserRolePopup = forwardRef(function UpdateUserRolePopup({userRoleId,
             try {
                 const response = await getUserRoleById(userRoleId, token);
                 const data = await response.data;
+                console.log("User role data:", data)
                 setRoleName(data.userRoleName);
                 setSelectedBranch(data.branchName);
             } catch (error) {

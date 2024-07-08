@@ -8,14 +8,14 @@ import InputLabel from "../../../Components/Label/InputLabel";
 import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons";
 import DatePicker from "../../../Components/DatePicker/DatePicker";
 import SearchBar from "../../../Components/SearchBar/SearchBar";
-import { useNavigate } from "react-router-dom";
-import { BsEye } from "react-icons/bs";
-import { RiPrinterFill } from "react-icons/ri";
-import { Link, useParams } from "react-router-dom";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner";
 import BranchDropdown from "../../../Components/InputDropdown/BranchDropdown";
 import GrnDoc from "../../../Components/InventoryDocuments/GrnDoc/GrnDoc";
 import secureLocalStorage from "react-secure-storage";
+import { useNavigate } from "react-router-dom";
+import { BsEye } from "react-icons/bs";
+import { RiPrinterFill } from "react-icons/ri";
+import { Link, useParams } from "react-router-dom";
 import { getProducts } from "../../../Api/Inventory/Product/ProductAPI";
 import { getSuppliers } from "../../../Api/Inventory/Supplier/SupplierAPI";
 import { getBranchOptions } from "../../../Api/BranchMgmt/BranchAPI";
@@ -43,7 +43,6 @@ export const GoodReceive = () => {
   const navigate = useNavigate();
 
   const handleReprintClick = (GRN_NO) => {
-    console.log("Reprint button clicked for GRN No:", GRN_NO);
     setSelectedGRN_NO(GRN_NO);
     setshowGRNReceipt(true);
   };
@@ -65,8 +64,6 @@ export const GoodReceive = () => {
       const userJSON = secureLocalStorage.getItem("user");
       if (userJSON) {
         const user = JSON.parse(userJSON);
-        console.log("user role", user.role);
-        console.log("user branch", user.branchName);
 
         const response = await getAllGRN();
         let data = response.data || [];
@@ -88,6 +85,7 @@ export const GoodReceive = () => {
   const fetchBranches = async () => {
     try {
       const response = await getBranchOptions();
+      console.log('Fetched branches:', response.data);
       setBranches(response.data);
     } catch (error) {
       console.error("Error fetching branches:", error);
@@ -136,14 +134,11 @@ export const GoodReceive = () => {
       setLoading(true);
       let data = grnData;
 
-      console.log("Initial data:", data);
-
       const productId = searchParams.productId.split(" ")[0]; // Assuming the productId is the first part
       const supplierId = searchParams.supplierId.split(" ")[0];
 
       if (searchParams.GRN_NO) {
         data = data.filter((item) => item.GRN_NO.includes(searchParams.GRN_NO));
-        console.log("filtered data", data);
       }
       if (searchParams.invoiceNo) {
         data = data.filter((item) =>
@@ -159,13 +154,11 @@ export const GoodReceive = () => {
         });
       }
       if (supplierId && selectedBranch === 'All' ) {
-        console.log("supplierId", supplierId);
         data = data.filter(
           (item) => item.supplierId && item.supplierId.includes(supplierId)
         );
       }
       if (productId) {
-        console.log("productId", productId);
         data = data.filter(
           (item) =>
             item.productGRNs &&
@@ -174,7 +167,6 @@ export const GoodReceive = () => {
                 productGRN.productId && productGRN.productId.includes(productId)
             )
         );
-        console.log("After filtering by productId:", data);
       }
       if (selectedBranch && selectedBranch !== "All") {
         data = data.filter((item) => item.branchName === selectedBranch);
@@ -186,7 +178,6 @@ export const GoodReceive = () => {
             item.supplierId.includes(supplierId) &&
             item.branchName === selectedBranch
         );
-        console.log("After filtering by supplierId and branchName:", data);
       } else if (productId) {
         data = data.filter(
           (item) =>
@@ -196,10 +187,9 @@ export const GoodReceive = () => {
                 productGRN.productId && productGRN.productId.includes(productId)
             )
         );
-        console.log("After filtering by productId:", data);
       }
 
-      setGrnData(data); // Set the filtered data to grnData
+      setGrnData(data); 
     } catch (error) {
       console.error("Error fetching GRN data:", error);
       setGrnData([]);

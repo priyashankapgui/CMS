@@ -78,7 +78,7 @@ export const Products = () => {
 
 
     const handleClearBtnCategorySection = async () => {
-        setSelectedAdjustCategory(''); // Clear the search bar data
+        setSelectedAdjustCategory(''); 
         try {
             setLoadingCategories(true);
             const response = await getCategories();
@@ -121,7 +121,6 @@ export const Products = () => {
 
     const handleDropdownChange = (value) => {
         setSelectedBranch(value);
-        console.log('Selected Drop Down Value:', value);
     };
 
 
@@ -259,7 +258,6 @@ export const Products = () => {
 
 
     const handleDeleteCategory = async (categoryId) => {
-        console.log("category",categoryId);
         setLoading(true);
         try {
             await deleteCategoryById(categoryId);
@@ -298,7 +296,6 @@ export const Products = () => {
             await deleteProductById(productId);
             const updatedProductsData = productsData.filter(product => product.productId !== productId);
             setProductsData(updatedProductsData);
-            console.log("Product deleted successfully");
 
             const alertData = {
                 severity: 'warning',
@@ -379,11 +376,9 @@ const handleSave = async () => {
             batchNo: detail.batchNo,
             discount: parseFloat(detail.discount ?? 0), 
         }));
-        console.log(updates);
         
         const updateResponse = await updateProductDiscount(updates);
-        console.log(updateResponse.data); 
-        
+
         handleSearch(); 
 
         

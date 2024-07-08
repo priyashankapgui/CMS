@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
+import secureLocalStorage from "react-secure-storage";
+import StockTranIn from '../../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
 import { Link } from 'react-router-dom';
-import RoundButtons from '../../../Components/Buttons/RoundButtons/RoundButtons';
 import { BsEye, BsCheckCircle, BsXCircle  } from "react-icons/bs";
 import { RiPrinterFill } from "react-icons/ri";
-import secureLocalStorage from "react-secure-storage";
-import StockTranIn from '../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
-import { getAllTransfers } from '../../../Api/Inventory/StockTransfer/StockTransferAPI';
+import { getAllTransfers } from '../../../../Api/Inventory/StockTransfer/StockTransferAPI';
 
 const StockTransferIn = ({ searchParams }) => {
+    console.log("search params",searchParams);
     const [stockData, setStockData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSTN_NO, setSelectedSTN_NO] = useState(null); 
@@ -51,11 +52,11 @@ const StockTransferIn = ({ searchParams }) => {
                         return createdAt >= fromDate && createdAt <= toDate;
                     });
                 }
-                if (searchParams.requestBranch !== 'All' && searchParams.supplyingBranch === 'All') {
+                if (searchParams.requestBranch) {
                     filteredData = filteredData.filter(
                         (item) => item.requestBranch === searchParams.requestBranch
                     );
-                } if (searchParams.supplyingBranch !== 'All' && searchParams.requestBranch === 'All') {
+                } if (searchParams.supplyingBranch) {
                     filteredData = filteredData.filter(
                         (item) => item.supplyingBranch === searchParams.supplyingBranch
                     );
