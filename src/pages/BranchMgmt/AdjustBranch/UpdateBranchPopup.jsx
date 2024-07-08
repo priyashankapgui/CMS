@@ -31,9 +31,8 @@ function UpdateBranchPopup({ branchId, onClose }) {
         branchName: Joi.string().required().label('Branch Name'),
         address: Joi.string().required().label('Address'),
         email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
-        contactNumber: Joi.string().required().label('Contact Number'),
-        image: Joi.any().optional().label('Image')
-    });
+        contactNumber: Joi.string().length(10).pattern(/^[0-9]+$/).required().label('Contact Number'),
+    });    
 
     useEffect(() => {
         const fetchBranch = async () => {
