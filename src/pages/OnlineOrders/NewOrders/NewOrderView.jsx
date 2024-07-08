@@ -157,7 +157,6 @@ export function NewOrderView() {
                                 <InputLabel for="ordNo" color="#0377A8">ORD No: <span>{orderData.onlineBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString('en-GB')}</span></InputLabel>
                             <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString()}</span></InputLabel>
                             </div>
                         </div>

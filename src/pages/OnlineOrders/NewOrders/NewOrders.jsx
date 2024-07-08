@@ -5,7 +5,6 @@ import { BsEye } from 'react-icons/bs';
 import { Link } from "react-router-dom";
 import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
-import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 
 const NewOrders = ({ selectedBranch, setNewOrdersCount, searchClicked }) => {
     const [orders, setOrders] = useState([]);
@@ -21,14 +20,12 @@ const NewOrders = ({ selectedBranch, setNewOrdersCount, searchClicked }) => {
                     newOrders = newOrders.filter(order => order.branch.branchName === selectedBranch);
                 }
 
-                const response = await getAllOnlineBills();
-                const newOrders = response.filter(order => order.status === "New");
                 setOrders(newOrders);
                 setNewOrdersCount(newOrders.length);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             } finally {
-                setLoading(false); // Set loading to false after data is fetched
+                setLoading(false); 
             }
         };
 
@@ -67,7 +64,6 @@ const NewOrders = ({ selectedBranch, setNewOrdersCount, searchClicked }) => {
                         <td>{order.comment}</td>
                         <td>
                             <Link to={`/online-orders/viewOrder/${order.onlineBillNo}`}>
-                                <RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />} />
                                 <RoundButtons id={`eyeViewBtn-${order.onlineBillNo}`} type="submit" name={`eyeViewBtn-${order.onlineBillNo}`} icon={<BsEye />} />
                             </Link>
                         </td>

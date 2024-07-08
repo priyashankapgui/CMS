@@ -5,15 +5,14 @@ import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import secureLocalStorage from 'react-secure-storage';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
-import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 import emailjs from 'emailjs-com';
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 
-const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,searchClicked }) => {
+const PendingPickup = ({ setPickupOrdersCount, onTabChange, selectedBranch, searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [userDetails, setUserDetails] = useState({ username: '' });
     const [showAlert, setShowAlert] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
         title: 'Success',
@@ -22,6 +21,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
     });
     const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const userJSON = secureLocalStorage.getItem("user");
@@ -32,6 +32,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
             });
         }
     }, []);
+
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -54,9 +55,6 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
         fetchOrders();
     }, [selectedBranch, searchClicked, setPickupOrdersCount]);
 
-    const handleOrderPickedUp = async (order) => {
-        if (userDetails.username) {
-            const currentTime = new Date().toISOString();
     const handleOrderPickedUp = async () => {
         if (userDetails.username && selectedOrder) {
             const currentTime = new Date().toISOString(); 
@@ -153,18 +151,12 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,search
                             <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString('en-GB') : 'N/A'}</td>
                             <td>{order.acceptedBy}</td>
                             <td>
-                                <RoundButtons
+                                <RoundButtons 
                                     id={`doneBtn-${order.onlineBillNo}`}
                                     backgroundColor='#EBBC00'
                                     type="submit"
                                     name={`doneBtn-${order.onlineBillNo}`}
                                     icon={<MdDone color="white" />}
-                                    onClick={() => handleOrderPickedUp(order)}
-                                <RoundButtons 
-                                    id={`doneBtn-${order.onlineBillNo}`} 
-                                    type="submit" 
-                                    name={`doneBtn-${order.onlineBillNo}`} 
-                                    icon={<MdDone />} 
                                     onClick={() => handleOpenConfirmationModal(order)} 
                                 />
                             </td>
