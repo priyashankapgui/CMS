@@ -18,6 +18,7 @@ import PasswordStrengthBar from "react-password-strength-bar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import secureLocalStorage from "react-secure-storage";
 import { getEmployeeById, updateEmployee } from "../../../../Api/BranchMgmt/UserAccountsAPI";
+import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
 
 export function UpdateUser() {
   const [employeeData, setEmployeeData] = useState({}); // State for storing employee data
@@ -29,6 +30,9 @@ export function UpdateUser() {
   const [showAlertError, setShowAlertError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [initialBranch, setInitialBranch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const currentUser = JSON.parse(secureLocalStorage.getItem("user"));
   const navigate = useNavigate();
 
@@ -38,6 +42,7 @@ export function UpdateUser() {
   useEffect(() => {
     const getEmployeeData = async () => {
       try {
+        setLoading(true);
         const token = secureLocalStorage.getItem("accessToken");
         const response = await getEmployeeById(employeeId, token);
         if (response.status !== 200) {
@@ -46,8 +51,11 @@ export function UpdateUser() {
         const data = await response.data;
         console.log("Employee data:", data);
         setEmployeeData(data);
+        setInitialBranch(data.branchName);
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setLoading(false);
       }
     };
     getEmployeeData();
@@ -76,6 +84,7 @@ export function UpdateUser() {
   };
 
   const handleUpdate = async () => {
+    setButtonLoading(true);
     if (!employeeData.employeeName || !employeeData.email) {
       setShowAlertError("Please fill the rquired fields");
       return;
@@ -124,6 +133,7 @@ export function UpdateUser() {
       setShowAlertError(error.message);
       console.error("Error:", error);
     }
+    setButtonLoading(false);
   };
 
   const handlePasswordChange = (e) => {
@@ -155,245 +165,234 @@ export function UpdateUser() {
       <div className="top-nav-blue-text">
         <div className="new-account-top-link">
           <Link to="/accounts">
-            <IoChevronBackCircleOutline
-              style={{ fontSize: "22px", color: "#0377A8" }}
-            />
+            <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
           </Link>
           <h4>Update Account</h4>
         </div>
       </div>
       <Layout>
-        <div className="new-account-form-background">
-          <div className="new-account-form-title">
-            <h3>Update Account</h3>
-            <Link to="/accounts">
-              <RoundButtons
-                id="cancelBillBtn"
-                type="submit"
-                name="cancelBillBtn"
-                icon={
-                  <AiOutlineClose
-                    style={{ color: "red" }}
-                    onClick={() => console.log("Close Button clicked")}
-                  />
-                }
-              />
-            </Link>
-          </div>
-          <div className="branch-field">
-            <InputLabel for="branchName" color="#0377A8">
-              Branch
-            </InputLabel>
-            <BranchDropdown
-              id="branchName"
-              name="branchName"
-              editable={true}
-              onChange={(e) => handleBranchChange(e)}
-              displayValue={employeeData.branchName}
-            />
-          </div>
-          <div className="flex-content-NA">
-            <div className="user-role-field">
-              <InputLabel for="userRole" color="#0377A8">
-                User Role
+        {loading ? (
+          <SubSpinner />
+        ) : (
+          <div className="new-account-form-background">
+            <div className="new-account-form-title">
+              <h3>Update Account</h3>
+              <Link to="/accounts">
+                <RoundButtons
+                  id="cancelBillBtn"
+                  type="submit"
+                  name="cancelBillBtn"
+                  icon={
+                    <AiOutlineClose
+                      style={{ color: "red" }}
+                      onClick={() => console.log("Close Button clicked")}
+                    />
+                  }
+                />
+              </Link>
+            </div>
+            <div className="branch-field">
+              <InputLabel for="branchName" color="#0377A8">
+                Branch
               </InputLabel>
-              <UserRoleDropdown
-                id="userRole"
-                name="userRole"
+              <BranchDropdown
+                id="branchName"
+                name="branchName"
                 editable={true}
-                onChange={(e) => handleUserRoleChange(e)}
-                filterByBranch={employeeData.branchName}
-                displayValue={employeeData.userRoleName}
-                removeOptions={[currentUser.role]}
+                onChange={(e) => handleBranchChange(e)}
+                displayValue={initialBranch}
               />
             </div>
-            <div className="add-dp-NA" {...getRootProps()}>
-              <label className="upload-label" htmlFor="profilePicture">
-                <Icon
-                  icon="fluent:camera-add-20-regular"
-                  style={{ fontSize: "0.813em" }}
+            <div className="flex-content-NA">
+              <div className="user-role-field">
+                <InputLabel for="userRole" color="#0377A8">
+                  User Role
+                </InputLabel>
+                <UserRoleDropdown
+                  id="userRole"
+                  name="userRole"
+                  editable={true}
+                  onChange={(e) => handleUserRoleChange(e)}
+                  filterByBranch={employeeData.branchName}
+                  displayValue={employeeData.userRoleName}
+                  removeOptions={[currentUser.role]}
                 />
-              </label>
-              {imageUrl && (
-                <img className="preview-image" src={imageUrl} alt="Preview" />
-              )}
-              {!imageUrl && (
-                <img
-                  className="preview-image"
-                  src={`https://flexflowstorage01.blob.core.windows.net/cms-data/${employeeId}.png`}
-                  alt="Profile"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = `${process.env.PUBLIC_URL}/Images/account_circle.svg`;
+              </div>
+              <div className="add-dp-NA" {...getRootProps()}>
+                <label className="upload-label" htmlFor="profilePicture">
+                  <Icon icon="fluent:camera-add-20-regular" style={{ fontSize: "0.813em" }} />
+                </label>
+                {imageUrl && <img className="preview-image" src={imageUrl} alt="Preview" />}
+                {!imageUrl && (
+                  <img
+                    className="preview-image"
+                    src={`https://flexflowstorage01.blob.core.windows.net/cms-data/${employeeId}.png`}
+                    alt="Profile"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `${process.env.PUBLIC_URL}/Images/account_circle.svg`;
+                    }}
+                  />
+                )}
+                <input {...getInputProps()} />
+                {isDragActive ? <p>Drop the image here...</p> : null}
+              </div>
+            </div>
+            <div className="emp-id-field">
+              <InputLabel for="empID" color="#0377A8">
+                Emp ID
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empID"
+                name="empID"
+                value={employeeData.employeeId}
+                editable={false}
+              />
+            </div>
+            <div className="emp-name-field">
+              <InputLabel for="empName" color="#0377A8">
+                Emp Name
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empName"
+                name="empName"
+                value={employeeData.employeeName}
+                onChange={(e) =>
+                  setEmployeeData({
+                    ...employeeData,
+                    employeeName: e.target.value,
+                  })
+                }
+                editable={true}
+              />
+            </div>
+            <div className="email-field">
+              <InputLabel for="empEmail" color="#0377A8">
+                Official Email (Optional)
+              </InputLabel>
+              <InputField
+                type="email"
+                id="empEmail"
+                name="empEmail"
+                value={employeeData.email}
+                onChange={(e) => setEmployeeData({ ...employeeData, email: e.target.value })}
+                editable={true}
+              />
+            </div>
+            <div className="phone-field">
+              <InputLabel for="empPhone" color="#0377A8">
+                Telephone (Optional)
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empPhone"
+                name="empPhone"
+                editable={true}
+                value={employeeData.phone}
+                onChange={(e) => setEmployeeData({ ...employeeData, phone: e.target.value })}
+              />
+            </div>
+            <div className="address-field">
+              <InputLabel for="empAddress" color="#0377A8">
+                Address (Optional)
+              </InputLabel>
+              <InputField
+                type="text"
+                id="empAddress"
+                name="empAddress"
+                editable={true}
+                value={employeeData.address}
+                onChange={(e) => setEmployeeData({ ...employeeData, address: e.target.value })}
+              />
+            </div>
+            <div className="password-field">
+              <InputLabel for="tempPassword" color="#0377A8">
+                Password
+              </InputLabel>
+              <InputField
+                type={showPassword ? "text" : "password"}
+                id="tempPassword"
+                name="tempPassword"
+                value={password}
+                onChange={handlePasswordChange}
+                editable={true}
+              >
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="toggle-password-button"
+                  style={{
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                    padding: 0,
                   }}
+                >
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </InputField>
+              {password && (
+                <PasswordStrengthBar
+                  password={password}
+                  minLength={8}
+                  scoreWordStyle={{
+                    fontSize: "14px",
+                    fontFamily: "Poppins",
+                  }}
+                  scoreWords={["very weak", "weak", "good", "strong", "very strong"]}
+                  shortScoreWord="should be atlest 8 characters long"
                 />
               )}
-              <input {...getInputProps()} />
-              {isDragActive ? <p>Drop the image here...</p> : null}
+              <InputLabel for="tempConPassword" color="#0377A8">
+                Confirm Password
+              </InputLabel>
+              <InputField
+                type={showConfirmPassword ? "text" : "password"}
+                id="tempConPassword"
+                name="tempPassword"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                editable={true}
+              >
+                <button
+                  type="button"
+                  onClick={toggleShowConfirmPassword}
+                  className="toggle-password-button"
+                  style={{
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                  }}
+                >
+                  {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                </button>
+              </InputField>
             </div>
-          </div>
-          <div className="emp-id-field">
-            <InputLabel for="empID" color="#0377A8">
-              Emp ID
-            </InputLabel>
-            <InputField
-              type="text"
-              id="empID"
-              name="empID"
-              value={employeeData.employeeId}
-              editable={false}
-            />
-          </div>
-          <div className="emp-name-field">
-            <InputLabel for="empName" color="#0377A8">
-              Emp Name
-            </InputLabel>
-            <InputField
-              type="text"
-              id="empName"
-              name="empName"
-              value={employeeData.employeeName}
-              onChange={(e) =>
-                setEmployeeData({
-                  ...employeeData,
-                  employeeName: e.target.value,
-                })
-              }
-              editable={true}
-            />
-          </div>
-          <div className="email-field">
-            <InputLabel for="empEmail" color="#0377A8">
-              Official Email
-            </InputLabel>
-            <InputField
-              type="email"
-              id="empEmail"
-              name="empEmail"
-              value={employeeData.email}
-              onChange={(e) =>
-                setEmployeeData({ ...employeeData, email: e.target.value })
-              }
-              editable={true}
-            />
-          </div>
-          <div className="phone-field">
-            <InputLabel for="empPhone" color="#0377A8">
-              Telephone
-            </InputLabel>
-            <InputField
-              type="text"
-              id="empPhone"
-              name="empPhone"
-              editable={true}
-              value={employeeData.phone}
-              onChange={(e) =>
-                setEmployeeData({ ...employeeData, phone: e.target.value })
-              }
-            />
-          </div>
-          <div className="address-field">
-            <InputLabel for="empAddress" color="#0377A8">
-              Address (Optional)
-            </InputLabel>
-            <InputField
-              type="text"
-              id="empAddress"
-              name="empAddress"
-              editable={true}
-              value={employeeData.address}
-              onChange={(e) =>
-                setEmployeeData({ ...employeeData, address: e.target.value })
-              }
-            />
-          </div>
-          <div className="password-field">
-            <InputLabel for="tempPassword" color="#0377A8">
-              Password
-            </InputLabel>
-            <InputField
-              type={showPassword ? "text" : "password"}
-              id="tempPassword"
-              name="tempPassword"
-              value={password}
-              onChange={handlePasswordChange}
-              editable={true}
-            >
-              <button
-                type="button"
-                onClick={toggleShowPassword}
-                className="toggle-password-button"
-                style={{
-                  border: "none",
-                  background: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                }}
+            {buttonLoading ? (
+              <SubSpinner spinnerText="Updating"/>
+            ) : (
+              <Buttons
+                type="submit"
+                id="create-btn"
+                style={{ backgroundColor: "#23A3DA", color: "white" }}
+                btnWidth="22em"
+                onClick={handleUpdate}
               >
-                {showPassword ? <FaEye /> : <FaEyeSlash />}
-              </button>
-            </InputField>
-            {password && (
-              <PasswordStrengthBar
-                password={password}
-                minLength={8}
-                scoreWordStyle={{
-                  fontSize: "14px",
-                  fontFamily: "Poppins",
-                }}
-                scoreWords={[
-                  "very weak",
-                  "weak",
-                  "good",
-                  "strong",
-                  "very strong",
-                ]}
-                shortScoreWord="should be atlest 8 characters long"
-              />
+                Save
+              </Buttons>
             )}
-            <InputLabel for="tempConPassword" color="#0377A8">
-              Confirm Password
-            </InputLabel>
-            <InputField
-              type={showConfirmPassword ? "text" : "password"}
-              id="tempConPassword"
-              name="tempPassword"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              editable={true}
-            >
-              <button
-                type="button"
-                onClick={toggleShowConfirmPassword}
-                className="toggle-password-button"
-                style={{
-                  border: "none",
-                  background: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                }}
-              >
-                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-              </button>
-            </InputField>
           </div>
-          <Buttons
-            type="submit"
-            id="create-btn"
-            style={{ backgroundColor: "#23A3DA", color: "white" }}
-            onClick={handleUpdate}
-          >
-            Save
-          </Buttons>
-        </div>
-
+        )}
         {showAlertSuccess && (
           <CustomAlert
             severity="success"
             title="Success"
             message="Employee updated successfully"
             duration={3000}
-            onClose={() => 
+            onClose={() =>
               // window.history.back()
               navigate("/accounts")
             }

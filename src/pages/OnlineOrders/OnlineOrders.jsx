@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import { useLocation } from 'react-router-dom';
 import Layout from "../../Layout/Layout";
 import "./OnlineOrders.css";
 import SearchBar from '../../Components/SearchBar/SearchBar';
@@ -9,7 +9,7 @@ import InputField from "../../Components/InputField/InputField";
 import Buttons from "../../Components/Buttons/SquareButtons/Buttons";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import NewOrders from '../OnlineOrders/NewOrders/NewOrders';
+import NewOrders from './NewOrders/NewOrders';
 import ProcessingOrders from './ProcessingOrders/ProcessingOrders';
 import PendingPickup from './PendingPickupOrders/PendingPickupOrders';
 import CompletedOrder from './CompletedOrders/CompletedOrders';
@@ -20,7 +20,8 @@ export const OnlineOrders = () => {
     const [newOrdersCount, setNewOrdersCount] = useState(0); 
     const [processingOrdersCount, setProcessingOrdersCount] = useState(0);
     const [pickupOrdersCount, setPickupOrdersCount] = useState(0);
-    const [tabIndex, setTabIndex] = useState(0); // State for tracking active tab index
+    const [tabIndex, setTabIndex] = useState(0); 
+    const [searchClicked, setSearchClicked] = useState(false); 
 
     const location = useLocation();
 
@@ -38,6 +39,15 @@ export const OnlineOrders = () => {
 
     const handleTabSelect = (index) => {
         setTabIndex(index);
+    };
+
+    const handleSearchClick = () => {
+        setSearchClicked(true);
+    };
+
+    const handleClearClick = () => {
+        setSelectedBranch('');
+        setSearchClicked(false);
     };
 
     return (
@@ -66,14 +76,10 @@ export const OnlineOrders = () => {
                             <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
                             <SearchBar />
                         </div>
-                        <div className="prodcutName">
-                            <InputLabel htmlFor="ProductID/Name" color="#0377A8">Product ID / Name</InputLabel>
-                            <SearchBar />
-                        </div>
                     </div>
                     <div className="OnlineOrdersBtn">
-                        <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={''}> Search </Buttons>
-                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={''}> Clear </Buttons>
+                        <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearchClick}> Search </Buttons>
+                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearClick}> Clear </Buttons>
                     </div>
                 </div>
                 <Tabs className="OnlineOrdersTabs" selectedIndex={tabIndex} onSelect={handleTabSelect}>
@@ -96,16 +102,33 @@ export const OnlineOrders = () => {
                     </TabList>
 
                     <TabPanel>
-                        <NewOrders setNewOrdersCount={setNewOrdersCount} />
+                        <NewOrders 
+                            selectedBranch={selectedBranch} 
+                            setNewOrdersCount={setNewOrdersCount} 
+                            searchClicked={searchClicked}
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <ProcessingOrders setProcessingOrdersCount={setProcessingOrdersCount} onTabChange={setTabIndex} />
+                        <ProcessingOrders 
+                            selectedBranch={selectedBranch} 
+                            setProcessingOrdersCount={setProcessingOrdersCount} 
+                            searchClicked={searchClicked}
+                            onTabChange={setTabIndex} 
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <PendingPickup setPickupOrdersCount={setPickupOrdersCount} onTabChange={setTabIndex} />
+                        <PendingPickup 
+                            selectedBranch={selectedBranch} 
+                            setPickupOrdersCount={setPickupOrdersCount} 
+                            searchClicked={searchClicked}
+                            onTabChange={setTabIndex} 
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <CompletedOrder />
+                        <CompletedOrder 
+                            selectedBranch={selectedBranch} 
+                            searchClicked={searchClicked}
+                        />
                     </TabPanel>
                 </Tabs>
             </Layout>
