@@ -296,15 +296,7 @@ export const WebFeedbacks = () => {
                                 />
                             </div>
                             <div className="actionField">
-                                <InputLabel htmlFor="actionType" color="#0377A8">Action</InputLabel>
-                                <InputDropdown
-                                    id="actionType"
-                                    name="actionType"
-                                    editable={true}
-                                    options={['All', 'Taken', 'Pending']}
-                                    value={filters.actionType || 'All'}
-                                    onChange={(e) => handleActionDropdownChange(e)}
-                                />
+                              
                             </div>
                         </div>
                         <div className="feed-BtnSection">
