@@ -32,7 +32,7 @@ export const WebMgmt = () => {
         formData.append("type", imageType);
       }
 
-      const response = await fetch("http://localhost:8080/webIamges", {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/webIamges`, {
         method: "POST",
         body: formData,
       });
