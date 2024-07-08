@@ -107,6 +107,20 @@ export function CompletedOrders() {
                             <div className='inputFlex'>
                                 <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>Card</span></InputLabel>
                             </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="acceptedAt" color="#0377A8">Accepted At: <span>{new Date(orderData.acceptedAt).toLocaleString('en-GB')}</span></InputLabel>
+                            </div>
+                        </div>
+                        <div className='detail2'>
+                            <div className='inputFlex'>
+                                <InputLabel for="acceptedby" color="#0377A8">Accepted By: <span>{orderData.acceptedBy}</span></InputLabel>
+                            </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="issueddby" color="#0377A8">Issued By:<span>{orderData.pickupBy}</span></InputLabel>
+                            </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="pickupAt" color="#0377A8">Pickup At:<span>{new Date(orderData.pickupTime).toLocaleString('en-GB')}</span></InputLabel>
+                            </div>
                         </div>
                     </div>
                 </div>
