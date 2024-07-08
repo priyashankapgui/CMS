@@ -85,8 +85,8 @@ export const GoodReceive = () => {
   const fetchBranches = async () => {
     try {
       const response = await getBranchOptions();
-      console.log('Fetched branches:', response.data);
-      setBranches(response.data);
+      console.log('Fetcheds branches:', response);
+      setBranches(response);
     } catch (error) {
       console.error("Error fetching branches:", error);
     }
