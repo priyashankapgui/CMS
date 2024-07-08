@@ -69,18 +69,18 @@ export const OnlineOrders = () => {
         }
     };
 
-    const fetchSuggestionsByCustomerName = async (term) => {
-        try {
-            const bills = await getAllOnlineBills();
-            return bills.filter(bill => bill.customerName.toLowerCase().includes(term.toLowerCase())).map(bill => ({
-                id: bill.customerName,
-                displayText: `${bill.customerName} ${bill.onlineBillNo}`
-            }));
-        } catch (error) {
-            console.error('Error fetching suggestions by customer name:', error);
-            return [];
-        }
-    };
+    // const fetchSuggestionsByCustomerName = async (term) => {
+    //     try {
+    //         const bills = await getAllOnlineBills();
+    //         return bills.filter(bill => bill.customerName.toLowerCase().includes(term.toLowerCase())).map(bill => ({
+    //             id: bill.customerName,
+    //             displayText: `${bill.customerName} ${bill.onlineBillNo}`
+    //         }));
+    //     } catch (error) {
+    //         console.error('Error fetching suggestions by customer name:', error);
+    //         return [];
+    //     }
+    // };
 
     const handleSelectSuggestionByOrderNo = async (suggestion) => {
         try {
@@ -165,8 +165,8 @@ export const OnlineOrders = () => {
                             />
                         </div>
                         <div className="customerName">
-                            <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
-                            {/* <SearchBar 
+                            {/* <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
+                            <SearchBar 
                                 searchTerm={searchTermCustomerName}
                                 setSearchTerm={setSearchTermCustomerName}
                                 onSelectSuggestion={handleSelectSuggestionByCustomerName}
