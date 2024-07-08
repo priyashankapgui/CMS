@@ -220,7 +220,8 @@ export const WorkList = () => {
                                             </Link>
                                         </div>
                                     )
-                                }))}
+                                }))
+                                .sort((a, b) => new Date(b.billedAt) - new Date(a.billedAt))}
                             />
                         </div>
                     )}
