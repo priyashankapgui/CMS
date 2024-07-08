@@ -96,6 +96,7 @@ export const Sales = () => {
         }
         try {
             const products = await getProductByBranch(searchTerm, selectedBranch);
+            console.log("products",products);
             const productMap = new Map();
 
             products.forEach((product) => {

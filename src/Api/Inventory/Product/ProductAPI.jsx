@@ -27,10 +27,9 @@ export const createProduct = async (newProduct) => {
     }
 };
 
-export const getProducts = async (token) => {
+export const getProducts = async () => {
     try {
-        const token = getAccessToken();
-        const response = await api.get('/products', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await api.get('/products');
         return response.data;
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -41,9 +40,8 @@ export const getProducts = async (token) => {
 
 export const getProductById = async (productId) => {
     try {
-        const token = getAccessToken();
         const response = await api.get(`/products/${productId}`,
-        { headers: { Authorization: `Bearer ${token}` } });
+        );
         return response.data;
     } catch (error) {
         console.error(`Error fetching product by ID ${productId}:`, error);
