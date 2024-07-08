@@ -41,22 +41,27 @@ const mapOrdersToRows = (orders) => {
         )
     }));
 };
-const Completed = () => {
+const Completed = ({selectedBranch,searchClicked}) => {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills(); 
-                const completedOrders = response.filter(order => order.status === "Completed");
+                let completedOrders = response.filter(order => order.status === "Completed");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    completedOrders = completedOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+    
                 setOrders(completedOrders);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
         };
-
+    
         fetchOrders();
-    }, []);
+    }, [selectedBranch, searchClicked]);
 
     const rows = mapOrdersToRows(orders);
 

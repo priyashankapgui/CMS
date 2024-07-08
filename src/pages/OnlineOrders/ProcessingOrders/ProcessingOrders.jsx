@@ -7,7 +7,7 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx'
 import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 import emailjs from 'emailjs-com';
 
-const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
+const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch,searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
     const [alertDetails, setAlertDetails] = useState({
@@ -23,25 +23,29 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills();
-                const processingOrders = response.filter(order => order.status === "Processing");
-                console.log("Processing Orders Fetched:", processingOrders); // Debug log
+                let processingOrders = response.filter(order => order.status === "Processing");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    processingOrders = processingOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+    
                 setOrders(processingOrders);
                 setProcessingOrdersCount(processingOrders.length); 
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
         };
-
+    
         fetchOrders();
-    }, [setProcessingOrdersCount]);
-
+    }, [selectedBranch, searchClicked, setProcessingOrdersCount]);
+    
     const handleProcessingDone = async (order) => {
         try {
             const updates = { status: "Pickup" };
             await updateOnlineBill(order.onlineBillNo, updates);
             setOrders((prevOrders) => prevOrders.filter(o => o.onlineBillNo !== order.onlineBillNo));
             setProcessingOrdersCount((prevCount) => prevCount - 1);
-            console.log("Order Processed and Count Updated:", orders.length); // Debug log
+            console.log("Order Processed and Count Updated:", orders.length);
             setAlertDetails({
                 severity: 'success',
                 title: 'Success',
@@ -50,10 +54,8 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
             });
             setShowAlert(true);
 
-            // Switch tab to Pending Pickup (index 2)
             onTabChange(2);
 
-            // Send email to customer
             const templateParams = {
                 customer_name: `${order.customer.firstName} ${order.customer.lastName}`,
                 order_number: order.onlineBillNo,

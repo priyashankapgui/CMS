@@ -8,7 +8,7 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx'
 import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
 import emailjs from 'emailjs-com';
 
-const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
+const PendingPickup = ({ setPickupOrdersCount, onTabChange,selectedBranch,searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [userDetails, setUserDetails] = useState({ username: '' });
     const [showAlert, setShowAlert] = useState(false);
@@ -30,21 +30,25 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
             });
         }
     }, []);
-
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills();
-                const pickupOrders = response.filter(order => order.status === "Pickup");
+                let pickupOrders = response.filter(order => order.status === "Pickup");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    pickupOrders = pickupOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+    
                 setOrders(pickupOrders);
                 setPickupOrdersCount(pickupOrders.length);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
         };
-
+    
         fetchOrders();
-    }, [setPickupOrdersCount]);
+    }, [selectedBranch, searchClicked, setPickupOrdersCount]);
 
     const handleOrderPickedUp = async () => {
         if (userDetails.username && selectedOrder) {
@@ -67,7 +71,6 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                 });
                 setShowAlert(true);
 
-                // Send email to customer
                 const templateParams = {
                     customer_name: `${selectedOrder.customer.firstName} ${selectedOrder.customer.lastName}`,
                     order_number: selectedOrder.onlineBillNo,
@@ -81,7 +84,6 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                         console.error('Failed to send email:', error);
                     });
 
-                // Switch tab to Completed (index 3)
                 onTabChange(3);
             } catch (error) {
                 console.error("Error updating order status:", error);
@@ -93,7 +95,7 @@ const PendingPickup = ({ setPickupOrdersCount, onTabChange }) => {
                 });
                 setShowAlert(true);
             } finally {
-                setConfirmationModalOpen(false); // Close the modal after handling
+                setConfirmationModalOpen(false); 
             }
         }
     };

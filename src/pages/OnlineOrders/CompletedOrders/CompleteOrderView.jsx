@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, Link } from 'react-router-dom'; 
 import Layout from "../../../Layout/Layout";
 import "./CompleteOrderView.css";
 import { IoChevronBackCircleOutline } from 'react-icons/io5';
@@ -12,7 +12,6 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx'
 
 export function CompletedOrders() {
     const { onlineBillNo } = useParams();
-    const navigate = useNavigate(); // Use useNavigate
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
