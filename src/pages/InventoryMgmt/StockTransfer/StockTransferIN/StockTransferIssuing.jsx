@@ -38,6 +38,7 @@ export const StockTransferIssuing = () => {
                     batchNo: '', 
                     transferQty: '',
                     unitPrice: 0,
+                    expDate: '',
                     amount: 0,
                 }));
                 setRows(products);
@@ -55,10 +56,12 @@ export const StockTransferIssuing = () => {
     const fetchBatchSuggestions = async (productId, branchName, searchTerm) => {
         try {
             const response = await getBatchNo(productId,branchName);
+            console.log("data ",response.data);
             return response.data.map(batch => ({
                 value: batch.batchNo,
                 displayText: `${batch.batchNo} (Available: ${batch.totalAvailableQty})`,
-                unitPrice: batch.sellingPrice 
+                unitPrice: batch.sellingPrice ,
+                expDate: batch.expDate,
             }));
         } catch (error) {
             console.error("Error fetching batch suggestions:", error);
@@ -69,7 +72,7 @@ export const StockTransferIssuing = () => {
     const handleBatchSelect = (id, selectedBatch) => {
         const updatedRows = rows.map(row => {
             if (row.id === id) {
-                return { ...row, batchNo: selectedBatch.value, unitPrice: selectedBatch.unitPrice, amount: (row.transferQty * selectedBatch.unitPrice).toFixed(2) };
+                return { ...row, batchNo: selectedBatch.value, unitPrice: selectedBatch.unitPrice, expDate: selectedBatch.expDate, amount: (row.transferQty * selectedBatch.unitPrice).toFixed(2) };
             }
             return row;
         });
@@ -93,6 +96,7 @@ export const StockTransferIssuing = () => {
                     batchNo: row.batchNo,
                     transferQty: row.transferQty,
                     unitPrice: row.unitPrice,
+                    expDate: row.expDate,
                     amount: row.amount
                 }))
             };
@@ -147,6 +151,7 @@ export const StockTransferIssuing = () => {
             batchNo: '', 
             transferQty: '',
             unitPrice: 0,
+            expDate: '',
             amount: 0,
         };
         setRows([...rows, newRow]);
@@ -155,7 +160,7 @@ export const StockTransferIssuing = () => {
     const handleDeleteRow = (id) => {
         if (id === 1 && rows.length === 1) {
             // Clear data for the first row
-            setRows([{ id: 1, productId: '', reqQty: '', batchNo: '', transferQty: '', unitPrice: 0, amount: 0 }]);
+            setRows([{ id: 1, productId: '', reqQty: '', batchNo: '', transferQty: '', unitPrice: 0, expDate: '', amount: 0 }]);
         } else {
             // Delete other rows
             setRows(rows.filter(row => row.id !== id));
@@ -169,6 +174,7 @@ export const StockTransferIssuing = () => {
         "Batch No",
         "Transfer Qty",
         "Unit Price",
+        "Exp Date",
         "Amount",
         
     ];
@@ -198,6 +204,8 @@ export const StockTransferIssuing = () => {
                 onChange={(e) => handleInputChange(row.id, 'unitPrice', parseFloat(e.target.value) || 0)}
             />
         ),
+
+        expDate: row.expDate,
         amount: row.amount,
         
     }));

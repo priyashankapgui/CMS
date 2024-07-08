@@ -5,7 +5,6 @@ import SubSpinner from '../../../Components/Spinner/SubSpinner/SubSpinner';
 import { getGRNByGRN_NO } from '../../../Api/Inventory/GoodReceive/GoodReceiveAPI';
 
 const GrnDoc = ({ GRN_NO, onClose }) => {
-    console.log("data ohh", GRN_NO);
     const [GRNData, setGRNData] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -56,7 +55,7 @@ const GrnDoc = ({ GRN_NO, onClose }) => {
                         <div className="GrnDoc-top-details-right">
                             <p>Invoice No: {GRNData?.invoiceNo}</p>
                             <p>Supplier: {GRNData?.supplierName}</p>
-                            <p>Submitted By: {GRNData?.submittedBy || 'N/A'}</p>
+                            {/* <p>Submitted By: {GRNData?.submittedBy || 'N/A'}</p> */}
                         </div>
                     </div>
                     <hr className='invoice-line-top' />

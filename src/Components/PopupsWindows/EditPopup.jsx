@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import SubPopup from "./SubPopup";
 import Buttons from "../Buttons/SquareButtons/Buttons";
 import SubSpinner from "../Spinner/SubSpinner/SubSpinner";
 
-function EditPopup({ topTitle, children, buttonId, buttonText, onClick, open }) {
+function EditPopup({ topTitle, children, buttonId, buttonText, onClick, open, onClose }) {
     const [isHovered, setIsHovered] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const onClickWithLoading = async () => {
+    const onClickWithLoading = async (event) => {
         setLoading(true);
-        await onClick();
+        await onClick(event);
         setLoading(false);
     };
 
@@ -18,6 +18,7 @@ function EditPopup({ topTitle, children, buttonId, buttonText, onClick, open }) 
         <div style={{ width: "" }}>
             <SubPopup
                 open={open}
+                onClose={onClose}
                 triggerComponent={
                     <Icon
                         icon="bitcoin-icons:edit-outline"

@@ -76,22 +76,26 @@ export const Products = () => {
         }
     };
 
-
+    
     const handleClearBtnCategorySection = async () => {
         setSelectedAdjustCategory(''); 
         try {
             setLoadingCategories(true);
             const response = await getCategories();
+            console.log("data category",response.data);
             if (response.data && response.data) {
+                
                 setCategoryData(response.data);
+                console.log("categoryData1",categoryData);
                 setFilteredCategories(response.data);
+                console.log("filteredCategories1",filteredCategories);
             } else {
                 console.error('Invalid response format:', response);
             }
         } catch (error) {
             console.error('Error fetching categories:', error);
         } finally {
-            setLoading(false);
+            setLoadingCategories(false);
         }
        
     };
@@ -203,7 +207,9 @@ export const Products = () => {
                 const response = await getCategories();
                 if (response.data && response.data) {
                     setCategoryData(response.data);
+                    console.log("categoryData",categoryData);
                     setFilteredCategories(response.data);
+                    console.log("filteredCategories",filteredCategories);
                 } else {
                     console.error('Invalid response format:', response);
                 }
