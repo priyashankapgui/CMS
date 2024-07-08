@@ -1,4 +1,7 @@
 import axios from "axios";
+import secureLocalStorage from 'react-secure-storage';
+
+const getAccessToken = () => secureLocalStorage.getItem('accessToken');
 
 
 const api = axios.create({
@@ -11,9 +14,11 @@ const api = axios.create({
 
 export const createCategory = async (newCategory) => {
     try {
+        const token = getAccessToken();
         const response = await api.post('/categories', newCategory, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}` 
             }
         });
         return response.data;
@@ -36,7 +41,9 @@ export const getCategories = async () => {
 
 export const getCategoryById = async (categoryId) => {
     try {
-        const response = await api.get(`/categories/${categoryId}`);
+        const token = getAccessToken();
+        const response = await api.get(`/categories/${categoryId}`,
+        { headers: { Authorization: `Bearer ${token}` } });
         return response.data;
     } catch (error) {
         console.error(`Error fetching category by ID ${categoryId}:`, error);
@@ -47,9 +54,11 @@ export const getCategoryById = async (categoryId) => {
 
 export const updateCategory = async (categoryId, updatedCategory) => {
     try {
+        const token = getAccessToken();
         const response = await api.put(`/categories/${categoryId}`, updatedCategory, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
             }
         });
         return response.data;
@@ -63,7 +72,10 @@ export const updateCategory = async (categoryId, updatedCategory) => {
 
 export const deleteCategoryById = async (categoryId) => {
     try {
-        const response = await api.delete(`/categories/${categoryId}`);
+        const token = getAccessToken();
+        const response = await api.delete(`/categories/${categoryId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
         return response.data;
     } catch (error) {
         console.error(`Error deleting category with ID ${categoryId}:`, error);

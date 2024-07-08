@@ -1,17 +1,25 @@
 import axios from "axios";
+import secureLocalStorage from "react-secure-storage";
+
+const getAccessToken = () => secureLocalStorage.getItem('accessToken');
 
 
-export const api = axios.create({
-    baseURL: process.env.REACT_APP_API_BASE_URL, 
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
+const createAuthInstance = () => {
+    const token = getAccessToken();
+    return axios.create({
+        baseURL: process.env.REACT_APP_API_BASE_URL,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+};
 
 
 export const createSupplier = async (supplierData) => {
     try {
-        const response = await api.post('/suppliers', supplierData);
+        const authApi = createAuthInstance();
+        const response = await authApi.post('/suppliers', supplierData);
         return response.data; 
     } catch (error) {
         console.error('Error creating supplier:', error);
@@ -23,7 +31,8 @@ export const createSupplier = async (supplierData) => {
 
 export const getSuppliers = async () => {
     try {
-        const response = await api.get('/suppliers');
+        const authApi = createAuthInstance();
+        const response = await authApi.get('/suppliers');
         return response.data;
     } catch (error) {
         console.error('Error fetching suppliers:', error);
@@ -34,7 +43,8 @@ export const getSuppliers = async () => {
 
 export const getSupplierById = async (supplierId) => {
     try {
-        const response = await api.get(`/suppliers/${supplierId}`);
+        const authApi = createAuthInstance();
+        const response = await authApi.get(`/suppliers/${supplierId}`);
         return response.data;
     } catch (error) {
         console.error(`Error fetching supplier by ID ${supplierId}:`, error);
@@ -45,7 +55,8 @@ export const getSupplierById = async (supplierId) => {
 
 export const deleteSupplierById = async (supplierId) => {
     try {
-        const response = await api.delete(`/suppliers/${supplierId}`);
+        const authApi = createAuthInstance();
+        const response = await authApi.delete(`/suppliers/${supplierId}`);
         return response.data;
     } catch (error) {
         console.error(`Error deleting supplier with ID ${supplierId}:`, error);
@@ -56,7 +67,8 @@ export const deleteSupplierById = async (supplierId) => {
 
 export const updateSupplier = async (supplierId, updatedSupplier) => {
     try {
-        const response = await api.put(`/suppliers/${supplierId}`, updatedSupplier);
+        const authApi = createAuthInstance();
+        const response = await authApi.put(`/suppliers/${supplierId}`, updatedSupplier);
         return response.data;
     } catch (error) {
         console.error(`Error updating supplier with ID ${supplierId}:`, error);
@@ -67,4 +79,4 @@ export const updateSupplier = async (supplierId, updatedSupplier) => {
 
 
 
-export default api;
+// export default api;

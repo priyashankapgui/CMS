@@ -58,6 +58,26 @@ export const getAllBills = async () => {
     }
 };
 
+export const getAllBillsByDate = async ({ branchName, startDate, endDate } = {}) => {
+    const params = {};
+    if (branchName) {
+        params.branchName = branchName;
+    }
+    if (startDate) {
+        params.startDate = startDate;
+    }
+    if (endDate) {
+        params.endDate = endDate;
+    }
+
+    try {
+        const response = await api.get('/bills-by-branch-and-date-range', { params });
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching all  physical bills by branch:', error.response ? error.response.data : error);
+        throw error;
+    }
+};
 
 
 
@@ -80,22 +100,24 @@ export const getRefundedBillData = async (RTBNo) => {
         throw error;
     }
 };
-export const getAllRefundBills = async ({ startDate, endDate } = {}) => {
-    const params = {};
 
+export const getAllRefundBillsByDate = async ({ branchName, startDate, endDate } = {}) => {
+    const params = {};
+    if (branchName) {
+        params.branchName = branchName;
+    }
     if (startDate) {
         params.startDate = startDate;
     }
-
     if (endDate) {
         params.endDate = endDate;
     }
 
     try {
-        const response = await api.get('/refund', { params });
-        return response.data;
+        const response = await api.get('/refund/branch-date-range', { params });
+        return response.data.data;
     } catch (error) {
-        console.error('Error fetching all refund bills:', error);
+        console.error('Error fetching all refund bills:', error.response ? error.response.data : error);
         throw error;
     }
 };
@@ -110,16 +132,17 @@ export const postCancelBill = async (payload) => {
     }
 };
 
+export const getCheckRefundBillData = async (billNo) => {
+    try {
+        const response = await api.get(`/refund/bill/${billNo}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching RefundBillDataStartReturn data:', error.response ? error.response.data : error);
+        throw error;
+    }
+};
+
+
 export default api;
 
-// export const putCancelBill = async (payload) => {
-//     console.log("Thank youuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu")
-//     try {
-//         const response = await axios.put('/api/cancel-bill', payload);
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error in putCancelBill:', error);
-//         throw error;
-//     }
-// };
-// export default api;
+

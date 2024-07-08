@@ -1,19 +1,17 @@
-import Layout from "../../../Layout/Layout";
+import Layout from "../../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
 import './StockTransferIssuing.css';
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import InputLabel from "../../../../Components/Label/InputLabel";
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import SearchBar from '../../../../Components/SearchBar/SearchBar';
+import secureLocalStorage from "react-secure-storage";
+import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
+import ConfirmationPopup from "../../../../Components/PopupsWindows/ConfirmationPopup";
 import { Link , useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import InputLabel from "../../../Components/Label/InputLabel";
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import SearchBar from '../../../Components/SearchBar/SearchBar';
-import { FiPlus } from "react-icons/fi"; 
-import { AiOutlineDelete } from "react-icons/ai";
-import secureLocalStorage from "react-secure-storage";
-import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
-import ConfirmationPopup from "../../../Components/PopupsWindows/ConfirmationPopup";
-import { getStockTransferBySTN_NO, getBatchNo, createstockTransferIN } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
-import { cancelStockRequest } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { getStockTransferBySTN_NO, getBatchNo, createstockTransferIN } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { cancelStockRequest } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const StockTransferIssuing = () => {
     const { STN_NO } = useParams();
@@ -32,7 +30,6 @@ export const StockTransferIssuing = () => {
                 
                 
                 const response = await getStockTransferBySTN_NO(STN_NO);
-                console.log("Fetched data:", response.data);
                 setStockTransferDetails(response.data);
                 const products = response.data.products.map((product, index) => ({
                     id: index + 1,
@@ -56,10 +53,8 @@ export const StockTransferIssuing = () => {
     }, [STN_NO]);
 
     const fetchBatchSuggestions = async (productId, branchName, searchTerm) => {
-        console.log("data",searchTerm);
         try {
             const response = await getBatchNo(productId,branchName);
-            console.log("Batch suggestions response:", response.data);
             return response.data.map(batch => ({
                 value: batch.batchNo,
                 displayText: `${batch.batchNo} (Available: ${batch.totalAvailableQty})`,
@@ -94,7 +89,7 @@ export const StockTransferIssuing = () => {
                 submittedBy: user.userName,
                 supplyingBranch: stockTransferDetails?.supplyingBranch,
                 products: rows.map(row => ({
-                    productId: row.productId.split(' / ')[0], // Assuming productId is split by ' / ' and first part is the ID
+                    productId: row.productId.split(' / ')[0],
                     batchNo: row.batchNo,
                     transferQty: row.transferQty,
                     unitPrice: row.unitPrice,
@@ -102,10 +97,8 @@ export const StockTransferIssuing = () => {
                 }))
             };
 
-            console.log("Data to be sent:", data);
 
             const response = await createstockTransferIN(data);
-            console.log("Save response:", response.data);
             setAlert({
                 show: true,
                 severity: 'success',
@@ -227,7 +220,6 @@ export const StockTransferIssuing = () => {
                 };
 
                 const response = await cancelStockRequest(data);
-                console.log("Cancellation response:", response.data);
                 setAlert({
                     show: true,
                     severity: 'success',

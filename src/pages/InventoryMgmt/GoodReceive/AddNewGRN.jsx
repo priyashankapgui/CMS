@@ -2,15 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import './AddNewGRN.css';
 import Layout from "../../../Layout/Layout";
 import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import { Link, useNavigate } from 'react-router-dom';
-import { IoChevronBackCircleOutline } from "react-icons/io5";
 import InputLabel from "../../../Components/Label/InputLabel";
 import InputField from "../../../Components/InputField/InputField";
 import SearchBar from '../../../Components/SearchBar/SearchBar';
-import { FiPlus } from "react-icons/fi";
-import { AiOutlineDelete } from "react-icons/ai";
+import DatePicker from '../../../Components/DatePicker/DatePicker';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import { Link, useNavigate } from 'react-router-dom';
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+import { FiPlus } from "react-icons/fi";
+import { AiOutlineDelete } from "react-icons/ai";
 import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
 import { getSuppliers } from '../../../Api/Inventory/Supplier/SupplierAPI';
 import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
@@ -26,6 +27,7 @@ export function AddNewGRN() {
     const [supplierId, setSupplierId] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState('');
     const [branchName, setBranchName] = useState('');
+    const [grnDate, setGrnDate] = useState(new Date());
     const [rows, setRows] = useState([{ id: 1, productId: '', batchNo: '', totalQty: '', purchasePrice: '', sellingPrice: '', freeQty: '', expDate: '', comment: '', amount: '' }]);
     const [alert, setAlert] = useState({ show: false, severity: '', title: '', message: '' });
     const navigate = useNavigate();
@@ -73,6 +75,11 @@ export function AddNewGRN() {
         }
     };
 
+    const handleDateChange = (date) => {
+        setGrnDate(date);
+    };
+    
+
     const handleSave = async (e) => {
         e.preventDefault();
 
@@ -96,7 +103,6 @@ export function AddNewGRN() {
                 amount: row.amount,
             }))
         };
-        console.log("data",grnData);
 
         try {
             await createGRN(grnData);
@@ -139,10 +145,8 @@ export function AddNewGRN() {
 
     const handleDeleteRow = (id) => {
         if (id === 1) {
-            // Clear data for the first row
             setRows(rows.map(row => (row.id === 1 ? initialRowData : row)));
         } else {
-            // Delete other rows
             setRows(rows.filter(row => row.id !== id));
         }
     };
@@ -301,7 +305,10 @@ export function AddNewGRN() {
                                         <td><InputField type="text" id="purchasePrice" name="purchasePrice" textAlign="right" editable={true} value={row.purchasePrice} onChange={(e) => handleInputChange(row.id, 'purchasePrice', e.target.value)} width="100%" /></td>
                                         <td><InputField type="text" id="sellingPrice" name="sellingPrice" textAlign="right" editable={true} value={row.sellingPrice} onChange={(e) => handleInputChange(row.id, 'sellingPrice', e.target.value)} width="100%" /></td>
                                         <td><InputField type="number" id="freeQty" name="freeQty" textAlign="center" editable={true} value={row.freeQty} onChange={(e) => handleInputChange(row.id, 'freeQty', e.target.value)} width="100%" /></td>
-                                        <td><InputField type="date" id="expDate" name="expDate" editable={true} value={row.expDate} onChange={(e) => handleInputChange(row.id, 'expDate', e.target.value)} width="100%" /></td>
+                                        <td> <DatePicker
+                                                selectedDate={row.expDate}
+                                                onDateChange={(date) => handleInputChange(row.id, 'expDate', date)}
+                                            /></td>
                                         <td><InputField type="text" id="amount" name="amount" textAlign="right" editable={false} value={row.amount} width="100%" /></td>
                                         <td><InputField type="text" id="comment" name="comment" editable={true} value={row.comment} onChange={(e) => handleInputChange(row.id, 'comment', e.target.value)} width="100%" /></td>
                                         <td style={{ paddingRight: '12px', cursor: 'pointer' }}><FiPlus onClick={handleAddRow} style={{ cursor: 'pointer' }} /></td>

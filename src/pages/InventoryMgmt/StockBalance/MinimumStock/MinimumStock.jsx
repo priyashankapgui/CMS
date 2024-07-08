@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
-import "./StockBalance.css";
-import InputLabel from "../../../Components/Label/InputLabel";
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import SearchBar from "../../../Components/SearchBar/SearchBar";
-import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
-import StockSummary from './StockSummary';
-import AdjustStock from './AdjustStock';
-import { getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI';
-import { getProducts } from '../../../Api/Inventory/Product/ProductAPI';
-import { getActiveStock } from '../../../Api/Inventory/StockBalance/StockBalanceAPI';
+import "./MinimumStock.css";
+import InputLabel from "../../../../Components/Label/InputLabel";
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import SearchBar from "../../../../Components/SearchBar/SearchBar";
+import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
+import secureLocalStorage from "react-secure-storage";
+import { getBranchOptions } from '../../../../Api/BranchMgmt/BranchAPI';
+import { getProducts } from '../../../../Api/Inventory/Product/ProductAPI';
+import { getProductMinQty } from '../../../../Api/Inventory/StockBalance/StockBalanceAPI';
 
-export const StockBalance = () => {
+export const MinimunStock = () => {
     const [branches, setBranches] = useState([]);
     const [selectedBranch, setSelectedBranch] = useState('');
     const [product, setProduct] = useState(null);
@@ -26,6 +25,7 @@ export const StockBalance = () => {
     useEffect(() => {
         fetchBranches();
         fetchAllProducts();
+        fetchProductQuantities(); 
     }, []);
 
     const fetchBranches = async () => {
@@ -64,28 +64,42 @@ export const StockBalance = () => {
         }
     };
 
-    const handleDropdownChange = (value) => {
-        setSelectedBranch(value);
-        console.log('Selected Drop Down Value:', value);
+     
+    const fetchProductQuantities = async () => {
+        try {
+            const userJSON = secureLocalStorage.getItem("user");
+            if (userJSON) {
+                const user = JSON.parse(userJSON);
+                const response = await getProductMinQty();
+                let data = response.data || [];
+                
+                if (user.role !== 'Super Admin') {
+                    data = data.filter(item => item.branchName === user.branchName);
+                }
+                setStockDetails(data);
+            } else {
+                console.error('User details not found in secure storage');
+            }
+        } catch (error) {
+            console.error('Error fetching product quantities:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleProductSelect = (selectedProduct) => {
-        setProduct(selectedProduct);
+
+
+    const handleDropdownChange = (value) => {
+        setSelectedBranch(value);
     };
 
     const handleSearch = async () => {
         setLoading(true);
-        if (!selectedBranch || !product) {
-            console.error('Please select both branch and product');
 
-            return;
-        }
-
-        console.log('Branch:', selectedBranch);
-        console.log('Product:', product);
+        const productId = selectedProduct ? selectedProduct.split(' ')[0] : null;
 
         try {
-            const response = await getActiveStock(selectedBranch, product.id);
+            const response = await getProductMinQty(selectedBranch, productId);
 
             const data = response.data;
             setStockDetails(Array.isArray(data) ? data : [data]);
@@ -96,23 +110,31 @@ export const StockBalance = () => {
         }
     };
 
-    const handleClear = () => {
+    const handleClear = async () => {
         setSelectedBranch('');
         setProduct(null);
         setSelectedProduct('');
         setBatchNo('');
         setCategory(null);
-        setStockDetails([]);
         branchDropdownRef.current.reset();
+        try {
+            setLoading(true);
+            const response = await getProductMinQty();
+            setStockDetails(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <>
-            <div className="stock-balance-bodycontainer">
-                <div className="stock-balance-filter-container">
-                    <div className="stock-balance-content-top">
+            <div className="min-stock-bodycontainer">
+                <div className="min-stock-filter-container">
+                    <div className="min-stock-content-top">
                         <div className="branchField">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <InputLabel htmlFor="branchName" color="#0377A8">Branch</InputLabel>
                             <BranchDropdown
                                 id="branchName"
                                 name="branchName"
@@ -124,57 +146,38 @@ export const StockBalance = () => {
                             />
                         </div>
                         <div className="productField">
-                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name<span style={{ color: 'red' }}>*</span></InputLabel>
+                            <InputLabel htmlFor="product" color="#0377A8">Product ID / Name</InputLabel>
                             <SearchBar
                                 searchTerm={selectedProduct}
                                 setSearchTerm={setSelectedProduct}
                                 onSelectSuggestion={(suggestion) => {
                                     setSelectedProduct(`${suggestion.displayText}`);
-                                    setProduct(suggestion);
+                                    setProduct(suggestion); 
                                 }}
                                 fetchSuggestions={fetchProductsSuggestions}
                             />
                         </div>
-
                     </div>
-                    <div className="stock-balance-BtnSection">
+                    <div className="min-stock-BtnSection">
                         <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearch}>Search</Buttons>
                         <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClear}>Clear</Buttons>
                     </div>
                 </div>
-                <div className="stock-balance-content-middle">
-                    <p className="stock-active-balance-title">Active Stock</p>
-
+                <div className="min-stock-content-middle">
                     <TableWithPagi
-                        columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Qty', '']}
+                        columns={['Branch Name', 'Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
                         rows={stockDetails.map(detail => ({
+                            'Branch Name': detail.branchName,
                             'Product ID': detail.productId,
                             'Product Name': detail.productName,
-                            'Branch Name': detail.branchName,
-                            'Category Name': detail.categoryName,
-                            'Qty': detail.qty,
-                            '': (
-                                <div style={{ display: "flex", gap: "0.5em" }}>
-                                    <StockSummary
-                                        productId={detail.productId}
-                                        productName={detail.productName}
-                                        branchName={detail.branchName}
-                                        qty={detail.qty}
-                                    />
-                                    <AdjustStock
-                                        productId={detail.productId}
-                                        productName={detail.productName}
-                                        branchName={detail.branchName}
-                                    />
-                                </div>
-                            )
+                            'Available Qty': detail.totalAvailableQty,
+                            ' Min Qty': detail.minQty,
                         }))}
                     />
                 </div>
             </div>
-
         </>
     );
 };
 
-export default StockBalance;
+export default MinimunStock;

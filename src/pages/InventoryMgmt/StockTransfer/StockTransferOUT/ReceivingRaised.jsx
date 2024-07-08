@@ -1,14 +1,14 @@
-import Layout from "../../../Layout/Layout";
+import Layout from "../../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
-import './Cancelled.css';
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
+import './ReceivingRaised.css';
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import InputLabel from "../../../../Components/Label/InputLabel";
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import InputLabel from "../../../Components/Label/InputLabel";
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import { getStockTransferBySTN_NO } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { getStockTransferBySTN_NO } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
-export const ReceivingCancelled = () => {
+export const ReceivingRaised = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
@@ -17,7 +17,7 @@ export const ReceivingCancelled = () => {
         const fetchStockTransferDetails = async () => {
             try {
                 const response = await getStockTransferBySTN_NO(STN_NO);
-                setStockTransferDetails(response.data);
+                    setStockTransferDetails(response.data);
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
             }
@@ -42,18 +42,18 @@ export const ReceivingCancelled = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-            <div className="stockCancel-top-link">
+            <div className="receivingRaised-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer OUT - Cancelled</h4>
+                    <h4>Stock Transfer OUT - Raised</h4>
                 </div>
                 
-            </div>
-            <Layout>
-                <div className="stockCancel-bodycontainer">
-                    <div className="stockCancel-filter-container">
-                        <div className="stockCancelField">
+            </div> 
+            <Layout>    
+                <div className="receivingRaised-bodycontainer">
+                    <div className="receivingRaised-filter-container">
+                        <div className="receivingRaisedField">
                             <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
                             <div className="data-box">
                                 <span>{stockTransferDetails?.STN_NO}</span>
@@ -77,26 +77,22 @@ export const ReceivingCancelled = () => {
                                 <span>{stockTransferDetails?.requestedBy}</span>
                             </div>
                         </div>
-                        <div className="CancelledByField">
-                            <InputLabel htmlFor="cancelledBy" color="#0377A8">Cancelled By</InputLabel>
-                            <div className="data-box">
-                                <span>{stockTransferDetails?.submittedBy}</span>
-                            </div>
-                        </div>
+                       
                     </div>
-                    <div className="stockCancel-content-middle">
+                    <div className="receivingRaised-content-middle">
                         {stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
                                 "Req. Qty": product.requestedQty,
-                                "Status": 'Cancelled'
+                                "Status": 'Raised'
                                 
                             }))} columns={columns} />
                         ) : (
                             <p>No products available</p>
                         )}
                     </div>
-                    <div className="stockCancel-BtnSection">
+                    <div className="receivingRaised-BtnSection">
+                        
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
                         
                     </div>
@@ -106,4 +102,4 @@ export const ReceivingCancelled = () => {
     );
 };
 
-export default ReceivingCancelled;
+export default ReceivingRaised;

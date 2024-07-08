@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Joi from 'joi';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
@@ -21,7 +21,9 @@ function AddNewSupplierPopup() {
         regNo: Joi.string().required().label('Reg No'),
         email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
         address: Joi.string().required().label('Address'),
-        contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No'),
+        contactNo: Joi.string().pattern(/^\d{10}$/).required().label('Contact No').messages({
+            'string.pattern.base': 'Contact No must be a 10-digit number.'
+        }),
     });
 
     
@@ -43,10 +45,11 @@ function AddNewSupplierPopup() {
 
         const validationErrors = validate();
         if (validationErrors) {
+            const errorMessages = Object.values(validationErrors).join(' ');
             setAlertConfig({
                 severity: 'error',
                 title: 'Validation Error',
-                message: 'Please fill out all required fields correctly.',
+                message: errorMessages,
                 duration: 3000
             });
             setAlertVisible(true);
@@ -62,7 +65,6 @@ function AddNewSupplierPopup() {
                 contactNo
             };
             const createdSupplier = await createSupplier(supplierData);
-            console.log('Supplier created successfully:', createdSupplier);
 
             setAlertConfig({
                 severity: 'success',

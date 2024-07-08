@@ -25,12 +25,12 @@ import { WebFeedbacks } from '../pages/WebFeedbacks/WebFeedbacks';
 import { Analysis } from '../pages/Reporting/Analysis/Analysis';
 import { Reports } from '../pages/Reporting/Reports/Reports';
 import ProtectedRoute from './ProtectedRoute';
-import StockTransferIssuing from '../pages/InventoryMgmt/StockTransfer/StockTransferIssuing';
-import ReceivingCompleted from '../pages/InventoryMgmt/StockTransfer/ReceivingCompleted';
-import IssuingCompleted from '../pages/InventoryMgmt/StockTransfer/IssuingCompleted';
-import Cancelled from '../pages/InventoryMgmt/StockTransfer/IssuingCancelled';
-import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/receivingRaised';
-import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/ReceivingCancelled';
+import StockTransferIssuing from '../pages/InventoryMgmt/StockTransfer/StockTransferIN/StockTransferIssuing';
+import ReceivingCompleted from '../pages/InventoryMgmt/StockTransfer/StockTransferOUT/ReceivingCompleted';
+import IssuingCompleted from '../pages/InventoryMgmt/StockTransfer/StockTransferIN/IssuingCompleted';
+import Cancelled from '../pages/InventoryMgmt/StockTransfer/StockTransferIN/IssuingCancelled';
+import ReceivingRaised from '../pages/InventoryMgmt/StockTransfer/StockTransferOUT/ReceivingRaised';
+import ReceivingCancelled from '../pages/InventoryMgmt/StockTransfer/StockTransferOUT/ReceivingCancelled';
 import StockBalanceMain from '../pages/InventoryMgmt/StockBalance/StockBalanceMain';
 import NotFound from '../pages/NotFound/NotFound';
 import Login from '../pages/LoginPart/Login/Login';
@@ -136,4 +136,3 @@ export function SidebarRouter() {
     </Routes>
   );
 }
-

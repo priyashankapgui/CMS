@@ -12,13 +12,25 @@
         position: absolute;
         left: 0;
         top: 0;
-        width: 100%;
-        height: auto;
-        margin: 0;
+        width: 297mm;
+        /* A4 landscape width */
+        height: 210mm;
+        /* A4 landscape height */
+        margin: 10mm;
+        /* Adjust margins as needed */
         padding: 0;
         border: none;
         background-color: #fff;
         font-size: 12px;
+    }
+
+    .GrnDoc-paper-footer {
+        font-size: 10px;
+        text-align: center;
+        position: fixed;
+        bottom: 10mm;
+        /* Adjust bottom margin for footer */
+        width: 100%;
     }
 
     .pageNumber::after {
@@ -34,7 +46,7 @@
     width: 297mm;
     height: 210mm;
     margin: 0 auto;
-    padding: 15px 25px 15px 25px;
+    padding: 15px 25px;
     border: 1px solid #ddd;
     background-color: #fafafa;
     font-family: Poppins, sans-serif;
@@ -58,7 +70,6 @@
     color: #fff;
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
-
 }
 
 .GrnDoc-top-details {
@@ -83,7 +94,7 @@
 
 .GrnDoc-bodyContent-table td {
     font-size: 12px;
-    padding: 40px 0;
+    padding: 6px 0;
 }
 
 .GrnDoc-bottomContent {
@@ -91,8 +102,9 @@
 }
 
 .GrnDoc-paper-footer {
-    font-size: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
     text-align: center;
-    /* margin-top: 33.56em;
-    position: relative; */
+    font-size: 10px;
 }

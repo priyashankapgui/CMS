@@ -1,14 +1,14 @@
-import Layout from "../../../Layout/Layout";
+import Layout from "../../../../Layout/Layout";
 import React, { useState, useEffect } from 'react';
-import './Cancelled.css';
-import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
+import  '../StockTransferIN/Cancelled.css';
+import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
+import InputLabel from "../../../../Components/Label/InputLabel";
+import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
-import InputLabel from "../../../Components/Label/InputLabel";
-import TableWithPagi from '../../../Components/Tables/TableWithPagi';
-import { getStockTransferBySTN_NO } from "../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import { getStockTransferBySTN_NO } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
-export const IssuingCancelled = () => {
+export const ReceivingCancelled = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
@@ -17,8 +17,7 @@ export const IssuingCancelled = () => {
         const fetchStockTransferDetails = async () => {
             try {
                 const response = await getStockTransferBySTN_NO(STN_NO);
-                    setStockTransferDetails(response.data);
-
+                setStockTransferDetails(response.data);
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
             }
@@ -47,7 +46,7 @@ export const IssuingCancelled = () => {
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
-                    <h4>Stock Transfer IN - Cancelled</h4>
+                    <h4>Stock Transfer OUT - Cancelled</h4>
                 </div>
                 
             </div>
@@ -107,4 +106,4 @@ export const IssuingCancelled = () => {
     );
 };
 
-export default IssuingCancelled;
+export default ReceivingCancelled;

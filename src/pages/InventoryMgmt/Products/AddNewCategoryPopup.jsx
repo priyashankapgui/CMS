@@ -16,13 +16,14 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
 
     const categorySchema = Joi.object({
         categoryName: Joi.string().required().label('Category Name'),
-        image: Joi.any().optional().label('Image'),
     });
 
 
 
     const validate = () => {
-        const result = categorySchema.validate({ categoryName, image }, { abortEarly: false });
+        const result = categorySchema.validate( { categoryName},
+            { abortEarly: false }
+        );
         if (!result.error) return null;
 
         const errorMessages = {};
@@ -32,14 +33,21 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         return errorMessages;
     };
 
-    // const resetFields = () => {
-    //     setCategoryName('');
-    //     setImage(null);
-    // };
 
     const handleCategoryImageUpload = (e) => {
         const file = e.target.files[0];
-        console.log("Selected file:", file);
+
+        if (file && !['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+            setAlertConfig({
+                severity: 'error',
+                title: 'Validation Error',
+                message: 'Image type should be JPG / JPEG / PNG.',
+                duration: 4000
+            });
+            setAlertVisible(true);
+            setImage(null);
+            return;
+        }
 
         if (file) {
             TransformFile(file);
@@ -51,7 +59,6 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
 
         reader.onloadend = () => {
             setImage(reader.result);
-            console.log("Base64 Image:", reader.result);
         };
 
         reader.onerror = (error) => {
@@ -74,7 +81,7 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
             setAlertConfig({
                 severity: 'error',
                 title: 'Validation Error',
-                message: 'Please fill out all required fields correctly.',
+                message:  Object.values(validationErrors).join('\n'),
                 duration: 4000
             });
             setAlertVisible(true);
@@ -82,8 +89,10 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
         }
 
         const formData = new FormData();
-        formData.append('image', image);
         formData.append('categoryName', categoryName);
+        if (image) {
+            formData.append('image', image);
+        }
 
         setIsLoading(true);
         try {
@@ -96,8 +105,6 @@ const AddNewCategoryPopup = ({ onClose, onSave }) => {
                 duration: 4000
             });
             setAlertVisible(true);
-
-            // Reset form fields
             setCategoryName('');
             setImage('');
 

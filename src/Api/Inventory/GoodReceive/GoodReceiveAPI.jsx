@@ -1,4 +1,7 @@
 import axios from "axios";
+import secureLocalStorage from 'react-secure-storage';
+
+const getAccessToken = () => secureLocalStorage.getItem('accessToken');
 
 
 export const api = axios.create({
@@ -11,7 +14,10 @@ export const api = axios.create({
 
 export const createGRN = async (grnData) => {
     try {
-        const response = await api.post('/grn', grnData);
+        const token = getAccessToken();
+        const response = await api.post('/grn', grnData, {
+            headers: { Authorization: `Bearer ${token}` } 
+        });
         return response.data; 
     } catch (error) {
         console.error('Error creating GRN:', error);
@@ -23,7 +29,10 @@ export const createGRN = async (grnData) => {
 
 export const getAllGRN = async () => {
     try {
-        const response = await api.get('/grn');
+        const token = getAccessToken();
+        const response = await api.get('/grn', {
+            headers: { Authorization: `Bearer ${token}` } 
+        });
         console.log("grn data ",response.data);
         return response.data;
     } catch (error) {
@@ -35,10 +44,12 @@ export const getAllGRN = async () => {
 
 export const getGRNByGRN_NO = async ( GRN_NO) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/grn-all', {
             params: {
                 GRN_NO
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {

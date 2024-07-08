@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SubPopup from './SubPopup';
 import Buttons from '../Buttons/SquareButtons/Buttons';
 import SubSpinner from '../Spinner/SubSpinner/SubSpinner';
 
-function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick, closeSubpopup }) {
+function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick, closeSubpopup, forceClose }) {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
 
@@ -19,6 +19,12 @@ function AddNewPopup({ topTitle, children, buttonId, buttonText, onClick, closeS
             closeSubpopup();
         }
     };
+
+    useEffect(() => {
+        if (forceClose) {
+            setOpen(false);
+        }
+    }, [forceClose]);
 
     const handleOpen = () => {
         setOpen(true);

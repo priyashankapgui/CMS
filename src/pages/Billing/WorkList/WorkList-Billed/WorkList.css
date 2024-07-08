@@ -44,29 +44,3 @@
     font-weight: bold;
 }
 
-
-/* table css */
-
-.billed-history-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.billed-history-table th {
-    background-color: #F5F3F3;
-    font-size: 0.9em;
-    padding: 6px;
-    margin: 4px;
-}
-
-.billed-history-table td,
-.billed-history-table th {
-    border-bottom: 1px solid #dddddd;
-    text-align: left;
-    padding: 6px;
-}
-
-.billed-history-table tbody {
-    font-size: 0.875em;
-
-}

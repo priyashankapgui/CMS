@@ -1,10 +1,10 @@
 import React from 'react';
-import axios from 'axios';
 import ReactApexChart from 'react-apexcharts';
 import './SalesChart.css';
 import BranchDropdown from '../InputDropdown/BranchDropdown';
 import SubSpinner from '../Spinner/SubSpinner/SubSpinner';
 import debounce from 'lodash.debounce';
+import { getOnlineSaleChartData, getPhysicalSaleChartData } from '../../Api/Analysis/ChartApi';
 
 class SalesChart extends React.Component {
     constructor(props) {
@@ -132,31 +132,31 @@ class SalesChart extends React.Component {
     fetchData = async (year, month, branchName) => {
         this.setState({ isLoading: true });
         try {
-            const [onlineResponse, physicalResponse] = await Promise.all([
-                axios.get('http://localhost:8080/daily-online-sales-data', { params: { branchName, year, month } }),
-                axios.get('http://localhost:8080/daily-sales-data-chart', { params: { branchName, year, month } })
+            const [onlineSalesData, physicalSalesData] = await Promise.all([
+                getOnlineSaleChartData(branchName, year, month),
+                getPhysicalSaleChartData(branchName, year, month)
             ]);
 
-            const onlineSalesData = new Array(31).fill(0);
-            console.log("Online Sale Chart Data", onlineResponse);
+            const onlineSalesArray = new Array(31).fill(0);
+            console.log("Online Sale Chart Data", onlineSalesData);
 
-            onlineResponse.data.data.onlineSalesData.forEach(item => {
-                onlineSalesData[item.day - 1] = item.totalAmount;
+            onlineSalesData.forEach(item => {
+                onlineSalesArray[item.day - 1] = item.totalAmount;
             });
 
-            const physicalSalesData = new Array(31).fill(0);
-            console.log("Physical Sale Chart Data", physicalResponse);
+            const physicalSalesArray = new Array(31).fill(0);
+            console.log("Physical Sale Chart Data", physicalSalesData);
 
-            physicalResponse.data.data.salesData.forEach(item => {
-                physicalSalesData[item.day - 1] = item.totalAmount;
+            physicalSalesData.forEach(item => {
+                physicalSalesArray[item.day - 1] = item.totalAmount;
             });
 
-            const newYMax = Math.max(...onlineSalesData, ...physicalSalesData);
+            const newYMax = Math.max(...onlineSalesArray, ...physicalSalesArray);
 
             this.setState({
                 series: [
-                    { name: 'Physical Sale', data: physicalSalesData },
-                    { name: 'Online Sale', data: onlineSalesData }
+                    { name: 'Physical Sale', data: physicalSalesArray },
+                    { name: 'Online Sale', data: onlineSalesArray }
                 ],
                 options: {
                     ...this.state.options,
@@ -165,7 +165,7 @@ class SalesChart extends React.Component {
                         max: newYMax
                     }
                 },
-                totalSales: this.calculateTotalSales(onlineSalesData) + this.calculateTotalSales(physicalSalesData),
+                totalSales: this.calculateTotalSales(onlineSalesArray) + this.calculateTotalSales(physicalSalesArray),
                 isLoading: false
             });
         } catch (error) {
@@ -220,7 +220,6 @@ class SalesChart extends React.Component {
                         <option value={10}>October</option>
                         <option value={11}>November</option>
                         <option value={12}>December</option>
-
                     </select>
                     <BranchDropdown
                         id="branchName"

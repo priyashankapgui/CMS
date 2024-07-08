@@ -1,5 +1,36 @@
-.work-order-receipt-frame{
-    width: 100mm;
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .work-order-receipt-frame,
+    .work-order-receipt-frame * {
+        visibility: visible;
+    }
+
+    .work-order-receipt-frame {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: #fff;
+        font-size: 12px;
+    }
+
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+}
+
+
+
+.work-order-receipt-frame {
+    width: 80mm;
     height: fit-content;
     margin: 0 auto;
     padding: 20px;
@@ -7,34 +38,45 @@
     background-color: #fafafa;
     font-family: Poppins;
 }
-.workordertitle{
+
+.workordertitle {
     text-align: center;
     margin-top: 15px;
 }
-.workOrderHeadingShopName{
+
+.workOrderHeadingShopName {
     text-align: center;
 }
-.WorkOrderDetails{
-    display: flex;
-    color: black;
-    margin-top: 1vh;
+
+.workorder-details-table {
+    width: 100%;
+    font-size: 12px;
+    margin: 0 auto;
+}
+
+.workorder-details-table .workorder-details-label {
     font-weight: 500;
 }
-.WorkOrderDetails span{
-    color: black;
-    font-weight: 400;
+
+.workorder-details-table .workorder-details-value {
+    text-align: right;
 }
-.WorkOrderTable{
+
+.WorkOrderTable {
     width: 100%;
     border-collapse: collapse;
     margin: 10px 0;
 }
-.WorkOrderTableHead{
-    background-color: #ececec;
+
+.WorkOrderTable th,
+.WorkOrderTable td {
     padding: 2px;
     text-align: left;
     font-size: 12px;
+
 }
-.WorkOrderTable tbody{
-    font-size: 14px;
+
+.WorkOrderTable thead th {
+    background-color: #ececec;
+
 }

@@ -4,40 +4,52 @@ import RoundButtons from "../../../Components/Buttons/RoundButtons/RoundButtons"
 import { MdDone } from "react-icons/md";
 import { getAllOnlineBills, updateOnlineBill } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import ConfirmationModal from '../../../Components/PopupsWindows/Modal/ConfirmationModal.jsx';
+import emailjs from 'emailjs-com';
+import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 
-const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
+const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange,selectedBranch,searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [alertDetails, setAlertDetails] = useState({
         severity: 'success',
         title: 'Success',
         message: 'Order processed successfully!',
         duration: 3000
     });
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills();
-                const processingOrders = response.filter(order => order.status === "Processing");
-                console.log("Processing Orders Fetched:", processingOrders); // Debug log
+                let processingOrders = response.filter(order => order.status === "Processing");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    processingOrders = processingOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+    
                 setOrders(processingOrders);
-                setProcessingOrdersCount(processingOrders.length); // This should update the count in the parent component
+                setProcessingOrdersCount(processingOrders.length); 
             } catch (error) {
                 console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
             }
         };
-
+    
         fetchOrders();
-    }, [setProcessingOrdersCount]);
-
+    }, [selectedBranch, searchClicked, setProcessingOrdersCount]);
+    
     const handleProcessingDone = async (order) => {
         try {
             const updates = { status: "Pickup" };
             await updateOnlineBill(order.onlineBillNo, updates);
             setOrders((prevOrders) => prevOrders.filter(o => o.onlineBillNo !== order.onlineBillNo));
             setProcessingOrdersCount((prevCount) => prevCount - 1);
-            console.log("Order Processed and Count Updated:", orders.length); // Debug log
+            console.log("Order Processed and Count Updated:", orders.length);
             setAlertDetails({
                 severity: 'success',
                 title: 'Success',
@@ -46,8 +58,20 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
             });
             setShowAlert(true);
 
-            // Switch tab to Pending Pickup (index 2)
             onTabChange(2);
+
+            const templateParams = {
+                customer_name: `${order.customer.firstName} ${order.customer.lastName}`,
+                order_number: order.onlineBillNo,
+                email: order.customer.email,
+            };
+
+            emailjs.send("service_ase4f59","template_iigr25h", templateParams, 'c0LBbcJjnX0kOW0AK')
+                .then((response) => {
+                    console.log('Email sent successfully:', response.status, response.text);
+                }, (error) => {
+                    console.error('Failed to send email:', error);
+                });
         } catch (error) {
             console.error("Error updating order status:", error);
             setAlertDetails({
@@ -60,9 +84,34 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
         }
     };
 
+    const openConfirmationModal = (order) => {
+        setSelectedOrder(order);
+        setIsConfirmationModalOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setSelectedOrder(null);
+        setIsConfirmationModalOpen(false);
+    };
+
+    const confirmProcessingDone = () => {
+        if (selectedOrder) {
+            handleProcessingDone(selectedOrder);
+        }
+        closeConfirmationModal();
+    };
+
     const handleCloseAlert = () => {
         setShowAlert(false);
     };
+
+    if (loading) {
+        return <SubSpinner />;
+    }
+
+    if (orders.length === 0) {
+        return <div style={{ color: '#dc0808' }}>Processing orders are not here...</div>;
+    }
 
     return (
         <>
@@ -85,15 +134,16 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                             <td>{order.branch.branchName}</td>
                             <td>{order.customer.firstName} {order.customer.lastName}</td>
                             <td>Card</td>
-                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString() : 'N/A'}</td>
+                            <td>{order.acceptedAt ? new Date(order.acceptedAt).toLocaleString('en-GB') : 'N/A'}</td>
                             <td>{order.acceptedBy}</td>
                             <td>
                                 <RoundButtons 
                                     id={`doneBtn-${order.onlineBillNo}`} 
+                                    backgroundColor='#16A8D6'
                                     type="submit" 
                                     name={`doneBtn-${order.onlineBillNo}`} 
-                                    icon={<MdDone />} 
-                                    onClick={() => handleProcessingDone(order)} 
+                                    icon={<MdDone color="white" />} 
+                                    onClick={() => openConfirmationModal(order)} 
                                 />
                             </td>
                         </tr>
@@ -109,6 +159,13 @@ const ProcessingOrders = ({ setProcessingOrdersCount, onTabChange }) => {
                     onClose={handleCloseAlert}
                 />
             )}
+            <ConfirmationModal
+                open={isConfirmationModalOpen}
+                onClose={closeConfirmationModal}
+                onConfirm={confirmProcessingDone}
+                bodyContent="Are you sure you want to mark this order as processed and ready for pickup?"
+                yesBtnBgColor="#23A3DA"
+            />
         </>
     );
 };

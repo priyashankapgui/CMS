@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
@@ -7,7 +6,6 @@ import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import { createBranch, getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
 function AddNewBranchPopup({ fetchData }) {
-    const navigate = useNavigate();
     const [branchName, setBranchName] = useState('');
     const [address, setAddress] = useState('');
     const [branchEmail, setBranchEmail] = useState('');

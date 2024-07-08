@@ -1,5 +1,7 @@
 import axios from "axios";
+import secureLocalStorage from 'react-secure-storage';
 
+const getAccessToken = () => secureLocalStorage.getItem('accessToken');
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL, 
@@ -11,9 +13,11 @@ const api = axios.create({
 
 export const createProduct = async (newProduct) => {
     try {
+        const token = getAccessToken();
         const response = await api.post('/products', newProduct, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}` 
             }
         });
         return response.data;
@@ -23,9 +27,10 @@ export const createProduct = async (newProduct) => {
     }
 };
 
-export const getProducts = async () => {
+export const getProducts = async (token) => {
     try {
-        const response = await api.get('/products');
+        const token = getAccessToken();
+        const response = await api.get('/products', { headers: { Authorization: `Bearer ${token}` } });
         return response.data;
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -36,7 +41,9 @@ export const getProducts = async () => {
 
 export const getProductById = async (productId) => {
     try {
-        const response = await api.get(`/products/${productId}`);
+        const token = getAccessToken();
+        const response = await api.get(`/products/${productId}`,
+        { headers: { Authorization: `Bearer ${token}` } });
         return response.data;
     } catch (error) {
         console.error(`Error fetching product by ID ${productId}:`, error);
@@ -47,9 +54,11 @@ export const getProductById = async (productId) => {
 
 export const updateProduct = async (productId, updatedProduct) => {
     try {
+        const token = getAccessToken();
         const response = await api.put(`/products/${productId}`, updatedProduct, {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
             }
         });
         return response.data;
@@ -63,7 +72,10 @@ export const updateProduct = async (productId, updatedProduct) => {
 
 export const deleteProductById = async (productId) => {
     try {
-        const response = await api.delete(`/products/${productId}`);
+        const token = getAccessToken();
+        const response = await api.delete(`/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+    });
         return response.data;
     } catch (error) {
         console.error(`Error deleting product with ID ${productId}:`, error);
@@ -74,11 +86,13 @@ export const deleteProductById = async (productId) => {
 
 export const getProductBatchDetails = async (branchName, productId) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/product-batch-details', {
             params: {
                 branchName,
                 productId
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {
@@ -91,10 +105,12 @@ export const getProductBatchDetails = async (branchName, productId) => {
 
 export const getProductByCategoryId = async ( categoryId) => {
     try {
+        const token = getAccessToken();
         const response = await api.get('/products-category', {
             params: {
                 categoryId
-            }
+            },
+            headers: { Authorization: `Bearer ${token}` } 
         });
         return response.data;
     } catch (error) {
@@ -106,7 +122,9 @@ export const getProductByCategoryId = async ( categoryId) => {
 
 export const updateProductDiscount = async (updates) => {
     try {
-        const response = await api.put('/product-batch-sum-discount', { updates });
+        const token = getAccessToken();
+        const response = await api.put('/product-batch-sum-discount', updates, {
+             headers: { Authorization: `Bearer ${token}`  } });
         return response.data;
     } catch (error) {
         console.error('Error updating product discount:', error);
