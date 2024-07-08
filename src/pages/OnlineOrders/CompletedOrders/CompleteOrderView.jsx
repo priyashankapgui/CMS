@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, Link } from 'react-router-dom'; 
 import Layout from "../../../Layout/Layout";
 import "./CompleteOrderView.css";
 import { IoChevronBackCircleOutline } from 'react-icons/io5';
@@ -13,7 +13,6 @@ import MainSpinner from '../../../Components/Spinner/MainSpinner/MainSpinner.jsx
 
 export function CompletedOrders() {
     const { onlineBillNo } = useParams();
-    const navigate = useNavigate(); // Use useNavigate
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
@@ -81,7 +80,7 @@ export function CompletedOrders() {
         <>
             <div className='top-nav-blue-text'>
                 <div className='ViewCompletedDetails'>
-                    <Link to="/online-orders" onClick={() => navigate('/online-orders?tab=completed')}>
+                <Link to="/online-orders?tab=completed">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>View Completed Order</h4>
@@ -107,9 +106,6 @@ export function CompletedOrders() {
                             </div>
                             <div className='inputFlex'>
                                 <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>Card</span></InputLabel>
-                            </div>
-                            <div className='inputFlex'>
-                                <InputLabel for="hopetoPickUp" color="#0377A8">Hope to Pick Up: <span>{orderData.hopeToPickup ? new Date(orderData.hopeToPickup).toLocaleString() : 'N/A'}</span></InputLabel>
                             </div>
                         </div>
                     </div>

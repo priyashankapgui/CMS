@@ -80,7 +80,7 @@ export const AdjustBranch = () => {
     };
 
     const handlePopupClose = () => {
-        fetchBranchData(); // Call fetchBranchData when closing the popup
+        fetchBranchData();
     };
 
     return (

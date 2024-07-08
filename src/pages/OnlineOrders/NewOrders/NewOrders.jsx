@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { getAllOnlineBills } from "../../../Api/OnlineOrders/OnlineOrdersAPI.jsx";
 import SubSpinner from "../../../Components/Spinner/SubSpinner/SubSpinner.jsx";
 
-const NewOrders = ({ setNewOrdersCount }) => {
+const NewOrders = ({ selectedBranch, setNewOrdersCount, searchClicked }) => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -14,18 +14,23 @@ const NewOrders = ({ setNewOrdersCount }) => {
         const fetchOrders = async () => {
             try {
                 const response = await getAllOnlineBills();
-                const newOrders = response.filter(order => order.status === "New");
+                let newOrders = response.filter(order => order.status === "New");
+                
+                if (selectedBranch && selectedBranch !== "All") {
+                    newOrders = newOrders.filter(order => order.branch.branchName === selectedBranch);
+                }
+
                 setOrders(newOrders);
                 setNewOrdersCount(newOrders.length);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             } finally {
-                setLoading(false); // Set loading to false after data is fetched
+                setLoading(false); 
             }
         };
 
         fetchOrders();
-    }, [setNewOrdersCount]);
+    }, [selectedBranch, searchClicked, setNewOrdersCount]);
 
     if (loading) {
         return (
