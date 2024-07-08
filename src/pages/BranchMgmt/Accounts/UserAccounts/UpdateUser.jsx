@@ -155,7 +155,11 @@ export function UpdateUser() {
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "",
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
     multiple: false,
     onDrop: handleDrop,
   });
@@ -372,7 +376,7 @@ export function UpdateUser() {
               </InputField>
             </div>
             {buttonLoading ? (
-              <SubSpinner spinnerText="Updating"/>
+              <SubSpinner spinnerText="Updating" />
             ) : (
               <Buttons
                 type="submit"

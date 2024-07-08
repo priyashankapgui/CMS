@@ -5,6 +5,7 @@ import Buttons from '../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import BranchDropdown from '../../../Components/InputDropdown/BranchDropdown';
+import InputDropdown from '../../../Components/InputDropdown/InputDropdown';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
 import secureLocalStorage from "react-secure-storage";
@@ -60,7 +61,8 @@ export function NewStockTransfer() {
     const fetchBranches = async () => {
         try {
             const response = await getBranchOptions();
-            setBranches(response.data.data);
+            console.log('Fetchedd branches:', response);
+            setBranches(response || []);
         } catch (error) {
             console.error('Error fetching branches:', error);
         }
@@ -189,7 +191,7 @@ export function NewStockTransfer() {
                             </div>
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch<span style={{ color: 'red' }}>*</span></InputLabel>
-                            <BranchDropdown
+                            {/* <BranchDropdown
                                 id="branchName"
                                 name="branchName"
                                 editable={true}
@@ -198,7 +200,16 @@ export function NewStockTransfer() {
                                 addOptions={["All"]}
                                 value={selectedBranch}
                                 ref={branchDropdownRef}
-                            />
+                            /> */}
+                             <InputDropdown
+                                    id="branchName"
+                                    name="branchName" 
+                                    editable={true}
+                                    options={branches.map(branch => branch.branchName)}
+                                    onChange={handleDropdownChange}
+                                    value={selectedBranch}
+                                ref={branchDropdownRef}
+                                />
                         </div>
 
                     </div>
