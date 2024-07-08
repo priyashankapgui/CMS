@@ -54,6 +54,8 @@ export const ReceivingCompleted = () => {
                     productId: product.productId,
                     batchNo: batch.batchNo,
                     transferQty: batch.transferQty,
+                    unitPrice: batch.unitPrice,
+                    expDate: batch.expDate
                 }))
             ),
         };
@@ -104,6 +106,7 @@ export const ReceivingCompleted = () => {
         "Batch No",
         "Transfer Qty",
         "Unit Price",
+        "Exp Date",
         "Amount",
     ];
 
@@ -168,6 +171,7 @@ export const ReceivingCompleted = () => {
                                 "Batch No": product.batches.map(batch => batch.batchNo).join(', '),
                                 "Transfer Qty": product.batches.map(batch => batch.transferQty).join(', '),
                                 "Unit Price": product.batches.map(batch => batch.unitPrice).join(', '),
+                                "Exp Date": product.batches.map(batch => batch.expDate).join(', '),
                                 "Amount": product.batches.map(batch => batch.amount).join(', ')
                             }))} columns={columns} />
                         ) : (

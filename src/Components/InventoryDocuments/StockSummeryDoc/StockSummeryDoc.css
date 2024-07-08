@@ -46,9 +46,6 @@
     border: 1px solid #ddd;
     background-color: #fafafa;
     font-family: Poppins, sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
 }
 
 .stockSummeryDoc-paper-sys-logo {

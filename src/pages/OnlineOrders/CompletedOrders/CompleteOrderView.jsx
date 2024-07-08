@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useParams, Link } from 'react-router-dom'; 
 import Layout from "../../../Layout/Layout";
 import "./CompleteOrderView.css";
 import { IoChevronBackCircleOutline } from 'react-icons/io5';
@@ -9,10 +9,10 @@ import WorkOrderReceipt from '../../../Components/WorkOrderReceipt/WorkOrderRece
 import { getOnlineBillByNumber } from '../../../Api/OnlineOrders/OnlineOrdersAPI.jsx';
 import { getOnlineBillProductsByBillNo } from '../../../Api/OnlineBillProducts/OnlineBillProductsAPI.jsx';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert.jsx';
+import MainSpinner from '../../../Components/Spinner/MainSpinner/MainSpinner.jsx';
 
 export function CompletedOrders() {
     const { onlineBillNo } = useParams();
-    const navigate = useNavigate(); // Use useNavigate
     const [showPopup, setShowPopup] = useState(false);
     const [orderData, setOrderData] = useState(null);
     const [products, setProducts] = useState([]);
@@ -73,14 +73,14 @@ export function CompletedOrders() {
     const numberOfItems = products.length;
 
     if (!orderData) {
-        return <div>Loading...</div>;
+        return <div> <MainSpinner /></div>;
     }
 
     return (
         <>
             <div className='top-nav-blue-text'>
                 <div className='ViewCompletedDetails'>
-                    <Link to="/online-orders" onClick={() => navigate('/online-orders?tab=completed')}>
+                <Link to="/online-orders?tab=completed">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>View Completed Order</h4>
@@ -97,7 +97,7 @@ export function CompletedOrders() {
                                 <InputLabel for="ordNo" color="#0377A8">ORD No: <span>{orderData.onlineBillNo}</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString()}</span></InputLabel>
+                                <InputLabel for="orderedat" color="#0377A8">Ordered At: <span>{new Date(orderData.createdAt).toLocaleString('en-GB')}</span></InputLabel>
                             </div>
                         </div>
                         <div className='detail2'>
@@ -108,18 +108,27 @@ export function CompletedOrders() {
                                 <InputLabel for="paymentMethod" color="#0377A8">Payment Method: <span>Card</span></InputLabel>
                             </div>
                             <div className='inputFlex'>
-                                <InputLabel for="hopetoPickUp" color="#0377A8">Hope to Pick Up: <span>{orderData.hopeToPickup ? new Date(orderData.hopeToPickup).toLocaleString() : 'N/A'}</span></InputLabel>
+                                <InputLabel for="acceptedAt" color="#0377A8">Accepted At: <span>{new Date(orderData.acceptedAt).toLocaleString('en-GB')}</span></InputLabel>
+                            </div>
+                        </div>
+                        <div className='detail2'>
+                            <div className='inputFlex'>
+                                <InputLabel for="acceptedby" color="#0377A8">Accepted By: <span>{orderData.acceptedBy}</span></InputLabel>
+                            </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="issueddby" color="#0377A8">Issued By:<span>{orderData.pickupBy}</span></InputLabel>
+                            </div>
+                            <div className='inputFlex'>
+                                <InputLabel for="pickupAt" color="#0377A8">Pickup At:<span>{new Date(orderData.pickupTime).toLocaleString('en-GB')}</span></InputLabel>
                             </div>
                         </div>
                     </div>
-                    <hr />
                 </div>
                 <div className='viewCompletedItem'>
                     <table className='viewCompletedtable'>
                         <thead>
                             <tr>
-                                <th>Product ID</th>
-                                <th>Product Name</th>
+                                <th>Product ID / Name</th>
                                 <th>Qty</th>
                                 <th>Unit Price</th>
                                 <th>Dis%</th>
@@ -130,12 +139,11 @@ export function CompletedOrders() {
                             {products.length > 0 ? (
                                 products.map(item => (
                                     <tr key={`${item.productId}-${item.batchNo}-${item.branchId}`}>
-                                        <td><InputField id="" name="productId" editable={false} width="100%" value={item.productId} /></td>
-                                        <td><InputField id="" name="productName" editable={false} width="300px" value={item.productName} /></td>
-                                        <td><InputField id="" name="qty" editable={false} width="100%" value={item.PurchaseQty} /></td>
-                                        <td><InputField id="" name="unitPrice" editable={false} width="100%" value={item.sellingPrice} /></td>
-                                        <td><InputField id="" name="discount" editable={false} width="100%" value={item.discount} /></td>
-                                        <td><InputField id="" name="amount" editable={false} width="100%" value={calculateAmount(item)} /></td>
+                                        <td><InputField id="" name="productName" editable={false} width="400px" value={`${item.productId}  ${item.productName}`} /></td>
+                                        <td><InputField id="" name="qty" editable={false} width="100%" value={item.PurchaseQty.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="unitPrice" editable={false} width="100%" value={item.sellingPrice.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="discount" editable={false} width="100%" value={item.discount.toFixed(2)} textAlign='center' /></td>
+                                        <td><InputField id="" name="amount" editable={false} width="100%" value={calculateAmount(item)} textAlign='center' /></td>
                                     </tr>
                                 ))
                             ) : (
@@ -143,30 +151,34 @@ export function CompletedOrders() {
                                     <td colSpan="6">No items found</td>
                                 </tr>
                             )}
-                            <tr>
-                                <td colSpan="6">
-                                    <div className="summary-box">
-                                        <div className="summary-row">
-                                            <span>Gross Total:</span>
-                                            <InputField className="Onlineinput" id="" name="grossTotal" editable={false} width="100%" value={calculateGrossTotal()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Total Discount:</span>
-                                            <InputField className="Onlineinput" id="" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Net Total:</span>
-                                            <InputField className="Onlineinput" id="" name="netTotal" editable={false} width="100%" value={calculateNetTotal()} />
-                                        </div>
-                                        <div className="summary-row">
-                                            <span>Number of Items:</span>
-                                            <InputField className="Onlineinput" id="" name="itemCount" editable={false} width="100%" value={numberOfItems} />
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
+                </div>
+                <div className="onlineOrderpaymentSummeryrWrapper">
+                    <div className="onlineOrderpaymentSummeryrContainer">
+                        <div className="online-payment-summery-middle">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><InputLabel htmlFor="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
+                                        <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} value={calculateGrossTotal()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="discountBill" color="#0377A8">Total Discount</InputLabel></td>
+                                        <td><InputField id="discount" name="discount" editable={false} width="100%" value={calculateTotalDiscount()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="netTotal" color="#0377A8" fontSize="1.125em" fontWeight="510">Net Total</InputLabel></td>
+                                        <td><InputField type="text" id="netTotal" name="netTotal" editable={false} value={calculateNetTotal()} /></td>
+                                    </tr>
+                                    <tr>
+                                        <td><InputLabel htmlFor="noItems" color="#0377A8">No Items:</InputLabel></td>
+                                        <td><InputField type="text" id="noItems" name="noItems" editable={false} value={numberOfItems} /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </Layout>
             {showPopup && <WorkOrderReceipt onlineOrdNo={orderData.onlineBillNo} onClose={handleClosePopup} />}

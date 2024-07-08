@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import InputLabel from '../../../Components/Label/InputLabel';
 import InputField from '../../../Components/InputField/InputField';
 import AddNewPopup from '../../../Components/PopupsWindows/AddNewPopup';
 import CustomAlert from '../../../Components/Alerts/CustomAlert/CustomAlert';
+import PropTypes from 'prop-types';
+import Joi from 'joi';
 import { createBranch, getBranchOptions } from '../../../Api/BranchMgmt/BranchAPI.jsx';
 
 function AddNewBranchPopup({ fetchData }) {
-    const navigate = useNavigate();
     const [branchName, setBranchName] = useState('');
     const [address, setAddress] = useState('');
     const [branchEmail, setBranchEmail] = useState('');
@@ -29,6 +29,25 @@ function AddNewBranchPopup({ fetchData }) {
         setIsSaveDisabled(!(branchName && address && branchEmail && contactNo));
     }, [branchName, address, branchEmail, contactNo]);
 
+    const schema = Joi.object({
+        branchName: Joi.string().required().label('Branch Name'),
+        address: Joi.string().required().label('Address'),
+        email: Joi.string().email({ tlds: { allow: false } }).required().label('Email'),
+        contactNo: Joi.string().length(10).pattern(/^[0-9]+$/).required().label('Contact No'),
+    });
+
+    const validate = () => {
+        const data = { branchName, address, email: branchEmail, contactNo };
+        const result = schema.validate(data, { abortEarly: false });
+        if (!result.error) return null;
+
+        const errorMessages = {};
+        result.error.details.forEach(detail => {
+            errorMessages[detail.path[0]] = detail.message;
+        });
+        return errorMessages;
+    };
+
     const showAlert = (config) => {
         setAlertConfig(config);
         setAlertVisible(true);
@@ -48,6 +67,17 @@ function AddNewBranchPopup({ fetchData }) {
     };
 
     const handleSave = async () => {
+        const validationErrors = validate();
+        if (validationErrors) {
+            showAlert({
+                severity: 'error',
+                title: 'Validation Error',
+                message: 'Please fill out all required fields correctly.',
+                duration: 5000
+            });
+            return;
+        }
+
         try {
             const branchExists = await checkBranchExists(branchName);
             if (branchExists) {
@@ -67,13 +97,17 @@ function AddNewBranchPopup({ fetchData }) {
                 contactNumber: contactNo
             });
 
-            console.log("Branch added successfully");
             showAlert({
                 severity: 'success',
                 title: 'Branch Added',
                 message: 'Branch added successfully!',
                 duration: 3000
             });
+
+            setBranchName('');
+            setAddress('');
+            setBranchEmail('');
+            setContactNo('');
 
             fetchData();
         } catch (error) {
@@ -111,7 +145,7 @@ function AddNewBranchPopup({ fetchData }) {
                 buttonText="Save"
                 onClick={handleSave}
                 closeSubpopup={handleClose}
-                disabled={isSaveDisabled}  
+                disabled={isSaveDisabled}
             >
                 <div style={{ display: 'block', width: '100%' }}>
                     <div>
@@ -167,5 +201,9 @@ function AddNewBranchPopup({ fetchData }) {
         </>
     );
 }
+
+AddNewBranchPopup.propTypes = {
+    fetchData: PropTypes.func.isRequired
+};
 
 export default AddNewBranchPopup;

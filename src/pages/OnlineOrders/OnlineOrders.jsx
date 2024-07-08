@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import { useLocation } from 'react-router-dom';
 import Layout from "../../Layout/Layout";
 import "./OnlineOrders.css";
 import SearchBar from '../../Components/SearchBar/SearchBar';
 import InputLabel from "../../Components/Label/InputLabel";
 import BranchDropdown from "../../Components/InputDropdown/BranchDropdown";
-import InputField from "../../Components/InputField/InputField";
 import Buttons from "../../Components/Buttons/SquareButtons/Buttons";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import NewOrders from '../OnlineOrders/NewOrders/NewOrders';
+import NewOrders from './NewOrders/NewOrders';
 import ProcessingOrders from './ProcessingOrders/ProcessingOrders';
 import PendingPickup from './PendingPickupOrders/PendingPickupOrders';
 import CompletedOrder from './CompletedOrders/CompletedOrders';
 import Badge from '@mui/material/Badge';
+import { getAllOnlineBills, getOnlineBillByNumber/*, getOnlineBillByCustomerName*/ } from '../../Api/OnlineOrders/OnlineOrdersAPI'; 
 
 export const OnlineOrders = () => {
     const [selectedBranch, setSelectedBranch] = useState('');
     const [newOrdersCount, setNewOrdersCount] = useState(0); 
     const [processingOrdersCount, setProcessingOrdersCount] = useState(0);
     const [pickupOrdersCount, setPickupOrdersCount] = useState(0);
-    const [tabIndex, setTabIndex] = useState(0); // State for tracking active tab index
+    const [tabIndex, setTabIndex] = useState(0); 
+    const [searchClicked, setSearchClicked] = useState(false);
+    const [searchTermOrderNo, setSearchTermOrderNo] = useState('');
+    const [searchTermCustomerName, setSearchTermCustomerName] = useState('');
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const location = useLocation();
 
@@ -39,6 +43,99 @@ export const OnlineOrders = () => {
     const handleTabSelect = (index) => {
         setTabIndex(index);
     };
+
+    const handleSearchClick = () => {
+        setSearchClicked(true);
+    };
+
+    const handleClearClick = () => {
+        setSelectedBranch('');
+        setSearchClicked(false);
+        setSearchTermOrderNo('');
+        setSearchTermCustomerName('');
+        setSelectedOrder(null);
+    };
+
+    const fetchSuggestionsByOrderNo = async (term) => {
+        try {
+            const bills = await getAllOnlineBills();
+            return bills.filter(bill => bill.onlineBillNo.toLowerCase().includes(term.toLowerCase())).map(bill => ({
+                id: bill.onlineBillNo,
+                displayText: `${bill.onlineBillNo} ${bill.customerName}`
+            }));
+        } catch (error) {
+            console.error('Error fetching suggestions by order number:', error);
+            return [];
+        }
+    };
+
+    // const fetchSuggestionsByCustomerName = async (term) => {
+    //     try {
+    //         const bills = await getAllOnlineBills();
+    //         return bills.filter(bill => bill.customerName.toLowerCase().includes(term.toLowerCase())).map(bill => ({
+    //             id: bill.customerName,
+    //             displayText: `${bill.customerName} ${bill.onlineBillNo}`
+    //         }));
+    //     } catch (error) {
+    //         console.error('Error fetching suggestions by customer name:', error);
+    //         return [];
+    //     }
+    // };
+
+    const handleSelectSuggestionByOrderNo = async (suggestion) => {
+        try {
+            const bill = await getOnlineBillByNumber(suggestion.id);
+            setSelectedOrder(bill);
+            setSearchTermOrderNo(suggestion.displayText);
+            setSearchClicked(true);
+            switch (bill.status) {
+                case 'New':
+                    setTabIndex(0);
+                    break;
+                case 'Processing':
+                    setTabIndex(1);
+                    break;
+                case 'Pending Pickup':
+                    setTabIndex(2);
+                    break;
+                case 'Completed':
+                    setTabIndex(3);
+                    break;
+                default:
+                    setTabIndex(0);
+            }
+        } catch (error) {
+            console.error('Error fetching bill by order number:', error);
+        }
+    };
+
+    // const handleSelectSuggestionByCustomerName = async (suggestion) => {
+    //     try {
+    //         const bill = await getOnlineBillByCustomerName(suggestion.id);
+    //         setSelectedOrder(bill);
+    //         setSearchTermCustomerName(suggestion.displayText);
+    //         setSearchClicked(true);
+    //         // Assuming status is one of ['New', 'Processing', 'Pending Pickup', 'Completed']
+    //         switch (bill.status) {
+    //             case 'New':
+    //                 setTabIndex(0);
+    //                 break;
+    //             case 'Processing':
+    //                 setTabIndex(1);
+    //                 break;
+    //             case 'Pending Pickup':
+    //                 setTabIndex(2);
+    //                 break;
+    //             case 'Completed':
+    //                 setTabIndex(3);
+    //                 break;
+    //             default:
+    //                 setTabIndex(0);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching bill by customer name:', error);
+    //     }
+    // };
 
     return (
         <>
@@ -60,20 +157,26 @@ export const OnlineOrders = () => {
                         </div>
                         <div className="orderNo">
                             <InputLabel htmlFor="orderNo" color="#0377A8">Order No</InputLabel>
-                            <InputField type="text" id="orderNo" name="orderNo" editable={true} width="250px" />
+                            <SearchBar 
+                                searchTerm={searchTermOrderNo}
+                                setSearchTerm={setSearchTermOrderNo}
+                                onSelectSuggestion={handleSelectSuggestionByOrderNo}
+                                fetchSuggestions={fetchSuggestionsByOrderNo}
+                            />
                         </div>
                         <div className="customerName">
-                            <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
-                            <SearchBar />
-                        </div>
-                        <div className="prodcutName">
-                            <InputLabel htmlFor="ProductID/Name" color="#0377A8">Product ID / Name</InputLabel>
-                            <SearchBar />
+                            {/* <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
+                            <SearchBar 
+                                searchTerm={searchTermCustomerName}
+                                setSearchTerm={setSearchTermCustomerName}
+                                onSelectSuggestion={handleSelectSuggestionByCustomerName}
+                                fetchSuggestions={fetchSuggestionsByCustomerName}
+                            /> */}
                         </div>
                     </div>
                     <div className="OnlineOrdersBtn">
-                        <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={''}> Search </Buttons>
-                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={''}> Clear </Buttons>
+                        {/* <Buttons type="button" id="search-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSearchClick}> Search </Buttons> */}
+                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "white", color: "#EB1313" }} onClick={handleClearClick}> Clear </ Buttons>
                     </div>
                 </div>
                 <Tabs className="OnlineOrdersTabs" selectedIndex={tabIndex} onSelect={handleTabSelect}>
@@ -96,16 +199,37 @@ export const OnlineOrders = () => {
                     </TabList>
 
                     <TabPanel>
-                        <NewOrders setNewOrdersCount={setNewOrdersCount} />
+                        <NewOrders 
+                            selectedBranch={selectedBranch} 
+                            setNewOrdersCount={setNewOrdersCount} 
+                            searchClicked={searchClicked}
+                            selectedOrder={selectedOrder}
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <ProcessingOrders setProcessingOrdersCount={setProcessingOrdersCount} onTabChange={setTabIndex} />
+                        <ProcessingOrders 
+                            selectedBranch={selectedBranch} 
+                            setProcessingOrdersCount={setProcessingOrdersCount} 
+                            searchClicked={searchClicked}
+                            onTabChange={setTabIndex}
+                            selectedOrder={selectedOrder}
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <PendingPickup setPickupOrdersCount={setPickupOrdersCount} onTabChange={setTabIndex} />
+                        <PendingPickup 
+                            selectedBranch={selectedBranch} 
+                            setPickupOrdersCount={setPickupOrdersCount} 
+                            searchClicked={searchClicked}
+                            onTabChange={setTabIndex}
+                            selectedOrder={selectedOrder}
+                        />
                     </TabPanel>
                     <TabPanel>
-                        <CompletedOrder />
+                        <CompletedOrder 
+                            selectedBranch={selectedBranch} 
+                            searchClicked={searchClicked}
+                            selectedOrder={selectedOrder}
+                        />
                     </TabPanel>
                 </Tabs>
             </Layout>

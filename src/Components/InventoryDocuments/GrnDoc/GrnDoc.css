@@ -32,7 +32,7 @@
 
 .GrnDoc-paper-frame {
     width: 297mm;
-    height: 210mm;
+    height: 200mm;
     margin: 0 auto;
     padding: 15px 25px 15px 25px;
     border: 1px solid #ddd;
@@ -83,7 +83,7 @@
 
 .GrnDoc-bodyContent-table td {
     font-size: 12px;
-    padding: 40px 0;
+    padding: 15px 0;
 }
 
 .GrnDoc-bottomContent {
