@@ -39,7 +39,11 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: "",
+    accept: {
+      "image/jpeg": [],
+      "image/png": [],
+      "image/webp": [],
+    },
     multiple: false,
     onDrop: handleDrop,
   });
@@ -116,7 +120,7 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
           type="text"
           id="branchName"
           name="branchName"
-          value={employeeData.branchName || 'All'}
+          value={employeeData.branchName || "All"}
           width="250px"
         />
       </div>
@@ -125,13 +129,7 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
           <InputLabel for="userRole" color="#0377A8">
             User Role
           </InputLabel>
-          <InputField
-            type="text"
-            id="role"
-            name="role"
-            value={employeeData.role}
-            width="250px"
-          />
+          <InputField type="text" id="role" name="role" value={employeeData.role} width="250px" />
         </div>
         <div
           className={editable ? "change-dp" : "change-dp-no-hover"}
@@ -206,7 +204,7 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
       </div>
       <div className="phone-field">
         <InputLabel for="empPhone" color="#0377A8">
-            Phone Number (Optional)
+          Phone Number (Optional)
         </InputLabel>
         <InputField
           type="text"
@@ -256,7 +254,10 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
           title="Success"
           message="Your Details have been updated successfully"
           duration={3000}
-          onClose={() => {toggleEditable(); setShowAlertSuccess(false);}}
+          onClose={() => {
+            toggleEditable();
+            setShowAlertSuccess(false);
+          }}
         />
       )}
 
