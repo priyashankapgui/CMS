@@ -89,6 +89,11 @@ export function UpdateUser() {
       setShowAlertError("Please fill the rquired fields");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(employeeData.email)) {
+      setShowAlertError("Invalid email format");
+      return;
+    }
     if (password !== confirmPassword) {
       setShowAlertError("Passwords do not match");
       return;

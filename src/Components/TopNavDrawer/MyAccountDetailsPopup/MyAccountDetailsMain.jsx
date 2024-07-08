@@ -65,6 +65,11 @@ export default function MyAccountDetailsMain({ editable, profilePicExists, toggl
       setShowAlertError("Please fill in all fields");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(employeeData.email)) {
+      setShowAlertError("Invalid email format");
+      return;
+    }
     setLoading(true);
     try {
       let body = {};
