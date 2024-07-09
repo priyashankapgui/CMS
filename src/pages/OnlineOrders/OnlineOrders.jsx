@@ -13,7 +13,7 @@ import ProcessingOrders from './ProcessingOrders/ProcessingOrders';
 import PendingPickup from './PendingPickupOrders/PendingPickupOrders';
 import CompletedOrder from './CompletedOrders/CompletedOrders';
 import Badge from '@mui/material/Badge';
-import { getAllOnlineBills, getOnlineBillByNumber/*, getOnlineBillByCustomerName*/ } from '../../Api/OnlineOrders/OnlineOrdersAPI'; 
+import { getAllOnlineBills, getOnlineBillByNumber } from '../../Api/OnlineOrders/OnlineOrdersAPI'; 
 
 export const OnlineOrders = () => {
     const [selectedBranch, setSelectedBranch] = useState('');
@@ -55,32 +55,20 @@ export const OnlineOrders = () => {
         setSearchTermCustomerName('');
         setSelectedOrder(null);
     };
-
     const fetchSuggestionsByOrderNo = async (term) => {
         try {
             const bills = await getAllOnlineBills();
-            return bills.filter(bill => bill.onlineBillNo.toLowerCase().includes(term.toLowerCase())).map(bill => ({
-                id: bill.onlineBillNo,
-                displayText: `${bill.onlineBillNo} ${bill.customerName}`
-            }));
+            return bills
+                .filter(bill => bill.onlineBillNo.toLowerCase().includes(term.toLowerCase()))
+                .map(bill => ({
+                    id: bill.onlineBillNo,
+                    displayText: `${bill.onlineBillNo} ${bill.customerName || ''}`.trim()
+                }));
         } catch (error) {
             console.error('Error fetching suggestions by order number:', error);
             return [];
         }
     };
-
-    // const fetchSuggestionsByCustomerName = async (term) => {
-    //     try {
-    //         const bills = await getAllOnlineBills();
-    //         return bills.filter(bill => bill.customerName.toLowerCase().includes(term.toLowerCase())).map(bill => ({
-    //             id: bill.customerName,
-    //             displayText: `${bill.customerName} ${bill.onlineBillNo}`
-    //         }));
-    //     } catch (error) {
-    //         console.error('Error fetching suggestions by customer name:', error);
-    //         return [];
-    //     }
-    // };
 
     const handleSelectSuggestionByOrderNo = async (suggestion) => {
         try {
@@ -108,34 +96,6 @@ export const OnlineOrders = () => {
             console.error('Error fetching bill by order number:', error);
         }
     };
-
-    // const handleSelectSuggestionByCustomerName = async (suggestion) => {
-    //     try {
-    //         const bill = await getOnlineBillByCustomerName(suggestion.id);
-    //         setSelectedOrder(bill);
-    //         setSearchTermCustomerName(suggestion.displayText);
-    //         setSearchClicked(true);
-    //         // Assuming status is one of ['New', 'Processing', 'Pending Pickup', 'Completed']
-    //         switch (bill.status) {
-    //             case 'New':
-    //                 setTabIndex(0);
-    //                 break;
-    //             case 'Processing':
-    //                 setTabIndex(1);
-    //                 break;
-    //             case 'Pending Pickup':
-    //                 setTabIndex(2);
-    //                 break;
-    //             case 'Completed':
-    //                 setTabIndex(3);
-    //                 break;
-    //             default:
-    //                 setTabIndex(0);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching bill by customer name:', error);
-    //     }
-    // };
 
     return (
         <>
@@ -165,13 +125,6 @@ export const OnlineOrders = () => {
                             />
                         </div>
                         <div className="customerName">
-                            {/* <InputLabel htmlFor="CustomerName" color="#0377A8">Customer Name</InputLabel>
-                            <SearchBar 
-                                searchTerm={searchTermCustomerName}
-                                setSearchTerm={setSearchTermCustomerName}
-                                onSelectSuggestion={handleSelectSuggestionByCustomerName}
-                                fetchSuggestions={fetchSuggestionsByCustomerName}
-                            /> */}
                         </div>
                     </div>
                     <div className="OnlineOrdersBtn">
