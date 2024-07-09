@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import RoundButtons from '../../../../Components/Buttons/RoundButtons/RoundButtons';
 import secureLocalStorage from "react-secure-storage";
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import StockTranIn from '../../../../Components/InventoryDocuments/St-In-Doc/StockTraIn';
 import { Link } from 'react-router-dom';
 import { BsEye, BsCheckCircle, BsXCircle  } from "react-icons/bs";
@@ -96,6 +97,9 @@ const StockTransferIn = ({ searchParams }) => {
         <>
             <div className="stockTransferIN-bodycontainer">
                 <div className="stockTransferIN-content-middle">
+                {loading ? (
+                            <div><SubSpinner /></div>
+                        ) : (
                     <TableWithPagi
                         columns={['STN No', 'Created At', 'Request Branch', 'Supplying Branch', 'Status', 'Requested By', 'Submitted By', 'Submitted At', 'Actions']}
                         rows={stockData.map((data, index) => ({
@@ -154,6 +158,7 @@ const StockTransferIn = ({ searchParams }) => {
                         customTableStyle={{ top: '20%', width: '100%' }}
                         itemsPerPage={10}
                     />
+                        )}
                 </div>
             </div>
             {showStockINReceipt && (

@@ -15,11 +15,13 @@ export const WebMgmt = () => {
   const [alert, setAlert] = useState({ severity: "", title: "", message: "", show: false });
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState({ carosel: false, endimage: false, aboutimages: false });
-
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  
   const handleImageChange = (event, type) => {
     const file = event.target.files;
     setFiles(prevFiles => ({ ...prevFiles, [type]: file }));
     setImageType(type);
+    setSubmitted(prevSubmitted => ({ ...prevSubmitted, [type]: false })); // Reset the submitted state for the selected type
   };
 
   const handleCreatewebImage = async () => {
@@ -32,7 +34,7 @@ export const WebMgmt = () => {
         formData.append("type", imageType);
       }
 
-      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/webIamges`, {
+      const response = await fetch(`${apiUrl}/webIamges`, {
         method: "POST",
         body: formData,
       });
@@ -162,5 +164,3 @@ export const WebMgmt = () => {
     </Layout>
   );
 };
-
-

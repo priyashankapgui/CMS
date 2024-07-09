@@ -41,24 +41,26 @@ export const WebFeedbacks = () => {
         userID: "",
     });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const data = await getWebFeedbacks();
-    
-                const sortedData = data.sort((a, b) => {
-                    if (a.action === 'Pending' && b.action !== 'Pending') return -1;
-                    if (a.action !== 'Pending' && b.action === 'Pending') return 1;
-                    return new Date(a.createdAt) - new Date(b.createdAt);
-                });
-    
-                setFiltered(sortedData);
-                setRows(sortedData);
-            } catch (error) {
+    const fetchData = async () => {
+        try {
+            const data = await getWebFeedbacks();
 
-                console.error('Failed to fetch data:', error);
-            }
-        };
+            const sortedData = data.sort((a, b) => {
+                if (a.action === 'Pending' && b.action !== 'Pending') return -1;
+                if (a.action !== 'Pending' && b.action === 'Pending') return 1;
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+
+            setFiltered(sortedData);
+            setRows(sortedData);
+        } catch (error) {
+
+            console.error('Failed to fetch data:', error);
+        }
+    };
+
+    useEffect(() => {
+       
     
         fetchData();
     }, []);
@@ -119,6 +121,8 @@ export const WebFeedbacks = () => {
             setRows(sortedRows);
             setActionSummary('');
             setEditModeId(null);
+            fetchData();
+
         } catch (error) {
             console.error('Error updating feedback:', error);
         } finally {
@@ -170,6 +174,7 @@ export const WebFeedbacks = () => {
     };
 
     const handleActionDropdownChange = (value) => {
+       console.log(value);
         setSelectedAction(value);
     };
 
@@ -296,7 +301,23 @@ export const WebFeedbacks = () => {
                                 />
                             </div>
                             <div className="actionField">
-                              
+                                <InputLabel htmlFor="actionType" color="#0377A8">Action</InputLabel>
+                                <InputDropdown
+                                    id="actionType"
+                                    name="actionType"
+                                    editable={true}
+                                    options={['All', 'Taken', 'Pending']}
+                                    value={selectedAction?selectedAction:'All'}
+                                    onChange={(e) => handleActionDropdownChange(e.target.value)}
+    
+                                />
+                                {/* <InputDropdown
+                                    id="repoType"
+                                    name="repoType"
+                                    editable={true}
+                                    options={repoTypes.repoTypes}
+                                    onChange={(value) => handleDropdownChange(value, 'reportType')}
+                                /> */}
                             </div>
                         </div>
                         <div className="feed-BtnSection">
