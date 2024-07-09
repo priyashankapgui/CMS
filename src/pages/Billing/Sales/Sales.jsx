@@ -40,7 +40,10 @@ export const Sales = () => {
     const [userDetails, setUserDetails] = useState({
         username: ""
     });
+    const [contactNo, setContactNo] = useState('');
+    const [contactNoError, setContactNoError] = useState('')
 
+        ;
     const calculateTotals = useCallback(() => {
         let totalGross = 0;
         let totalNet = 0;
@@ -89,6 +92,10 @@ export const Sales = () => {
         setSelectedBranch(value);
     };
 
+
+
+
+
     const fetchProductsSuggestions = async (searchTerm) => {
         if (!selectedBranch) {
             console.error('Branch not selected');
@@ -96,7 +103,7 @@ export const Sales = () => {
         }
         try {
             const products = await getProductByBranch(searchTerm, selectedBranch);
-            console.log("products",products);
+            console.log("products", products);
             const productMap = new Map();
 
             products.forEach((product) => {
@@ -226,6 +233,7 @@ export const Sales = () => {
         }
         setRows(updatedRows);
     };
+
 
     const handleQtyChange = (e, rowIndex) => {
         const billQty = parseFloat(e.target.value) || 0;
@@ -484,266 +492,292 @@ export const Sales = () => {
         setShowSalesReceipt(false);
     };
 
-    return (
-        <>
-            {alert.open && (
-                <CustomAlert
-                    severity={alert.severity}
-                    title={alert.title}
-                    message={alert.message}
-                    duration={4000}
-                    onClose={handleCloseAlert}
-                />
-            )}
-            <div className="top-nav-blue-text">
-                <h4>Sales</h4>
-            </div>
-            <Layout>
-                {loading && (
-                    <div className="loading-overlay">
-                        <SubSpinner spinnerText='Saving' />
-                    </div>
-                )}
-                <div className="salesBody">
-                    {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
-                    <div className="sales-top-content">
-                        <div className="branchName">
-                            <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
-                            <BranchDropdown
-                                id="branchName"
-                                name="branchName"
-                                editable={true}
-                                onChange={(e) => handleBranchDropdownChange(e)}
-                            />
-                        </div>
-                        <div className="customerName">
-                            <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
-                            <InputField type="text" id="customerName" name="customerName" editable={true} />
-                        </div>
-                        <div className="contactNo">
-                            <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
-                            <InputField type="text" id="contactNo" name="contactNo" editable={true} />
-                        </div>
-                    </div>
-                    <div className='mainBody'>
 
-                        <>
-                            <div className="billContainer">
-                                <table className='billContainerTable'>
-                                    <thead>
-                                        <tr>
-                                            <th>Barcode</th>
-                                            <th>Product ID / Name</th>
-                                            <th>Batch No</th>
-                                            <th>Bill Qty</th>
-                                            <th>Unit Price</th>
-                                            <th>Avb. Qty</th>
-                                            <th>Dis</th>
-                                            <th>Amount</th>
-                                            <th />
-                                            <th />
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {rows.map((row, rowIndex) => (
-                                            <tr key={rowIndex}>
-                                                <td>
-                                                    <InputField
-                                                        type="text"
-                                                        id={`barcode-${rowIndex}`}
-                                                        name="barcode"
-                                                        editable={true}
-                                                        width="100%"
-                                                        value={row.productDetails.barcode || ''}
-                                                        onChange={(e) => handleBarcodeChange(e, rowIndex)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <SearchBar
-                                                        searchTerm={row.selectedProduct}
-                                                        setSearchTerm={(term) => {
-                                                            const updatedRows = [...rows];
-                                                            updatedRows[rowIndex].selectedProduct = term;
-                                                            setRows(updatedRows);
-                                                        }}
-                                                        onSelectSuggestion={(suggestion) => handleProductSelection(suggestion, rowIndex)}
-                                                        fetchSuggestions={fetchProductsSuggestions}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    {row.batchOptions.length > 1 ? (
-                                                        <InputDropdown
-                                                            id={`batchNo-${rowIndex}`}
-                                                            name="batchNo"
-                                                            editable={true}
-                                                            width="100%"
-                                                            value={row.productDetails.batchNo || ''}
-                                                            onChange={(e) => handleBatchChange(e, rowIndex)}
-                                                            options={row.batchOptions}
-                                                        />
-                                                    ) : (
+    const validateContactNo = (value) => {
+        const contactNoRegex = /^\d{10}$/;
+        return contactNoRegex.test(value);
+    };
+    
+
+    const handleContactNoChange = (e) => {
+        const value = e.target.value;
+        setContactNo(value);
+
+        if (!validateContactNo(value)) {
+            setContactNoError('Contact No must be 10 digits.');
+        } else {
+            setContactNoError('');
+        }
+    }
+
+        return (
+            <>
+                {alert.open && (
+                    <CustomAlert
+                        severity={alert.severity}
+                        title={alert.title}
+                        message={alert.message}
+                        duration={4000}
+                        onClose={handleCloseAlert}
+                    />
+                )}
+                <div className="top-nav-blue-text">
+                    <h4>Sales</h4>
+                </div>
+                <Layout>
+                    {loading && (
+                        <div className="loading-overlay">
+                            <SubSpinner spinnerText='Saving' />
+                        </div>
+                    )}
+                    <div className="salesBody">
+                        {showSalesReceipt && <SalesReceipt billNo={billNo} onClose={handleCloseReceipt} />}
+                        <div className="sales-top-content">
+                            <div className="branchName">
+                                <InputLabel htmlFor="branchName" color="#0377A8">Branch<span style={{ color: 'red' }}>*</span></InputLabel>
+                                <BranchDropdown
+                                    id="branchName"
+                                    name="branchName"
+                                    editable={true}
+                                    onChange={(e) => handleBranchDropdownChange(e)}
+                                />
+                            </div>
+                            <div className="customerName">
+                                <InputLabel htmlFor="customerName" color="#0377A8">Customer Name</InputLabel>
+                                <InputField type="text" id="customerName" name="customerName" editable={true} />
+                            </div>
+                            <div className="contactNo">
+                                <InputLabel htmlFor="contactNo" color="#0377A8">Contact No</InputLabel>
+                                <InputField
+                                    type="text"
+                                    id="contactNo"
+                                    name="contactNo"
+                                    editable={true}
+                                    value={contactNo}
+                                    onChange={handleContactNoChange}
+                                />
+                                  {contactNoError && <span style={{ color: 'red', fontSize:'12px' }}>{contactNoError}</span>}
+                            </div>
+                        </div>
+                        <div className='mainBody'>
+
+                            <>
+                                <div className="billContainer">
+                                    <table className='billContainerTable'>
+                                        <thead>
+                                            <tr>
+                                                <th>Barcode</th>
+                                                <th>Product ID / Name</th>
+                                                <th>Batch No</th>
+                                                <th>Bill Qty</th>
+                                                <th>Unit Price</th>
+                                                <th>Avb. Qty</th>
+                                                <th>Dis</th>
+                                                <th>Amount</th>
+                                                <th />
+                                                <th />
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {rows.map((row, rowIndex) => (
+                                                <tr key={rowIndex}>
+                                                    <td>
                                                         <InputField
                                                             type="text"
-                                                            id={`batchNo-${rowIndex}`}
-                                                            name="batchNo"
+                                                            id={`barcode-${rowIndex}`}
+                                                            name="barcode"
+                                                            editable={true}
+                                                            width="100%"
+                                                            value={row.productDetails.barcode || ''}
+                                                            onChange={(e) => handleBarcodeChange(e, rowIndex)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <SearchBar
+                                                            searchTerm={row.selectedProduct}
+                                                            setSearchTerm={(term) => {
+                                                                const updatedRows = [...rows];
+                                                                updatedRows[rowIndex].selectedProduct = term;
+                                                                setRows(updatedRows);
+                                                            }}
+                                                            onSelectSuggestion={(suggestion) => handleProductSelection(suggestion, rowIndex)}
+                                                            fetchSuggestions={fetchProductsSuggestions}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        {row.batchOptions.length > 1 ? (
+                                                            <InputDropdown
+                                                                id={`batchNo-${rowIndex}`}
+                                                                name="batchNo"
+                                                                editable={true}
+                                                                width="100%"
+                                                                value={row.productDetails.batchNo || ''}
+                                                                onChange={(e) => handleBatchChange(e, rowIndex)}
+                                                                options={row.batchOptions}
+                                                            />
+                                                        ) : (
+                                                            <InputField
+                                                                type="text"
+                                                                id={`batchNo-${rowIndex}`}
+                                                                name="batchNo"
+                                                                editable={false}
+                                                                width="100%"
+                                                                textAlign="center"
+                                                                value={row.productDetails.batchNo || ''}
+                                                            />
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <InputField
+                                                            type="number"
+                                                            id={`billQty-${rowIndex}`}
+                                                            name="billQty"
+                                                            editable={true}
+                                                            width="100%"
+                                                            textAlign="center"
+                                                            value={row.productDetails.billQty || ''}
+                                                            onChange={(e) => handleQtyChange(e, rowIndex)}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <InputField
+                                                            type="number"
+                                                            id={`unitPrice-${rowIndex}`}
+                                                            name="unitPrice"
+                                                            editable={false}
+                                                            textAlign="right"
+                                                            width="100%"
+                                                            value={row.productDetails.sellingPrice || ''}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <InputField
+                                                            type="number"
+                                                            id={`avbQty-${rowIndex}`}
+                                                            name="avbQty"
                                                             editable={false}
                                                             width="100%"
                                                             textAlign="center"
-                                                            value={row.productDetails.batchNo || ''}
+                                                            value={row.productDetails.totalAvailableQty || ''}
                                                         />
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    <InputField
-                                                        type="number"
-                                                        id={`billQty-${rowIndex}`}
-                                                        name="billQty"
-                                                        editable={true}
-                                                        width="100%"
-                                                        textAlign="center"
-                                                        value={row.productDetails.billQty || ''}
-                                                        onChange={(e) => handleQtyChange(e, rowIndex)}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <InputField
-                                                        type="number"
-                                                        id={`unitPrice-${rowIndex}`}
-                                                        name="unitPrice"
-                                                        editable={false}
-                                                        textAlign="right"
-                                                        width="100%"
-                                                        value={row.productDetails.sellingPrice || ''}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <InputField
-                                                        type="number"
-                                                        id={`avbQty-${rowIndex}`}
-                                                        name="avbQty"
-                                                        editable={false}
-                                                        width="100%"
-                                                        textAlign="center"
-                                                        value={row.productDetails.totalAvailableQty || ''}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <InputField
-                                                        type="text"
-                                                        id={`discountPerItem-${rowIndex}`}
-                                                        name="discountPerItem"
-                                                        editable={false}
-                                                        width="100%"
-                                                        textAlign="center"
-                                                        value={row.productDetails.discount || ''}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <InputField
-                                                        type="text"
-                                                        id={`amount-${rowIndex}`}
-                                                        name="amount"
-                                                        editable={false}
-                                                        width="100%"
-                                                        textAlign="right"
-                                                        value={row.productDetails.amount || ''}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <FiPlus onClick={addRow} style={{ cursor: 'pointer', marginRight: '12px' }} />
-                                                </td>
-                                                <td>
-                                                    <AiOutlineDelete onClick={() => deleteRow(rowIndex)} style={{ cursor: 'pointer' }} />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div className="paymentContainerWrapper">
-                                <div className="paymentContainer">
-                                    <div className="payment-method-top">
-                                        <h3>Select Payment Method<span style={{ color: 'red' }}>*</span></h3>
-                                        <div className='paymentRadio'>
-                                            <InputRadio
-                                                name="paymentMethod"
-                                                options={[
-                                                    { value: 'Cash', label: 'Cash' },
-                                                    { value: 'Card', label: 'Card' }
-                                                ]}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="payment-method-middle">
-                                        <table>
-                                            <tbody>
-                                                <tr>
-                                                    <td><InputLabel htmlFor="noItems" color="#0377A8">No Items:</InputLabel></td>
-                                                    <td><InputField type="text" id="noItems" name="noItems" editable={false} value={noItems} /></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><InputLabel htmlFor="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
-                                                    <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} value={grossTotal} /></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><InputLabel htmlFor="discountBill" color="#0377A8">Discount %</InputLabel></td>
+                                                    </td>
                                                     <td>
-                                                        <div className="discountFieldsContainer">
-                                                            <InputField
-                                                                type="text"
-                                                                id="discountBillRate"
-                                                                name="discountBillRate"
-                                                                className="discountBillRate"
-                                                                editable={true}
-                                                                placeholder="%"
-                                                                width="3em"
-                                                                onChange={handleDiscountRateChange}
-                                                            />
-                                                            <InputField
-                                                                type="text"
-                                                                id="discountBillAmount"
-                                                                name="discountBillAmount"
-                                                                className="discountBillAmount"
-                                                                editable={false}
-                                                                value={(grossTotal - netTotal).toFixed(2)}
-                                                                width="23.7em"
-                                                            />
-                                                        </div>
+                                                        <InputField
+                                                            type="text"
+                                                            id={`discountPerItem-${rowIndex}`}
+                                                            name="discountPerItem"
+                                                            editable={false}
+                                                            width="100%"
+                                                            textAlign="center"
+                                                            value={row.productDetails.discount || ''}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <InputField
+                                                            type="text"
+                                                            id={`amount-${rowIndex}`}
+                                                            name="amount"
+                                                            editable={false}
+                                                            width="100%"
+                                                            textAlign="right"
+                                                            value={row.productDetails.amount || ''}
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <FiPlus onClick={addRow} style={{ cursor: 'pointer', marginRight: '12px' }} />
+                                                    </td>
+                                                    <td>
+                                                        <AiOutlineDelete onClick={() => deleteRow(rowIndex)} style={{ cursor: 'pointer' }} />
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td><InputLabel htmlFor="netTotal" color="#0377A8" fontSize="18px" fontWeight="510">Net Total</InputLabel></td>
-                                                    <td><InputField type="text" id="netTotal" name="netTotal" editable={false} value={netTotal} /></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><InputLabel htmlFor="receivedAmount" color="#0377A8">Received</InputLabel></td>
-                                                    <td><InputField type="number" id="receivedAmount" name="receivedAmount" editable={true} placeholder="0.00" value={receivedAmount} onChange={(e) => handleReceivedAmountChange(e)} /></td>
-                                                </tr>
-                                                {receivedAmount > 0 && (
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div className="paymentContainerWrapper">
+                                    <div className="paymentContainer">
+                                        <div className="payment-method-top">
+                                            <h3>Select Payment Method<span style={{ color: 'red' }}>*</span></h3>
+                                            <div className='paymentRadio'>
+                                                <InputRadio
+                                                    name="paymentMethod"
+                                                    options={[
+                                                        { value: 'Cash', label: 'Cash' },
+                                                        { value: 'Card', label: 'Card' }
+                                                    ]}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="payment-method-middle">
+                                            <table>
+                                                <tbody>
                                                     <tr>
-                                                        <td><InputLabel htmlFor="balance" color="#0377A8">Balance</InputLabel></td>
-                                                        <td><InputField type="text" id="balance" name="balance" editable={false} value={balance} /></td>
+                                                        <td><InputLabel htmlFor="noItems" color="#0377A8">No Items:</InputLabel></td>
+                                                        <td><InputField type="text" id="noItems" name="noItems" editable={false} value={noItems} /></td>
                                                     </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div className="payment-method-bottom">
-                                        <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
-                                        <Buttons type="button" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClear}> Clear </Buttons>
-                                    </div>
-                                    <div className="cardLogos">
-                                        <Icon icon="game-icons:cash" />
-                                        <Icon icon="fa:cc-visa" />
-                                        <Icon icon="logos:mastercard" />
+                                                    <tr>
+                                                        <td><InputLabel htmlFor="grossTotal" color="#0377A8">Gross Total</InputLabel></td>
+                                                        <td><InputField type="text" id="grossTotal" name="grossTotal" editable={false} value={grossTotal} /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><InputLabel htmlFor="discountBill" color="#0377A8">Discount %</InputLabel></td>
+                                                        <td>
+                                                            <div className="discountFieldsContainer">
+                                                                <InputField
+                                                                    type="text"
+                                                                    id="discountBillRate"
+                                                                    name="discountBillRate"
+                                                                    className="discountBillRate"
+                                                                    editable={true}
+                                                                    placeholder="%"
+                                                                    width="3em"
+                                                                    onChange={handleDiscountRateChange}
+                                                                />
+                                                                <InputField
+                                                                    type="text"
+                                                                    id="discountBillAmount"
+                                                                    name="discountBillAmount"
+                                                                    className="discountBillAmount"
+                                                                    editable={false}
+                                                                    value={(grossTotal - netTotal).toFixed(2)}
+                                                                    width="23.7em"
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><InputLabel htmlFor="netTotal" color="#0377A8" fontSize="18px" fontWeight="510">Net Total</InputLabel></td>
+                                                        <td><InputField type="text" id="netTotal" name="netTotal" editable={false} value={netTotal} /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><InputLabel htmlFor="receivedAmount" color="#0377A8">Received</InputLabel></td>
+                                                        <td><InputField type="number" id="receivedAmount" name="receivedAmount" editable={true} placeholder="0.00" value={receivedAmount} onChange={(e) => handleReceivedAmountChange(e)} /></td>
+                                                    </tr>
+                                                    {receivedAmount > 0 && (
+                                                        <tr>
+                                                            <td><InputLabel htmlFor="balance" color="#0377A8">Balance</InputLabel></td>
+                                                            <td><InputField type="text" id="balance" name="balance" editable={false} value={balance} /></td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="payment-method-bottom">
+                                            <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
+                                            <Buttons type="button" id="clear-btn" style={{ backgroundColor: "#fafafa", color: "red" }} onClick={handleClear}> Clear </Buttons>
+                                        </div>
+                                        <div className="cardLogos">
+                                            <Icon icon="game-icons:cash" />
+                                            <Icon icon="fa:cc-visa" />
+                                            <Icon icon="logos:mastercard" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </>
+                            </>
+                        </div>
                     </div>
-                </div>
-            </Layout>
-        </>
-    );
-}
+                </Layout>
+            </>
+        );
+    }
