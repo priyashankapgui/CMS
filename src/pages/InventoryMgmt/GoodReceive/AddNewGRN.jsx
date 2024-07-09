@@ -199,11 +199,16 @@ export function AddNewGRN() {
     const fetchProductsSuggestions = async (query) => {
         try {
             const response = await getProducts();
-            if (response.data && response.data) {
-                return response.data.map(product => ({
-                    id: product.productId,
-                    displayText: `${product.productId} ${product.productName}`
-                }));
+            if (response.data) {
+                return response.data
+                    .filter(product => 
+                        product.productName.toLowerCase().includes(query.toLowerCase()) || 
+                        product.productId.toLowerCase().includes(query.toLowerCase())
+                    )
+                    .map(product => ({
+                        id: product.productId,
+                        displayText: `${product.productId} ${product.productName}`
+                    }));
             }
             return [];
         } catch (error) {
@@ -253,7 +258,6 @@ export function AddNewGRN() {
                                     name="branchName"
                                     editable={true}
                                     onChange={(e) => handleDropdownChange(e)}
-                                    addOptions={["All"]}
                                     value={selectedBranch}
                                     ref={branchDropdownRef}
                                     />

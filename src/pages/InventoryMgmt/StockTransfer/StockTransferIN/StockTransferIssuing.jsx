@@ -6,6 +6,7 @@ import InputLabel from "../../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import SearchBar from '../../../../Components/SearchBar/SearchBar';
 import secureLocalStorage from "react-secure-storage";
+import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
 import CustomAlert from '../../../../Components/Alerts/CustomAlert/CustomAlert';
 import ConfirmationPopup from "../../../../Components/PopupsWindows/ConfirmationPopup";
 import { Link , useNavigate, useParams } from 'react-router-dom';
@@ -246,7 +247,7 @@ export const StockTransferIssuing = () => {
                 message: 'Failed to cancel stock transfer.'
             });
         } finally {
-            setShowConfirmation(false); // Close the confirmation popup
+            setShowConfirmation(false); 
         }
     };
 
@@ -297,7 +298,11 @@ export const StockTransferIssuing = () => {
                         </div>
                     </div>
                     <div className="StockIn-content-middle">
+                    {loading ? (
+                            <div><SubSpinner /></div>
+                        ) : (
                         <TableWithPagi rows={tableRows} columns={columns} />
+                        )}
                     </div>
                     <div className="StockIn-BtnSection">
                         <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Issue </Buttons>

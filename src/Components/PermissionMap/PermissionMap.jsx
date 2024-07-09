@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-export default function PermissionMap({ checkedPages, permissionArray }) {
+export default function PermissionMap({ checkedPages, permissionArray = [] }) {
   const BranchManagement = ["accounts", "accounts/user-roles", "adjust-branch"];
   const InventoryManagement = [
     "products",
@@ -16,16 +16,16 @@ export default function PermissionMap({ checkedPages, permissionArray }) {
   const Billing = ["sales", "work-list"];
   const Reporting = ["reporting/reports", "reporting/analysis"];
 
-  const BranchManagementPages = permissionArray.filter((page) =>
+  const BranchManagementPages = permissionArray?.filter((page) =>
     BranchManagement.includes(page.pageId)
   );
-  const InventoryManagementPages = permissionArray.filter((page) =>
+  const InventoryManagementPages = permissionArray?.filter((page) =>
     InventoryManagement.includes(page.pageId)
   );
-  const BillingPages = permissionArray.filter((page) =>
+  const BillingPages = permissionArray?.filter((page) =>
     Billing.includes(page.pageId)
   );
-  const ReportingPages = permissionArray.filter((page) =>
+  const ReportingPages = permissionArray?.filter((page) =>
     Reporting.includes(page.pageId)
   );
   // console.log(BranchManagementPages);

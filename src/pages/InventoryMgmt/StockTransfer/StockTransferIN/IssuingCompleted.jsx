@@ -6,21 +6,25 @@ import InputLabel from "../../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
+import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner"; 
 import { getStockTransferBySTN_NO } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
 
 export const IssuingCompleted = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
+    const [loading, setLoading] = useState(true); 
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
+            setLoading(true);
             try {
                 const response = await getStockTransferBySTN_NO(STN_NO);
                 setStockTransferDetails(response.data);
-                
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
+            } finally {
+                setLoading(false); 
             }
         };
 
@@ -33,9 +37,7 @@ export const IssuingCompleted = () => {
         navigate('/stock-transfer');
     };
 
-
     const calculateTotalAmount = () => {
-        
         return stockTransferDetails?.products.reduce((total, product) => 
             total + product.batches.reduce((batchTotal, batch) => batchTotal + batch.amount, 0), 0
         ) || 0;
@@ -54,13 +56,12 @@ export const IssuingCompleted = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-            <div className="stockIssuingCompleted-top-link">
+                <div className="stockIssuingCompleted-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>Stock Transfer IN - Completed</h4>
                 </div>
-                
             </div>
             <Layout>
                 <div className="stockIssuingCompleted-bodycontainer">
@@ -97,7 +98,9 @@ export const IssuingCompleted = () => {
                         </div>
                     </div>
                     <div className="stockIssuingCompleted-content-middle">
-                        {stockTransferDetails?.products ? (
+                        {loading ? (
+                            <SubSpinner /> 
+                        ) : stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
                                 "Req. Qty": product.requestedQty,

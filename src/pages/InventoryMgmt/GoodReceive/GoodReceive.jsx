@@ -235,21 +235,27 @@ export const GoodReceive = () => {
     navigate("/good-receive/new");
   };
 
+  
   const fetchProductsSuggestions = async (query) => {
     try {
-      const response = await getProducts();
-      if (response.data && response.data) {
-        return response.data.map((product) => ({
-          id: product.productId,
-          displayText: `${product.productId} ${product.productName}`,
-        }));
-      }
-      return [];
+        const response = await getProducts();
+        if (response.data) {
+            return response.data
+                .filter(product => 
+                    product.productName.toLowerCase().includes(query.toLowerCase()) || 
+                    product.productId.toLowerCase().includes(query.toLowerCase())
+                )
+                .map(product => ({
+                    id: product.productId,
+                    displayText: `${product.productId} ${product.productName}`
+                }));
+        }
+        return [];
     } catch (error) {
-      console.error("Error fetching product suggestions:", error);
-      return [];
+        console.error('Error fetching product:', error);
+        return [];
     }
-  };
+};
 
   const fetchSuppliersSuggestions = async (query) => {
     try {
@@ -290,7 +296,6 @@ export const GoodReceive = () => {
                   name="branchName"
                   editable={true}
                   onChange={(e) => handleDropdownChange(e)}
-                  addOptions={["All"]}
                 />
               </div>
               <div className="datePickerFrom">

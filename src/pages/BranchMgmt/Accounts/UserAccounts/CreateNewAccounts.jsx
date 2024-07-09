@@ -77,6 +77,10 @@ export function CreateNewAccounts() {
       ) {
         throw new Error("Please fill in required fields");
       }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(employeeData.email)) {
+        throw new Error("Invalid email format");
+      }
       if (employeeData.password !== confirmPassword) {
         throw new Error("Passwords do not match");
       }
