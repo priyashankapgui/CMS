@@ -13,10 +13,10 @@ import {
   createUserRole,
   getUserRolePermissionsByToken,
 } from "../../../../Api/BranchMgmt/UserRoleAPI";
-const token = secureLocalStorage.getItem("accessToken");
 
 function AddNewUserRolePopup({ refresh }) {
-  const [permissionArray, setPermissionArray] = useState([]);
+  const token = secureLocalStorage.getItem("accessToken");
+  const [permissionArray, setPermissionArray] = useState(["None"]);
   const [checkedPages, setCheckedPages] = useState(new Map());
   const [roleName, setRoleName] = useState();
   const [selectedBranch, setSelectedBranch] = useState("None");
@@ -45,7 +45,7 @@ function AddNewUserRolePopup({ refresh }) {
       }
     };
     getPermissions();
-  }, []);
+  }, [token]);
 
   const handleSave = async () => {
     try {

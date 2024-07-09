@@ -4,6 +4,7 @@ import  '../StockTransferIN/Cancelled.css';
 import Buttons from '../../../../Components/Buttons/SquareButtons/Buttons';
 import InputLabel from "../../../../Components/Label/InputLabel";
 import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import { getStockTransferBySTN_NO } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
@@ -12,14 +13,18 @@ export const ReceivingCancelled = () => {
     const navigate = useNavigate();
     const { STN_NO } = useParams();
     const [stockTransferDetails, setStockTransferDetails] = useState(null);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
             try {
+                setLoading(true); 
                 const response = await getStockTransferBySTN_NO(STN_NO);
                 setStockTransferDetails(response.data);
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
+            } finally {
+                setLoading(false); 
             }
         };
 
@@ -32,7 +37,6 @@ export const ReceivingCancelled = () => {
         navigate('/stock-transfer');
     };
 
-
     const columns = [
         "Product Id / Name",
         "Req. Qty",
@@ -42,13 +46,12 @@ export const ReceivingCancelled = () => {
     return (
         <>
             <div className="top-nav-blue-text">
-            <div className="stockCancel-top-link">
+                <div className="stockCancel-top-link">
                     <Link to="/stock-transfer">
                         <IoChevronBackCircleOutline style={{ fontSize: "22px", color: "#0377A8" }} />
                     </Link>
                     <h4>Stock Transfer OUT - Cancelled</h4>
                 </div>
-                
             </div>
             <Layout>
                 <div className="stockCancel-bodycontainer">
@@ -85,12 +88,13 @@ export const ReceivingCancelled = () => {
                         </div>
                     </div>
                     <div className="stockCancel-content-middle">
-                        {stockTransferDetails?.products ? (
+                        {loading ? ( 
+                            <SubSpinner />
+                        ) : stockTransferDetails?.products ? (
                             <TableWithPagi rows={stockTransferDetails.products.map(product => ({
                                 "Product Id / Name": `${product.productId} / ${product.productName}`,
                                 "Req. Qty": product.requestedQty,
                                 "Status": 'Cancelled'
-                                
                             }))} columns={columns} />
                         ) : (
                             <p>No products available</p>
@@ -98,7 +102,6 @@ export const ReceivingCancelled = () => {
                     </div>
                     <div className="stockCancel-BtnSection">
                         <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
-                        
                     </div>
                 </div>
             </Layout>

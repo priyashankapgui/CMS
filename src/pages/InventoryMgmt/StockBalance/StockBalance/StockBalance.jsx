@@ -7,6 +7,7 @@ import SearchBar from "../../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import StockSummary from './StockSummary';
 import AdjustStock from './AdjustStock';
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import { getBranchOptions } from '../../../../Api/BranchMgmt/BranchAPI';
 import { getProducts } from '../../../../Api/Inventory/Product/ProductAPI';
 import { getActiveStock } from '../../../../Api/Inventory/StockBalance/StockBalanceAPI';
@@ -51,11 +52,16 @@ export const StockBalance = () => {
     const fetchProductsSuggestions = async (query) => {
         try {
             const response = await getProducts();
-            if (response.data && response.data) {
-                return response.data.map(product => ({
-                    id: product.productId,
-                    displayText: `${product.productId} ${product.productName}`
-                }));
+            if (response.data) {
+                return response.data
+                    .filter(product => 
+                        product.productName.toLowerCase().includes(query.toLowerCase()) || 
+                        product.productId.toLowerCase().includes(query.toLowerCase())
+                    )
+                    .map(product => ({
+                        id: product.productId,
+                        displayText: `${product.productId} ${product.productName}`
+                    }));
             }
             return [];
         } catch (error) {
@@ -111,7 +117,6 @@ export const StockBalance = () => {
                                 name="branchName"
                                 editable={true}
                                 onChange={(e) => handleDropdownChange(e)}
-                                addOptions={["All"]}
                                 value={selectedBranch}
                                 ref={branchDropdownRef}
                             />
@@ -137,7 +142,9 @@ export const StockBalance = () => {
                 </div>
                 <div className="stock-balance-content-middle">
                     <p className="stock-active-balance-title">Active Stock</p>
-
+                    {loading ? (
+                            <div><SubSpinner /></div>
+                        ) : (
                     <TableWithPagi
                         columns={['Product ID', 'Product Name', 'Branch Name', 'Category Name', 'Qty', '']}
                         rows={stockDetails.map(detail => ({
@@ -163,6 +170,7 @@ export const StockBalance = () => {
                             )
                         }))}
                     />
+                    )}
                 </div>
             </div>
 

@@ -45,11 +45,16 @@ export function NewStockTransfer() {
     const fetchProductsSuggestions = async (query) => {
         try {
             const response = await getProducts();
-            if (response.data && response.data) {
-                return response.data.map(product => ({
-                    id: product.productId,
-                    displayText: `${product.productId} ${product.productName}`
-                }));
+            if (response.data) {
+                return response.data
+                    .filter(product => 
+                        product.productName.toLowerCase().includes(query.toLowerCase()) || 
+                        product.productId.toLowerCase().includes(query.toLowerCase())
+                    )
+                    .map(product => ({
+                        id: product.productId,
+                        displayText: `${product.productId} ${product.productName}`
+                    }));
             }
             return [];
         } catch (error) {
@@ -184,23 +189,13 @@ export function NewStockTransfer() {
                                     name="requestBranch"
                                     editable={true}
                                     onChange={(e) => handleRequestBranchChange(e)}
-                                    addOptions={["All"]}
                                     value={selectedBranch}
                                     ref={branchDropdownRef}
                                 />
                             </div>
                         <div className="branchField">
                             <InputLabel htmlFor="branchName" color="#0377A8">Supplying Branch<span style={{ color: 'red' }}>*</span></InputLabel>
-                            {/* <BranchDropdown
-                                id="branchName"
-                                name="branchName"
-                                editable={true}
-                                options={branches.map(branch => branch.branchName)}
-                                onChange={handleDropdownChange}
-                                addOptions={["All"]}
-                                value={selectedBranch}
-                                ref={branchDropdownRef}
-                            /> */}
+
                              <InputDropdown
                                     id="branchName"
                                     name="branchName" 

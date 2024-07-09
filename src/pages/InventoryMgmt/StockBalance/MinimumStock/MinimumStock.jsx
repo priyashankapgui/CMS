@@ -6,6 +6,7 @@ import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import SearchBar from "../../../../Components/SearchBar/SearchBar";
 import BranchDropdown from '../../../../Components/InputDropdown/BranchDropdown';
 import secureLocalStorage from "react-secure-storage";
+import SubSpinner from '../../../../Components/Spinner/SubSpinner/SubSpinner';
 import { getBranchOptions } from '../../../../Api/BranchMgmt/BranchAPI';
 import { getProducts } from '../../../../Api/Inventory/Product/ProductAPI';
 import { getProductMinQty } from '../../../../Api/Inventory/StockBalance/StockBalanceAPI';
@@ -41,21 +42,24 @@ export const MinimunStock = () => {
         try {
             const response = await getProducts();
             setProducts(response.data);
-            setLoading(false);
         } catch (error) {
             console.error('Error fetching all products:', error);
-            setLoading(false);
         }
     };
 
     const fetchProductsSuggestions = async (query) => {
         try {
             const response = await getProducts();
-            if (response.data && response.data) {
-                return response.data.map(product => ({
-                    id: product.productId,
-                    displayText: `${product.productId} ${product.productName}`
-                }));
+            if (response.data) {
+                return response.data
+                    .filter(product => 
+                        product.productName.toLowerCase().includes(query.toLowerCase()) || 
+                        product.productId.toLowerCase().includes(query.toLowerCase())
+                    )
+                    .map(product => ({
+                        id: product.productId,
+                        displayText: `${product.productId} ${product.productName}`
+                    }));
             }
             return [];
         } catch (error) {
@@ -66,6 +70,7 @@ export const MinimunStock = () => {
 
      
     const fetchProductQuantities = async () => {
+        setLoading(true);
         try {
             const userJSON = secureLocalStorage.getItem("user");
             if (userJSON) {
@@ -86,8 +91,6 @@ export const MinimunStock = () => {
             setLoading(false);
         }
     };
-
-
 
     const handleDropdownChange = (value) => {
         setSelectedBranch(value);
@@ -140,7 +143,6 @@ export const MinimunStock = () => {
                                 name="branchName"
                                 editable={true}
                                 onChange={(e) => handleDropdownChange(e)}
-                                addOptions={["All"]}
                                 value={selectedBranch}
                                 ref={branchDropdownRef}
                             />
@@ -164,16 +166,20 @@ export const MinimunStock = () => {
                     </div>
                 </div>
                 <div className="min-stock-content-middle">
-                    <TableWithPagi
-                        columns={['Branch Name', 'Product ID', 'Product Name', , 'Available Qty', 'Min Qty']}
-                        rows={stockDetails.map(detail => ({
-                            'Branch Name': detail.branchName,
-                            'Product ID': detail.productId,
-                            'Product Name': detail.productName,
-                            'Available Qty': detail.totalAvailableQty,
-                            ' Min Qty': detail.minQty,
-                        }))}
-                    />
+                    {loading ? (
+                        <div><SubSpinner /></div>
+                    ) : (
+                        <TableWithPagi
+                            columns={['Branch Name', 'Product ID', 'Product Name', 'Available Qty', 'Min Qty']}
+                            rows={stockDetails.map(detail => ({
+                                'Branch Name': detail.branchName,
+                                'Product ID': detail.productId,
+                                'Product Name': detail.productName,
+                                'Available Qty': detail.totalAvailableQty,
+                                'Min Qty': detail.minQty,
+                            }))}
+                        />
+                    )}
                 </div>
             </div>
         </>

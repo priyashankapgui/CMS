@@ -8,6 +8,7 @@ import TableWithPagi from '../../../../Components/Tables/TableWithPagi';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { IoChevronBackCircleOutline } from "react-icons/io5";
 import { getStockTransferBySTN_NO, updateTransferQty } from "../../../../Api/Inventory/StockTransfer/StockTransferAPI";
+import SubSpinner from "../../../../Components/Spinner/SubSpinner/SubSpinner";
 
 export const ReceivingCompleted = () => {
     const navigate = useNavigate();
@@ -16,9 +17,11 @@ export const ReceivingCompleted = () => {
     const [isSaved, setIsSaved] = useState(false);
     const [alertVisible, setAlertVisible] = useState(false); 
     const [alertConfig, setAlertConfig] = useState({}); 
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchStockTransferDetails = async () => {
+            setLoading(true); 
             try {
                 const response = await getStockTransferBySTN_NO(STN_NO);
                 setStockTransferDetails(response.data);
@@ -29,6 +32,8 @@ export const ReceivingCompleted = () => {
                 }
             } catch (error) {
                 console.error('Error fetching stock transfer details:', error);
+            } finally {
+                setLoading(false); 
             }
         };
 
@@ -131,60 +136,66 @@ export const ReceivingCompleted = () => {
             </div>
             <Layout>
                 <div className="stockReceiving-bodycontainer">
-                    <div className="stockReceiving-filter-container">
-                        <div className="StockTransferField">
-                            <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
-                            <div className="stockReceivingdata-box">
-                                <span>{stockTransferDetails?.STN_NO}</span>
+                    {loading ? ( 
+                        <SubSpinner />
+                    ) : (
+                        <>
+                            <div className="stockReceiving-filter-container">
+                                <div className="StockTransferField">
+                                    <InputLabel htmlFor="stnNo" color="#0377A8">Stock Transfer No(STN)</InputLabel>
+                                    <div className="stockReceivingdata-box">
+                                        <span>{stockTransferDetails?.STN_NO}</span>
+                                    </div>
+                                </div>
+                                <div className="RequestedBranchField">
+                                    <InputLabel htmlFor="requestedBranch" color="#0377A8">Requested Branch</InputLabel>
+                                    <div className="stockReceivingdata-box">
+                                        <span>{stockTransferDetails?.requestBranch}</span>
+                                    </div>
+                                </div>
+                                <div className="SupplyingBranchField">
+                                    <InputLabel htmlFor="supplyingBranch" color="#0377A8">Supplying Branch</InputLabel>
+                                    <div className="stockReceivingdata-box">
+                                        <span>{stockTransferDetails?.supplyingBranch}</span>
+                                    </div>
+                                </div>
+                                <div className="RequestedByField">
+                                    <InputLabel htmlFor="requestedBy" color="#0377A8">Requested By</InputLabel>
+                                    <div className="stockReceivingdata-box">
+                                        <span>{stockTransferDetails?.requestedBy}</span>
+                                    </div>
+                                </div>
+                                <div className="SubmittedByField">
+                                    <InputLabel htmlFor="submittedBy" color="#0377A8">Submitted By</InputLabel>
+                                    <div className="stockReceivingdata-box">
+                                        <span>{stockTransferDetails?.submittedBy}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="RequestedBranchField">
-                            <InputLabel htmlFor="requestedBranch" color="#0377A8">Requested Branch</InputLabel>
-                            <div className="stockReceivingdata-box">
-                                <span>{stockTransferDetails?.requestBranch}</span>
+                            <div className="stockReceiving-content-middle">
+                                {stockTransferDetails?.products ? (
+                                    <TableWithPagi rows={stockTransferDetails.products.map(product => ({
+                                        "Product Id / Name": `${product.productId} / ${product.productName}`,
+                                        "Req. Qty": product.requestedQty,
+                                        "Batch No": product.batches.map(batch => batch.batchNo).join(', '),
+                                        "Transfer Qty": product.batches.map(batch => batch.transferQty).join(', '),
+                                        "Unit Price": product.batches.map(batch => batch.unitPrice).join(', '),
+                                        "Exp Date": product.batches.map(batch => batch.expDate).join(', '),
+                                        "Amount": product.batches.map(batch => batch.amount).join(', ')
+                                    }))} columns={columns} />
+                                ) : (
+                                    <p>No products available</p>
+                                )}
                             </div>
-                        </div>
-                        <div className="SupplyingBranchField">
-                            <InputLabel htmlFor="supplyingBranch" color="#0377A8">Supplying Branch</InputLabel>
-                            <div className="stockReceivingdata-box">
-                                <span>{stockTransferDetails?.supplyingBranch}</span>
+                            <div className="stockReceiving-BtnSection">
+                                {!isSaved ? (
+                                    <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
+                                ) : null}
+                                <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
+                                <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
                             </div>
-                        </div>
-                        <div className="RequestedByField">
-                            <InputLabel htmlFor="requestedBy" color="#0377A8">Requested By</InputLabel>
-                            <div className="stockReceivingdata-box">
-                                <span>{stockTransferDetails?.requestedBy}</span>
-                            </div>
-                        </div>
-                        <div className="SubmittedByField">
-                            <InputLabel htmlFor="submittedBy" color="#0377A8">Submitted By</InputLabel>
-                            <div className="stockReceivingdata-box">
-                                <span>{stockTransferDetails?.submittedBy}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="stockReceiving-content-middle">
-                        {stockTransferDetails?.products ? (
-                            <TableWithPagi rows={stockTransferDetails.products.map(product => ({
-                                "Product Id / Name": `${product.productId} / ${product.productName}`,
-                                "Req. Qty": product.requestedQty,
-                                "Batch No": product.batches.map(batch => batch.batchNo).join(', '),
-                                "Transfer Qty": product.batches.map(batch => batch.transferQty).join(', '),
-                                "Unit Price": product.batches.map(batch => batch.unitPrice).join(', '),
-                                "Exp Date": product.batches.map(batch => batch.expDate).join(', '),
-                                "Amount": product.batches.map(batch => batch.amount).join(', ')
-                            }))} columns={columns} />
-                        ) : (
-                            <p>No products available</p>
-                        )}
-                    </div>
-                    <div className="stockReceiving-BtnSection">
-                        {!isSaved ? (
-                            <Buttons type="button" id="save-btn" style={{ backgroundColor: "#23A3DA", color: "white" }} onClick={handleSave}> Save </Buttons>
-                        ) : null}
-                        <Buttons type="button" id="close-btn" style={{ backgroundColor: "white", color: "black" }} onClick={handleButtonClick}>Close</Buttons>
-                        <p className='tot-amount-txt'>Total Amount: <span className="totalAmountValue">Rs: {calculateTotalAmount()}</span></p>
-                    </div>
+                        </>
+                    )}
                 </div>
             </Layout>
         </>
