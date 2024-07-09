@@ -1,0 +1,50 @@
+.ViewCompletedDetails {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.View-Completed-top {
+    background-color: white;
+    width: 100%;
+    height: 140px;
+    padding: 20px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    font-size: 1em;
+    margin-bottom: 20px;
+}
+
+.View-Completed-top-cont {
+    display: flex;
+    gap: 200px;
+}
+
+.View-Completed-top-cont span {
+    color: black;
+    font-weight: 500;
+}
+
+.inputFlex {
+    display: flex;
+    padding: 5px;
+}
+
+
+.viewCompletedItem {
+    overflow: auto;
+    width: 100%;
+    height: 60vh;
+    margin: 20px 0 20px 0;
+    position: relative;
+}
+
+.viewCompletedtable {
+    margin: 0 auto;
+}
+
+.viewCompletedtable th {
+    background-color: #E9E9E9;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}

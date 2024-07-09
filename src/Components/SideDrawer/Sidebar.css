@@ -5,26 +5,14 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+
 }
 
 body {
     background-color: #fafafa;
 }
-.adjust-branch,
-.accounts,
-.products,
-.suppliers,
-.good-receive,
-.stock-balance,
-.stock-transfer,
-.stock-return,
-.check-price,
-.sales,
-.work-list,
-.online-orders,
-.web-mgmt,
-.reporting,
-.page-name {
+
+.top-nav-blue-text {
     margin-left: 16.875em;
     font-size: 1em;
     color: #0377A8;
@@ -34,31 +22,43 @@ body {
     align-items: center;
     flex-direction: column;
     margin-top: -53px;
-    z-index: 1;
+    z-index: 6;
 }
-/* Sidebar.js */
 
 .sidebar-nav {
-    background: #0377A8;
+    background-color: #0377A8;
     width: 15.625em;
-    min-height: 100vh;
-    height: fit-content;
+    height: 100%;
     display: flex;
     flex-direction: column;
     top: 0;
     left: -100%;
     transition: 350ms;
     z-index: 10;
-    position: absolute;
-  }
-  
-  .show {
+    position: fixed;
+    overflow-y: scroll;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.sidebar-nav {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.show {
     left: 0;
-  }
+}
 
 .sidebar-wrap {
     width: 100%;
+    height: 100%;
 }
+
 
 .side-top {
     display: flex;
@@ -77,7 +77,7 @@ body {
 
 .collapse-side-icon2 {
     width: 2.188em;
-    height:  2.188em;
+    height: 2.188em;
     color: #0377A8;
     margin-top: 0.313em;
     border-radius: 50%;
@@ -124,7 +124,7 @@ body {
 }
 
 .sidebar-link:hover {
-    background: rgba(19, 86, 112, 0.6);
+    background: rgba(19, 86, 112, 0.5);
     cursor: pointer;
 }
 
@@ -143,7 +143,18 @@ body {
 }
 
 .dropdown-link:hover {
-    background: rgba(19, 86, 112, 0.6);
+    background: rgba(19, 86, 112, 0.5);
     cursor: pointer;
 }
 
+
+.sidebar-link.active,
+.dropdown-link.active {
+    background-color: rgba(19, 86, 112, 0.8);
+
+}
+
+.sidebar-link.active .sidebar-label,
+.dropdown-link.active .sidebar-label {
+    color: white;
+}

@@ -1,0 +1,7 @@
+{
+  "repoTypes": [
+    "Stock Summary",
+    "Upcoming Expiry Stock",
+    "Already Expired Stock"
+  ]
+}

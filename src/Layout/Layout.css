@@ -1,8 +1,10 @@
 * {
   margin: 0;
   padding: 0;
+  transition: margin-left 0.3s ease;
 }
 
 #bodycontent {
-  margin-top: 70px;
+  margin-top: 4.4em;
+  margin-bottom: 0.625em;
 }

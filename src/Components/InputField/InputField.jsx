@@ -1,49 +1,36 @@
 import React from 'react';
-import styled from 'styled-components';
+import './InputField.css';
 
-const InputContainer = styled.div`
-  position: relative;
-`;
+function InputField({ type, id, name, placeholder, onChange, editable, borderRadius, height, width, marginTop, value, textAlign, border, className, children, loading}) {    // Default onChange handler that does nothing
+    const noop = () => { };
 
-const Input = styled.input`
-  border-radius: ${(props) => props.borderRadius || '0.625em'};
-  border: 1px solid #8D9093;
-  height: ${(props) => props.height || '2.25em'};
-  width: ${(props) => props.width || '27em'};
-  margin-top: 0.313em;
-  margin-bottom: 0.313em;
-  font-size: 0.75em;
-  padding: 0.625em;
-  opacity: ${(props) => (props.editable ? 1 : 0.5)};
-  pointer-events: ${(props) => (props.editable ? 'auto' : 'none')};
-`;
-
-const IconContainer = styled.span`
-  position: absolute;
-  top: 50%;
-  right: 0.625em;
-  transform: translateY(-50%);
-`;
-
-function InputField(props) {
     return (
-        <InputContainer>
-            <Input
-                id={props.id}
-                name={props.name}
-                placeholder={props.placeholder}
-                onChange={props.onChange}
-                editable={props.editable}
-                borderRadius={props.borderRadius}
-                height={props.height}
-                width={props.width}
+        <div className="input-container">
+            <input
+                type={type}
+                id={id}
+                name={name}
+                placeholder={loading ? 'Loading...' : placeholder}
+                onChange={onChange || noop}
+                value={loading ? '' : value}
+                className={`input ${editable && !loading ? '' : 'disabled'} ${className}`}
+                disabled={loading}
+
+                style={{
+                    borderRadius: borderRadius || '0.625em',
+                    height: height || '2.6em',
+                    width: width || '27em',
+                    marginTop: marginTop || '0.313em',
+                    textAlign: textAlign || 'left',
+                    border: border || '1px solid #8D9093'
+                }}
             />
-            {props.children && (
-                <IconContainer>
-                    {props.children}
-                </IconContainer>
+            {children && !loading && (
+                <span className="icon-container">
+                    {children}
+                </span>
             )}
-        </InputContainer>
+        </div>
     );
 }
 

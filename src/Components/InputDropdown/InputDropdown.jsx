@@ -1,35 +1,190 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect, useRef } from 'react';
+import { IoMdArrowDropdown } from "react-icons/io";
+import './InputDropdown.css';
 
-const Dropdown = styled.select`
-  border-radius: 0.625em;
-  border: 1px solid #8D9093;
-  height: 2.25em;
-  width: 15.625em;
-  margin-top: 0.313em;
-  margin-bottom: 0.313em;
-  font-size: 0.813em;
-  padding-left: 0.625em;
-  opacity: ${(props) => (props.editable ? 1 : 0.5)};
-  pointer-events: ${(props) => (props.editable ? 'auto' : 'none')};
-`;
+const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, options, loading }) => {
+    const [selectedOption, setSelectedOption] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
-function InputDropdown(props) {
-    return (
-        <div>
-            <Dropdown
-                id={props.id}
-                name={props.name}
-                style={props.style}
-                onChange={props.onChange}
-                editable={props.editable}
+    useEffect(() => {
+        if (options.length > 0) {
+            setSelectedOption(options[0]);
+        }
+    }, [options]);
+
+    const handleOptionClick = (option) => {
+        setSelectedOption(option);
+        onChange(option);
+        setIsOpen(false);
+    };
+
+    const toggleDropdown = () => {
+        if (editable) {
+            setIsOpen(!isOpen);
+        }
+    };
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setIsOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    if (loading) {
+        return(
+            <div
+            id={id}
+            name={name}
+            ref={dropdownRef}
+            className="dropdown-container"
+            style={{
+                borderRadius: borderRadius || '0.625em',
+                height: height || '2.375em',
+                width: width || '15.625em',
+                marginTop: marginTop || '0.313em',
+            }}
+        >
+            <div
+                className={`dropdown-selected disabled`}
+                onClick={toggleDropdown}
+                tabIndex={editable ? 0 : -1}  // Add tabindex for focus
             >
-                {props.options.map(option => (
-                    <option key={option} value={option}>{option}</option>
-                ))}
-            </Dropdown>
+                <span>Loading...</span>
+                <IoMdArrowDropdown className="dropdown-arrow" />
+            </div>
+            </div>
+        )
+    }
+
+    if (options.length === 0) {
+        return <div className='hint-text'>Options not available</div>;
+    }
+
+    return (
+        <div
+            id={id}
+            name={name}
+            ref={dropdownRef}
+            className="dropdown-container"
+            style={{
+                borderRadius: borderRadius || '0.625em',
+                height: height || '2.6em',
+                width: width || '15.625em',
+                marginTop: marginTop || '0.313em',
+            }}
+        >
+            <div
+                className={`dropdown-selected ${editable ? '' : 'disabled'}`}
+                onClick={toggleDropdown}
+                tabIndex={editable ? 0 : -1}
+            >
+                <span>{selectedOption}</span>
+                <IoMdArrowDropdown className="dropdown-arrow" />
+            </div>
+            {isOpen && (
+                <div className="dropdown-list">
+                    {options.map((option, index) => (
+                        <div
+                            key={index}
+                            className="dropdown-option"
+                            onClick={() => handleOptionClick(option)}
+                        >
+                            {option}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
-}
+};
 
 export default InputDropdown;
+
+
+// import React, { useState, useEffect, useRef } from 'react';
+// import { IoMdArrowDropdown } from "react-icons/io";
+// import './InputDropdown.css';
+
+// const InputDropdown = ({ id, name, height, width, onChange, editable, borderRadius, marginTop, options }) => {
+//     const [selectedOption, setSelectedOption] = useState('');
+//     const [isOpen, setIsOpen] = useState(false);
+//     const dropdownRef = useRef(null);
+
+//     useEffect(() => {
+//         if (options.length > 0) {
+//             setSelectedOption(options[0]);
+//         }
+//     }, [options]);
+
+//     const handleOptionClick = (option) => {
+//         setSelectedOption(option);
+//         onChange(option); // Pass the selected option directly
+//         setIsOpen(false);
+//     };
+
+//     const toggleDropdown = () => {
+//         if (editable) {
+//             setIsOpen(!isOpen);
+//         }
+//     };
+
+//     const handleClickOutside = (event) => {
+//         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+//             setIsOpen(false);
+//         }
+//     };
+
+//     useEffect(() => {
+//         document.addEventListener('mousedown', handleClickOutside);
+//         return () => {
+//             document.removeEventListener('mousedown', handleClickOutside);
+//         };
+//     }, []);
+
+//     return (
+//         <div
+//             id={id}
+//             name={name}
+//             ref={dropdownRef}
+//             className="dropdown-container"
+//             style={{
+//                 borderRadius: borderRadius || '0.625em',
+//                 height: height || '2.6em',
+//                 width: width || '15.625em',
+//                 marginTop: marginTop || '0.313em',
+//             }}
+//         >
+//             <div
+//                 className={`dropdown-selected ${editable ? '' : 'disabled'}`}
+//                 onClick={toggleDropdown}
+//                 tabIndex={editable ? 0 : -1}
+//             >
+//                 <span>{selectedOption}</span>
+//                 <IoMdArrowDropdown className="dropdown-arrow" />
+//             </div>
+//             {isOpen && (
+//                 <div className="dropdown-list">
+//                     {options.map((option, index) => (
+//                         <div
+//                             key={index}
+//                             className="dropdown-option"
+//                             onClick={() => handleOptionClick(option)}
+//                         >
+//                             {option}
+//                         </div>
+//                     ))}
+//                 </div>
+//             )}
+//         </div>
+//     );
+// };
+
+// export default InputDropdown;
